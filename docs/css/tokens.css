@@ -1,0 +1,80 @@
+/* Biosyn — generated from tokens.json */
+:root, [data-theme="dark"] {
+  --navy-900: #010232;
+  --bg: var(--navy-900);
+  --surface: #080b42;
+  --surface-raised: #10144f;
+  --line: #22276a;
+  --line-strong: #6c72b0;
+  --ink: #f4f6ff;
+  --ink-muted: #aeb3d9;
+  --ink-subtle: #8a8fc0;
+  --brand-lime: #c6f84a;
+  --brand-green: #7cf04a;
+  --brand-yellow: #e8f84a;
+  --brand-lime-hover: #b2ea2c;
+  --on-brand: var(--navy-900);
+  --accent-text: #c6f84a;
+  --focus-ring: #c6f84a;
+  --tint-lime: #16260f;
+  --on-tint-lime: #d9fb7d;
+  --watermark: rgba(255, 255, 255, 0.045);
+  --watermark-brand: rgba(198, 248, 74, 0.08);
+  --success: #5fd68a;
+  --danger: #ff8a7a;
+  --warning: #ffc24d;
+  --info: #8ec9ff;
+  --overlay: rgba(1, 2, 30, 0.76);
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 16px 40px rgba(0, 0, 20, 0.45);
+  --shadow-glow: 0 0 0 1px rgba(198, 248, 74, 0.35), 0 10px 40px rgba(198, 248, 74, 0.2);
+}
+[data-theme="light"] {
+  --bg: #f5f6fb;
+  --surface: #ffffff;
+  --surface-raised: #eceef8;
+  --line: #d9dcee;
+  --line-strong: #767ba6;
+  --ink: var(--navy-900);
+  --ink-muted: #41477a;
+  --ink-subtle: #5a5f8e;
+  --accent-text: #2f6b0a;
+  --focus-ring: #2f6b0a;
+  --tint-lime: #eaf7c9;
+  --on-tint-lime: #2f5a0b;
+  --watermark: rgba(1, 2, 50, 0.03);
+  --success: #1d7a44;
+  --danger: #c0392b;
+  --warning: #8a5a00;
+  --info: #1f4fb8;
+  --overlay: rgba(1, 2, 50, 0.48);
+  --shadow-card: 0 1px 2px rgba(1, 2, 50, 0.06), 0 10px 28px rgba(1, 2, 50, 0.09);
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+  --container-max: 1200px;
+  --header-height: 76px;
+  --font-display: "Readex Pro", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans Arabic", "Readex Pro", system-ui, sans-serif;
+}
+.display-xl { font-family: var(--font-display); font-size: 56px; line-height: 68px; font-weight: 700; }
+.display { font-family: var(--font-display); font-size: 44px; line-height: 56px; font-weight: 700; }
+.h1 { font-family: var(--font-display); font-size: 34px; line-height: 46px; font-weight: 700; }
+.h2 { font-family: var(--font-display); font-size: 26px; line-height: 38px; font-weight: 600; }
+.h3 { font-family: var(--font-display); font-size: 20px; line-height: 30px; font-weight: 600; }
+.body-lg { font-family: var(--font-sans); font-size: 18px; line-height: 32px; font-weight: 400; }
+.body { font-family: var(--font-sans); font-size: 16px; line-height: 28px; font-weight: 400; }
+.label { font-family: var(--font-sans); font-size: 14px; line-height: 22px; font-weight: 600; }
+.small { font-family: var(--font-sans); font-size: 14px; line-height: 24px; font-weight: 400; }
+.caption { font-family: var(--font-sans); font-size: 12px; line-height: 20px; font-weight: 500; }

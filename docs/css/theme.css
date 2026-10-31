@@ -1,0 +1,86 @@
+/* Theme layer: soft white/navy backgrounds, light/dark switch, LTR (English) adjustments */
+
+/* ---- page background: subtle navy + white washes ---- */
+html[data-theme="light"] { --bg: #f6f7fc; --surface: #ffffff; --surface-raised: #eef0f9; --line: #dde0f0; --watermark-brand: rgba(1, 2, 50, 0.05); }
+html[data-theme="light"] body {
+  background:
+    radial-gradient(1100px 520px at 100% -10%, rgba(1, 2, 50, 0.09), transparent 60%),
+    radial-gradient(900px 480px at 0% 0%, rgba(124, 240, 74, 0.08), transparent 55%),
+    radial-gradient(1000px 600px at 50% 110%, rgba(1, 2, 50, 0.06), transparent 60%),
+    linear-gradient(180deg, #f8f9fe 0%, #eef0f8 100%) fixed;
+}
+html[data-theme="dark"] body {
+  background:
+    radial-gradient(1100px 520px at 100% -10%, rgba(255, 255, 255, 0.06), transparent 60%),
+    radial-gradient(900px 480px at 0% 0%, rgba(198, 248, 74, 0.05), transparent 55%),
+    var(--bg) fixed;
+}
+html, body { transition: background-color .25s ease, color .25s ease; }
+
+/* light: cards float on white with a soft navy shadow */
+html[data-theme="light"] :is(.bs-course, .bs-inst, .bs-plan, .bx-panel, .bx-post, .bs-news, .bx-program, .bx-formcard, .bs-enroll, .bx-stat, .bx-crow, .bx-modal) { box-shadow: 0 1px 2px rgba(1, 2, 50, .05), 0 8px 24px rgba(1, 2, 50, .07); }
+html[data-theme="light"] .bs-header { background: color-mix(in srgb, #ffffff 82%, transparent); box-shadow: 0 1px 0 rgba(1, 2, 50, .06); }
+html[data-theme="light"] .bs-hero { background-color: transparent; }
+
+/* light: footer + promo bar stay navy, so the page reads white-with-navy */
+html[data-theme="light"] .bs-footer, html[data-theme="light"] .bs-promo {
+  --surface: #010232; --surface-raised: #10144f; --line: #22276a; --line-strong: #6c72b0;
+  --ink: #f4f6ff; --ink-muted: #aeb3d9; --ink-subtle: #8a8fc0; --accent-text: #c6f84a; --watermark: rgba(255, 255, 255, .045);
+  --tint-lime: #16260f; --on-tint-lime: #d9fb7d;
+  background: #010232; color: var(--ink);
+}
+html[data-theme="light"] .bs-promo { background: #010232; color: #d9fb7d; }
+html[data-theme="light"] .bs-footer .bs-logo .bs-logo-dark { display: block; }
+html[data-theme="light"] .bs-footer .bs-logo .bs-logo-light { display: none; }
+html[data-theme="light"] .bx-sidebar .bs-logo .bs-logo-dark { display: none; }
+html[data-theme="light"] .bx-sidebar .bs-logo .bs-logo-light { display: block; }
+
+/* ---- header tools: theme + language switches ---- */
+.bx-toggles { display: inline-flex; gap: 6px; align-items: center; }
+.bx-tg { width: 38px; height: 38px; display: inline-grid; place-items: center; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; font: 700 13px/1 var(--font-sans); padding: 0; }
+.bx-tg:hover { border-color: var(--line-strong); }
+.bx-tg svg { width: 18px; height: 18px; }
+html[data-theme="dark"] .bx-tg .i-moon, html[data-theme="light"] .bx-tg .i-sun { display: none; }
+@media (max-width: 420px) { .bx-tg { width: 34px; height: 34px; } .bs-header-tools .bs-btn-sm { padding-inline: 10px; } }
+
+/* ---- English / LTR ---- */
+html[data-lang="en"] body { font-family: "Inter", "IBM Plex Sans Arabic", system-ui, sans-serif; }
+html[data-lang="en"] { --font-display: "Readex Pro", "Inter", system-ui, sans-serif; --font-sans: "Inter", "IBM Plex Sans Arabic", system-ui, sans-serif; }
+html[data-lang="en"][data-i18n="pending"] body { opacity: 0; }
+html[data-lang="en"] .bs-latin[style*="direction:ltr"] { text-align: left !important; }
+html[data-lang="en"] .bx-dir-flip, html[data-lang="en"] .bs-hero .bs-orbit { transform: scaleX(-1); }
+
+/* status colors that work on both themes */
+.bx-ok-text { color: var(--success) !important; }
+.bx-bad-text { color: var(--danger) !important; }
+
+/* hero mark + header logo per theme */
+.bs-hm-light { display: none; }
+html[data-theme="light"] .bs-hm-dark { display: none; }
+html[data-theme="light"] .bs-hm-light { display: block; }
+
+/* LTR fixes for English */
+html[data-lang="en"] .bs-root { direction: ltr; }
+html[data-lang="en"] :is(.bx-crow h4, .bx-mine h3, .bx-livetop h2, .bx-program h3, .bx-upnext b, .bx-cycle .t, .bx-sessions b) { text-align: left; }
+html[data-lang="en"] [style*="text-align:right"], html[data-lang="en"] [style*="text-align: right"] { text-align: left !important; }
+html[data-lang="en"] .bx-hsearch button svg, html[data-lang="en"] .bx-flip-en { transform: scaleX(-1); }
+
+/* header fit: keep every item on one line */
+.bs-nav a, .bx-hlogin, .bs-header-tools .bs-btn { white-space: nowrap; }
+.bs-header-in { gap: var(--space-4); }
+.bx-hsearch { flex: 0 1 210px; }
+.bs-nav { flex: 1 1 auto; min-width: 0; justify-content: center; }
+.bs-nav a { padding: 8px 11px; }
+@media (max-width: 1439px) { .bx-hsearch { display: none; } }
+@media (max-width: 1040px) { .bs-nav a { padding: 8px 8px; font-size: 13px; } .bx-hlogin { display: none; } }
+html[data-lang="en"] :is(.bs-course-hero h1, .bs-course-title, .bs-curr-title, .bx-lesson-head h2, .bx-lesson b, .bx-nextlive h2, .bx-sess-row b) { text-align: left; }
+body { min-height: 100vh; }
+html[data-theme="light"] { background: #eef0f8; }
+mark { background: var(--brand-gradient); color: var(--on-brand); padding: 0 .15em; border-radius: 10px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+@media (max-width: 480px) {
+  .bs-header-tools > .bs-btn-primary { display: none; }
+  .bs-header-tools { gap: 6px; }
+  .bs-logo img { height: 28px !important; }
+}
+[hidden] { display: none !important; }
+.bx-app { min-height: 100vh; }

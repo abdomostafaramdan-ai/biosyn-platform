@@ -1,0 +1,417 @@
+/* Biosyn Egypt: site behaviour. Pages are static HTML; this file wires them to Supabase. */
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const EGP = (n) => Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
+  const here = () => location.pathname.split('/').pop() || 'index.html';
+  const LEVEL = { beginner: 'مبتدئ', intermediate: 'متوسط', advanced: 'متقدم' };
+  const ERR = {
+    'gateway not available': 'بوابة الدفع هذه غير مفعّلة بعد، جرّب بوابة أخرى.',
+    'already enrolled': 'أنت مسجّل في هذا الكورس بالفعل.',
+    'course is full': 'اكتمل عدد المقاعد في هذا الكورس.',
+    'plan not available': 'هذه الباقة غير متاحة حاليًا.',
+    'course not available': 'هذا الكورس غير متاح حاليًا.',
+  };
+  const arErr = (e) => ERR[e && e.message] || (e && e.message) || 'حدث خطأ غير متوقع، حاول مرة أخرى.';
+  window.$ = $; window.$$ = $$; window.esc = esc; window.EGP = EGP; window.LEVEL = LEVEL; window.arErr = arErr;
+
+
+  // ---------- tracking (Meta Pixel / GA4). Inactive until the IDs are set in config.js ----------
+  const T = (window.BIOSYN && BIOSYN.TRACKING) || {};
+  if (T.META_PIXEL_ID) {
+    !function (f, b, e, v, n, t, s) { if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); }; if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0; t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s); }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', T.META_PIXEL_ID); fbq('track', 'PageView');
+  }
+  if (T.GA4_ID) {
+    const s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(T.GA4_ID); document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || []; window.gtag = function () { dataLayer.push(arguments); }; gtag('js', new Date()); gtag('config', T.GA4_ID);
+  }
+  window.track = function (name, d) {
+    d = d || {};
+    try {
+      if (window.fbq) {
+        if (name === 'view_content') fbq('track', 'ViewContent', { content_name: d.item, content_ids: [d.id], content_type: 'product' });
+        else if (name === 'begin_checkout') fbq('track', 'InitiateCheckout', { value: d.value, currency: 'EGP', content_name: d.item });
+        else if (name === 'purchase') fbq('track', 'Purchase', { value: d.value, currency: 'EGP' }, { eventID: d.id }); // same id as the server-side event => de-duplicated
+        else if (name === 'sign_up') fbq('track', 'CompleteRegistration');
+        else if (name === 'lead') fbq('track', 'Lead', { content_name: d.type });
+      }
+      if (window.gtag) {
+        if (name === 'view_content') gtag('event', 'view_item', { items: [{ item_id: d.id, item_name: d.item }] });
+        else if (name === 'begin_checkout') gtag('event', 'begin_checkout', { value: d.value, currency: 'EGP' });
+        else if (name === 'purchase') gtag('event', 'purchase', { transaction_id: d.id, value: d.value, currency: 'EGP' });
+        else if (name === 'sign_up') gtag('event', 'sign_up');
+        else if (name === 'lead') gtag('event', 'generate_lead', { lead_type: d.type });
+        else gtag('event', name, d);
+      }
+    } catch (e) { /* tracking must never break the page */ }
+  };
+
+
+  // ---------- device id (account-sharing limit), referral capture, SEO helper ----------
+  window.deviceId = () => {
+    try { let d = localStorage.getItem('biosyn.device'); if (!d) { d = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now()); localStorage.setItem('biosyn.device', d); } return d; }
+    catch { return 'nostorage-' + navigator.userAgent.length + screen.width; }
+  };
+  window.deviceLabel = () => { const u = navigator.userAgent; const os = /Android/.test(u) ? 'Android' : /iPhone|iPad/.test(u) ? 'iOS' : /Windows/.test(u) ? 'Windows' : /Mac/.test(u) ? 'Mac' : /Linux/.test(u) ? 'Linux' : 'جهاز'; const br = /Edg\//.test(u) ? 'Edge' : /Chrome\//.test(u) ? 'Chrome' : /Firefox\//.test(u) ? 'Firefox' : /Safari\//.test(u) ? 'Safari' : ''; return (br ? br + ' · ' : '') + os; };
+  try { const r = new URLSearchParams(location.search).get('ref'); if (r && /^[A-Za-z0-9]{4,16}$/.test(r)) localStorage.setItem('biosyn.ref', r.toUpperCase()); } catch {}
+  window.setMeta = (title, desc, image) => {
+    if (title) document.title = title;
+    const put = (attr, key, val) => { if (!val) return; let el = document.head.querySelector(`meta[${attr}="${key}"]`); if (!el) { el = document.createElement('meta'); el.setAttribute(attr, key); document.head.appendChild(el); } el.setAttribute('content', val); };
+    put('name', 'description', desc); put('property', 'og:title', title); put('property', 'og:description', desc); put('property', 'og:image', image); put('property', 'og:url', location.href.split('#')[0]);
+  };
+
+  // ---------- AI support chat (enable with BIOSYN.SUPPORT_CHAT = true after setting ANTHROPIC_API_KEY) ----------
+  function mountSupport() {
+    if (!BIOSYN.SUPPORT_CHAT || /admin|instructor|watch/.test(document.body.dataset.page || '')) return;
+    const w = document.createElement('div'); w.className = 'bx-chat';
+    w.innerHTML = `<button type="button" class="bx-chat-fab" aria-expanded="false" aria-label="المساعدة">؟ مساعدة</button><section class="bx-chat-panel" hidden aria-label="مساعد Biosyn"><header><b>مساعد Biosyn</b><button type="button" data-cx aria-label="إغلاق">×</button></header><div class="bx-chat-log" aria-live="polite"><div class="bx-chat-m a">أهلاً! اسألني عن الباقات، الدفع، الشهادات أو الدورات. لأي مشكلة في حسابك راسلنا على contact@biosynegypt.com</div></div><form><input class="bx-input" maxlength="1000" placeholder="اكتب سؤالك…" aria-label="سؤالك"><button class="bs-btn bs-btn-primary bs-btn-sm" type="submit">إرسال</button></form></section>`;
+    document.body.appendChild(w);
+    const fab = $('.bx-chat-fab', w), panel = $('.bx-chat-panel', w), log = $('.bx-chat-log', w), form = $('form', w), inp = $('input', form);
+    const hist = [];
+    const toggle = (o) => { panel.hidden = !o; fab.setAttribute('aria-expanded', String(o)); if (o) inp.focus(); };
+    fab.onclick = () => toggle(panel.hidden); $('[data-cx]', w).onclick = () => toggle(false);
+    const add = (cls, t) => { const d = document.createElement('div'); d.className = 'bx-chat-m ' + cls; d.textContent = t; log.appendChild(d); log.scrollTop = log.scrollHeight; return d; };
+    form.onsubmit = async (e) => {
+      e.preventDefault(); const q = inp.value.trim(); if (!q) return; inp.value = '';
+      add('u', q); hist.push({ role: 'user', content: q }); const wait = add('a', '…');
+      try { const r = await sb.fn('support-chat', { messages: hist.slice(-10) }); wait.textContent = r.reply; hist.push({ role: 'assistant', content: r.reply }); }
+      catch { wait.textContent = 'المساعد غير متاح الآن. راسلنا على contact@biosynegypt.com'; hist.pop(); }
+    };
+  }
+
+
+  // ---------- theme + language switches ----------
+  window.mountToggles = function () {
+    const en = document.documentElement.getAttribute('data-lang') === 'en';
+    const shellOnly = /(admin|instructor)\.html/.test(location.pathname);
+    $$('[data-toggles]').forEach((box) => {
+      if (box.dataset.ready) return; box.dataset.ready = '1';
+      box.innerHTML = `<button type="button" class="bx-tg" data-theme-toggle aria-label="${en ? 'Toggle light / dark mode' : 'الوضع الفاتح / الداكن'}" title="${en ? 'Light / dark' : 'فاتح / داكن'}"><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>` +
+        (shellOnly ? '' : `<button type="button" class="bx-tg" data-no-i18n data-lang-toggle lang="${en ? 'ar' : 'en'}" aria-label="${en ? 'العربية' : 'English'}" title="${en ? 'العربية' : 'English'}">${en ? 'ع' : 'EN'}</button>`);
+      $('[data-theme-toggle]', box).onclick = () => {
+        const t = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t); try { localStorage.setItem('biosyn.theme', t); } catch {}
+      };
+      const lb = $('[data-lang-toggle]', box);
+      if (lb) lb.onclick = () => {
+        try { localStorage.setItem('biosyn.lang', en ? 'ar' : 'en'); } catch {}
+        const u = new URL(location.href); u.searchParams.delete('lang'); location.href = u.href;
+      };
+    });
+  };
+
+  // ---------- UI helpers ----------
+  function toast(msg, kind) {
+    let box = $('.bx-toasts');
+    if (!box) { box = document.createElement('div'); box.className = 'bx-toasts'; box.setAttribute('role', 'status'); document.body.appendChild(box); }
+    const t = document.createElement('div'); t.className = 'bx-toast' + (kind === 'err' ? ' err' : ''); t.textContent = msg; box.appendChild(t);
+    setTimeout(() => t.remove(), 5000);
+  }
+  function modal(html, onMount) {
+    const back = document.createElement('div'); back.className = 'bx-modal-back';
+    back.innerHTML = `<div class="bx-modal" role="dialog" aria-modal="true">${html}</div>`;
+    const close = () => back.remove();
+    back.addEventListener('mousedown', (e) => { if (e.target === back) close(); });
+    document.addEventListener('keydown', function esc_(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc_); } });
+    document.body.appendChild(back);
+    if (onMount) onMount($('.bx-modal', back), close);
+    return close;
+  }
+  window.ui = { toast, modal };
+
+  // ---------- session / profile ----------
+  let meP = null;
+  window.getMe = () => {
+    if (!sb.user) return Promise.resolve(null);
+    if (!meP) meP = sb.one('profiles', { select: '*', id: 'eq.' + sb.user.id }).catch(() => null);
+    return meP;
+  };
+  sb.onChange(() => { meP = null; });
+  window.requireLogin = () => {
+    if (sb.user) return true;
+    location.href = 'login.html?next=' + encodeURIComponent(here() + location.search);
+    return false;
+  };
+
+  // ---------- header, footer, drawer ----------
+  function mountLayout() {
+    const h = $('#site-header'), f = $('#site-footer');
+    if (h) h.outerHTML = LAYOUT.header;
+    if (f) f.outerHTML = LAYOUT.footer;
+    const cur = here();
+    $$('.bs-nav a').forEach((a) => { if (a.getAttribute('href') === cur) a.setAttribute('aria-current', 'page'); });
+    // search box -> course list
+    const form = $('.bx-hsearch');
+    if (form) form.addEventListener('submit', (e) => { e.preventDefault(); const q = $('input', form).value.trim(); location.href = 'courses.html' + (q ? '?q=' + encodeURIComponent(q) : ''); });
+    // drawer for narrow screens
+    const hdr = $('.bs-header');
+    if (hdr && !$('.bx-drawer')) {
+      const d = document.createElement('nav'); d.className = 'bx-drawer'; d.setAttribute('aria-label', 'القائمة');
+      d.innerHTML = $$('.bs-nav a', hdr).map((a) => `<a href="${a.getAttribute('href')}"${a.hasAttribute('aria-current') ? ' aria-current="page"' : ''}>${esc(a.textContent.trim())}</a>`).join('') +
+        (sb.user ? '' : '<a href="login.html">تسجيل الدخول</a>');
+      hdr.appendChild(d);
+      const btn = $('.bx-hmenu', hdr);
+      if (btn) { btn.setAttribute('aria-expanded', 'false'); btn.addEventListener('click', () => { const o = document.body.classList.toggle('nav-open'); btn.setAttribute('aria-expanded', String(o)); }); }
+    }
+  }
+
+  async function mountUserMenu() {
+    const tools = $('.bs-header-tools');
+    if (!tools || !sb.user) return;
+    const me = await getMe();
+    const name = (me && me.full_name) || sb.user.email || 'حسابي';
+    const role = me && me.role;
+    $$('.bx-hlogin, a.bs-btn', tools).forEach((n) => n.remove());
+    const um = document.createElement('div'); um.className = 'bx-um';
+    um.innerHTML = `<button type="button" aria-haspopup="true" aria-expanded="false"><span class="bx-um-av">${esc(name.trim().charAt(0).toUpperCase())}</span>${esc(name.split(' ')[0])}</button>
+      <div class="bx-um-pop" role="menu"><a href="account.html">حسابي</a>
+      ${role === 'instructor' ? '<a href="instructor.html">لوحة المحاضر</a>' : ''}
+      ${role === 'admin' || role === 'support' ? '<a href="admin.html">لوحة الإدارة</a>' : ''}
+      ${role === 'admin' ? '<a href="instructor.html">لوحة المحاضر</a>' : ''}
+      <hr><button type="button" data-out>تسجيل الخروج</button></div>`;
+    tools.appendChild(um);
+    const b = $('button', um);
+    b.addEventListener('click', (e) => { e.stopPropagation(); const o = um.dataset.open !== 'true'; um.dataset.open = o; b.setAttribute('aria-expanded', String(o)); });
+    document.addEventListener('click', () => { um.dataset.open = 'false'; });
+    $('[data-out]', um).addEventListener('click', async () => { await sb.auth.signOut(); location.href = 'index.html'; });
+    const dr = $('.bx-drawer a[href="login.html"]'); if (dr) dr.remove();
+  }
+
+  // ---------- plans + checkout ----------
+  const GW = { paymob: 'Paymob', stripe: 'Stripe', fawaterk: 'Fawaterk' };
+  function checkout(target) {
+    if (!requireLogin()) return;
+    const gws = BIOSYN.GATEWAYS;
+    modal(`<h3>إتمام الدفع</h3>
+      <p><b>${esc(target.title)}</b> · ${EGP(target.price)} ج.م</p>
+      <div role="radiogroup" aria-label="بوابة الدفع" style="display:grid;gap:10px">
+        ${gws.filter((g) => GW[g]).map((g, i) => `<label class="bx-opt"><input type="radio" name="gw" value="${g}" ${i === 0 ? 'checked' : ''}><b>${GW[g]}</b><small>دفع إلكتروني آمن</small></label>`).join('')}
+      </div>
+      <div data-manual hidden class="bx-banner" style="display:block;margin-top:10px"></div>
+      <div class="bx-coupon" style="margin:14px 0 4px"><label class="bx-hint" for="cpn" style="display:block;margin-bottom:6px">عندك كود خصم؟</label><div style="display:flex;gap:8px"><input id="cpn" class="bx-input" dir="ltr" autocomplete="off" placeholder="WELCOME20" style="flex:1"><button type="button" class="bs-btn bs-btn-secondary" data-cpn>تطبيق</button></div><div class="bx-formmsg" data-cpnmsg aria-live="polite"></div></div>
+      <p class="bx-hint">تُضاف رسوم بوابة الدفع على المبلغ، وتظهر لك قيمتها النهائية في صفحة الدفع. ${target.note || ''} بالمتابعة فأنت توافق على <a class="bx-link" href="terms.html" target="_blank">الشروط</a> و<a class="bx-link" href="refund.html" target="_blank">سياسة الاسترداد</a>.</p>
+      <div class="bx-formmsg" aria-live="polite"></div>
+      <div class="bx-modal-actions"><button type="button" class="bs-btn bs-btn-primary" data-go>متابعة للدفع</button><button type="button" class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div>`,
+    (m, close) => {
+      $('[data-x]', m).onclick = close;
+      let coupon = '', finalPrice = target.price, pinfo = null;
+      const mbox = $('[data-manual]', m), rg = $('[role=radiogroup]', m);
+      const drawManual = () => {
+        const v = ($('input[name=gw]:checked', m) || {}).value || '';
+        if (!v.startsWith('manual:')) { mbox.hidden = true; $('[data-go]', m).textContent = 'متابعة للدفع'; return; }
+        const isI = v === 'manual:instapay', to = isI ? pinfo.instapay : pinfo.vodafone_cash;
+        mbox.hidden = false; $('[data-go]', m).textContent = 'أرسلت التحويل';
+        mbox.innerHTML = `<b>حوّل ${EGP(finalPrice)} ج.م ${isI ? 'عبر إنستاباي إلى' : 'على محفظة فودافون كاش رقم'}:</b> <span class="bs-latin" dir="ltr" style="font-weight:700">${esc(to)}</span><br><small>بعد التحويل اكتب رقم العملية أو الرقم الذي حوّلت منه. يتفعّل اشتراكك بعد مراجعة الفريق (عادة خلال ساعات العمل).</small><input id="mref" class="bx-input" dir="ltr" maxlength="120" placeholder="${isI ? 'رقم العملية' : '01xxxxxxxxx'}" style="margin-top:8px;width:100%">`;
+      };
+      sb.rpc('payment_instructions').then((pi) => {
+        pinfo = pi || {};
+        const opts = [];
+        if (pinfo.instapay) opts.push(['instapay', 'إنستاباي', 'تحويل يدوي · بدون رسوم']);
+        if (pinfo.vodafone_cash) opts.push(['vodafone_cash', 'فودافون كاش', 'تحويل يدوي · بدون رسوم']);
+        rg.insertAdjacentHTML('beforeend', opts.map(([k, n, s]) => `<label class="bx-opt"><input type="radio" name="gw" value="manual:${k}"><b>${n}</b><small>${s}</small></label>`).join(''));
+        $$('input[name=gw]', m).forEach((r) => (r.onchange = drawManual));
+      }).catch(() => {});
+      const cm = $('[data-cpnmsg]', m), priceEl = $('p b', m).parentElement;
+      $('[data-cpn]', m).onclick = async (ev) => {
+        const cbtn = ev.currentTarget, code = $('#cpn', m).value.trim(); coupon = ''; cm.className = 'bx-formmsg';
+        if (!code) { cm.textContent = ''; priceEl.innerHTML = `<b>${esc(target.title)}</b> · ${EGP(target.price)} ج.م`; return; }
+        cbtn.disabled = true;
+        try {
+          const q = await sb.rpc('validate_coupon', { p_code: code, p_plan_code: target.plan_code || null, p_course: target.course_id || null });
+          coupon = code; finalPrice = Number(q.final); drawManual && drawManual(); cm.className = 'bx-formmsg ok';
+          cm.textContent = `تم تطبيق الكود: خصم ${EGP(q.discount)} ج.م` + (Number(q.final) === 0 ? ' (مجاني بالكامل)' : '');
+          priceEl.innerHTML = `<b>${esc(target.title)}</b> · <s class="bx-muted">${EGP(q.list)}</s> <b>${EGP(q.final)} ج.م</b>`;
+          track('add_coupon', { code });
+        } catch (e) { finalPrice = target.price; drawManual(); cm.className = 'bx-formmsg err'; cm.textContent = arErr(e); priceEl.innerHTML = `<b>${esc(target.title)}</b> · ${EGP(target.price)} ج.م`; }
+        cbtn.disabled = false;
+      };
+      $('[data-go]', m).onclick = async (ev) => {
+        const msg = $('.bx-formmsg:not([data-cpnmsg])', m), btn = ev.currentTarget; btn.disabled = true; msg.className = 'bx-formmsg'; msg.textContent = 'جارٍ تجهيز صفحة الدفع…';
+        const gwv = $('input[name=gw]:checked', m).value;
+        if (gwv.startsWith('manual:')) {
+          const ref = ($('#mref', m) || {}).value || '';
+          if (!ref.trim()) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = 'اكتب رقم العملية أو الرقم الذي حوّلت منه.'; return; }
+          try {
+            const r = await sb.rpc('create_manual_payment', { p_method: gwv.slice(7), p_ref: ref.trim(), p_plan_code: target.plan_code || null, p_course: target.course_id || null, p_coupon: coupon || null });
+            track('begin_checkout', { value: finalPrice, item: target.title, id: target.plan_code || target.course_id });
+            msg.className = 'bx-formmsg ok';
+            msg.textContent = r.status === 'paid' ? 'تم التفعيل!' : 'استلمنا طلبك. سنراجع التحويل ونفعّل اشتراكك، وسيصلك بريد بالتأكيد.';
+            setTimeout(() => (location.href = 'account.html#payments'), 2500);
+          } catch (e) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = arErr(e); }
+          return;
+        }
+        try {
+          const body = { gateway: gwv, return_url: new URL('account.html', location.href).href };
+          if (target.plan_code) body.plan_code = target.plan_code; else body.course_id = target.course_id;
+          if (coupon) body.coupon = coupon;
+          track('begin_checkout', { value: target.price, item: target.title, id: target.plan_code || target.course_id });
+          const r = await sb.fn('create-checkout', body);
+          location.href = r.url;
+        } catch (e) {
+          btn.disabled = false; msg.className = 'bx-formmsg err';
+          msg.textContent = e.status === 401 ? 'انتهت جلستك، سجّل الدخول من جديد.' : arErr(e.data && e.data.error ? { message: e.data.error } : e);
+        }
+      };
+    });
+  }
+  window.checkout = checkout;
+
+  const periodAr = (m) => (m === 1 ? 'مدة شهر واحد' : m === 12 ? 'صلاحية 12 شهرًا' : m < 11 ? `صلاحية ${m} أشهر` : `صلاحية ${m} شهرًا`);
+  async function hydratePlans() {
+    const cards = $$('.bs-plan');
+    if (!cards.length) return;
+    let plans; try { plans = await sb.get('plans', { select: '*', active: 'eq.true', order: 'duration_months' }); } catch { return; }
+    cards.forEach((card, i) => {
+      const p = plans[i];
+      if (!p) { card.remove(); return; }
+      $('.bs-plan-name', card).textContent = p.name;
+      $('.bs-plan-price b', card).textContent = EGP(p.price_egp);
+      const old = Number(p.old_price_egp);
+      $('.bs-plan-period', card).textContent = (old > p.price_egp ? `السعر السابق ${EGP(old)} · ` : '') + periodAr(p.duration_months);
+      const badge = $('.bs-badge', card);
+      if (badge) { if (old > p.price_egp) badge.textContent = `وفر ${Math.round((1 - p.price_egp / old) * 100)}٪`; else badge.remove(); }
+      const cta = $('.bs-plan-cta', card);
+      if (cta) cta.addEventListener('click', () => checkout({ plan_code: p.code, title: p.name, price: p.price_egp, note: 'الاشتراك لا يتجدد تلقائيًا ولا يمكن استرداده.' }));
+    });
+  }
+
+  window.hydratePlansNow = hydratePlans;
+
+  // ---------- catalogue ----------
+  window.courseCard = (c, inst, nLect, href) => `<a class="bs-course" href="${href || 'course.html?c=' + encodeURIComponent(c.slug)}"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span></div><div class="bs-course-body"><span class="bs-course-kind">${c.kind === 'interactive' ? 'دورة تفاعلية' : 'دورة مسجلة'}</span><h3 class="bs-course-title">${esc(c.title)}</h3><div class="bs-course-meta">${nLect != null ? `<span>${nLect} محاضرة</span>` : ''}${c.kind === 'recorded' ? `<span>${LEVEL[c.level] || ''}</span>` : `<span>${EGP(c.price_egp)} ج.م</span>`}${inst ? `<span>${esc(inst)}</span>` : ''}</div></div></a>`;
+
+  async function loadCatalog(kind) {
+    const [courses, insts] = await Promise.all([
+      sb.get('courses', { select: '*,lectures(id)', kind: 'eq.' + kind, status: 'eq.published', order: 'created_at.desc' }),
+      sb.get('public_instructors', { select: '*' }).catch(() => []),
+    ]);
+    const names = Object.fromEntries(insts.map((i) => [i.id, i.full_name]));
+    return courses.map((c) => ({ ...c, n: (c.lectures || []).length, inst: names[c.instructor_id] || '' }));
+  }
+  window.loadCatalog = loadCatalog;
+
+  async function pageCourses() {
+    const grid = $('.bs-grid'); if (!grid) return;
+    grid.innerHTML = '<div class="bx-loading" style="grid-column:1/-1">جارٍ تحميل الدورات…</div>';
+    let all = [];
+    try { all = await loadCatalog('recorded'); } catch (e) { grid.innerHTML = `<div class="bx-empty-big" style="grid-column:1/-1"><b>تعذّر تحميل الدورات</b>${esc(arErr(e))}</div>`; return; }
+    const q = $('#q'), sel = $('#inst'), sort = $('.bx-catalog-live select, .bx-sortsel');
+    const chips = $('.bx-chips');
+    const specs = [...new Set(all.map((c) => c.specialty).filter(Boolean))];
+    let spec = '';
+    if (chips) {
+      if (!specs.length) chips.remove();
+      else { chips.innerHTML = ['كل التخصصات', ...specs].map((s, i) => `<button class="bx-chip" aria-pressed="${i === 0}" data-s="${i ? esc(s) : ''}">${esc(s)}</button>`).join(''); chips.addEventListener('click', (e) => { const b = e.target.closest('.bx-chip'); if (!b) return; spec = b.dataset.s; $$('.bx-chip', chips).forEach((x) => x.setAttribute('aria-pressed', String(x === b))); draw(); }); }
+    }
+    if (sel) sel.innerHTML = '<option value="">كل المحاضرين</option>' + [...new Set(all.map((c) => c.inst).filter(Boolean))].map((n) => `<option>${esc(n)}</option>`).join('');
+    const lv = $$('.bx-side-group:first-child input[type=checkbox]');
+    lv.forEach((c) => (c.checked = false));
+    const url = new URL(location.href); if (q && url.searchParams.get('q')) q.value = url.searchParams.get('q');
+    function draw() {
+      const t = (q ? q.value : '').trim().toLowerCase();
+      const levels = lv.map((c, i) => (c.checked ? ['beginner', 'intermediate', 'advanced'][i] : null)).filter(Boolean);
+      let list = all.filter((c) => (!t || (c.title + ' ' + c.inst).toLowerCase().includes(t)) && (!spec || c.specialty === spec) && (!levels.length || levels.includes(c.level)) && (!sel || !sel.value || c.inst === sel.value));
+      const s = sort ? sort.selectedIndex : 0;
+      if (s === 3) list.sort((a, b) => a.title.localeCompare(b.title)); else if (s === 2) list.reverse();
+      grid.innerHTML = list.length ? list.map((c) => courseCard(c, c.inst, c.n)).join('') : `<div class="bx-empty-big" style="grid-column:1/-1"><b>${all.length ? 'لا توجد نتائج مطابقة' : 'لا توجد دورات منشورة بعد'}</b>${all.length ? 'جرّب تغيير البحث أو الفلاتر.' : 'سنضيف الدورات هنا فور نشرها.'}</div>`;
+      const cnt = $('.bx-count'); if (cnt) cnt.textContent = `${list.length} دورة`;
+    }
+    [q, sel, sort, ...lv].forEach((el) => el && el.addEventListener('input', draw));
+    const go = $('.bx-pagehead .bs-btn-primary'); if (go) go.addEventListener('click', draw);
+    const clear = $$('.bx-side .bs-btn-ghost')[0]; if (clear) clear.addEventListener('click', () => { lv.forEach((c) => (c.checked = false)); if (sel) sel.value = ''; if (q) q.value = ''; draw(); });
+    draw();
+  }
+
+  async function pageInteractive() {
+    const box = $('.bx-programs'); if (!box) return;
+    let all = []; try { all = await loadCatalog('interactive'); } catch { all = []; }
+    box.innerHTML = all.length ? all.map((c) => `<article class="bx-program"><div class="bx-date"><small>دورة</small><b>★</b></div><div>
+      <div class="bx-row"><span class="bs-badge bs-badge-info">تفاعلية</span>${c.specialty ? `<span class="bx-st bx-st-info">${esc(c.specialty)}</span>` : ''}</div>
+      <h3>${esc(c.title)}</h3><div class="bx-meta"><span>${esc(c.inst || 'Biosyn Egypt')}</span><span>${LEVEL[c.level] || ''}</span></div></div>
+      <div class="bx-program-cta"><div class="bx-price">${EGP(c.price_egp)} <small>ج.م</small></div><a href="course.html?c=${encodeURIComponent(c.slug)}" class="bs-btn bs-btn-primary">اكتشف الكورس</a></div></article>`).join('')
+      : '<div class="bx-empty-big"><b>لا توجد دورات تفاعلية مفتوحة للتسجيل حاليًا</b>سنعلن عن الدفعة القادمة قريبًا. <a class="bx-link" href="consultations.html">تواصل معنا</a></div>';
+    const h = $('.bx-hint[style*="margin: 0"]'); if (h) h.remove();
+    const up = $('.bx-upnext'); if (up) up.closest('.bx-panel').remove();
+    const chips = $('.bx-chips'); if (chips) chips.remove();
+  }
+
+  async function pageHome() {
+    const grid = $('.bs-grid'); if (!grid) return;
+    let all = []; try { all = await loadCatalog('recorded'); } catch { return; }
+    const draw = (list) => { grid.innerHTML = list.length ? list.slice(0, 6).map((c) => courseCard(c, c.inst, c.n)).join('') : '<div class="bx-empty-big" style="grid-column:1/-1"><b>الدورات قريبًا</b>سنضيفها هنا فور نشرها.</div>'; };
+    draw(all);
+    const tabs = $$('.bs-tabs [role=tab]');
+    tabs.forEach((t, i) => t.addEventListener('click', () => { tabs.forEach((x) => x.setAttribute('aria-selected', String(x === t))); draw(i === 2 ? [...all].reverse() : all); }));
+  }
+
+  // ---------- request forms (instructor / institution / consultation) ----------
+  function wireRequestForm(form, type, ids) {
+    if (!form) return;
+    const btn = $('button.bs-btn-primary', form); if (!btn) return;
+    const msg = document.createElement('div'); msg.className = 'bx-formmsg'; msg.setAttribute('aria-live', 'polite'); btn.parentElement.after(msg);
+    btn.addEventListener('click', async () => {
+      const f = {};
+      $$('input,select,textarea', form).forEach((el) => {
+        if (el.type === 'checkbox') return;
+        const lab = el.id && $(`label[for="${el.id}"]`, form);
+        const key = (lab ? lab.textContent : el.getAttribute('aria-label') || el.id || '').trim();
+        if (key) f[key] = el.tagName === 'SELECT' ? el.options[el.selectedIndex].text : el.value.trim();
+      });
+      const get = (id) => ($('#' + id, form) ? $('#' + id, form).value.trim() : '');
+      const name = get(ids.name), email = get(ids.email), phone = ids.phone ? get(ids.phone) : '';
+      const consent = $('input[type=checkbox]', form);
+      msg.className = 'bx-formmsg err';
+      if (!name || !/^\S+@\S+\.\S+$/.test(email)) { msg.textContent = 'اكتب الاسم وبريدًا إلكترونيًا صحيحًا.'; return; }
+      if (consent && !consent.checked) { msg.textContent = 'يرجى الموافقة على الشروط للمتابعة.'; return; }
+      btn.disabled = true; msg.className = 'bx-formmsg'; msg.textContent = 'جارٍ الإرسال…';
+      try {
+        window.track && track('lead', { type });
+        await sb.insertQuiet('requests', { type, name, email, phone: phone || null, payload: f, user_id: sb.user ? sb.user.id : null }, !!sb.user);
+        msg.className = 'bx-formmsg ok'; msg.textContent = 'وصل طلبك. سنراجعه ونتواصل معك على بريدك الإلكتروني. تقديم الطلب لا يعني القبول.';
+        form.reset();
+      } catch (e) { msg.className = 'bx-formmsg err'; msg.textContent = arErr(e); }
+      btn.disabled = false;
+    });
+  }
+
+  function pageTeach() {
+    const forms = $$('form.bx-form');
+    wireRequestForm(forms.find((f) => $('#r-n', f)), 'instructor_recorded', { name: 'r-n', email: 'r-e' });
+    wireRequestForm(forms.find((f) => $('#i-n', f)), 'instructor_interactive', { name: 'i-n', email: 'i-e' });
+    // earnings calculator (illustrative)
+    const inc = $('#c-inc'), tv = $('#c-tv'), cv = $('#c-cv'); if (!inc) return;
+    const fmt = (n, d) => Number(n).toLocaleString('en-US', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
+    const tiles = $$('.bx-calc-tile'); const warn = $('.bx-calc-warn');
+    const draw = () => {
+      const I = +inc.value || 0, T = +tv.value || 0, C = +cv.value || 0;
+      const per = T > 0 ? I / T : 0, val = per * C;
+      const set = (i, big, small) => { const t = tiles[i]; if (!t) return; $('b', t).innerHTML = `${big} <small>ج.م</small>`; if (small !== undefined && t.querySelectorAll(':scope > small').length) t.querySelector(':scope > small').textContent = small; };
+      set(0, fmt(per, 2)); set(1, fmt(val, 2), `${fmt(C)} مشاهدة × ${fmt(per, 2)} ج.م`); set(2, fmt(val * 0.3, 2)); set(3, fmt(val * 0.7, 2));
+      if (warn) warn.style.display = T > 0 && C > T ? '' : 'none';
+    };
+    [inc, tv, cv].forEach((e) => e.addEventListener('input', draw)); draw();
+  }
+
+  function pageInstitutions() { wireRequestForm($('form.bx-formcard'), 'institution', { name: 'o-c', email: 'o-e', phone: 'o-p' }); }
+  function pageConsultations() { wireRequestForm($('form.bx-formcard'), 'consultation', { name: 'c-n', email: 'c-e', phone: 'c-p' }); }
+
+  // ---------- boot ----------
+  const pages = { index: pageHome, home: pageHome, courses: pageCourses, interactive: pageInteractive, teach: pageTeach, institutions: pageInstitutions, consultations: pageConsultations };
+  window.BiosynPages = window.BiosynPages || {};
+  async function boot() {
+    sb.auth.consumeHash();
+    mountLayout();
+    mountToggles();
+    mountUserMenu();
+    hydratePlans();
+    mountSupport();
+    const p = document.body.dataset.page;
+    const fn = pages[p] || window.BiosynPages[p];
+    if (fn) { try { await fn(); } catch (e) { console.error(e); } }
+  }
+  // deferred scripts (pages.js, dash-*.js) run before DOMContentLoaded, so wait for it
+  if (document.readyState === 'complete') boot(); else document.addEventListener('DOMContentLoaded', boot);
+})();

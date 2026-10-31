@@ -1,0 +1,29 @@
+import type { admin as AdminFn } from './db.ts';
+
+type Sb = ReturnType<typeof AdminFn>;
+
+// Sends queued rows from email_outbox through Resend. Safe to call from anywhere (webhooks, cron).
+// Without RESEND_API_KEY nothing is claimed, so rows simply wait in the queue.
+export async function sendPending(sb: Sb, max = 20): Promise<{ sent: number; failed: number; skipped?: string }> {
+  const key = Deno.env.get('RESEND_API_KEY'), from = Deno.env.get('MAIL_FROM');
+  if (!key || !from) return { sent: 0, failed: 0, skipped: 'RESEND_API_KEY / MAIL_FROM not set' };
+  const { data: rows, error } = await sb.rpc('claim_emails', { p_n: max });
+  if (error || !rows) return { sent: 0, failed: 0, skipped: error?.message };
+  let sent = 0, failed = 0;
+  for (const r of rows as Array<{ id: string; to_email: string; subject: string; body_html: string; attempts: number }>) {
+    try {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'Idempotency-Key': r.id },
+        body: JSON.stringify({ from, to: [r.to_email], subject: r.subject, html: r.body_html }),
+      });
+      if (!res.ok) throw new Error(`resend ${res.status}: ${(await res.text()).slice(0, 300)}`);
+      await sb.from('email_outbox').update({ status: 'sent', sent_at: new Date().toISOString(), last_error: null }).eq('id', r.id);
+      sent++;
+    } catch (e) {
+      failed++;
+      await sb.from('email_outbox').update({ status: r.attempts >= 5 ? 'failed' : 'pending', last_error: String(e).slice(0, 500) }).eq('id', r.id);
+    }
+  }
+  return { sent, failed };
+}

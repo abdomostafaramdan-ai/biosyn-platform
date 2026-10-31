@@ -1,0 +1,28 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><script>(function(){var d=document.documentElement;try{var q=new URLSearchParams(location.search),t=localStorage.getItem('biosyn.theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');d.setAttribute('data-theme',t);var only=/(admin|instructor)\.html/.test(location.pathname),l=q.get('lang');if(l==='en'||l==='ar')localStorage.setItem('biosyn.lang',l);else l=localStorage.getItem('biosyn.lang');if(l==='en'&&!only){d.lang='en';d.dir='ltr';d.setAttribute('data-lang','en');d.setAttribute('data-i18n','pending');document.write('<script src="js/i18n-en.js"><\/script>')}}catch(e){d.setAttribute('data-theme','dark')}})()</script><meta name="viewport" content="width=device-width,initial-scale=1"><title>تسجيل الدخول وإنشاء حساب | Biosyn Egypt</title><meta name="description" content="سجّل دخولك أو أنشئ حسابًا على Biosyn Egypt."><meta property="og:title" content="تسجيل الدخول وإنشاء حساب | Biosyn Egypt"><meta property="og:description" content="سجّل دخولك أو أنشئ حسابًا على Biosyn Egypt."><meta property="og:image" content="img/og.png"><meta property="og:type" content="website"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="img/biosyn-mark.png"><link rel="stylesheet" href="css/tokens.css"><link rel="stylesheet" href="css/ds.css"><link rel="stylesheet" href="css/site.css"><link rel="stylesheet" href="css/instructor.css"><link rel="stylesheet" href="css/content.css"><link rel="stylesheet" href="css/auth.css"><link rel="stylesheet" href="css/live.css"><link rel="stylesheet" href="css/theme.css"></head><body data-page="login"><div class="bs-root" dir="rtl">
+<header class="bx-authbar"><a class="bs-logo" href="index.html" aria-label="Biosyn Egypt"><img class="bs-logo-dark" src="img/biosyn-logo.png" alt="Biosyn" style="height:36px"></a>
+<a class="bx-back-link" href="index.html"><svg class="ic ic-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>العودة إلى الموقع</a></header>
+<div class="bx-auth-wrap" style="grid-template-columns:minmax(0,480px);justify-content:center">
+<section class="bx-auth-card" aria-labelledby="auth-h">
+  <span class="bx-eyebrow" id="auth-eb">أهلاً بعودتك</span>
+  <h1 id="auth-h">تسجيل الدخول</h1>
+  <p class="bx-muted" id="auth-sub">سجّل دخولك للوصول إلى مساحتك التعليمية.</p>
+  <div class="bx-seg" role="tablist"><button type="button" role="tab" id="tab-in" aria-selected="true">تسجيل الدخول</button><button type="button" role="tab" id="tab-up" aria-selected="false">حساب جديد</button></div>
+
+  <form class="bx-form" id="f-in" style="gap:16px" novalidate>
+    <div class="bx-field"><label for="l-e">البريد الإلكتروني</label><input id="l-e" class="bx-input" type="email" dir="ltr" placeholder="name@example.com" autocomplete="email" required></div>
+    <div class="bx-field"><label for="l-p">كلمة المرور</label><input id="l-p" class="bx-input" type="password" dir="ltr" autocomplete="current-password" required></div>
+    <div class="bx-spread"><span></span><a href="#" class="bx-link" id="forgot">نسيت كلمة المرور؟</a></div>
+    <div class="bx-formmsg" id="m-in" aria-live="polite"></div>
+    <button type="submit" class="bs-btn bs-btn-primary bs-btn-lg">تسجيل الدخول</button>
+  </form>
+
+  <form class="bx-form" id="f-up" style="gap:16px" hidden novalidate>
+    <div class="bx-field"><label for="r-n">الاسم الكامل</label><input id="r-n" class="bx-input" type="text" autocomplete="name" required></div>
+    <div class="bx-field"><label for="r-e">البريد الإلكتروني</label><input id="r-e" class="bx-input" type="email" dir="ltr" placeholder="name@example.com" autocomplete="email" required></div>
+    <div class="bx-field"><label for="r-p">كلمة المرور</label><input id="r-p" class="bx-input" type="password" dir="ltr" placeholder="8 أحرف على الأقل" autocomplete="new-password" minlength="8" required></div>
+    <label class="bx-check"><input type="checkbox" id="r-c"><span>أوافق على <a class="bx-link" href="terms.html" target="_blank">الشروط والأحكام</a> و<a class="bx-link" href="privacy.html" target="_blank">سياسة الخصوصية</a>.</span></label>
+    <div class="bx-formmsg" id="m-up" aria-live="polite"></div>
+    <button type="submit" class="bs-btn bs-btn-primary bs-btn-lg">إنشاء الحساب</button>
+  </form>
+  <p class="bx-hint" style="margin:0;text-align:center">بياناتك الشخصية موضع اهتمامنا.</p>
+</section></div></div><script src="js/config.js"></script><script src="js/i18n.js"></script><script src="js/sb.js"></script><script src="js/layout.js"></script><script src="js/app.js" defer></script><script src="js/pages.js" defer></script></body></html>
