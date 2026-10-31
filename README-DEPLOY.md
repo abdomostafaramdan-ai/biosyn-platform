@@ -1,5 +1,8 @@
 # تشغيل موقع Biosyn
 
+> الحالة: الموقع شغال على https://abdomostafaramdan-ai.github.io/biosyn-platform/ (GitHub Pages من مجلد docs). إعدادات Supabase Auth (Site URL وRedirect URLs) مضبوطة عليه وعلى biosynegypt.com.
+
+
 ## 1) رفع الموقع
 مجلد `site/` ملفات ثابتة. ارفعه على GitHub Pages أو Cloudflare Pages أو Netlify (سحب وإفلات). مفيش build.
 `js/config.js` فيه رابط Supabase والمفتاح العام (publishable) وقائمة البوابات المفعّلة.
