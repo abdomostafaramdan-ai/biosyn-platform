@@ -1,5 +1,6 @@
 import { admin, currentUser } from './_shared/db.ts';
 import { bunnyEmbedUrl, cors, json } from './_shared/lib.ts';
+import { loadSecrets, sec } from './_shared/secrets.ts';
 
 // POST { lecture_id } -> { url }  (signed Bunny embed URL, valid 4 hours)
 Deno.serve(async (req) => {
@@ -22,7 +23,8 @@ Deno.serve(async (req) => {
   if (!devOk) return json({ error: 'device limit' }, 403);
 
   const { data: v } = await sb.from('lecture_videos').select('bunny_video_id').eq('lecture_id', lecture_id).single();
-  const lib = Deno.env.get('BUNNY_LIBRARY_ID'), key = Deno.env.get('BUNNY_TOKEN_KEY');
+  await loadSecrets(sb);
+  const lib = sec('BUNNY_LIBRARY_ID'), key = sec('BUNNY_TOKEN_KEY');
   if (!v || !lib || !key) return json({ error: 'video not available yet' }, 404);
   return json({ url: await bunnyEmbedUrl(lib, v.bunny_video_id, key) });
 });

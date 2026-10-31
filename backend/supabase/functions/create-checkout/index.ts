@@ -1,6 +1,7 @@
 import { admin, currentUser, afterPaid } from './_shared/db.ts';
 import { cors, json, grossUp, type Gateway } from './_shared/lib.ts';
 import { createCheckout, enabledGateways, feeRates } from './_shared/gateways.ts';
+import { loadSecrets, sec } from './_shared/secrets.ts';
 
 // POST { gateway, plan_code } | { gateway, course_id }, plus { return_url }
 Deno.serve(async (req) => {
@@ -9,13 +10,14 @@ Deno.serve(async (req) => {
     const user = await currentUser(req);
     if (!user) return json({ error: 'unauthorized' }, 401);
 
+    await loadSecrets(admin());
     const b = await req.json();
     const gw = b.gateway as Gateway;
     if (!enabledGateways().includes(gw)) return json({ error: 'gateway not available' }, 400);
 
     const sb = admin();
     // SITE_URL secret, or the site_url saved in the admin settings
-    let site = (Deno.env.get('SITE_URL') ?? '').replace(/\/$/, '');
+    let site = sec('SITE_URL').replace(/\/$/, '');
     if (!site) { const { data: st } = await sb.from('app_settings').select('value').eq('key', 'site_url').maybeSingle(); site = String(st?.value ?? '').replace(/\/$/, ''); }
     const ret = String(b.return_url ?? site);
     if (!site || !ret.startsWith(site)) return json({ error: 'bad return_url' }, 400);

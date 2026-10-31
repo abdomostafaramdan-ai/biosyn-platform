@@ -1,8 +1,9 @@
 import type { Gateway } from './lib.ts';
+import { sec } from './secrets.ts';
 
-const env = (k: string) => Deno.env.get(k) ?? '';
+const env = (k: string) => sec(k);
 const need = (k: string) => {
-  const v = Deno.env.get(k);
+  const v = sec(k);
   if (!v) throw new Error(`missing secret ${k}`);
   return v;
 };

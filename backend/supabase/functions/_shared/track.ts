@@ -1,4 +1,5 @@
 import type { admin as AdminFn } from './db.ts';
+import { loadSecrets, sec } from './secrets.ts';
 
 type Sb = ReturnType<typeof AdminFn>;
 
@@ -8,7 +9,8 @@ const sha256 = async (s: string) =>
 // Meta Conversions API "Purchase" (server side). event_id = payment id, so it de-duplicates with the browser pixel event.
 // Optional: does nothing unless META_PIXEL_ID and META_CAPI_TOKEN are set.
 export async function sendMetaPurchase(sb: Sb, paymentId: string) {
-  const pixel = Deno.env.get('META_PIXEL_ID'), token = Deno.env.get('META_CAPI_TOKEN');
+  await loadSecrets(sb);
+  const pixel = sec('META_PIXEL_ID'), token = sec('META_CAPI_TOKEN');
   if (!pixel || !token) return;
   const { data: p } = await sb.from('payments').select('id,user_id,amount_egp,fee_egp,paid_at,status').eq('id', paymentId).single();
   if (!p || p.status !== 'paid') return;

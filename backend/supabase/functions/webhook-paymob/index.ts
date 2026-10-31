@@ -1,11 +1,13 @@
 import { admin, markProcessed, recordEvent, settle } from './_shared/db.ts';
 import { verifyPaymob } from './_shared/lib.ts';
+import { loadSecrets, sec } from './_shared/secrets.ts';
 
 Deno.serve(async (req) => {
   const body = await req.json().catch(() => null);
   const obj = body?.obj;
   const hmac = new URL(req.url).searchParams.get('hmac');
-  const secret = Deno.env.get('PAYMOB_HMAC_SECRET') ?? '';
+  await loadSecrets(admin());
+  const secret = sec('PAYMOB_HMAC_SECRET');
   if (!obj || !secret || !(await verifyPaymob(obj, hmac, secret))) return new Response('bad signature', { status: 400 });
 
   const sb = admin();

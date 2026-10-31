@@ -1,5 +1,6 @@
 import { admin } from './_shared/db.ts';
 import { cors, json } from './_shared/lib.ts';
+import { loadSecrets, sec } from './_shared/secrets.ts';
 
 // Public support assistant. POST { messages: [{role:'user'|'assistant', content}] } -> { reply }
 // Needs the ANTHROPIC_API_KEY secret. Answers only from the platform facts below + live plans/catalog.
@@ -36,7 +37,8 @@ const sha = async (s: string) => [...new Uint8Array(await crypto.subtle.digest('
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
-  const key = Deno.env.get('ANTHROPIC_API_KEY');
+  await loadSecrets(admin());
+  const key = sec('ANTHROPIC_API_KEY');
   if (!key) return json({ error: 'not configured' }, 503);
   const body = await req.json().catch(() => null);
   const msgs = Array.isArray(body?.messages) ? body.messages : [];

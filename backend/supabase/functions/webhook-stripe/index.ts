@@ -1,9 +1,11 @@
 import { admin, markProcessed, recordEvent, settle } from './_shared/db.ts';
 import { verifyStripe } from './_shared/lib.ts';
+import { loadSecrets, sec } from './_shared/secrets.ts';
 
 Deno.serve(async (req) => {
   const raw = await req.text();
-  const secret = Deno.env.get('STRIPE_WEBHOOK_SECRET') ?? '';
+  await loadSecrets(admin());
+  const secret = sec('STRIPE_WEBHOOK_SECRET');
   if (!secret || !(await verifyStripe(raw, req.headers.get('stripe-signature'), secret))) {
     return new Response('bad signature', { status: 400 });
   }

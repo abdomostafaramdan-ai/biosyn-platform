@@ -863,7 +863,14 @@ window.I18N_EN = {
 "ش ع": "SA",
 "تُضاف رسوم بوابة الدفع على المبلغ، وتظهر لك قيمتها النهائية في صفحة الدفع.": "Payment gateway fees are added to the amount; you'll see the final total on the payment page.",
 "بالمتابعة فأنت توافق على": "By continuing you agree to the",
-"سياسة الاسترداد.": "Refund Policy."
+"سياسة الاسترداد.": "Refund Policy.",
+"جارٍ تحميل طرق الدفع…": "Loading payment methods…",
+"دفع إلكتروني آمن · بطاقة أو محفظة": "Secure online payment · card or wallet",
+"الدفع غير متاح حاليًا. تواصل معنا على contact@biosynegypt.com": "Payment isn't available right now. Contact us at contact@biosynegypt.com",
+"اختر طريقة الدفع.": "Choose a payment method.",
+"Paymob": "Paymob",
+"Stripe": "Stripe",
+"Fawaterk": "Fawaterk"
 };
 
 window.I18N_EN_PATTERNS = (function () {

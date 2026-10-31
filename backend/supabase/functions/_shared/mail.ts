@@ -1,11 +1,13 @@
 import type { admin as AdminFn } from './db.ts';
+import { loadSecrets, sec } from './secrets.ts';
 
 type Sb = ReturnType<typeof AdminFn>;
 
 // Sends queued rows from email_outbox through Resend. Safe to call from anywhere (webhooks, cron).
 // Without RESEND_API_KEY nothing is claimed, so rows simply wait in the queue.
 export async function sendPending(sb: Sb, max = 20): Promise<{ sent: number; failed: number; skipped?: string }> {
-  const key = Deno.env.get('RESEND_API_KEY'), from = Deno.env.get('MAIL_FROM');
+  await loadSecrets(sb);
+  const key = sec('RESEND_API_KEY'), from = sec('MAIL_FROM');
   if (!key || !from) return { sent: 0, failed: 0, skipped: 'RESEND_API_KEY / MAIL_FROM not set' };
   const { data: rows, error } = await sb.rpc('claim_emails', { p_n: max });
   if (error || !rows) return { sent: 0, failed: 0, skipped: error?.message };

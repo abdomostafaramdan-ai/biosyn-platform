@@ -320,3 +320,11 @@ EXTRA.update({
 "بالمتابعة فأنت توافق على": "By continuing you agree to the",
 "سياسة الاسترداد.": "Refund Policy.",
 })
+
+EXTRA.update({
+"جارٍ تحميل طرق الدفع…": "Loading payment methods…",
+"دفع إلكتروني آمن · بطاقة أو محفظة": "Secure online payment · card or wallet",
+"الدفع غير متاح حاليًا. تواصل معنا على contact@biosynegypt.com": "Payment isn't available right now. Contact us at contact@biosynegypt.com",
+"اختر طريقة الدفع.": "Choose a payment method.",
+"Paymob": "Paymob", "Stripe": "Stripe", "Fawaterk": "Fawaterk",
+})

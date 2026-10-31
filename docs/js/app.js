@@ -19,15 +19,20 @@
 
 
   // ---------- tracking (Meta Pixel / GA4). Inactive until the IDs are set in config.js ----------
-  const T = (window.BIOSYN && BIOSYN.TRACKING) || {};
-  if (T.META_PIXEL_ID) {
-    !function (f, b, e, v, n, t, s) { if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); }; if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0; t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s); }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', T.META_PIXEL_ID); fbq('track', 'PageView');
-  }
-  if (T.GA4_ID) {
-    const s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(T.GA4_ID); document.head.appendChild(s);
-    window.dataLayer = window.dataLayer || []; window.gtag = function () { dataLayer.push(arguments); }; gtag('js', new Date()); gtag('config', T.GA4_ID);
-  }
+  // public, non-secret settings (gateways enabled, manual payment numbers, tracking IDs) from the database
+  window.SITE_SETTINGS = (async () => { try { return (await sb.rpc('public_settings')) || {}; } catch { return {}; } })();
+  const T0 = (window.BIOSYN && BIOSYN.TRACKING) || {};
+  window.SITE_SETTINGS.then((s) => {
+    const pixel = T0.META_PIXEL_ID || s.meta_pixel, ga = T0.GA4_ID || s.ga4;
+    if (pixel && !window.fbq) {
+      !function (f, b, e, v, n, t, x) { if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); }; if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0; t.src = v; x = b.getElementsByTagName(e)[0]; x.parentNode.insertBefore(t, x); }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', pixel); fbq('track', 'PageView');
+    }
+    if (ga && !window.gtag) {
+      const sc = document.createElement('script'); sc.async = true; sc.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(ga); document.head.appendChild(sc);
+      window.dataLayer = window.dataLayer || []; window.gtag = function () { dataLayer.push(arguments); }; gtag('js', new Date()); gtag('config', ga);
+    }
+  });
   window.track = function (name, d) {
     d = d || {};
     try {
@@ -64,8 +69,10 @@
   };
 
   // ---------- AI support chat (enable with BIOSYN.SUPPORT_CHAT = true after setting ANTHROPIC_API_KEY) ----------
-  function mountSupport() {
-    if (!BIOSYN.SUPPORT_CHAT || /admin|instructor|watch/.test(document.body.dataset.page || '')) return;
+  async function mountSupport() {
+    if (/admin|instructor|watch/.test(document.body.dataset.page || '')) return;
+    const st = await window.SITE_SETTINGS;
+    if (!BIOSYN.SUPPORT_CHAT && !st.support_chat) return;
     const w = document.createElement('div'); w.className = 'bx-chat';
     w.innerHTML = `<button type="button" class="bx-chat-fab" aria-expanded="false" aria-label="المساعدة">؟ مساعدة</button><section class="bx-chat-panel" hidden aria-label="مساعد Biosyn"><header><b>مساعد Biosyn</b><button type="button" data-cx aria-label="إغلاق">×</button></header><div class="bx-chat-log" aria-live="polite"><div class="bx-chat-m a">أهلاً! اسألني عن الباقات، الدفع، الشهادات أو الدورات. لأي مشكلة في حسابك راسلنا على contact@biosynegypt.com</div></div><form><input class="bx-input" maxlength="1000" placeholder="اكتب سؤالك…" aria-label="سؤالك"><button class="bs-btn bs-btn-primary bs-btn-sm" type="submit">إرسال</button></form></section>`;
     document.body.appendChild(w);
@@ -184,12 +191,9 @@
   const GW = { paymob: 'Paymob', stripe: 'Stripe', fawaterk: 'Fawaterk' };
   function checkout(target) {
     if (!requireLogin()) return;
-    const gws = BIOSYN.GATEWAYS;
     modal(`<h3>إتمام الدفع</h3>
       <p><b>${esc(target.title)}</b> · ${EGP(target.price)} ج.م</p>
-      <div role="radiogroup" aria-label="بوابة الدفع" style="display:grid;gap:10px">
-        ${gws.filter((g) => GW[g]).map((g, i) => `<label class="bx-opt"><input type="radio" name="gw" value="${g}" ${i === 0 ? 'checked' : ''}><b>${GW[g]}</b><small>دفع إلكتروني آمن</small></label>`).join('')}
-      </div>
+      <div role="radiogroup" aria-label="بوابة الدفع" style="display:grid;gap:10px"><div class="bx-loading" data-gwload>جارٍ تحميل طرق الدفع…</div></div>
       <div data-manual hidden class="bx-banner" style="display:block;margin-top:10px"></div>
       <div class="bx-coupon" style="margin:14px 0 4px"><label class="bx-hint" for="cpn" style="display:block;margin-bottom:6px">عندك كود خصم؟</label><div style="display:flex;gap:8px"><input id="cpn" class="bx-input" dir="ltr" autocomplete="off" placeholder="WELCOME20" style="flex:1"><button type="button" class="bs-btn bs-btn-secondary" data-cpn>تطبيق</button></div><div class="bx-formmsg" data-cpnmsg aria-live="polite"></div></div>
       <p class="bx-hint">تُضاف رسوم بوابة الدفع على المبلغ، وتظهر لك قيمتها النهائية في صفحة الدفع. ${target.note || ''} بالمتابعة فأنت توافق على <a class="bx-link" href="terms.html" target="_blank">الشروط</a> و<a class="bx-link" href="refund.html" target="_blank">سياسة الاسترداد</a>.</p>
@@ -206,14 +210,18 @@
         mbox.hidden = false; $('[data-go]', m).textContent = 'أرسلت التحويل';
         mbox.innerHTML = `<b>حوّل ${EGP(finalPrice)} ج.م ${isI ? 'عبر إنستاباي إلى' : 'على محفظة فودافون كاش رقم'}:</b> <span class="bs-latin" dir="ltr" style="font-weight:700">${esc(to)}</span><br><small>بعد التحويل اكتب رقم العملية أو الرقم الذي حوّلت منه. يتفعّل اشتراكك بعد مراجعة الفريق (عادة خلال ساعات العمل).</small><input id="mref" class="bx-input" dir="ltr" maxlength="120" placeholder="${isI ? 'رقم العملية' : '01xxxxxxxxx'}" style="margin-top:8px;width:100%">`;
       };
-      sb.rpc('payment_instructions').then((pi) => {
+      window.SITE_SETTINGS.then((pi) => {
         pinfo = pi || {};
-        const opts = [];
-        if (pinfo.instapay) opts.push(['instapay', 'إنستاباي', 'تحويل يدوي · بدون رسوم']);
-        if (pinfo.vodafone_cash) opts.push(['vodafone_cash', 'فودافون كاش', 'تحويل يدوي · بدون رسوم']);
-        rg.insertAdjacentHTML('beforeend', opts.map(([k, n, s]) => `<label class="bx-opt"><input type="radio" name="gw" value="manual:${k}"><b>${n}</b><small>${s}</small></label>`).join(''));
+        const online = (Array.isArray(pinfo.gateways) && pinfo.gateways.length ? pinfo.gateways : (BIOSYN.GATEWAYS_FALLBACK || [])).filter((g) => GW[g]);
+        const opts = online.map((g) => [g, GW[g], 'دفع إلكتروني آمن · بطاقة أو محفظة']);
+        if (pinfo.instapay) opts.push(['manual:instapay', 'إنستاباي', 'تحويل يدوي · بدون رسوم']);
+        if (pinfo.vodafone_cash) opts.push(['manual:vodafone_cash', 'فودافون كاش', 'تحويل يدوي · بدون رسوم']);
+        rg.innerHTML = opts.length ? opts.map(([k, n, s], i) => `<label class="bx-opt"><input type="radio" name="gw" value="${k}" ${i === 0 ? 'checked' : ''}><b>${n}</b><small>${s}</small></label>`).join('')
+          : '<div class="bx-formmsg err">الدفع غير متاح حاليًا. تواصل معنا على contact@biosynegypt.com</div>';
+        $('[data-go]', m).disabled = !opts.length;
         $$('input[name=gw]', m).forEach((r) => (r.onchange = drawManual));
-      }).catch(() => {});
+        drawManual();
+      });
       const cm = $('[data-cpnmsg]', m), priceEl = $('p b', m).parentElement;
       $('[data-cpn]', m).onclick = async (ev) => {
         const cbtn = ev.currentTarget, code = $('#cpn', m).value.trim(); coupon = ''; cm.className = 'bx-formmsg';
@@ -230,7 +238,8 @@
       };
       $('[data-go]', m).onclick = async (ev) => {
         const msg = $('.bx-formmsg:not([data-cpnmsg])', m), btn = ev.currentTarget; btn.disabled = true; msg.className = 'bx-formmsg'; msg.textContent = 'جارٍ تجهيز صفحة الدفع…';
-        const gwv = $('input[name=gw]:checked', m).value;
+        const gwv = ($('input[name=gw]:checked', m) || {}).value || '';
+        if (!gwv) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = 'اختر طريقة الدفع.'; return; }
         if (gwv.startsWith('manual:')) {
           const ref = ($('#mref', m) || {}).value || '';
           if (!ref.trim()) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = 'اكتب رقم العملية أو الرقم الذي حوّلت منه.'; return; }

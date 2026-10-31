@@ -1,5 +1,6 @@
 import { sendPending } from './mail.ts';
 import { sendMetaPurchase } from './track.ts';
+import { crmFlush } from './crm.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 export const admin = () =>
@@ -50,4 +51,5 @@ export async function settle(sb: ReturnType<typeof admin>, paymentId: string, pa
 export async function afterPaid(sb: ReturnType<typeof admin>, paymentId?: string) {
   try { await sendPending(sb); } catch (e) { console.error('mail flush failed', e); }
   if (paymentId) { try { await sendMetaPurchase(sb, paymentId); } catch (e) { console.error('capi failed', e); } }
+  try { await crmFlush(sb); } catch (e) { console.error('crm flush failed', e); }
 }

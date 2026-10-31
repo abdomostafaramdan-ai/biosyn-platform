@@ -1,9 +1,11 @@
 import { admin, markProcessed, recordEvent, settle } from './_shared/db.ts';
 import { verifyFawaterk } from './_shared/lib.ts';
+import { loadSecrets, sec } from './_shared/secrets.ts';
 
 Deno.serve(async (req) => {
   const body = await req.json().catch(() => null);
-  const secret = Deno.env.get('FAWATERK_API_KEY') ?? '';
+  await loadSecrets(admin());
+  const secret = sec('FAWATERK_API_KEY');
   if (!body || !secret || !(await verifyFawaterk(body, secret))) return new Response('bad signature', { status: 400 });
 
   const sb = admin();

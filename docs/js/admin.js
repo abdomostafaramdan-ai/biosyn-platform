@@ -211,6 +211,57 @@
       $$('[data-pe]', main).forEach((b) => (b.onclick = () => edit(posts.find((x) => x.id === b.dataset.pe))));
     },
 
+    async integrations(main) {
+      let st = { status: {}, crm: {}, crm_last: null, functions_base: BIOSYN.SUPABASE_URL + '/functions/v1' };
+      try { st = await sb.fn('integrations'); } catch (e) { ui.toast(arErr(e), 'err'); }
+      const S = st.status || {}, W = st.functions_base;
+      const on = (keys) => keys.every((k) => S[k]);
+      const badge = (keys) => on(keys) ? '<span class="bs-badge bs-badge-new">متصل</span>' : keys.some((k) => S[k]) ? '<span class="bs-badge bs-badge-neutral">ناقص</span>' : '<span class="bs-badge bs-badge-neutral">غير مفعّل</span>';
+      const field = (k, label, ph, type) => `<div class="bx-field"><label for="ik-${k}">${label}${S[k] ? ` <small class="bx-hint">· ${S[k] === 'env' ? 'مضبوط في Supabase' : 'محفوظ ✓'}</small>` : ''}</label><input id="ik-${k}" data-key="${k}" class="bx-input" dir="ltr" type="${type || 'password'}" autocomplete="off" placeholder="${S[k] ? '•••••••• (اتركه فارغًا للإبقاء عليه)' : esc(ph || '')}"></div>`;
+      const hook = (name) => `<div class="bx-field"><label>رابط الإشعارات (Webhook) — انسخه في لوحة البوابة</label><div style="display:flex;gap:8px"><input class="bx-input" dir="ltr" readonly value="${esc(W + '/' + name)}" style="flex:1"><button type="button" class="bs-btn bs-btn-secondary bs-btn-sm" data-copy="${esc(W + '/' + name)}">نسخ</button></div></div>`;
+      const card = (id, title, desc, required, body, extra) => `<section class="bx-panel bx-intg" data-intg="${id}"><div class="bx-panel-head"><h3>${title}</h3>${badge(required)}</div><p class="bx-hint" style="margin-top:0">${desc}</p><form class="bx-form2" novalidate>${body}<div class="bx-formmsg" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-primary bs-btn-sm" type="submit">حفظ</button>${on(required) ? '<button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" data-clear>فصل الربط</button>' : ''}${extra || ''}</div></form></section>`;
+      const fee = (g) => `<div class="row2">${field('FEE_' + g + '_PCT', 'رسوم البوابة ٪ (تُضاف على العميل)', 'مثال: 2.75', 'text')}${field('FEE_' + g + '_FIXED', 'رسوم ثابتة لكل عملية (ج.م)', 'مثال: 3', 'text')}</div>`;
+      const crm = st.crm || {};
+      main.innerHTML = `<p class="bx-hint" style="margin-top:0">اربط خدماتك من هنا مباشرة. المفاتيح تُحفظ مشفّرة في قاعدة بياناتك ولا يمكن قراءتها من المتصفح بعد الحفظ؛ يظهر فقط أنها محفوظة. لتغيير مفتاح اكتب الجديد واحفظ.</p>
+        <div class="bx-intg-grid">
+        ${card('paymob', 'Paymob — بطاقات ومحافظ (فودافون كاش وغيرها)', 'من لوحة Paymob: Settings ← Account Info (Secret / Public key)، وDevelopers ← HMAC، وأرقام الـIntegration لكل طريقة دفع (بطاقة، محفظة) مفصولة بفاصلة.', ['PAYMOB_SECRET_KEY', 'PAYMOB_PUBLIC_KEY', 'PAYMOB_HMAC_SECRET', 'PAYMOB_INTEGRATION_IDS'],
+          `<div class="row2">${field('PAYMOB_SECRET_KEY', 'Secret key', 'egy_sk_live_…')}${field('PAYMOB_PUBLIC_KEY', 'Public key', 'egy_pk_live_…')}</div><div class="row2">${field('PAYMOB_HMAC_SECRET', 'HMAC secret', '')}${field('PAYMOB_INTEGRATION_IDS', 'Integration IDs', '123456, 234567', 'text')}</div>${fee('PAYMOB')}${hook('webhook-paymob')}`)}
+        ${card('fawaterk', 'Fawaterk — فوري وبطاقات ومحافظ', 'من لوحة فواتيرك: Integrations ← API key. جرّب أولًا على حساب staging.', ['FAWATERK_API_KEY'],
+          `<div class="row2">${field('FAWATERK_API_KEY', 'API key', '')}${field('FAWATERK_BASE_URL', 'رابط الخادم (اختياري)', 'https://staging.fawaterk.com', 'text')}</div>${fee('FAWATERK')}${hook('webhook-fawaterk')}`)}
+        ${card('stripe', 'Stripe — بطاقات دولية', 'من لوحة Stripe: Developers ← API keys (Secret key)، وWebhooks ← أضف الرابط بالأسفل مع حدث checkout.session.completed ثم انسخ Signing secret.', ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET'],
+          `<div class="row2">${field('STRIPE_SECRET_KEY', 'Secret key', 'sk_live_…')}${field('STRIPE_WEBHOOK_SECRET', 'Webhook signing secret', 'whsec_…')}</div>${fee('STRIPE')}${hook('webhook-stripe')}`)}
+        ${card('bunny', 'Bunny Stream — استضافة الفيديو', 'من Bunny: Stream ← مكتبتك ← API (Library ID)، وSecurity ← فعّل Token Authentication وانسخ المفتاح.', ['BUNNY_LIBRARY_ID', 'BUNNY_TOKEN_KEY'],
+          `<div class="row2">${field('BUNNY_LIBRARY_ID', 'Library ID', '123456', 'text')}${field('BUNNY_TOKEN_KEY', 'Token authentication key', '')}</div>`)}
+        ${card('resend', 'Resend — إيميلات المنصة', 'من resend.com: API Keys، وفعّل دومين الإرسال من Domains. عنوان المرسل مثل: Biosyn &lt;no-reply@biosynegypt.com&gt;', ['RESEND_API_KEY', 'MAIL_FROM'],
+          `<div class="row2">${field('RESEND_API_KEY', 'API key', 're_…')}${field('MAIL_FROM', 'عنوان المرسل', 'Biosyn <no-reply@biosynegypt.com>', 'text')}</div>`)}
+        ${card('meta', 'Meta Pixel وGoogle Analytics — تتبع الإعلانات', 'رقم الـPixel من Events Manager، وتوكن Conversions API من إعدادات الـPixel (اختياري)، ومعرّف GA4 يبدأ بـ G-.', ['META_PIXEL_ID'],
+          `<div class="row2">${field('META_PIXEL_ID', 'Pixel ID', '1234567890', 'text')}${field('META_CAPI_TOKEN', 'Conversions API token (اختياري)', '')}</div>${field('GA4_ID', 'Google Analytics 4 ID (اختياري)', 'G-XXXXXXX', 'text')}`)}
+        ${card('claude', 'مساعد الدعم بالذكاء الاصطناعي (Claude)', 'مفتاح من console.anthropic.com. بمجرد الحفظ يظهر زر «مساعدة» للزوار ويرد من سياسات المنصة وباقاتها فقط.', ['ANTHROPIC_API_KEY'],
+          `${field('ANTHROPIC_API_KEY', 'Anthropic API key', 'sk-ant-…')}`)}
+        </div>
+        <section class="bx-panel"><div class="bx-panel-head"><h3>Biosyn CRM</h3>${on(['CRM_URL', 'CRM_WOO_SECRET']) ? '<span class="bs-badge bs-badge-new">متصل</span>' : '<span class="bs-badge bs-badge-neutral">غير متصل</span>'}</div>
+          <p class="bx-hint" style="margin-top:0">كل دفعة أو استرداد يدخل الـCRM تلقائيًا كعميل + عملية دخل، وكل طلب من نماذج الموقع يدخل كعميل محتمل مع مهمة متابعة. المزامنة كل 5 دقائق وفور كل دفعة.</p>
+          <div class="bx-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px">${D.stat('أُرسلت', crm.sent || 0)}${D.stat('في الانتظار', (crm.pending || 0) + (crm.sending || 0))}${D.stat('فشلت', crm.failed || 0)}</div>
+          ${st.crm_last && st.crm_last.last_error ? `<p class="bx-formmsg err">آخر خطأ: ${esc(st.crm_last.last_error)}</p>` : ''}
+          <div class="bx-btnrow" style="margin-top:12px"><button class="bs-btn bs-btn-secondary bs-btn-sm" id="crmsync" type="button">مزامنة الآن</button><a class="bs-btn bs-btn-ghost bs-btn-sm" href="https://abdomostafaramdan-ai.github.io/biosyn-crm/" target="_blank" rel="noopener">فتح الـCRM ↗</a></div></section>`;
+      $$('[data-copy]', main).forEach((b) => (b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.copy); ui.toast('تم النسخ.'); } catch { ui.toast(b.dataset.copy); } }));
+      $$('.bx-intg form', main).forEach((f) => {
+        f.onsubmit = async (e) => {
+          e.preventDefault(); const msg = $('.bx-formmsg', f);
+          const vals = $$('[data-key]', f).filter((i) => i.value.trim());
+          if (!vals.length) return say(msg, 'اكتب قيمة واحدة على الأقل للحفظ.', 'err');
+          try { for (const i of vals) await sb.rpc('set_integration_secret', { p_key: i.dataset.key, p_value: i.value.trim() }); ui.toast('تم الحفظ. التفعيل خلال دقيقة.'); D.reload(); }
+          catch (err) { say(msg, arErr(err), 'err'); }
+        };
+        const clr = $('[data-clear]', f);
+        if (clr) clr.onclick = async () => {
+          if (!confirm('فصل هذا الربط وحذف المفاتيح المحفوظة له؟')) return;
+          try { for (const i of $$('[data-key]', f)) await sb.rpc('set_integration_secret', { p_key: i.dataset.key, p_value: '' }); ui.toast('تم فصل الربط.'); D.reload(); } catch (err) { ui.toast(arErr(err), 'err'); }
+        };
+      });
+      $('#crmsync', main).onclick = async (ev) => { ev.currentTarget.disabled = true; try { const r = await sb.fn('crm-sync'); ui.toast(r.skipped ? 'الـCRM غير متصل.' : `تمت المزامنة: ${r.sent} أُرسلت${r.failed ? '، ' + r.failed + ' فشلت' : ''}.`); D.reload(); } catch (e) { ui.toast(arErr(e), 'err'); ev.currentTarget.disabled = false; } };
+    },
+
     async settings(main) {
       const rows = await sb.get('app_settings', { select: '*' }).catch(() => []); const v = Object.fromEntries(rows.map((r) => [r.key, r.value || '']));
       main.innerHTML = D.panel('الإعدادات', `<p class="bx-hint" style="margin-top:0">تنبيهات الفريق بالبريد تصلك عند كل دفعة وكل طلب جديد. رابط الموقع يُستخدم في أزرار الإيميلات.</p><form class="bx-form2" id="sf" novalidate><div class="row2"><div class="bx-field"><label for="sn">بريد تنبيهات الفريق</label><input id="sn" class="bx-input" type="email" dir="ltr" value="${esc(v.notify_email || '')}"></div><div class="bx-field"><label for="su">رابط الموقع</label><input id="su" class="bx-input" type="url" dir="ltr" placeholder="https://biosynegypt.com" value="${esc(v.site_url || '')}"></div></div><div class="row2"><div class="bx-field"><label for="si">حساب إنستاباي (للتحويل اليدوي)</label><input id="si" class="bx-input" dir="ltr" placeholder="name@instapay" value="${esc(v.instapay_handle || '')}"></div><div class="bx-field"><label for="sv">رقم فودافون كاش</label><input id="sv" class="bx-input" dir="ltr" placeholder="01xxxxxxxxx" value="${esc(v.vodafone_cash_number || '')}"></div></div><p class="bx-hint" style="margin:0">اترك الحقل فارغًا لإخفاء طريقة الدفع اليدوية من صفحة الدفع.</p><div class="bx-formmsg" id="smsg" aria-live="polite"></div>${isAdmin() ? '<div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">حفظ</button></div>' : ''}</form>` +
@@ -330,7 +381,7 @@
 
   window.BiosynPages.admin = async () => {
     me = await D.guard(['admin', 'support']); if (!me) return;
-    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
+    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
   };
 })();

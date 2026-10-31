@@ -84,3 +84,4 @@ mark { background: var(--brand-gradient); color: var(--on-brand); padding: 0 .15
 }
 [hidden] { display: none !important; }
 .bx-app { min-height: 100vh; }
+.bx-intg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 16px; align-items: start; } .bx-intg-grid .bx-panel { margin: 0; }
