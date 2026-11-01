@@ -976,7 +976,11 @@ window.I18N_EN = {
 "الرجوع للرئيسية": "Back to home",
 "فيه ضغط على الفورم، جرّب بعد دقيقة.": "The form is busy, please try again in a minute.",
 "املأ الفورم وفريق Biosyn Egypt هيتواصل معاك": "Fill in the form and the Biosyn Egypt team will contact you",
-"عن المحاضرين": "About the instructors"
+"عن المحاضرين": "About the instructors",
+"إيميل الجهة *": "Organisation email *",
+"إيميل رسمي باسم الجهة، مش Gmail أو Yahoo أو Hotmail.": "An official email on your organisation’s domain — not Gmail, Yahoo or Hotmail.",
+"من فضلك استخدم إيميل الجهة (مثل name@university.edu.eg)، مش إيميل شخصي زي Gmail أو Yahoo.": "Please use your organisation email (e.g. name@university.edu.eg), not a personal address like Gmail or Yahoo.",
+"من فضلك استخدم إيميل الجهة، مش إيميل شخصي.": "Please use your organisation email, not a personal one."
 };
 
 window.I18N_EN_PATTERNS = (function () {

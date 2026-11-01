@@ -230,11 +230,14 @@
     },
 
     async forms(main) {
-      const [forms, subs] = await Promise.all([sb.get('forms', { select: '*', order: 'created_at.desc' }).catch(() => []), sb.get('form_submissions', { select: 'id,form_id,status' }).catch(() => [])]);
+      const [forms, subs, reqs] = await Promise.all([sb.get('forms', { select: '*', order: 'created_at.desc' }).catch(() => []), sb.get('form_submissions', { select: 'id,form_id,status' }).catch(() => []), sb.get('requests', { select: 'id,type,status' }).catch(() => [])]);
       const cnt = {}; subs.forEach((x) => { const c = (cnt[x.form_id] = cnt[x.form_id] || { all: 0, new: 0 }); c.all++; if (x.status === 'new') c.new++; });
       const base = location.href.replace(/admin\.html.*$/, '');
       const link = (f) => base + 'form.html?f=' + encodeURIComponent(f.slug);
-      main.innerHTML = D.panel('الفورمز والردود', `<p class="bx-hint" style="margin-top:0">اعمل أي فورم (تسجيل اهتمام، استبيان، طلب خدمة…) وخد رابطه شيره على السوشيال أو واتساب. كل رد بيوصل هنا وعلى إيميل التنبيهات، ولو فيه إيميل أو موبايل بيتبعت للـ CRM كـ Lead. طلبات فورمز الموقع الأساسية (المؤسسات، الاستشارات، المحاضرين) لسه بتوصل في «صندوق الطلبات».</p>
+      const rc = {}; reqs.forEach((r) => { const c = (rc[r.type] = rc[r.type] || { all: 0, new: 0 }); c.all++; if (r.status === 'new') c.new++; });
+      const siteForms = SITE_FORMS.map((sf) => { const c = sf.types.reduce((a, t) => ({ all: a.all + ((rc[t] || {}).all || 0), new: a.new + ((rc[t] || {}).new || 0) }), { all: 0, new: 0 });
+        return [`<b>${sf.title}</b><br><small class="bx-hint">فورم ثابت في الموقع</small>`, `<a class="bx-linkbtn" href="${sf.page}" target="_blank" rel="noopener">فتح الصفحة</a>`, `${c.all}${c.new ? ` <span class="bx-st bx-st-warn">${c.new} جديد</span>` : ''}`, '<span class="bx-st bx-st-ok">شغال</span>', `<button class="bx-linkbtn" data-sf="${sf.key}">الردود</button>`]; });
+      main.innerHTML = D.panel('فورمز الموقع', D.table(['الفورم', 'الصفحة', 'الردود', 'الحالة', ''], siteForms)) + D.panel('الفورمز والردود', `<p class="bx-hint" style="margin-top:0">اعمل أي فورم (تسجيل اهتمام، استبيان، طلب خدمة…) وخد رابطه شيره على السوشيال أو واتساب. كل رد بيوصل هنا وعلى إيميل التنبيهات، ولو فيه إيميل أو موبايل بيتبعت للـ CRM كـ Lead.</p>
         ${isAdmin() ? '<div class="bx-btnrow" style="margin-bottom:12px"><button class="bs-btn bs-btn-primary" id="fm-new">+ فورم جديد</button></div>' : ''}` +
         D.table(['الفورم', 'الرابط', 'الردود', 'الحالة', ''], forms.map((f) => {
           const c = cnt[f.id] || { all: 0, new: 0 };
@@ -249,6 +252,7 @@
       const nb = $('#fm-new', main); if (nb) nb.onclick = () => formBuilder(null);
       $$('[data-fe]', main).forEach((b) => (b.onclick = () => formBuilder(forms.find((f) => f.id === b.dataset.fe))));
       $$('[data-fr]', main).forEach((b) => (b.onclick = () => formResponses(forms.find((f) => f.id === b.dataset.fr))));
+      $$('[data-sf]', main).forEach((b) => (b.onclick = () => siteFormResponses(SITE_FORMS.find((x) => x.key === b.dataset.sf))));
     },
 
     async blog(main) {
@@ -365,6 +369,36 @@
   };
 
 
+
+  // built-in website forms (stored in requests) shown on the forms page
+  const SITE_FORMS = [
+    { key: 'inst', title: 'حلول المؤسسات', page: 'institutions.html', types: ['institution'] },
+    { key: 'teach', title: 'التقديم كمحاضر', page: 'teach.html', types: ['instructor_recorded', 'instructor_interactive'] },
+    { key: 'cons', title: 'طلب استشارة', page: 'consultations.html', types: ['consultation'] },
+  ];
+  async function siteFormResponses(sf) {
+    let rows = await sb.get('requests', { select: '*', type: 'in.(' + sf.types.join(',') + ')', order: 'created_at.desc' }).catch(() => []);
+    const kind = { instructor_recorded: 'كورس مسجل', instructor_interactive: 'كورس تفاعلي' };
+    const base = ['الاسم', 'الإيميل', 'الموبايل'];
+    const val = (r, c) => c === 'الاسم' ? r.name : c === 'الإيميل' ? r.email : c === 'الموبايل' ? r.phone : c === 'النوع' ? kind[r.type] || '' : (r.payload || {})[c];
+    const extra = [...new Set(rows.flatMap((r) => Object.keys(r.payload || {})))].filter((k) => !/الاسم|البريد|الهاتف|الموبايل|اسم مسؤول|_id$/.test(k));
+    const cols = [...(sf.types.length > 1 ? ['النوع'] : []), ...base, ...extra];
+    const ST = { new: 'جديد', in_review: 'قيد المراجعة', accepted: 'مقبول', rejected: 'مرفوض' };
+    const csv = () => {
+      const q = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+      const lines = [['التاريخ', ...cols, 'الحالة'].map(q).join(','), ...rows.map((r) => [new Date(r.created_at).toLocaleString('en-GB'), ...cols.map((c) => val(r, c)), ST[r.status] || r.status].map(q).join(','))];
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' })); a.download = `${sf.key}-responses.csv`; a.click();
+    };
+    ui.modal(`<h3>ردود: ${esc(sf.title)}</h3><p class="bx-hint" style="margin:0">${rows.length} رد</p>
+      <div class="bx-btnrow" style="margin:8px 0 12px"><button class="bs-btn bs-btn-primary bs-btn-sm" id="frcsv" ${rows.length ? '' : 'disabled'}>تحميل Excel (CSV)</button><button class="bs-btn bs-btn-ghost bs-btn-sm" data-x>إغلاق</button></div>
+      <div class="bx-scroll" style="max-height:60vh">${rows.length ? `<table class="bx-table"><thead><tr><th>التاريخ</th>${cols.map((c) => `<th>${esc(c)}</th>`).join('')}<th>الحالة</th></tr></thead><tbody>${rows.map((r) => `<tr><td style="white-space:nowrap">${D.date(r.created_at)}</td>${cols.map((c) => `<td>${esc(val(r, c) ?? '')}</td>`).join('')}
+        <td><select class="bx-select" data-rq="${r.id}" style="min-width:110px;height:34px;padding:0 8px">${Object.entries(ST).map(([k, v]) => `<option value="${k}" ${k === r.status ? 'selected' : ''}>${v}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table>` : '<p class="bx-hint">لسه مفيش ردود.</p>'}</div>`,
+    (m, close) => {
+      $('[data-x]', m).onclick = () => { close(); D.reload(); };
+      const cb = $('#frcsv', m); if (cb) cb.onclick = csv;
+      $$('[data-rq]', m).forEach((sel) => (sel.onchange = async () => { try { await setReqStatus(sel.dataset.rq, sel.value); const r = rows.find((x) => x.id === sel.dataset.rq); if (r) r.status = sel.value; ui.toast('تم التحديث.'); } catch (e) { ui.toast(arErr(e), 'err'); } }));
+    });
+  }
   // ---------- form builder + responses ----------
   const FTYPES = { text: 'نص قصير', textarea: 'نص طويل', email: 'إيميل', phone: 'موبايل', number: 'رقم', date: 'تاريخ', select: 'قائمة اختيار', radio: 'اختيار واحد', checkbox: 'اختيارات متعددة' };
   const hasOpts = (t) => t === 'select' || t === 'radio' || t === 'checkbox';

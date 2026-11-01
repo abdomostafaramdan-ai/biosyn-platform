@@ -431,6 +431,8 @@
   }
 
   // ---------- request forms (instructor / institution / consultation) ----------
+  const PERSONAL_DOMAINS = new Set('gmail.com googlemail.com yahoo.com yahoo.co.uk ymail.com rocketmail.com hotmail.com hotmail.co.uk outlook.com outlook.sa live.com msn.com icloud.com me.com mac.com aol.com proton.me protonmail.com pm.me yandex.com yandex.ru mail.ru gmx.com gmx.de zoho.com zohomail.com tutanota.com tuta.io mail.com inbox.com hushmail.com qq.com 163.com 126.com yahoo.fr hotmail.fr live.fr windowslive.com'.split(' '));
+  const PERSONAL_MAIL = { test: (e) => PERSONAL_DOMAINS.has(String(e).split('@').pop().trim().toLowerCase()) };
   function wireRequestForm(form, type, ids) {
     if (!form) return;
     const btn = $('button.bs-btn-primary', form); if (!btn) return;
@@ -449,13 +451,14 @@
       msg.className = 'bx-formmsg err';
       if (!name || !/^\S+@\S+\.\S+$/.test(email)) { msg.textContent = 'اكتب الاسم وبريدًا إلكترونيًا صحيحًا.'; return; }
       if (consent && !consent.checked) { msg.textContent = 'يرجى الموافقة على الشروط للمتابعة.'; return; }
+      if (type === 'institution' && PERSONAL_MAIL.test(email)) { msg.textContent = 'من فضلك استخدم إيميل الجهة (مثل name@university.edu.eg)، مش إيميل شخصي زي Gmail أو Yahoo.'; return; }
       btn.disabled = true; msg.className = 'bx-formmsg'; msg.textContent = 'جارٍ الإرسال…';
       try {
         window.track && track('lead', { type });
         await sb.insertQuiet('requests', { type, name, email, phone: phone || null, payload: f, user_id: sb.user ? sb.user.id : null }, !!sb.user);
         msg.className = 'bx-formmsg ok'; msg.textContent = 'وصل طلبك. سنراجعه ونتواصل معك على بريدك الإلكتروني. تقديم الطلب لا يعني القبول.';
         form.reset();
-      } catch (e) { msg.className = 'bx-formmsg err'; msg.textContent = arErr(e); }
+      } catch (e) { msg.className = 'bx-formmsg err'; msg.textContent = /institution email/.test(e.message || '') ? 'من فضلك استخدم إيميل الجهة، مش إيميل شخصي.' : arErr(e); }
       btn.disabled = false;
     });
   }

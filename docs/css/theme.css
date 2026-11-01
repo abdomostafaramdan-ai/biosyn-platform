@@ -214,3 +214,4 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 @media (max-width: 640px) { .bx-fbmain { grid-template-columns: 1fr 1fr; } .bx-fbmain [data-l] { grid-column: 1 / -1; } }
 .bx-modal:has(#fbf), .bx-modal:has(#frcsv) { width: min(880px, 100%); }
 .bx-teachers { display: flex; flex-wrap: wrap; gap: 10px; }
+.bx-modal:has(#frcsv) .bx-table td { min-width: 90px; }
