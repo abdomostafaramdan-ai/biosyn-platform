@@ -940,7 +940,8 @@ window.I18N_EN = {
 "خصم 52% على الباقة السنوية": "52% off the annual plan",
 "تصفّح الأسعار": "See pricing",
 "استثمر في نفسك الآن": "Invest in yourself now",
-"تصفّح الكورسات المسجلة": "Browse recorded courses"
+"تصفّح الكورسات المسجلة": "Browse recorded courses",
+"العلمي والطبي": "science & medicine"
 };
 
 window.I18N_EN_PATTERNS = (function () {

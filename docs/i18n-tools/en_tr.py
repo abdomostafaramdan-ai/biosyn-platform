@@ -360,3 +360,4 @@ EXTRA.update({
 EXTRA.update({"الأرقام تتحدّث تلقائيًا من المنصة.": "These numbers update automatically from the platform."})
 EXTRA.update({"حلول للمؤسسات": "Institutions", "استشارات": "Consultations", "الكورسات المسجلة": "Recorded courses", "الكورسات التفاعلية": "Interactive courses"})
 EXTRA.update({"خصم 52% على الباقة السنوية": "52% off the annual plan", "تصفّح الأسعار": "See pricing", "استثمر في نفسك الآن": "Invest in yourself now", "تصفّح الكورسات المسجلة": "Browse recorded courses"})
+EXTRA.update({"العلمي والطبي": "science & medicine", "ابدأ، تعلم، مارس": "Start, Learn, Practice"})
