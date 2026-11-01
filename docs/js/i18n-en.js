@@ -933,7 +933,8 @@ window.I18N_EN = {
 "مجتمع علمي بيكبر كل يوم من طلاب وباحثين ومحاضرين في مصر والوطن العربي.": "A scientific community growing every day — students, researchers and instructors across Egypt and the Arab world.",
 "* أرقام تقريبية، وتتحدّث تلقائيًا بعد ربطها بالنظام.": "* Approximate figures; they'll update automatically once linked to the system.",
 "دولة": "Countries",
-"دقيقة مشاهدة": "Minutes watched"
+"دقيقة مشاهدة": "Minutes watched",
+"الأرقام تتحدّث تلقائيًا من المنصة.": "These numbers update automatically from the platform."
 };
 
 window.I18N_EN_PATTERNS = (function () {

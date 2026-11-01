@@ -357,3 +357,4 @@ EXTRA.update({
 "* أرقام تقريبية، وتتحدّث تلقائيًا بعد ربطها بالنظام.": "* Approximate figures; they'll update automatically once linked to the system.",
 "دولة": "Countries", "دقيقة مشاهدة": "Minutes watched", "كورس": "Courses", "محاضر": "Instructors", "طالب": "Students",
 })
+EXTRA.update({"الأرقام تتحدّث تلقائيًا من المنصة.": "These numbers update automatically from the platform."})
