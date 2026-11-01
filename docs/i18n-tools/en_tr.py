@@ -358,3 +358,4 @@ EXTRA.update({
 "دولة": "Countries", "دقيقة مشاهدة": "Minutes watched", "كورس": "Courses", "محاضر": "Instructors", "طالب": "Students",
 })
 EXTRA.update({"الأرقام تتحدّث تلقائيًا من المنصة.": "These numbers update automatically from the platform."})
+EXTRA.update({"حلول للمؤسسات": "Institutions", "استشارات": "Consultations", "الكورسات المسجلة": "Recorded courses", "الكورسات التفاعلية": "Interactive courses"})

@@ -934,7 +934,9 @@ window.I18N_EN = {
 "* أرقام تقريبية، وتتحدّث تلقائيًا بعد ربطها بالنظام.": "* Approximate figures; they'll update automatically once linked to the system.",
 "دولة": "Countries",
 "دقيقة مشاهدة": "Minutes watched",
-"الأرقام تتحدّث تلقائيًا من المنصة.": "These numbers update automatically from the platform."
+"الأرقام تتحدّث تلقائيًا من المنصة.": "These numbers update automatically from the platform.",
+"حلول للمؤسسات": "Institutions",
+"استشارات": "Consultations"
 };
 
 window.I18N_EN_PATTERNS = (function () {
