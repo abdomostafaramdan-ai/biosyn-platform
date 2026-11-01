@@ -507,9 +507,18 @@
       };
       (curInsts.length ? curInsts : ['']).forEach(addRow);
       $('#ciadd', m).onclick = () => addRow('');
+      // several instructors only for interactive courses; recorded courses keep one
+      const syncMulti = () => {
+        const multi = $('#ck', m).value === 'interactive';
+        $('#ciadd', m).hidden = !multi;
+        if (!multi) $$('.bx-fbrow', rowsBox).slice(1).forEach((r) => r.remove());
+        $$('[data-cirm]', rowsBox).forEach((x) => (x.hidden = !multi));
+        const lab = $('#cinsts', m).previousElementSibling; if (lab) lab.textContent = multi ? 'المحاضرين' : 'المحاضر';
+      };
+      $('#ck', m).addEventListener('change', syncMulti); syncMulti();
       const instFields = async () => {
         const ids = []; let account = null;
-        for (const row of $$('.bx-fbrow', rowsBox)) {
+        for (const row of $$('.bx-fbrow', rowsBox).slice(0, $('#ck', m).value === 'interactive' ? 99 : 1)) {
           const v = $('[data-ci]', row).value; if (!v) continue;
           const name = $('[data-cin]', row).value.trim(), title = $('[data-cib]', row).value.trim() || null, visible = $('[data-civ]', row).checked;
           if (name.length < 2) throw new Error('اكتب اسم كل محاضر.');
