@@ -372,17 +372,12 @@
   }
 
   async function pageHome() {
-    // platform numbers: live from the database (public_stats); tiles with 0 are hidden, the band only shows when there is data
+    // platform numbers: live from the database (public_stats); zeros are shown as-is until launch
     (async () => {
       const band = $('#stats'); if (!band) return;
-      let st; try { st = await sb.rpc('public_stats'); } catch (e) { return; }
-      if (!st) return;
-      const tiles = $$('[data-k]', band);
-      tiles.forEach((el) => { const v = Number(st[el.dataset.k]) || 0; el.dataset.count = v; if (!v) el.closest('.bx-sb').remove(); });
+      let st = {}; try { st = (await sb.rpc('public_stats')) || {}; } catch (e) { /* keep zeros */ }
       const shown = $$('[data-k]', band);
-      if (!shown.length) return;
-      $('.bx-sb-grid', band).style.setProperty('--sb-n', Math.min(shown.length, 5));
-      band.hidden = false;
+      shown.forEach((el) => (el.dataset.count = Number(st[el.dataset.k]) || 0));
       const fmt = (n) => Math.round(n).toLocaleString('en-US');
       if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { shown.forEach((el) => (el.textContent = fmt(+el.dataset.count))); return; }
       const io = new IntersectionObserver((ents) => ents.forEach((en) => {
