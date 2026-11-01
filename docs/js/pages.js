@@ -63,15 +63,19 @@
 
   // course instructor: the site profile (name + bio) if set, else the instructor account name
   async function courseInst(c) {
-    if (c.featured_instructor_id) { const f = await sb.get('featured_instructors', { select: 'name,title,photo_url', id: 'eq.' + c.featured_instructor_id }).catch(() => []); if (f[0]) return f[0]; }
-    if (c.instructor_id) {
-      const f = await sb.get('featured_instructors', { select: 'name,title,photo_url', profile_id: 'eq.' + c.instructor_id }).catch(() => []); if (f[0]) return f[0];
-      const p = await sb.get('public_instructors', { select: '*', id: 'eq.' + c.instructor_id }).catch(() => []); if (p[0]) return { name: p[0].full_name };
+    const ids = (c.featured_instructor_ids && c.featured_instructor_ids.length) ? c.featured_instructor_ids : c.featured_instructor_id ? [c.featured_instructor_id] : [];
+    if (ids.length) {
+      const f = await sb.get('featured_instructors', { select: 'id,name,title,photo_url', id: 'in.(' + ids.join(',') + ')' }).catch(() => []);
+      const out = ids.map((id) => f.find((x) => x.id === id)).filter(Boolean); if (out.length) return out;
     }
-    return null;
+    if (c.instructor_id) {
+      const f = await sb.get('featured_instructors', { select: 'name,title,photo_url', profile_id: 'eq.' + c.instructor_id }).catch(() => []); if (f[0]) return [f[0]];
+      const p = await sb.get('public_instructors', { select: '*', id: 'eq.' + c.instructor_id }).catch(() => []); if (p[0]) return [{ name: p[0].full_name }];
+    }
+    return [];
   }
-  const teacherChip = (t) => t ? `<div class="bs-teacher"><div class="bs-inst-photo">${t.photo_url ? `<img src="${esc(t.photo_url)}" alt="">` : `<span>${esc((window.instInitials ? window.instInitials(t.name) : t.name.charAt(0)) || '')}</span>`}</div><div><small>المحاضر</small><b>${esc(t.name)}</b></div></div>` : '';
-  const aboutInst = (t) => t && t.title ? `<section class="bs-block-sec bx-aboutinst"><h2>عن المحاضر</h2><div class="bs-inst-wide"><div class="bs-inst-photo">${t.photo_url ? `<img src="${esc(t.photo_url)}" alt="">` : `<span>${esc(window.instInitials ? window.instInitials(t.name) : '')}</span>`}</div><div><h3>${esc(t.name)}</h3><p>${esc(t.title)}</p></div></div></section>` : '';
+  const teacherChip = (list) => (list && list.length ? `<div class="bx-teachers">${list.map((t) => `<div class="bs-teacher"><div class="bs-inst-photo">${t.photo_url ? `<img src="${esc(t.photo_url)}" alt="">` : `<span>${esc((window.instInitials ? window.instInitials(t.name) : t.name.charAt(0)) || '')}</span>`}</div><div><small>${list.length > 1 ? 'محاضر' : 'المحاضر'}</small><b>${esc(t.name)}</b></div></div>`).join('')}</div>` : '');
+  const aboutInst = (list) => { const l = (list || []).filter((t) => t.title); return l.length ? `<section class="bs-block-sec bx-aboutinst"><h2>${l.length > 1 ? 'عن المحاضرين' : 'عن المحاضر'}</h2><div style="display:grid;gap:12px">${l.map((t) => `<div class="bs-inst-wide"><div class="bs-inst-photo">${t.photo_url ? `<img src="${esc(t.photo_url)}" alt="">` : `<span>${esc(window.instInitials ? window.instInitials(t.name) : '')}</span>`}</div><div><h3>${esc(t.name)}</h3><p>${esc(t.title)}</p></div></div>`).join('')}</div></section>` : ''; };
   P.course = async () => {
     const root = $('#course-root'), slug = new URLSearchParams(location.search).get('c');
     if (!slug) { location.replace('courses.html'); return; }
@@ -104,7 +108,7 @@
     const lects = (c.lectures || []).sort((a, b) => a.position - b.position);
     const total = lects.reduce((s, l) => s + (l.duration_seconds || 0), 0);
     const [T, plans, subscribed] = await Promise.all([courseInst(c), sb.get('plans', { select: '*', active: 'eq.true', order: 'duration_months' }).catch(() => []), hasSubscription()]);
-    const inst = T && T.name;
+    const inst = T.map((t) => t.name).join('، ');
     const from = plans[0];
     const first = lects[0];
     const cta = subscribed

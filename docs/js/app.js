@@ -302,7 +302,7 @@
     ]);
     const names = Object.fromEntries(insts.map((i) => [i.id, i.full_name]));
     const fnames = Object.fromEntries(feat.map((i) => [i.id, i.name]));
-    return courses.map((c) => ({ ...c, n: (c.lectures || []).length, inst: fnames[c.featured_instructor_id] || names[c.instructor_id] || '' }));
+    return courses.map((c) => ({ ...c, n: (c.lectures || []).length, inst: (c.featured_instructor_ids || []).map((id) => fnames[id]).filter(Boolean).join('، ') || fnames[c.featured_instructor_id] || names[c.instructor_id] || '' }));
   }
   window.loadCatalog = loadCatalog;
 

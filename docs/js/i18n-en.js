@@ -37,7 +37,7 @@ window.I18N_EN = {
 "طالب": "Students",
 "دول": "Countries",
 "كورس": "Courses",
-"محاضر": "Instructors",
+"محاضر": "Instructor",
 "دقيقة مشاهدة (تقريبًا)": "Minutes watched (approx.)",
 "اختر طريقة التعلم": "Choose how you learn",
 "مسجلة بالسرعة التي تناسبك، أو تفاعلية مع المحاضر مباشرة": "Recorded at your own pace, or interactive with the instructor live",
@@ -975,7 +975,8 @@ window.I18N_EN = {
 "شكرًا! وصلنا ردك وفريق Biosyn هيتواصل معاك قريبًا.": "Thank you! We received your response and the Biosyn team will contact you soon.",
 "الرجوع للرئيسية": "Back to home",
 "فيه ضغط على الفورم، جرّب بعد دقيقة.": "The form is busy, please try again in a minute.",
-"املأ الفورم وفريق Biosyn Egypt هيتواصل معاك": "Fill in the form and the Biosyn Egypt team will contact you"
+"املأ الفورم وفريق Biosyn Egypt هيتواصل معاك": "Fill in the form and the Biosyn Egypt team will contact you",
+"عن المحاضرين": "About the instructors"
 };
 
 window.I18N_EN_PATTERNS = (function () {

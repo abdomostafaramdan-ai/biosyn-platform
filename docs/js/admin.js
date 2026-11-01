@@ -91,7 +91,7 @@
     async courses(main) {
       const [courses, insts, fl] = await Promise.all([sb.get('courses', { select: '*,lectures(id)', order: 'created_at.desc' }), sb.rpc('admin_users').then((u) => u.filter((x) => x.role === 'instructor')).catch(() => []), sb.get('featured_instructors', { select: 'id,name' }).catch(() => [])]);
       const nameOf = Object.fromEntries(insts.map((i) => [i.id, i.full_name || i.email])), fName = Object.fromEntries(fl.map((i) => [i.id, i.name]));
-      main.innerHTML = D.panel('الدورات', D.table(['الدورة', 'النوع', 'المحاضر', 'المحاضرات', 'الحالة', ''], courses.map((c) => [`<b class="bs-latin">${esc(c.title)}</b>`, c.kind === 'interactive' ? 'تفاعلي' : 'مسجل', esc(fName[c.featured_instructor_id] || nameOf[c.instructor_id] || '—'), (c.lectures || []).length, D.badge('course', c.status), isAdmin() ? `<button class="bx-linkbtn" data-edit="${c.id}">تعديل</button>` : '']), 'لا توجد دورات'),
+      main.innerHTML = D.panel('الدورات', D.table(['الدورة', 'النوع', 'المحاضر', 'المحاضرات', 'الحالة', ''], courses.map((c) => [`<b class="bs-latin">${esc(c.title)}</b>`, c.kind === 'interactive' ? 'تفاعلي' : 'مسجل', esc((c.featured_instructor_ids || []).map((id) => fName[id]).filter(Boolean).join('، ') || fName[c.featured_instructor_id] || nameOf[c.instructor_id] || '—'), (c.lectures || []).length, D.badge('course', c.status), isAdmin() ? `<button class="bx-linkbtn" data-edit="${c.id}">تعديل</button>` : '']), 'لا توجد دورات'),
         isAdmin() ? '<button class="bs-btn bs-btn-primary bs-btn-sm" id="newc">+ دورة جديدة</button>' : '');
       const open = (c) => courseForm(c, insts);
       const nc = $('#newc', main); if (nc) nc.onclick = () => open(null);
@@ -445,7 +445,9 @@
   async function courseForm(c, insts) {
     const isNew = !c; c = c || { kind: 'recorded', status: 'draft', level: 'beginner' };
     const feats = await sb.get('featured_instructors', { select: 'id,name,title,profile_id,visible', order: 'sort.asc,created_at.asc' }).catch(() => []);
-    const curInst = c.featured_instructor_id ? 'f:' + c.featured_instructor_id : c.instructor_id ? 'p:' + c.instructor_id : '';
+    const curIds = (c.featured_instructor_ids && c.featured_instructor_ids.length ? c.featured_instructor_ids : c.featured_instructor_id ? [c.featured_instructor_id] : []);
+    const curInsts = curIds.map((id) => 'f:' + id);
+    if (c.instructor_id && !feats.some((f) => f.profile_id === c.instructor_id && curIds.includes(f.id))) curInsts.unshift('p:' + c.instructor_id);
     const LV = { beginner: 'مبتدئ', beginner_intermediate: 'مبتدئ ومتوسط', intermediate: 'متوسط فقط', intermediate_advanced: 'متوسط ومتقدم', all_levels: 'مبتدئ ومتوسط ومتقدم (كل المستويات)' };
     if (c.level === 'advanced') LV.advanced = 'متقدم';
     let lects = [];
@@ -457,13 +459,8 @@
       <form class="bx-form2" id="cf" novalidate>
         <div class="row2"><div class="bx-field"><label for="ct">العنوان</label><input id="ct" class="bx-input" value="${esc(c.title || '')}"></div><div class="bx-field"><label for="cs">الرابط (slug)</label><input id="cs" class="bx-input" dir="ltr" value="${esc(c.slug || '')}"></div></div>
         <div class="row2"><div class="bx-field"><label for="ck">النوع</label><select id="ck" class="bx-select" ${isNew ? '' : 'disabled'}>${opt({ recorded: 'مسجل', interactive: 'تفاعلي' }, c.kind)}</select></div><div class="bx-field"><label for="cst">الحالة</label><select id="cst" class="bx-select">${opt({ draft: 'مسودة', review: 'قيد المراجعة', published: 'منشور', archived: 'مؤرشف' }, c.status)}</select></div><div class="bx-field"><label for="cl">المستوى</label><select id="cl" class="bx-select">${opt(LV, c.level)}</select></div></div>
-        <div class="bx-field"><label for="ci">المحاضر</label><select id="ci" class="bx-select"><option value="">— بدون محاضر —</option>
-          ${feats.length ? `<optgroup label="محاضرين الموقع">${feats.map((f) => `<option value="f:${f.id}" ${'f:' + f.id === curInst ? 'selected' : ''}>${esc(f.name)}</option>`).join('')}</optgroup>` : ''}
-          ${insts.length ? `<optgroup label="حسابات المحاضرين (لهم لوحة وأرباح)">${insts.map((i) => `<option value="p:${i.id}" ${'p:' + i.id === curInst ? 'selected' : ''}>${esc(i.full_name || i.email)}</option>`).join('')}</optgroup>` : ''}
-          <option value="new">+ إضافة محاضر جديد</option></select></div>
-        <div class="bx-instbox" id="cib-box" hidden><div class="row2"><div class="bx-field"><label for="cin">اسم المحاضر</label><input id="cin" class="bx-input" maxlength="80" placeholder="د. الاسم"></div>
-          <div class="bx-field"><label for="cib">نبذة عن المحاضر</label><textarea id="cib" class="bx-textarea" rows="2" maxlength="240" placeholder="الدرجة العلمية والجهة، مثلًا: أستاذ مساعد، كلية العلوم، جامعة القاهرة"></textarea></div></div>
-          <label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="civ" checked> إظهاره كمان في صفحة المحاضرين والشريط المتحرك</label></div>
+        <div class="bx-field"><label>المحاضرين</label><div id="cinsts" class="bx-fbfields"></div><button type="button" class="bs-btn bs-btn-ghost" id="ciadd" style="justify-self:start">+ إضافة محاضر آخر</button>
+          <small class="bx-hint">أول محاضر له حساب على المنصة هو اللي بتتحسب له أرباح المشاهدات.</small></div>
         <div class="bx-field"><label for="cc">اختصار الغلاف (اختياري)</label><input id="cc" class="bx-input" dir="ltr" maxlength="3" value="${esc(c.cover_code || '')}" placeholder="مثلًا BD"><small class="bx-hint">حرفين بيظهروا كبار على غلاف الكورس لو مفيش صورة، زي MB لـ Molecular Biology. لو سبته فاضي بيتعمل تلقائي من أول حرفين في العنوان.</small></div>
         <div class="row2"><div class="bx-field"><label for="cfa">الكلية</label><select id="cfa" class="bx-select"><option value="">—</option><option value="all" ${c.faculty === 'all' ? 'selected' : ''}>كل الكليات</option>${(window.FACULTIES || []).map((f) => `<option value="${f.id}" ${f.id === (c.faculty || (window.facultyOf ? window.facultyOf(c) : '')) ? 'selected' : ''}>${esc(f.name)}</option>`).join('')}</select></div><div class="bx-field"><label for="csp">التخصص</label><input id="csp" class="bx-input" list="csp-l" value="${esc(c.specialty || '')}" placeholder="اختر من القائمة أو اكتب تخصصًا"><datalist id="csp-l"></datalist></div></div>
         <div class="bx-field"><label for="csu">وصف مختصر</label><input id="csu" class="bx-input" value="${esc(c.summary || '')}"></div>
@@ -481,28 +478,49 @@
       $('#cs', m).addEventListener('input', (e) => (e.target.dataset.touched = '1'));
       const fillSp = () => { const f = (window.FACULTIES || []).find((x) => x.id === $('#cfa', m).value); $('#csp-l', m).innerHTML = ['كل التخصصات', ...(f ? f.specs : (window.FACULTIES || []).flatMap((x) => x.specs))].map((s) => `<option value="${esc(s)}">`).join(''); };
       $('#cfa', m).addEventListener('change', fillSp); fillSp();
-      const ciSel = $('#ci', m), box = $('#cib-box', m);
-      const syncInst = () => {
-        const v = ciSel.value; box.hidden = !v;
+      const rowsBox = $('#cinsts', m);
+      const optsHtml = (cur) => `<option value="">— اختر محاضر —</option>
+          ${feats.length ? `<optgroup label="محاضرين الموقع">${feats.map((f) => `<option value="f:${f.id}" ${'f:' + f.id === cur ? 'selected' : ''}>${esc(f.name)}</option>`).join('')}</optgroup>` : ''}
+          ${insts.length ? `<optgroup label="حسابات المحاضرين (لهم لوحة وأرباح)">${insts.map((i) => `<option value="p:${i.id}" ${'p:' + i.id === cur ? 'selected' : ''}>${esc(i.full_name || i.email)}</option>`).join('')}</optgroup>` : ''}
+          <option value="new" ${cur === 'new' ? 'selected' : ''}>+ إضافة محاضر جديد</option>`;
+      const fill = (row) => {
+        const v = $('[data-ci]', row).value, box = $('.bx-instbox', row); box.hidden = !v;
         if (!v) return;
-        if (v === 'new') { $('#cin', m).value = ''; $('#cib', m).value = ''; $('#civ', m).checked = true; return; }
+        if (v === 'new') { $('[data-cin]', row).value = ''; $('[data-cib]', row).value = ''; $('[data-civ]', row).checked = true; return; }
         const [k, id] = v.split(':');
         const f = k === 'f' ? feats.find((x) => x.id === id) : feats.find((x) => x.profile_id === id);
         const p = k === 'p' ? insts.find((x) => x.id === id) : null;
-        $('#cin', m).value = (f && f.name) || (p && p.full_name) || '';
-        $('#cib', m).value = (f && f.title) || '';
-        $('#civ', m).checked = f ? f.visible !== false : true;
+        $('[data-cin]', row).value = (f && f.name) || (p && p.full_name) || '';
+        $('[data-cib]', row).value = (f && f.title) || '';
+        $('[data-civ]', row).checked = f ? f.visible !== false : true;
       };
-      ciSel.onchange = syncInst; syncInst();
+      const addRow = (cur) => {
+        const row = document.createElement('div'); row.className = 'bx-fbrow';
+        row.innerHTML = `<div class="bx-fbmain" style="grid-template-columns:minmax(0,1fr) auto"><select class="bx-select" data-ci aria-label="المحاضر">${optsHtml(cur || '')}</select><button type="button" class="bx-linkbtn" data-cirm style="color:var(--danger-text)" aria-label="حذف">✕</button></div>
+          <div class="bx-instbox" hidden><div class="row2"><div class="bx-field"><label>اسم المحاضر</label><input class="bx-input" data-cin maxlength="80" placeholder="د. الاسم"></div>
+          <div class="bx-field"><label>نبذة عن المحاضر</label><textarea class="bx-textarea" data-cib rows="2" maxlength="240" placeholder="الدرجة العلمية والجهة، مثلًا: أستاذ مساعد، كلية العلوم، جامعة القاهرة"></textarea></div></div>
+          <label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-civ checked> إظهاره كمان في صفحة المحاضرين والشريط المتحرك</label></div>`;
+        rowsBox.appendChild(row);
+        $('[data-ci]', row).onchange = () => fill(row);
+        $('[data-cirm]', row).onclick = () => { row.remove(); if (!rowsBox.children.length) addRow(''); };
+        fill(row);
+      };
+      (curInsts.length ? curInsts : ['']).forEach(addRow);
+      $('#ciadd', m).onclick = () => addRow('');
       const instFields = async () => {
-        const v = ciSel.value; if (!v) return { instructor_id: null, featured_instructor_id: null };
-        const name = $('#cin', m).value.trim(), title = $('#cib', m).value.trim() || null, visible = $('#civ', m).checked;
-        if (name.length < 2) throw new Error('اكتب اسم المحاضر.');
-        const [k, id] = v.split(':');
-        let f = v === 'new' ? null : k === 'f' ? feats.find((x) => x.id === id) : feats.find((x) => x.profile_id === id);
-        if (f) { if (f.name !== name || (f.title || null) !== title || f.visible !== visible) await sb.update('featured_instructors', { id: 'eq.' + f.id }, { name, title, visible }); }
-        else { const r = await sb.insert('featured_instructors', { name, title, visible, profile_id: k === 'p' ? id : null, sort: 1000 }); f = Array.isArray(r) ? r[0] : r; }
-        return { instructor_id: k === 'p' ? id : (f && f.profile_id) || null, featured_instructor_id: f ? f.id : null };
+        const ids = []; let account = null;
+        for (const row of $$('.bx-fbrow', rowsBox)) {
+          const v = $('[data-ci]', row).value; if (!v) continue;
+          const name = $('[data-cin]', row).value.trim(), title = $('[data-cib]', row).value.trim() || null, visible = $('[data-civ]', row).checked;
+          if (name.length < 2) throw new Error('اكتب اسم كل محاضر.');
+          const [k, id] = v.split(':');
+          let f = v === 'new' ? null : k === 'f' ? feats.find((x) => x.id === id) : feats.find((x) => x.profile_id === id);
+          if (f) { if (f.name !== name || (f.title || null) !== title || f.visible !== visible) await sb.update('featured_instructors', { id: 'eq.' + f.id }, { name, title, visible }); }
+          else { const r = await sb.insert('featured_instructors', { name, title, visible, profile_id: k === 'p' ? id : null, sort: 1000 }); f = Array.isArray(r) ? r[0] : r; if (f) feats.push(f); }
+          if (f && f.id && !ids.includes(f.id)) ids.push(f.id);
+          const acc = k === 'p' ? id : f && f.profile_id; if (!account && acc) account = acc;
+        }
+        return { instructor_id: account, featured_instructor_id: ids[0] || null, featured_instructor_ids: ids };
       };
       const autoCode = (t) => { const w = String(t || '').replace(/[^\p{L}\p{N}\s]/gu, ' ').trim().split(/\s+/).filter(Boolean); return (w.length > 1 ? w[0][0] + w[1][0] : (w[0] || '').slice(0, 2)).toUpperCase(); };
       $('#cf', m).onsubmit = async (e) => {
