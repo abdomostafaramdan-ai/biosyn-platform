@@ -1,13 +1,13 @@
 /* Theme layer: soft white/navy backgrounds, light/dark switch, LTR (English) adjustments */
 
 /* ---- page background: subtle navy + white washes ---- */
-html[data-theme="light"] { --bg: #f6f7fc; --surface: #ffffff; --surface-raised: #eef0f9; --line: #dde0f0; --watermark-brand: rgba(1, 2, 50, 0.05); }
+html[data-theme="light"] { --bg: #e3e7f6; --surface: #f2f4fc; --surface-raised: #dce1f4; --line: #c7cdea; --watermark-brand: rgba(1, 2, 50, 0.05); }
 html[data-theme="light"] body {
   background:
-    radial-gradient(1100px 520px at 100% -10%, rgba(1, 2, 50, 0.09), transparent 60%),
-    radial-gradient(900px 480px at 0% 0%, rgba(124, 240, 74, 0.08), transparent 55%),
-    radial-gradient(1000px 600px at 50% 110%, rgba(1, 2, 50, 0.06), transparent 60%),
-    linear-gradient(180deg, #f8f9fe 0%, #eef0f8 100%) fixed;
+    radial-gradient(1100px 520px at 100% -10%, rgba(1, 2, 50, 0.14), transparent 60%),
+    radial-gradient(900px 480px at 0% 0%, rgba(124, 240, 74, 0.07), transparent 55%),
+    radial-gradient(1000px 600px at 50% 110%, rgba(1, 2, 50, 0.10), transparent 60%),
+    linear-gradient(180deg, #e8ebf8 0%, #d9def2 100%) fixed;
 }
 html[data-theme="dark"] body {
   background:
@@ -18,8 +18,8 @@ html[data-theme="dark"] body {
 html, body { transition: background-color .25s ease, color .25s ease; }
 
 /* light: cards float on white with a soft navy shadow */
-html[data-theme="light"] :is(.bs-course, .bs-inst, .bs-plan, .bx-panel, .bx-post, .bs-news, .bx-program, .bx-formcard, .bs-enroll, .bx-stat, .bx-crow, .bx-modal) { box-shadow: 0 1px 2px rgba(1, 2, 50, .05), 0 8px 24px rgba(1, 2, 50, .07); }
-html[data-theme="light"] .bs-header { background: color-mix(in srgb, #ffffff 82%, transparent); box-shadow: 0 1px 0 rgba(1, 2, 50, .06); }
+html[data-theme="light"] :is(.bs-course, .bs-inst, .bs-plan, .bx-panel, .bx-post, .bs-news, .bx-program, .bx-formcard, .bs-enroll, .bx-stat, .bx-crow, .bx-modal) { box-shadow: 0 1px 2px rgba(1, 2, 50, .07), 0 8px 24px rgba(1, 2, 50, .10); }
+html[data-theme="light"] .bs-header { background: color-mix(in srgb, #eceffb 86%, transparent); box-shadow: 0 1px 0 rgba(1, 2, 50, .10); }
 html[data-theme="light"] .bs-hero { background-color: transparent; }
 
 /* light: footer + promo bar stay navy, so the page reads white-with-navy */
@@ -75,7 +75,7 @@ html[data-lang="en"] .bx-hsearch button svg, html[data-lang="en"] .bx-flip-en { 
 @media (max-width: 1040px) { .bs-nav a { padding: 8px 8px; font-size: 13px; } .bx-hlogin { display: none; } }
 html[data-lang="en"] :is(.bs-course-hero h1, .bs-course-title, .bs-curr-title, .bx-lesson-head h2, .bx-lesson b, .bx-nextlive h2, .bx-sess-row b) { text-align: left; }
 body { min-height: 100vh; }
-html[data-theme="light"] { background: #eef0f8; }
+html[data-theme="light"] { background: #d9def2; }
 mark { background: var(--brand-gradient); color: var(--on-brand); padding: 0 .15em; border-radius: 10px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 @media (max-width: 480px) {
   .bs-header-tools > .bs-btn-primary { display: none; }
