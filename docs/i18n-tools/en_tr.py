@@ -328,3 +328,27 @@ EXTRA.update({
 "اختر طريقة الدفع.": "Choose a payment method.",
 "Paymob": "Paymob", "Stripe": "Stripe", "Fawaterk": "Fawaterk",
 })
+
+# faculties & specialties
+EXTRA.update({
+"اختر كليتك": "Choose your faculty", "8 كليات علمية وطبية، اختر كليتك وابدأ في كورساتها المسجلة": "8 science and medical faculties — pick yours and start its recorded courses",
+"كلية العلوم": "Faculty of Science", "كلية بايوتكنولوجي": "Faculty of Biotechnology", "كلية الصيدلة": "Faculty of Pharmacy", "كلية الزراعة": "Faculty of Agriculture",
+"كلية الطب": "Faculty of Medicine", "كلية الطب البيطري": "Faculty of Veterinary Medicine", "كلية طب الأسنان": "Faculty of Dentistry",
+"كلية تكنولوجيا العلوم الصحية التطبيقية": "Faculty of Applied Health Sciences Technology",
+"كل الكليات": "All faculties", "الكلية": "Faculty", "الكلية والتخصص": "Faculty & specialty", "التخصص": "Specialty", "كل التخصصات": "All specialties",
+"اختر من القائمة أو اكتب تخصصًا": "Pick from the list or type a specialty", "تخصص آخر": "Other specialty", "اختر التخصص": "Choose a specialty",
+"الكيمياء الحيوية": "Biochemistry", "الأحياء الدقيقة": "Microbiology", "علم الحيوان": "Zoology", "علم النبات": "Botany", "الكيمياء": "Chemistry",
+"الفيزياء الحيوية": "Biophysics", "التكنولوجيا الحيوية الطبية": "Medical Biotechnology", "التكنولوجيا الحيوية النباتية": "Plant Biotechnology",
+"التكنولوجيا الحيوية الصناعية": "Industrial Biotechnology", "تقنيات النانو الحيوية": "Nanobiotechnology", "الأحياء التركيبية": "Synthetic Biology",
+"علم الأدوية": "Pharmacology", "الصيدلة الإكلينيكية": "Clinical Pharmacy", "الكيمياء الصيدلية": "Pharmaceutical Chemistry", "الصيدلانيات": "Pharmaceutics",
+"العقاقير": "Pharmacognosy", "الميكروبيولوجيا الصيدلية": "Pharmaceutical Microbiology", "علوم الأراضي والمياه": "Soil & Water Sciences",
+"وقاية النبات": "Plant Protection", "تربية النبات": "Plant Breeding", "الإنتاج الحيواني": "Animal Production", "علوم وتكنولوجيا الأغذية": "Food Science & Technology",
+"الهندسة الزراعية": "Agricultural Engineering", "التشريح": "Anatomy", "علم وظائف الأعضاء": "Physiology", "الباثولوجي": "Pathology",
+"الأحياء الدقيقة الطبية": "Medical Microbiology", "التشريح البيطري": "Veterinary Anatomy", "الطفيليات": "Parasitology", "الفيروسات البيطرية": "Veterinary Virology",
+"الأمراض المعدية للحيوان": "Animal Infectious Diseases", "الأدوية البيطرية": "Veterinary Pharmacology", "الرقابة الصحية على الأغذية": "Food Hygiene & Control",
+"علم أمراض الفم": "Oral Pathology", "تقويم الأسنان": "Orthodontics", "علاج الجذور": "Endodontics", "جراحة الفم والوجه والفكين": "Oral & Maxillofacial Surgery",
+"المواد السنية": "Dental Materials", "طب أسنان الأطفال": "Pediatric Dentistry", "المختبرات الطبية": "Medical Laboratories", "الأشعة والتصوير الطبي": "Radiology & Medical Imaging",
+"العلاج التنفسي": "Respiratory Therapy", "تكنولوجيا الأجهزة الطبية": "Medical Equipment Technology", "الإسعاف والطوارئ": "Emergency & Ambulance Care", "البصريات": "Optometry",
+"المناعة": "Immunology", "علوم الأعصاب": "Neuroscience", "الطب التناسلي": "Reproductive Medicine", "البحث السريري": "Clinical Research", "مهارات البحث العلمي": "Research Skills",
+"الأحياء الجزيئية": "Molecular Biology", "الوراثة": "Genetics", "الهندسة الوراثية": "Genetic Engineering", "المعلوماتية الحيوية": "Bioinformatics",
+})

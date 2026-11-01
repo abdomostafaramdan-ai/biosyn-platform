@@ -308,13 +308,36 @@
     let all = [];
     try { all = await loadCatalog('recorded'); } catch (e) { grid.innerHTML = `<div class="bx-empty-big" style="grid-column:1/-1"><b>تعذّر تحميل الدورات</b>${esc(arErr(e))}</div>`; return; }
     const q = $('#q'), sel = $('#inst'), sort = $('.bx-catalog-live select, .bx-sortsel');
-    const chips = $('.bx-chips');
-    const specs = [...new Set(all.map((c) => c.specialty).filter(Boolean))];
-    let spec = '';
-    if (chips) {
-      if (!specs.length) chips.remove();
-      else { chips.innerHTML = ['كل التخصصات', ...specs].map((s, i) => `<button class="bx-chip" aria-pressed="${i === 0}" data-s="${i ? esc(s) : ''}">${esc(s)}</button>`).join(''); chips.addEventListener('click', (e) => { const b = e.target.closest('.bx-chip'); if (!b) return; spec = b.dataset.s; $$('.bx-chip', chips).forEach((x) => x.setAttribute('aria-pressed', String(x === b))); draw(); }); }
+    const chips = $('.bx-chips'), facSel = $('#fac'), specSel = $('#spec');
+    const FAC = window.FACULTIES || [];
+    const u0 = new URL(location.href);
+    let fac = FAC.some((f) => f.id === u0.searchParams.get('f')) ? u0.searchParams.get('f') : '';
+    let spec = u0.searchParams.get('s') || '';
+    all.forEach((c) => (c.fac = window.facultyOf ? window.facultyOf(c) : ''));
+    function fillSpecs() {
+      if (!specSel) return;
+      const f = FAC.find((x) => x.id === fac);
+      const extra = [...new Set(all.filter((c) => (!fac || c.fac === fac) && c.specialty).map((c) => c.specialty))];
+      const list = [...new Set([...(f ? f.specs : FAC.flatMap((x) => x.specs)), ...extra])];
+      if (spec && !list.includes(spec)) spec = '';
+      specSel.innerHTML = '<option value="">كل التخصصات</option>' + list.map((s) => `<option ${s === spec ? 'selected' : ''}>${esc(s)}</option>`).join('');
     }
+    function syncFac() {
+      if (chips) $$('.bx-chip', chips).forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.f === fac)));
+      if (facSel) facSel.value = fac;
+      fillSpecs();
+      const nu = new URL(location.href); fac ? nu.searchParams.set('f', fac) : nu.searchParams.delete('f'); spec ? nu.searchParams.set('s', spec) : nu.searchParams.delete('s');
+      history.replaceState(null, '', nu);
+    }
+    if (chips) {
+      chips.innerHTML = [{ id: '', name: 'كل الكليات' }, ...FAC].map((f) => `<button class="bx-chip" aria-pressed="false" data-f="${f.id}">${esc(f.name)}</button>`).join('');
+      chips.addEventListener('click', (e) => { const b = e.target.closest('.bx-chip'); if (!b) return; fac = b.dataset.f; spec = ''; syncFac(); draw(); });
+    }
+    if (facSel) {
+      facSel.innerHTML = '<option value="">كل الكليات</option>' + FAC.map((f) => `<option value="${f.id}">${esc(f.name)}</option>`).join('');
+      facSel.addEventListener('change', () => { fac = facSel.value; spec = ''; syncFac(); draw(); });
+    }
+    if (specSel) specSel.addEventListener('change', () => { spec = specSel.value; syncFac(); draw(); });
     if (sel) sel.innerHTML = '<option value="">كل المحاضرين</option>' + [...new Set(all.map((c) => c.inst).filter(Boolean))].map((n) => `<option>${esc(n)}</option>`).join('');
     const lv = $$('.bx-side-group:first-child input[type=checkbox]');
     lv.forEach((c) => (c.checked = false));
@@ -322,7 +345,7 @@
     function draw() {
       const t = (q ? q.value : '').trim().toLowerCase();
       const levels = lv.map((c, i) => (c.checked ? ['beginner', 'intermediate', 'advanced'][i] : null)).filter(Boolean);
-      let list = all.filter((c) => (!t || (c.title + ' ' + c.inst).toLowerCase().includes(t)) && (!spec || c.specialty === spec) && (!levels.length || levels.includes(c.level)) && (!sel || !sel.value || c.inst === sel.value));
+      let list = all.filter((c) => (!t || (c.title + ' ' + c.inst).toLowerCase().includes(t)) && (!fac || c.fac === fac) && (!spec || c.specialty === spec) && (!levels.length || levels.includes(c.level)) && (!sel || !sel.value || c.inst === sel.value));
       const s = sort ? sort.selectedIndex : 0;
       if (s === 3) list.sort((a, b) => a.title.localeCompare(b.title)); else if (s === 2) list.reverse();
       grid.innerHTML = list.length ? list.map((c) => courseCard(c, c.inst, c.n)).join('') : `<div class="bx-empty-big" style="grid-column:1/-1"><b>${all.length ? 'لا توجد نتائج مطابقة' : 'لا توجد دورات منشورة بعد'}</b>${all.length ? 'جرّب تغيير البحث أو الفلاتر.' : 'سنضيف الدورات هنا فور نشرها.'}</div>`;
@@ -330,7 +353,8 @@
     }
     [q, sel, sort, ...lv].forEach((el) => el && el.addEventListener('input', draw));
     const go = $('.bx-pagehead .bs-btn-primary'); if (go) go.addEventListener('click', draw);
-    const clear = $$('.bx-side .bs-btn-ghost')[0]; if (clear) clear.addEventListener('click', () => { lv.forEach((c) => (c.checked = false)); if (sel) sel.value = ''; if (q) q.value = ''; draw(); });
+    const clear = $$('.bx-side .bs-btn-ghost')[0]; if (clear) clear.addEventListener('click', () => { lv.forEach((c) => (c.checked = false)); fac = ''; spec = ''; syncFac(); if (sel) sel.value = ''; if (q) q.value = ''; draw(); });
+    syncFac();
     draw();
   }
 

@@ -13,3 +13,12 @@
 @media (max-width: 900px) { .bx-statband > div:last-child { grid-column: 1 / -1; } }
 .bx-specs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 @media (max-width: 900px) { .bx-specs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* faculty cards: white tile, blue text, in both themes */
+.bx-specs:has(.bx-fac) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.bx-fac { background: #ffffff !important; color: #0b3aa8 !important; border-color: #d6def5 !important; min-height: 84px; box-shadow: 0 1px 2px rgba(1,2,50,.06), 0 6px 18px rgba(1,2,50,.08); transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+.bx-fac b { color: #0b3aa8; font: 700 16px/26px var(--font-display); }
+.bx-fac:hover { transform: translateY(-2px); border-color: #0b3aa8 !important; box-shadow: 0 10px 28px rgba(11,58,168,.18); }
+.bx-fac .bx-fac-ic { background: #e8eeff; color: #0b3aa8; }
+.bx-fac .bx-fac-ic .ic { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 900px) { .bx-specs:has(.bx-fac) { grid-template-columns: repeat(2, minmax(0, 1fr)); } .bx-fac b { font-size: 14px; line-height: 22px; } }
+@media (max-width: 600px) { .bx-fac { padding: 12px; gap: 10px; min-height: 72px; } .bx-fac .bx-fac-ic { width: 40px; height: 40px; } .bx-fac .bx-fac-ic .ic { width: 22px; height: 22px; } .bx-fac b { font-size: 13px; line-height: 20px; } }
