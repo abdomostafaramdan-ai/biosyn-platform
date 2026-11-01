@@ -372,6 +372,19 @@
   }
 
   async function pageHome() {
+    // count-up for the platform numbers when they scroll into view
+    const nums = $$('.bx-statband [data-count]');
+    if (nums.length && 'IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const fmt = (n) => Math.round(n).toLocaleString('en-US');
+      nums.forEach((el) => (el.textContent = '0'));
+      const io = new IntersectionObserver((ents) => ents.forEach((en) => {
+        if (!en.isIntersecting) return; io.unobserve(en.target);
+        const el = en.target, to = +el.dataset.count, t0 = performance.now(), d = 1400;
+        const step = (t) => { const k = Math.min(1, (t - t0) / d); el.textContent = fmt(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
+        requestAnimationFrame(step);
+      }), { threshold: 0.4 });
+      nums.forEach((el) => io.observe(el));
+    }
     const grid = $('.bs-grid'); if (!grid) return;
     let all = []; try { all = await loadCatalog('recorded'); } catch { return; }
     const draw = (list) => { grid.innerHTML = list.length ? list.slice(0, 6).map((c) => courseCard(c, c.inst, c.n)).join('') : '<div class="bx-empty-big" style="grid-column:1/-1"><b>الدورات قريبًا</b>سنضيفها هنا فور نشرها.</div>'; };

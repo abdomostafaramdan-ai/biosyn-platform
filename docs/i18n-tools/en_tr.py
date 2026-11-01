@@ -352,3 +352,8 @@ EXTRA.update({
 "المناعة": "Immunology", "علوم الأعصاب": "Neuroscience", "الطب التناسلي": "Reproductive Medicine", "البحث السريري": "Clinical Research", "مهارات البحث العلمي": "Research Skills",
 "الأحياء الجزيئية": "Molecular Biology", "الوراثة": "Genetics", "الهندسة الوراثية": "Genetic Engineering", "المعلوماتية الحيوية": "Bioinformatics",
 })
+EXTRA.update({
+"مجتمع علمي بيكبر كل يوم من طلاب وباحثين ومحاضرين في مصر والوطن العربي.": "A scientific community growing every day — students, researchers and instructors across Egypt and the Arab world.",
+"* أرقام تقريبية، وتتحدّث تلقائيًا بعد ربطها بالنظام.": "* Approximate figures; they'll update automatically once linked to the system.",
+"دولة": "Countries", "دقيقة مشاهدة": "Minutes watched", "كورس": "Courses", "محاضر": "Instructors", "طالب": "Students",
+})

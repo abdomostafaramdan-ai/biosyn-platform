@@ -34,10 +34,10 @@ window.I18N_EN = {
 "صورة حية لحركة المنصة": "A live snapshot of the platform",
 "أرقام المنصة": "Platform in numbers",
 "أرقام تقريبية، وتُربط لاحقًا بالنظام لتتحدث تلقائيًا.": "Approximate figures; they will update automatically once linked to the system.",
-"طالب": "Student",
+"طالب": "Students",
 "دول": "Countries",
 "كورس": "Courses",
-"محاضر": "Instructor",
+"محاضر": "Instructors",
 "دقيقة مشاهدة (تقريبًا)": "Minutes watched (approx.)",
 "اختر طريقة التعلم": "Choose how you learn",
 "مسجلة بالسرعة التي تناسبك، أو تفاعلية مع المحاضر مباشرة": "Recorded at your own pace, or interactive with the instructor live",
@@ -929,7 +929,11 @@ window.I18N_EN = {
 "العلاج التنفسي": "Respiratory Therapy",
 "تكنولوجيا الأجهزة الطبية": "Medical Equipment Technology",
 "الإسعاف والطوارئ": "Emergency & Ambulance Care",
-"البصريات": "Optometry"
+"البصريات": "Optometry",
+"مجتمع علمي بيكبر كل يوم من طلاب وباحثين ومحاضرين في مصر والوطن العربي.": "A scientific community growing every day — students, researchers and instructors across Egypt and the Arab world.",
+"* أرقام تقريبية، وتتحدّث تلقائيًا بعد ربطها بالنظام.": "* Approximate figures; they'll update automatically once linked to the system.",
+"دولة": "Countries",
+"دقيقة مشاهدة": "Minutes watched"
 };
 
 window.I18N_EN_PATTERNS = (function () {

@@ -94,7 +94,6 @@
   .bx-focus li { grid-template-columns: 56px minmax(0, 1fr); }
   .bx-focus li > :last-child { grid-column: 1 / -1; justify-self: start; }
   .bx-balance, .bx-resume { padding: var(--space-5, 20px); }
-  .bx-statband { padding: var(--space-5, 20px); }
 }
 .bx-main { grid-template-columns: minmax(0, 1fr); }
 .bx-panel-head { flex-wrap: wrap; }
