@@ -456,7 +456,7 @@
       try {
         window.track && track('lead', { type });
         await sb.insertQuiet('requests', { type, name, email, phone: phone || null, payload: f, user_id: sb.user ? sb.user.id : null }, !!sb.user);
-        msg.className = 'bx-formmsg ok'; msg.textContent = 'وصل طلبك. سنراجعه ونتواصل معك على بريدك الإلكتروني. تقديم الطلب لا يعني القبول.';
+        msg.className = 'bx-formmsg ok'; msg.textContent = /^instructor/.test(type) ? 'وصل طلبك. سنراجعه ونتواصل معك على بريدك الإلكتروني. تقديم الطلب لا يعني القبول.' : 'وصل طلبك، وفريق Biosyn هيتواصل معاك قريبًا.';
         form.reset();
       } catch (e) { msg.className = 'bx-formmsg err'; msg.textContent = /institution email/.test(e.message || '') ? 'من فضلك استخدم إيميل الجهة، مش إيميل شخصي.' : arErr(e); }
       btn.disabled = false;

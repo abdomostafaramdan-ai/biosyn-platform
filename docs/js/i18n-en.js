@@ -980,7 +980,8 @@ window.I18N_EN = {
 "إيميل الجهة *": "Organisation email *",
 "إيميل رسمي باسم الجهة، مش Gmail أو Yahoo أو Hotmail.": "An official email on your organisation’s domain — not Gmail, Yahoo or Hotmail.",
 "من فضلك استخدم إيميل الجهة (مثل name@university.edu.eg)، مش إيميل شخصي زي Gmail أو Yahoo.": "Please use your organisation email (e.g. name@university.edu.eg), not a personal address like Gmail or Yahoo.",
-"من فضلك استخدم إيميل الجهة، مش إيميل شخصي.": "Please use your organisation email, not a personal one."
+"من فضلك استخدم إيميل الجهة، مش إيميل شخصي.": "Please use your organisation email, not a personal one.",
+"وصل طلبك، وفريق Biosyn هيتواصل معاك قريبًا.": "Your request was received — the Biosyn team will contact you soon."
 };
 
 window.I18N_EN_PATTERNS = (function () {
