@@ -35,3 +35,5 @@
 .bx-sb-note { font: 400 12px/18px var(--font-sans); color: rgba(255,255,255,.5); }
 @media (max-width: 1100px) { .bx-sb-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 700px) { .bx-statband { padding: var(--space-5, 20px); gap: var(--space-5, 20px); } .bx-sb-head h2 { font-size: 24px; line-height: 34px; } .bx-sb-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .bx-sb { padding: 14px; } .bx-sb:last-child:nth-child(odd) { grid-column: 1 / -1; } .bx-sb b { font-size: 26px; line-height: 34px; } }
+.bx-sb-head { flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; }
+.bx-sb-head p { max-width: 40em; font-size: 17px; line-height: 30px; color: rgba(255,255,255,.85); }
