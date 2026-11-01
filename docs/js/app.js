@@ -445,8 +445,48 @@
   function pageInstitutions() { wireRequestForm($('form.bx-formcard'), 'institution', { name: 'o-c', email: 'o-e', phone: 'o-p' }); }
   function pageConsultations() { wireRequestForm($('form.bx-formcard'), 'consultation', { name: 'c-n', email: 'c-e', phone: 'c-p' }); }
 
+
+  // ---------- instructors (featured_instructors table, managed from Admin) ----------
+  const initials = (n) => String(n || '').replace(/^(د|أ\.?د|م)\.\s*/, '').trim().split(/\s+/).slice(0, 2).map((w) => w.replace(/^ال(?=..)/, '').charAt(0)).join(' ');
+  window.instInitials = initials;
+  function instCard(i) {
+    const ph = i.photo_url ? `<img src="${esc(i.photo_url)}" alt="${esc(i.name)}" loading="lazy">` : `<span>${esc(initials(i.name))}</span>`;
+    return `<div class="bs-inst"><div class="bs-inst-photo">${ph}</div><h3 class="bs-inst-name">${esc(i.name)}</h3>${i.title ? `<p class="bs-inst-role">${esc(i.title)}</p>` : ''}</div>`;
+  }
+  async function loadInstructors() {
+    return sb.get('featured_instructors', { select: 'id,name,title,photo_url,faculty,sort', visible: 'eq.true', order: 'sort.asc,created_at.asc' });
+  }
+  async function mountInstStrip() {
+    const box = $('[data-inst-strip]'); if (!box) return;
+    let list = []; try { list = await loadInstructors(); } catch (e) { return; }
+    if (!list.length) { box.closest('section').hidden = true; return; }
+    const cards = list.map(instCard).join('');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    box.innerHTML = `<div class="bx-mq-track"><div class="bx-mq-half">${cards}</div>${reduce ? '' : `<div class="bx-mq-half" aria-hidden="true">${cards}</div>`}</div>`;
+    box.classList.toggle('bx-mq-static', reduce);
+    box.style.setProperty('--mq-dur', Math.max(25, list.length * 6) + 's');
+  }
+  async function pageInstructors() {
+    const grid = $('#inst-grid'); if (!grid) return;
+    let list = [];
+    try { list = await loadInstructors(); } catch (e) { grid.innerHTML = `<div class="bx-empty-big" style="grid-column:1/-1"><b>تعذّر تحميل المحاضرين</b>${esc(arErr(e))}</div>`; return; }
+    const FAC = window.FACULTIES || [];
+    const chips = $('#inst-chips'); let fac = '';
+    const used = FAC.filter((f) => list.some((i) => i.faculty === f.id));
+    if (chips && used.length > 1) {
+      chips.innerHTML = [{ id: '', name: 'كل الكليات' }, ...used].map((f) => `<button class="bx-chip" aria-pressed="${!f.id}" data-f="${f.id}">${esc(f.name)}</button>`).join('');
+      chips.onclick = (e) => { const b = e.target.closest('.bx-chip'); if (!b) return; fac = b.dataset.f; $$('.bx-chip', chips).forEach((x) => x.setAttribute('aria-pressed', String(x === b))); draw(); };
+    } else if (chips) chips.remove();
+    const draw = () => {
+      const l = list.filter((i) => !fac || i.faculty === fac);
+      grid.innerHTML = l.length ? l.map(instCard).join('') : '<div class="bx-empty-big" style="grid-column:1/-1"><b>لا يوجد محاضرون بعد</b>سنضيفهم هنا قريبًا.</div>';
+      const c = $('#inst-count'); if (c) c.textContent = `${l.length} محاضر`;
+    };
+    draw();
+  }
+
   // ---------- boot ----------
-  const pages = { index: pageHome, home: pageHome, courses: pageCourses, interactive: pageInteractive, teach: pageTeach, institutions: pageInstitutions, consultations: pageConsultations };
+  const pages = { instructors: pageInstructors, index: pageHome, home: pageHome, courses: pageCourses, interactive: pageInteractive, teach: pageTeach, institutions: pageInstitutions, consultations: pageConsultations };
   window.BiosynPages = window.BiosynPages || {};
   async function boot() {
     sb.auth.consumeHash();
@@ -455,6 +495,7 @@
     mountUserMenu();
     hydratePlans();
     mountSupport();
+    mountInstStrip();
     const p = document.body.dataset.page;
     const fn = pages[p] || window.BiosynPages[p];
     if (fn) { try { await fn(); } catch (e) { console.error(e); } }

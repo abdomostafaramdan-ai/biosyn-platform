@@ -16,6 +16,7 @@ window.I18N_EN_PATTERNS = (function () {
     [new RegExp('^' + N + ' محاضرة مسجلة \\(حوالي (.+)\\)$'), (m, n, d) => `${n} recorded ${lec(n)} (about ${T(d)})`],
     [new RegExp('^' + N + ' (?:محاضرة|محاضرات) · (.+)$'), (m, n, d) => `${n} ${lec(n)} · ${T(d)}`],
     [new RegExp('^' + N + ' دقيقة$'), (m, n) => `${n} min`],
+    [new RegExp('^' + N + ' محاضر$'), (m, n) => `${n} instructor${Number(String(n).replace(/,/g, '')) === 1 ? '' : 's'}`],
     [new RegExp('^' + N + ' ساعة(?: و' + N + ' دقيقة)?$'), (m, h, mi) => `${h} h${mi ? ' ' + mi + ' min' : ''}`],
     [new RegExp('^' + N + ' ج\\.م$'), (m, n) => `EGP ${n}`],
     [new RegExp('^([−\\-·]) ' + N + ' ج\\.م$'), (m, s, n) => `${s} EGP ${n}`],

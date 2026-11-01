@@ -361,3 +361,10 @@ EXTRA.update({"الأرقام تتحدّث تلقائيًا من المنصة.":
 EXTRA.update({"حلول للمؤسسات": "Institutions", "استشارات": "Consultations", "الكورسات المسجلة": "Recorded courses", "الكورسات التفاعلية": "Interactive courses"})
 EXTRA.update({"خصم 52% على الباقة السنوية": "52% off the annual plan", "تصفّح الأسعار": "See pricing", "استثمر في نفسك الآن": "Invest in yourself now", "تصفّح الكورسات المسجلة": "Browse recorded courses"})
 EXTRA.update({"العلمي والطبي": "science & medicine", "ابدأ، تعلم، مارس": "Start, Learn, Practice"})
+EXTRA.update({
+"المحاضرين": "Instructors", "كل المحاضرين": "All instructors", "المحاضرين | Biosyn Egypt": "Instructors | Biosyn Egypt",
+"محاضرو Biosyn Egypt: باحثون وأكاديميون في العلوم الحيوية والطبية من مصر والعالم": "Biosyn Egypt instructors: researchers and academics in life and medical sciences from Egypt and around the world",
+"باحثون وأكاديميون من مصر والعالم يقدّمون كورسات Biosyn.": "Researchers and academics from Egypt and around the world who teach Biosyn courses.",
+"تعذّر تحميل المحاضرين": "Couldn't load instructors", "لا يوجد محاضرون بعد": "No instructors yet", "سنضيفهم هنا قريبًا.": "We'll add them here soon.",
+"انضم كمحاضر": "Teach with us", "إنضم كمحاضر": "Teach with us",
+})

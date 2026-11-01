@@ -941,7 +941,13 @@ window.I18N_EN = {
 "تصفّح الأسعار": "See pricing",
 "استثمر في نفسك الآن": "Invest in yourself now",
 "تصفّح الكورسات المسجلة": "Browse recorded courses",
-"العلمي والطبي": "science & medicine"
+"العلمي والطبي": "science & medicine",
+"المحاضرين | Biosyn Egypt": "Instructors | Biosyn Egypt",
+"محاضرو Biosyn Egypt: باحثون وأكاديميون في العلوم الحيوية والطبية من مصر والعالم": "Biosyn Egypt instructors: researchers and academics in life and medical sciences from Egypt and around the world",
+"باحثون وأكاديميون من مصر والعالم يقدّمون كورسات Biosyn.": "Researchers and academics from Egypt and around the world who teach Biosyn courses.",
+"تعذّر تحميل المحاضرين": "Couldn't load instructors",
+"لا يوجد محاضرون بعد": "No instructors yet",
+"سنضيفهم هنا قريبًا.": "We'll add them here soon."
 };
 
 window.I18N_EN_PATTERNS = (function () {
@@ -953,6 +959,7 @@ window.I18N_EN_PATTERNS = (function () {
     [new RegExp('^' + N + ' محاضرة مسجلة \\(حوالي (.+)\\)$'), (m, n, d) => `${n} recorded ${lec(n)} (about ${T(d)})`],
     [new RegExp('^' + N + ' (?:محاضرة|محاضرات) · (.+)$'), (m, n, d) => `${n} ${lec(n)} · ${T(d)}`],
     [new RegExp('^' + N + ' دقيقة$'), (m, n) => `${n} min`],
+    [new RegExp('^' + N + ' محاضر$'), (m, n) => `${n} instructor${Number(String(n).replace(/,/g, '')) === 1 ? '' : 's'}`],
     [new RegExp('^' + N + ' ساعة(?: و' + N + ' دقيقة)?$'), (m, h, mi) => `${h} h${mi ? ' ' + mi + ' min' : ''}`],
     [new RegExp('^' + N + ' ج\\.م$'), (m, n) => `EGP ${n}`],
     [new RegExp('^([−\\-·]) ' + N + ' ج\\.م$'), (m, s, n) => `${s} EGP ${n}`],

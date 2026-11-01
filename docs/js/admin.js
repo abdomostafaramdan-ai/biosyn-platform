@@ -179,6 +179,56 @@
       $$('[data-ca]', main).forEach((i) => (i.onchange = async () => { try { await sb.update('coupons', { id: 'eq.' + i.dataset.ca }, { active: i.checked }); ui.toast('تم التحديث.'); } catch (err) { i.checked = !i.checked; ui.toast(arErr(err), 'err'); } }));
     },
 
+    async instructors(main) {
+      const rows = await sb.get('featured_instructors', { select: '*', order: 'sort.asc,created_at.asc' }).catch(() => []);
+      const FAC = window.FACULTIES || [], fname = (id) => (FAC.find((f) => f.id === id) || {}).name || '—';
+      const av = (i) => i.photo_url ? `<img src="${esc(i.photo_url)}" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover">` : `<span style="width:36px;height:36px;border-radius:50%;display:inline-grid;place-items:center;background:var(--surface-raised);font-weight:700">${esc(window.instInitials ? window.instInitials(i.name) : '')}</span>`;
+      main.innerHTML = D.panel('المحاضرين في الموقع', `<p class="bx-hint" style="margin-top:0">دول اللي بيظهروا في الشريط المتحرك في الصفحة الرئيسية وفي صفحة المحاضرين، بالترتيب من الأصغر للأكبر.</p>
+        <div class="bx-btnrow" style="margin-bottom:12px">${isAdmin() ? '<button class="bs-btn bs-btn-primary" id="fi-new">إضافة محاضر</button>' : ''}<a class="bs-btn bs-btn-ghost" href="instructors.html" target="_blank" rel="noopener">عرض الصفحة</a></div>` +
+        D.table(['', 'الاسم', 'الوصف', 'الكلية', 'الترتيب', 'ظاهر', ''], rows.map((i) => [av(i), `<b>${esc(i.name)}</b>`, `<small>${esc(i.title || '')}</small>`, esc(fname(i.faculty)), String(i.sort),
+          `<input type="checkbox" data-fv="${i.id}" ${i.visible ? 'checked' : ''} ${isAdmin() ? '' : 'disabled'} aria-label="ظاهر">`, isAdmin() ? `<button class="bx-linkbtn" data-fe="${i.id}">تعديل</button>` : ''])));
+      const edit = (x) => {
+        const isNew = !x; x = x || { name: '', title: '', photo_url: '', faculty: '', sort: (rows.length ? Math.max(...rows.map((r) => r.sort)) + 10 : 10), visible: true };
+        ui.modal(`<h3>${isNew ? 'إضافة محاضر' : 'تعديل المحاضر'}</h3><form class="bx-form2" id="fif" novalidate>
+          <div class="bx-field"><label for="fn">الاسم</label><input id="fn" class="bx-input" maxlength="80" value="${esc(x.name)}" placeholder="د. الاسم"></div>
+          <div class="bx-field"><label for="ft">الوصف (الدرجة والجهة)</label><textarea id="ft" class="bx-textarea" rows="2" maxlength="240">${esc(x.title || '')}</textarea></div>
+          <div class="row2"><div class="bx-field"><label for="ff">الكلية</label><select id="ff" class="bx-select"><option value="">—</option>${FAC.map((f) => `<option value="${f.id}" ${f.id === x.faculty ? 'selected' : ''}>${esc(f.name)}</option>`).join('')}</select></div>
+          <div class="bx-field"><label for="fs">الترتيب</label><input id="fs" class="bx-input" type="number" dir="ltr" value="${x.sort}"></div></div>
+          <div class="bx-field"><label for="fpf">الصورة (اختياري)</label><input id="fpf" type="file" accept="image/png,image/jpeg,image/webp" class="bx-input"><small class="bx-hint">صورة مربعة أحسن، أقل من 2 ميجا. لو مفيش صورة هيظهر أول حرفين من الاسم.</small>
+            <input type="hidden" id="fpu" value="${esc(x.photo_url || '')}">${x.photo_url ? `<label class="bx-hint" style="display:flex;gap:6px;align-items:center;margin-top:6px"><input type="checkbox" id="fpr"> حذف الصورة الحالية</label>` : ''}</div>
+          <label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="fvv" ${x.visible ? 'checked' : ''}> ظاهر في الموقع</label>
+          <div class="bx-formmsg" aria-live="polite"></div>
+          <div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" type="submit">حفظ</button>${isNew ? '' : '<button type="button" class="bs-btn bs-btn-ghost" data-del style="color:var(--danger-text)">حذف</button>'}<button type="button" class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div></form>`,
+        (m, close) => {
+          $('[data-x]', m).onclick = close;
+          const del = $('[data-del]', m); if (del) del.onclick = async () => { if (!confirm('حذف المحاضر من الموقع؟')) return; try { await sb.remove('featured_instructors', { id: 'eq.' + x.id }); close(); D.reload(); } catch (e) { ui.toast(arErr(e), 'err'); } };
+          $('#fif', m).onsubmit = async (e) => {
+            e.preventDefault(); const msg = $('.bx-formmsg', m), btn = $('button[type=submit]', m);
+            const name = $('#fn', m).value.trim(); if (name.length < 2) return say(msg, 'اكتب اسم المحاضر.', 'err');
+            const row = { name, title: $('#ft', m).value.trim() || null, faculty: $('#ff', m).value || null, sort: Number($('#fs', m).value) || 100, visible: $('#fvv', m).checked, photo_url: $('#fpu', m).value || null };
+            if ($('#fpr', m) && $('#fpr', m).checked) row.photo_url = null;
+            const file = $('#fpf', m).files[0];
+            btn.disabled = true;
+            try {
+              if (file) {
+                if (!/^image\/(png|jpeg|webp)$/.test(file.type)) throw new Error('الصورة لازم تكون PNG أو JPG أو WebP.');
+                if (file.size > 2 * 1024 * 1024) throw new Error('حجم الصورة أكبر من 2 ميجا.');
+                say(msg, 'جارٍ رفع الصورة…');
+                const path = `instructors/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${file.type.split('/')[1].replace('jpeg', 'jpg')}`;
+                await sb.storage.upload('site-media', path, file);
+                row.photo_url = `${BIOSYN.SUPABASE_URL}/storage/v1/object/public/site-media/${path}`;
+              }
+              if (isNew) await sb.insert('featured_instructors', row); else await sb.update('featured_instructors', { id: 'eq.' + x.id }, row);
+              ui.toast('تم الحفظ.'); close(); D.reload();
+            } catch (err) { btn.disabled = false; say(msg, err.message && /[\u0600-\u06FF]/.test(err.message) ? err.message : arErr(err), 'err'); }
+          };
+        });
+      };
+      const nb = $('#fi-new', main); if (nb) nb.onclick = () => edit(null);
+      $$('[data-fe]', main).forEach((b) => (b.onclick = () => edit(rows.find((r) => r.id === b.dataset.fe))));
+      $$('[data-fv]', main).forEach((i) => (i.onchange = async () => { try { await sb.update('featured_instructors', { id: 'eq.' + i.dataset.fv }, { visible: i.checked }); ui.toast('تم التحديث.'); } catch (err) { i.checked = !i.checked; ui.toast(arErr(err), 'err'); } }));
+    },
+
     async blog(main) {
       const posts = await sb.get('posts', { select: '*', order: 'created_at.desc' }).catch(() => []);
       main.innerHTML = D.panel('المدونة', D.table(['العنوان', 'التصنيف', 'الحالة', 'التاريخ', ''], posts.map((x) => [esc(x.title), esc(x.tag || '—'), x.published ? 'منشور' : 'مسودة', D.date(x.published_at || x.created_at), `<button class="bx-linkbtn" data-pe="${x.id}">تعديل</button>${x.published ? ` · <a class="bx-link" href="article.html?p=${encodeURIComponent(x.slug)}" target="_blank">عرض</a>` : ''}`]), 'لا توجد مقالات بعد'), isAdmin() ? '<button class="bs-btn bs-btn-primary bs-btn-sm" id="newp">مقال جديد</button>' : '');
@@ -384,7 +434,7 @@
 
   window.BiosynPages.admin = async () => {
     me = await D.guard(['admin', 'support']); if (!me) return;
-    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
+    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'instructors', label: 'المحاضرين في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
   };
 })();

@@ -151,3 +151,4 @@ html[data-theme="light"] { --danger-text: #b4232b; }
   color: #010232 !important; box-shadow: 0 8px 22px rgba(124, 240, 74, .28); transform: translateY(-1px);
 }
 .bs-btn { transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
+.bs-inst-photo img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; border: 3px solid #fff; }
