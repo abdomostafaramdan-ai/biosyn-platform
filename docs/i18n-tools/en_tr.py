@@ -378,3 +378,16 @@ EXTRA.update({"فورم | Biosyn Egypt": "Form | Biosyn Egypt", "الفورم غ
 EXTRA.update({"المحاضرين": "Instructors", "عن المحاضرين": "About the instructors", "محاضر": "Instructor"})
 EXTRA.update({"إيميل الجهة *": "Organisation email *", "إيميل رسمي باسم الجهة، مش Gmail أو Yahoo أو Hotmail.": "An official email on your organisation’s domain — not Gmail, Yahoo or Hotmail.", "من فضلك استخدم إيميل الجهة (مثل name@university.edu.eg)، مش إيميل شخصي زي Gmail أو Yahoo.": "Please use your organisation email (e.g. name@university.edu.eg), not a personal address like Gmail or Yahoo.", "من فضلك استخدم إيميل الجهة، مش إيميل شخصي.": "Please use your organisation email, not a personal one."})
 EXTRA.update({"وصل طلبك، وفريق Biosyn هيتواصل معاك قريبًا.": "Your request was received — the Biosyn team will contact you soon."})
+EXTRA.update({
+"سجّل دخولك عشان تبدأ": "Sign in to start", "إعداد الكورس ورفع الفيديوهات بيتحفظ على حسابك، فتقدر تكمّل في أي وقت من أي جهاز.": "Your course setup and uploads are saved to your account, so you can continue any time from any device.",
+"إنشاء حساب": "Create account", "تسجيل الدخول": "Sign in", "البيانات الأساسية": "Basic details", "عرّف نفسك والكورس والفئة اللي معمول لها.": "Introduce yourself, the course and who it's for.",
+"اسم المحاضر *": "Instructor name *", "البريد الإلكتروني *": "Email *", "رقم الموبايل (واتساب)": "Mobile (WhatsApp)", "الفئة المستهدفة": "Target audience", "عنوان الكورس *": "Course title *",
+"التخصص العلمي *": "Specialty *", "المستوى *": "Level *", "نبذة عن الكورس": "About the course", "الكورس بيغطي إيه، وهيستفيد منه مين؟": "What does the course cover, and who will benefit?",
+"حفظ ومتابعة": "Save & continue", "رجوع": "Back", "المنهج والدروس": "Curriculum & lessons", "اكتب دروس الكورس بالترتيب. كل درس = فيديو واحد هترفعه في الخطوة الجاية.": "List the lessons in order. Each lesson = one video you'll upload in the next step.",
+"+ إضافة درس": "+ Add lesson", "الفيديوهات": "Videos", "اختر فيديو": "Choose video", "استبدال الفيديو": "Replace video", "أو حط لينك بدل الرفع": "Or paste a link instead", "لينك الفيديو": "Video link", "حفظ": "Save",
+"متابعة للمراجعة": "Continue to review", "المراجعة والإرسال": "Review & submit", "إرسال للمراجعة": "Submit for review", "لسه": "Pending", "✓ لينك": "✓ Link", "جارٍ الرفع…": "Uploading…",
+"وصل طلبك ✓": "Request received ✓", "ابدأ كورس جديد": "Start a new course", "طلاب": "Students", "باحثون": "Researchers", "مهنيون": "Professionals", "الكل": "Everyone", "متقدم": "Advanced", "متوسط": "Intermediate", "مبتدئ": "Beginner",
+"ارفع فيديو كل درس من جهازك (MP4 أفضل). الرفع بيكمل حتى لو النت فصل ورجع، بس خلّي الصفحة مفتوحة لحد ما يخلص.": "Upload each lesson's video from your device (MP4 preferred). Uploads resume if your connection drops — just keep the page open until they finish.",
+"فريق Biosyn هيراجع الكورس والفيديوهات ويتواصل معاك على إيميلك. تقديم الطلب لا يعني القبول.": "The Biosyn team will review the course and videos and contact you by email. Submitting doesn't guarantee acceptance.",
+"راجع البيانات قبل ما تبعت. بعد الإرسال مش هتقدر تعدّل لحد ما الفريق يراجع.": "Review before submitting. You can't edit after submitting until the team reviews it.",
+})

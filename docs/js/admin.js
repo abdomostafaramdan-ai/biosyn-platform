@@ -229,6 +229,16 @@
       $$('[data-fv]', main).forEach((i) => (i.onchange = async () => { try { await sb.update('featured_instructors', { id: 'eq.' + i.dataset.fv }, { visible: i.checked }); ui.toast('تم التحديث.'); } catch (err) { i.checked = !i.checked; ui.toast(arErr(err), 'err'); } }));
     },
 
+    async proposals(main) {
+      const [ps, ls] = await Promise.all([sb.get('course_proposals', { select: '*', status: 'neq.draft', order: 'submitted_at.desc' }).catch(() => []), sb.get('proposal_lessons', { select: 'id,proposal_id,uploaded,video_url' }).catch(() => [])]);
+      const ST = { submitted: ['جديد', 'warn'], in_review: ['قيد المراجعة', 'info'], accepted: ['اتقبل', 'ok'], rejected: ['مرفوض', 'danger'] };
+      const cnt = (id) => { const l = ls.filter((x) => x.proposal_id === id); return `${l.length} درس · ${l.filter((x) => x.uploaded || x.video_url).length} بفيديو`; };
+      D.setBadge('proposals', ps.filter((p) => p.status === 'submitted').length);
+      main.innerHTML = D.panel('كورسات مسجلة مقدّمة من محاضرين', `<p class="bx-hint" style="margin-top:0">الكورسات اللي المحاضرين جهّزوها من صفحة «انضم كمحاضر» ورفعوا فيديوهاتها على Bunny. افتح الطلب، شوف الفيديوهات، ولو مناسب اضغط «قبول وتحويل لكورس» وهيتعمل كورس مسودة بالمحاضرات والفيديوهات جاهزة، وحساب المحاضر يتحوّل لمحاضر.</p>` +
+        D.table(['الكورس', 'المحاضر', 'المحتوى', 'التاريخ', 'الحالة', ''], ps.map((p) => [`<b>${esc(p.title || '—')}</b><br><small class="bx-hint">${esc(p.specialty || '')}</small>`, `${esc(p.name || '')}<br><small class="bx-hint" dir="ltr">${esc(p.email || '')}</small>`, cnt(p.id), D.date(p.submitted_at || p.created_at), `<span class="bx-st bx-st-${(ST[p.status] || ['', 'mute'])[1]}">${(ST[p.status] || [p.status])[0]}</span>`, `<button class="bx-linkbtn" data-pp="${p.id}">فتح</button>`]), 'لسه مفيش كورسات مقدّمة.'));
+      $$('[data-pp]', main).forEach((b) => (b.onclick = () => proposalModal(ps.find((p) => p.id === b.dataset.pp))));
+    },
+
     async forms(main) {
       const [forms, subs, reqs] = await Promise.all([sb.get('forms', { select: '*', order: 'created_at.desc' }).catch(() => []), sb.get('form_submissions', { select: 'id,form_id,status' }).catch(() => []), sb.get('requests', { select: 'id,type,status' }).catch(() => [])]);
       const cnt = {}; subs.forEach((x) => { const c = (cnt[x.form_id] = cnt[x.form_id] || { all: 0, new: 0 }); c.all++; if (x.status === 'new') c.new++; });
@@ -306,8 +316,8 @@
           `<div class="row2">${field('FAWATERK_API_KEY', 'API key', '')}${field('FAWATERK_BASE_URL', 'رابط الخادم (اختياري)', 'https://staging.fawaterk.com', 'text')}</div>${fee('FAWATERK')}${hook('webhook-fawaterk')}`)}
         ${card('stripe', 'Stripe — بطاقات دولية', 'من لوحة Stripe: Developers ← API keys (Secret key)، وWebhooks ← أضف الرابط بالأسفل مع حدث checkout.session.completed ثم انسخ Signing secret.', ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET'],
           `<div class="row2">${field('STRIPE_SECRET_KEY', 'Secret key', 'sk_live_…')}${field('STRIPE_WEBHOOK_SECRET', 'Webhook signing secret', 'whsec_…')}</div>${fee('STRIPE')}${hook('webhook-stripe')}`)}
-        ${card('bunny', 'Bunny Stream — استضافة الفيديو', 'من Bunny: Stream ← مكتبتك ← API (Library ID)، وSecurity ← فعّل Token Authentication وانسخ المفتاح.', ['BUNNY_LIBRARY_ID', 'BUNNY_TOKEN_KEY'],
-          `<div class="row2">${field('BUNNY_LIBRARY_ID', 'Library ID', '123456', 'text')}${field('BUNNY_TOKEN_KEY', 'Token authentication key', '')}</div>`)}
+        ${card('bunny', 'Bunny Stream — استضافة الفيديو', 'من Bunny: Stream ← مكتبتك ← API: انسخ Library ID وAPI Key (ده اللي بيخلّي المحاضرين وإنت ترفعوا فيديوهات من الموقع مباشرة). ومن Security فعّل Token Authentication وانسخ مفتاحه (لحماية الفيديوهات من التحميل).', ['BUNNY_LIBRARY_ID', 'BUNNY_API_KEY', 'BUNNY_TOKEN_KEY'],
+          `<div class="row2">${field('BUNNY_LIBRARY_ID', 'Library ID', '123456', 'text')}${field('BUNNY_API_KEY', 'API Key (للرفع)', '')}</div><div class="row2">${field('BUNNY_TOKEN_KEY', 'Token authentication key', '')}</div>`)}
         ${card('resend', 'Resend — إيميلات المنصة', 'من resend.com: API Keys، وفعّل دومين الإرسال من Domains. عنوان المرسل مثل: Biosyn &lt;no-reply@biosynegypt.com&gt;', ['RESEND_API_KEY', 'MAIL_FROM'],
           `<div class="row2">${field('RESEND_API_KEY', 'API key', 're_…')}${field('MAIL_FROM', 'عنوان المرسل', 'Biosyn <no-reply@biosynegypt.com>', 'text')}</div>`)}
         ${card('meta', 'Meta Pixel وGoogle Analytics — تتبع الإعلانات', 'رقم الـPixel من Events Manager، وتوكن Conversions API من إعدادات الـPixel (اختياري)، ومعرّف GA4 يبدأ بـ G-.', ['META_PIXEL_ID'],
@@ -397,6 +407,39 @@
       $('[data-x]', m).onclick = () => { close(); D.reload(); };
       const cb = $('#frcsv', m); if (cb) cb.onclick = csv;
       $$('[data-rq]', m).forEach((sel) => (sel.onchange = async () => { try { await setReqStatus(sel.dataset.rq, sel.value); const r = rows.find((x) => x.id === sel.dataset.rq); if (r) r.status = sel.value; ui.toast('تم التحديث.'); } catch (e) { ui.toast(arErr(e), 'err'); } }));
+    });
+  }
+
+  // ---------- recorded-course proposal review ----------
+  async function proposalModal(p) {
+    const ls = await sb.get('proposal_lessons', { select: '*', proposal_id: 'eq.' + p.id, order: 'position.asc,created_at.asc' }).catch(() => []);
+    const done = p.status === 'accepted';
+    ui.modal(`<h3>${esc(p.title || 'كورس')}</h3>
+      <dl class="bx-kv"><dt>المحاضر</dt><dd>${esc(p.name || '')} · <span dir="ltr">${esc(p.email || '')}</span>${p.phone ? ` · <span dir="ltr">${esc(p.phone)}</span>` : ''}</dd><dt>التخصص</dt><dd>${esc(p.specialty || '—')}</dd><dt>المستوى</dt><dd>${esc(p.level || '—')}</dd><dt>الفئة</dt><dd>${esc(p.audience || '—')}</dd></dl>
+      ${p.summary ? `<p class="bx-hint" style="white-space:pre-line">${esc(p.summary)}</p>` : ''}
+      <h4 style="margin:8px 0">الدروس (${ls.length})</h4>
+      <ol class="bx-wzreview">${ls.map((l) => `<li><b>${esc(l.title)}</b> ${l.bunny_video_id ? `${l.uploaded ? '' : '<small class="bx-hint">(الرفع ما اكتملش)</small> '}<button class="bx-linkbtn" data-pv="${l.id}">مشاهدة</button>` : ''}${l.video_url ? ` <a class="bx-linkbtn" href="${esc(l.video_url)}" target="_blank" rel="noopener">فتح اللينك</a>` : ''}${!l.bunny_video_id && !l.video_url ? ' <small class="bx-hint">بدون فيديو</small>' : ''}</li>`).join('')}</ol>
+      <div id="pvbox"></div>
+      <div class="bx-formmsg" aria-live="polite"></div>
+      <div class="bx-modal-actions">${done ? `<a class="bs-btn bs-btn-primary" href="admin.html#courses">الكورس اتعمل — روح للدورات</a>` : isAdmin() ? `<button class="bs-btn bs-btn-primary" data-acc>قبول وتحويل لكورس</button><button class="bs-btn bs-btn-ghost" data-rev>قيد المراجعة</button><button class="bs-btn bs-btn-ghost" data-rej style="color:var(--danger-text)">رفض</button>` : ''}<button class="bs-btn bs-btn-ghost" data-x>إغلاق</button></div>`,
+    (m, close) => {
+      const msg = $('.bx-formmsg', m);
+      $('[data-x]', m).onclick = () => { close(); D.reload(); };
+      $$('[data-pv]', m).forEach((b) => (b.onclick = async () => {
+        b.disabled = true;
+        try { const r = await sb.fn('bunny-upload', { action: 'preview', lesson_id: b.dataset.pv }); $('#pvbox', m).innerHTML = `<div style="position:relative;padding-top:56.25%;margin-top:10px;border-radius:12px;overflow:hidden;background:#000"><iframe src="${esc(r.url)}" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div>`; }
+        catch (e) { say(msg, e.status === 503 ? 'اربط Bunny من «التكاملات» عشان تشوف الفيديوهات.' : arErr(e), 'err'); }
+        b.disabled = false;
+      }));
+      const setSt = async (status) => { await sb.update('course_proposals', { id: 'eq.' + p.id }, { status, updated_at: new Date().toISOString() }); p.status = status; };
+      const rev = $('[data-rev]', m); if (rev) rev.onclick = async () => { try { await setSt('in_review'); ui.toast('اتحوّل لقيد المراجعة.'); } catch (e) { say(msg, arErr(e), 'err'); } };
+      const rej = $('[data-rej]', m); if (rej) rej.onclick = async () => { if (!confirm('رفض الكورس؟')) return; try { await setSt('rejected'); ui.toast('اترفض.'); close(); D.reload(); } catch (e) { say(msg, arErr(e), 'err'); } };
+      const acc = $('[data-acc]', m); if (acc) acc.onclick = async () => {
+        if (!confirm('هيتعمل كورس مسودة بالمحاضرات والفيديوهات، وحساب المحاضر هيتحوّل لمحاضر. نكمل؟')) return;
+        acc.disabled = true; say(msg, 'جارٍ إنشاء الكورس…');
+        try { await sb.rpc('accept_course_proposal', { p_id: p.id }); ui.toast('اتعمل الكورس كمسودة في «الدورات». راجعه وانشره.'); close(); location.hash = '#courses'; }
+        catch (e) { acc.disabled = false; say(msg, arErr(e), 'err'); }
+      };
     });
   }
   // ---------- form builder + responses ----------
@@ -504,7 +547,7 @@
         <div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">${isNew ? 'إنشاء' : 'حفظ'}</button><button class="bs-btn bs-btn-ghost" type="button" data-x>إغلاق</button></div>
       </form>
       ${isNew ? '<p class="bx-hint">بعد الإنشاء يمكنك إضافة المحاضرات.</p>' : `<hr style="border:0;border-top:1px solid var(--line);width:100%"><h3>المحاضرات</h3><div id="ll"></div><div id="lfiles" style="margin-top:12px"></div>
-      <form class="bx-form2" id="lf" novalidate><div class="row2"><div class="bx-field"><label for="lt">عنوان المحاضرة</label><input id="lt" class="bx-input"></div><div class="bx-field"><label for="lv">معرّف الفيديو في Bunny (GUID)</label><input id="lv" class="bx-input" dir="ltr" placeholder="xxxxxxxx-xxxx-…"></div><div class="bx-field"><label for="ld">المدة (دقائق:ثواني)</label><input id="ld" class="bx-input" dir="ltr" placeholder="12:30"></div></div><label class="bx-hint" style="display:flex;gap:6px;align-items:center;margin:8px 0"><input type="checkbox" id="lpv"> محاضرة معاينة مجانية (يشاهدها أي زائر مسجّل دخوله)</label><div class="bx-formmsg" id="lm" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-secondary" type="submit">+ إضافة محاضرة</button></div></form>`}`,
+      <form class="bx-form2" id="lf" novalidate><div class="row2"><div class="bx-field"><label for="lt">عنوان المحاضرة</label><input id="lt" class="bx-input"></div><div class="bx-field"><label for="lv">فيديو المحاضرة (Bunny)</label><input id="lv" class="bx-input" dir="ltr" placeholder="ارفع فيديو أو الصق GUID"><span class="bx-btnrow" style="margin-top:6px;align-items:center"><label class="bs-btn bs-btn-ghost bs-btn-sm" style="cursor:pointer">رفع فيديو من جهازك<input type="file" id="lfile" accept="video/*" hidden></label><small class="bx-hint" id="lup"></small></span></div><div class="bx-field"><label for="ld">المدة (دقائق:ثواني)</label><input id="ld" class="bx-input" dir="ltr" placeholder="12:30"></div></div><label class="bx-hint" style="display:flex;gap:6px;align-items:center;margin:8px 0"><input type="checkbox" id="lpv"> محاضرة معاينة مجانية (يشاهدها أي زائر مسجّل دخوله)</label><div class="bx-formmsg" id="lm" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-secondary" type="submit">+ إضافة محاضرة</button></div></form>`}`,
     (m, cl) => {
       $('[data-x]', m).onclick = cl;
       $('#ck', m).onchange = (e) => ($('#ia', m).hidden = e.target.value !== 'interactive');
@@ -613,6 +656,18 @@
             await reload();
           } catch (err) { ui.toast(arErr(err), 'err'); }
         });
+        $('#lfile', m).onchange = async (ev) => {
+          const f = ev.target.files[0]; if (!f) return; const st = $('#lup', m), sub = $('#lf button[type=submit]', m);
+          sub.disabled = true; st.textContent = 'بنجهّز الرفع…';
+          try {
+            const d = await window.videoDuration(f); if (d && !$('#ld', m).value) $('#ld', m).value = `${Math.floor(d / 60)}:${String(d % 60).padStart(2, '0')}`;
+            if (!$('#lt', m).value.trim()) $('#lt', m).value = f.name.replace(/\.[^.]+$/, '');
+            const a = await sb.fn('bunny-upload', { action: 'create_admin', title: `${c.title} — ${$('#lt', m).value.trim()}` });
+            const guid = await window.bunnyUpload(f, a, (x, y) => (st.textContent = `جارٍ الرفع ${Math.floor((x / y) * 100)}%`));
+            $('#lv', m).value = guid; st.textContent = 'اتّرفع ✓ اضغط «إضافة محاضرة»';
+          } catch (err) { st.textContent = /not configured/.test(err.message || '') ? 'اربط Bunny من «التكاملات» الأول (Library ID وAPI Key).' : 'الرفع وقف: ' + (err.message || ''); }
+          sub.disabled = false; ev.target.value = '';
+        };
         $('#lf', m).onsubmit = async (e) => {
           e.preventDefault(); const msg = $('#lm', m), t = $('#lt', m).value.trim(), v = $('#lv', m).value.trim(), d = parseDur($('#ld', m).value);
           if (!t) return say(msg, 'اكتب عنوان المحاضرة.', 'err');
@@ -629,7 +684,7 @@
 
   window.BiosynPages.admin = async () => {
     me = await D.guard(['admin', 'support']); if (!me) return;
-    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'الفورمز والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرين في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
+    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'كورسات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'الفورمز والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرين في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
   };
 })();

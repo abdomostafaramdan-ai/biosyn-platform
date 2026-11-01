@@ -215,3 +215,20 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .bx-modal:has(#fbf), .bx-modal:has(#frcsv) { width: min(880px, 100%); }
 .bx-teachers { display: flex; flex-wrap: wrap; gap: 10px; }
 .bx-modal:has(#frcsv) .bx-table td { min-width: 90px; }
+/* recorded-course wizard (teach page) */
+.bx-stepper li.done i { background: var(--brand-lime); color: #010232; }
+.bx-wzlist { display: grid; gap: 10px; }
+.bx-wzrow { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+.bx-wznum { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-raised); font: 700 13px/1 var(--font-sans); flex: none; }
+.bx-wzvid { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-raised); }
+.bx-wzvid-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.bx-wzvid-t { flex: 1; min-width: 160px; }
+.bx-wzvid-act { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.bx-filebtn { cursor: pointer; }
+.bx-prog { flex: 1; min-width: 140px; height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.bx-prog i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #5fe04a, #c6f84a); transition: width .3s ease; }
+.bx-wzlink summary { cursor: pointer; }
+.bx-wzlink .bx-btnrow { margin-top: 8px; flex-wrap: nowrap; } .bx-wzlink .bx-input { flex: 1; }
+.bx-wzsum { margin: 0; } .bx-wzreview { margin: 0; padding-inline-start: 22px; display: grid; gap: 4px; }
+.bx-wzdone { display: grid; gap: 10px; justify-items: start; } .bx-wzdone h4 { margin: 0; font: 700 20px/30px var(--font-display); }
+.bx-modal:has([data-acc]), .bx-modal:has(#pvbox) { width: min(760px, 100%); }

@@ -524,6 +524,21 @@
     draw();
   }
 
+
+  // ---------- direct upload to Bunny Stream (TUS) ----------
+  let tusP = null;
+  const loadTus = () => window.tus ? Promise.resolve() : (tusP = tusP || new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/tus-js-client@4.1.0/dist/tus.min.js'; s.onload = res; s.onerror = () => rej(new Error('تعذّر تحميل أداة الرفع')); document.head.appendChild(s); }));
+  window.bunnyUpload = async (file, auth, onProgress) => {
+    await loadTus();
+    return new Promise((res, rej) => new window.tus.Upload(file, {
+      endpoint: auth.endpoint, retryDelays: [0, 3000, 5000, 10000, 20000, 60000], chunkSize: 50 * 1024 * 1024,
+      headers: { AuthorizationSignature: auth.signature, AuthorizationExpire: String(auth.expire), VideoId: auth.video_id, LibraryId: String(auth.library_id) },
+      metadata: { filetype: file.type || 'video/mp4', title: file.name },
+      onError: rej, onProgress: (a, b) => onProgress && onProgress(a, b), onSuccess: () => res(auth.video_id),
+    }).start());
+  };
+  window.videoDuration = (file) => new Promise((res) => { try { const v = document.createElement('video'); v.preload = 'metadata'; v.onloadedmetadata = () => { URL.revokeObjectURL(v.src); res(Math.round(v.duration) || null); }; v.onerror = () => res(null); v.src = URL.createObjectURL(file); } catch { res(null); } });
+
   // ---------- boot ----------
   const pages = { instructors: pageInstructors, index: pageHome, home: pageHome, courses: pageCourses, interactive: pageInteractive, teach: pageTeach, institutions: pageInstitutions, consultations: pageConsultations };
   window.BiosynPages = window.BiosynPages || {};
