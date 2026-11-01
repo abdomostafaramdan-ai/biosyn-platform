@@ -356,18 +356,48 @@
     draw();
   }
 
+  // interactive programme card (also used on the course page facts)
+  const facOf = (c) => (window.FACULTIES || []).find((f) => f.id === (window.facultyOf ? window.facultyOf(c) : c.faculty));
+  const fmtDay = (d) => { try { return new Date(d).toLocaleDateString(window.LOC || 'ar-EG-u-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' }); } catch { return ''; } };
+  window.facOf = facOf; window.fmtDay = fmtDay;
+  const ICO = {
+    cal: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+    seat: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+    lvl: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V14M10 20V9M16 20V4"/></svg>',
+    user: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+    live: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>',
+  };
+  window.BX_ICO = ICO;
+  function programCard(c) {
+    const f = facOf(c), href = `course.html?c=${encodeURIComponent(c.slug)}`;
+    const facts = [
+      c.starts_at ? `<li>${ICO.cal}<span>يبدأ ${esc(fmtDay(c.starts_at))}</span></li>` : '',
+      c.seats ? `<li>${ICO.seat}<span>${c.seats} مقعد</span></li>` : '',
+      LEVEL[c.level] ? `<li>${ICO.lvl}<span>${LEVEL[c.level]}</span></li>` : '',
+      `<li>${ICO.user}<span>${esc(c.inst || 'فريق Biosyn')}</span></li>`,
+    ].join('');
+    return `<article class="bx-pcard">
+      <a class="bx-pcard-cover" href="${href}" tabindex="-1" aria-hidden="true"><span class="bs-wm bs-wm-brand"></span>
+        <span class="bx-pcard-live">${ICO.live}مباشر أونلاين</span>
+        <span class="bx-pcard-ic">${f ? `<svg viewBox="0 0 24 24">${f.icon}</svg>` : ICO.live}</span>
+        ${f ? `<span class="bx-pcard-fac">${esc(f.name)}</span>` : ''}</a>
+      <div class="bx-pcard-body">
+        ${c.specialty ? `<span class="bx-pcard-tag">${esc(c.specialty)}</span>` : ''}
+        <h3><a href="${href}" dir="auto">${esc(c.title)}</a></h3>
+        ${c.summary ? `<p class="bx-pcard-sum">${esc(c.summary)}</p>` : ''}
+        <ul class="bx-pcard-facts">${facts}</ul>
+      </div>
+      <div class="bx-pcard-foot"><div class="bx-pcard-price"><b>${EGP(c.price_egp)}</b><small>ج.م</small></div><a href="${href}" class="bs-btn bs-btn-primary">التفاصيل والتسجيل</a></div>
+    </article>`;
+  }
   async function pageInteractive() {
     const box = $('.bx-programs'); if (!box) return;
     let all = []; try { all = await loadCatalog('interactive'); } catch { all = []; }
-    box.innerHTML = all.length ? all.map((c) => `<article class="bx-program"><div class="bx-date"><small>دورة</small><b>★</b></div><div>
-      <div class="bx-row"><span class="bs-badge bs-badge-info">تفاعلية</span>${c.specialty ? `<span class="bx-st bx-st-info">${esc(c.specialty)}</span>` : ''}</div>
-      <h3>${esc(c.title)}</h3><div class="bx-meta"><span>${esc(c.inst || 'Biosyn Egypt')}</span><span>${LEVEL[c.level] || ''}</span></div></div>
-      <div class="bx-program-cta"><div class="bx-price">${EGP(c.price_egp)} <small>ج.م</small></div><a href="course.html?c=${encodeURIComponent(c.slug)}" class="bs-btn bs-btn-primary">اكتشف الكورس</a></div></article>`).join('')
-      : '<div class="bx-empty-big"><b>لا توجد دورات تفاعلية مفتوحة للتسجيل حاليًا</b>سنعلن عن الدفعة القادمة قريبًا. <a class="bx-link" href="consultations.html">تواصل معنا</a></div>';
-    const h = $('.bx-hint[style*="margin: 0"]'); if (h) h.remove();
-    const up = $('.bx-upnext'); if (up) up.closest('.bx-panel').remove();
-    const chips = $('.bx-chips'); if (chips) chips.remove();
+    const cnt = $('#ic-count'); if (cnt) cnt.textContent = all.length ? `${all.length} ${all.length === 1 ? 'برنامج' : 'برامج'}` : '';
+    if (all.length) { box.innerHTML = all.map(programCard).join(''); box.classList.toggle('bx-pgrid-one', all.length === 1); }
+    else box.innerHTML = '<div class="bx-empty-big" style="grid-column:1/-1"><b>لا توجد دورات تفاعلية مفتوحة للتسجيل حاليًا</b>سنعلن عن الدفعة القادمة قريبًا. <a class="bx-link" href="consultations.html">تواصل معنا</a></div>';
   }
+
 
   async function pageHome() {
     // platform numbers: live from the database (public_stats); zeros are shown as-is until launch

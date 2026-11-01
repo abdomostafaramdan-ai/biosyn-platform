@@ -948,7 +948,14 @@ window.I18N_EN = {
 "تعذّر تحميل المحاضرين": "Couldn't load instructors",
 "لا يوجد محاضرون بعد": "No instructors yet",
 "سنضيفهم هنا قريبًا.": "We'll add them here soon.",
-"الدفع إلكتروني عبر بوابات دفع آمنة (بطاقة بنكية - محافظ إلكترونية مثل فودافون كاش - فوري - أمان)، وتظهر لك وسائل الدفع المتاحة عند إتمام الطلب.": "Payment is online through secure payment gateways (bank card, e-wallets such as Vodafone Cash, Fawry, Aman). You'll see the available payment methods when you complete your order."
+"الدفع إلكتروني عبر بوابات دفع آمنة (بطاقة بنكية - محافظ إلكترونية مثل فودافون كاش - فوري - أمان)، وتظهر لك وسائل الدفع المتاحة عند إتمام الطلب.": "Payment is online through secure payment gateways (bank card, e-wallets such as Vodafone Cash, Fawry, Aman). You'll see the available payment methods when you complete your order.",
+"البرامج المتاحة للتسجيل": "Programmes open for registration",
+"برنامج": "programme",
+"برامج": "programmes",
+"مباشر أونلاين": "Live online",
+"فريق Biosyn": "Biosyn team",
+"التفاصيل والتسجيل": "Details & registration",
+"التسجيلات تتاح بعد الجلسة، ويمكن استرداد الرسوم خلال 7 أيام من تاريخ الدفع.": "Recordings are available after each session, and fees are refundable within 7 days of payment."
 };
 
 window.I18N_EN_PATTERNS = (function () {
@@ -960,6 +967,9 @@ window.I18N_EN_PATTERNS = (function () {
     [new RegExp('^' + N + ' محاضرة مسجلة \\(حوالي (.+)\\)$'), (m, n, d) => `${n} recorded ${lec(n)} (about ${T(d)})`],
     [new RegExp('^' + N + ' (?:محاضرة|محاضرات) · (.+)$'), (m, n, d) => `${n} ${lec(n)} · ${T(d)}`],
     [new RegExp('^' + N + ' دقيقة$'), (m, n) => `${n} min`],
+    [new RegExp('^' + N + ' مقعد$'), (m, n) => `${n} seats`],
+    [new RegExp('^' + N + ' (?:برنامج|برامج)$'), (m, n) => `${n} programme${Number(n) === 1 ? '' : 's'}`],
+    [/^يبدأ (.+)$/, (m, d) => `Starts ${d}`],
     [new RegExp('^' + N + ' محاضر$'), (m, n) => `${n} instructor${Number(String(n).replace(/,/g, '')) === 1 ? '' : 's'}`],
     [new RegExp('^' + N + ' ساعة(?: و' + N + ' دقيقة)?$'), (m, h, mi) => `${h} h${mi ? ' ' + mi + ' min' : ''}`],
     [new RegExp('^' + N + ' ج\\.م$'), (m, n) => `EGP ${n}`],

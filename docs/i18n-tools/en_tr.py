@@ -369,3 +369,5 @@ EXTRA.update({
 "انضم كمحاضر": "Teach with us", "إنضم كمحاضر": "Teach with us",
 })
 EXTRA.update({"الدفع إلكتروني عبر بوابات دفع آمنة (بطاقة بنكية - محافظ إلكترونية مثل فودافون كاش - فوري - أمان)، وتظهر لك وسائل الدفع المتاحة عند إتمام الطلب.": "Payment is online through secure payment gateways (bank card, e-wallets such as Vodafone Cash, Fawry, Aman). You'll see the available payment methods when you complete your order."})
+EXTRA.update({"البرامج المتاحة للتسجيل": "Programmes open for registration", "برنامج": "programme", "برامج": "programmes", "مباشر أونلاين": "Live online", "فريق Biosyn": "Biosyn team", "التفاصيل والتسجيل": "Details & registration",
+"التسجيلات تتاح بعد الجلسة، ويمكن استرداد الرسوم خلال 7 أيام من تاريخ الدفع.": "Recordings are available after each session, and fees are refundable within 7 days of payment.", "انضم كمحاضر": "Teach with us"})
