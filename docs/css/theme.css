@@ -106,3 +106,22 @@ html[data-theme="light"] { --danger-text: #b4232b; }
   .bx-drawer a { padding: 12px; border-radius: 8px; color: var(--ink); font: 500 16px/24px var(--font-sans); text-decoration: none; }
   .bx-drawer a:hover, .bx-drawer a[aria-current="page"] { background: var(--surface); }
 }
+
+/* white cards with blue text on the navy page (learning modes, about, plans, instructors, FAQ, services, CTA) */
+:is(.bx-mode, .bs-about, .bs-plan, .bs-inst, .bx-faq details, .bx-svcpromo, .bx-cta:not([style*="navy-900"])) {
+  --ink: #0a2a7a; --ink-muted: #2d4596; --ink-subtle: #5a6db0; --accent-text: #0b3aa8;
+  --surface: #ffffff; --surface-raised: #eef2ff; --line: #d6def5; --line-strong: #9fb0e0;
+  --tint-lime: #e8eeff; --on-tint-lime: #0b3aa8; --brand-green: #0b3aa8;
+  --watermark: rgba(11, 58, 168, .05); --watermark-brand: rgba(11, 58, 168, .06);
+  background: #ffffff !important; color: var(--ink) !important; border-color: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .12), 0 14px 34px rgba(0, 0, 20, .35);
+}
+:is(.bx-mode, .bs-about, .bs-plan, .bs-inst, .bx-faq details, .bx-svcpromo, .bx-cta:not([style*="navy-900"])) :is(h2, h3, b, summary, .bs-plan-name, .bs-inst-name) { color: var(--ink); }
+.bs-plan-featured, .bx-cta:not([style*="navy-900"]) { border: 2px solid #c6f84a !important; box-shadow: 0 0 0 4px rgba(198, 248, 74, .18), 0 14px 34px rgba(0, 0, 20, .35); }
+:is(.bx-mode, .bs-about, .bs-plan, .bx-svcpromo, .bx-cta) .bs-btn-secondary { color: #0a2a7a !important; border-color: #0a2a7a; }
+:is(.bx-mode, .bs-about, .bs-plan, .bx-svcpromo, .bx-cta) .bs-btn-secondary:hover { background: #eef2ff; }
+:is(.bx-mode, .bs-about, .bs-plan, .bs-inst, .bx-svcpromo) :is(.bs-badge-member, .bs-badge-new, .bs-badge-info) { background: #e8eeff; color: #0b3aa8; border-color: transparent; }
+.bs-plan .bs-badge-new { background: #c6f84a; color: #010232; }
+.bs-pillar i { color: #010232; }
+.bx-svcpromo .bx-cat-ic { background: #e8eeff; color: #0b3aa8; }
+.bx-svcpromo:hover, .bs-inst:hover, .bx-mode:hover { transform: translateY(-2px); transition: transform .15s ease; }
