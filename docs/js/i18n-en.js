@@ -964,7 +964,18 @@ window.I18N_EN = {
 "تواصل وجروب واتساب": "WhatsApp group",
 "يتم التواصل معك وإضافتك لجروب واتساب، وعليه يكون التفاعل والمشاركة والمحتوى.": "We'll contact you and add you to a WhatsApp group for discussion, sharing and course materials.",
 "الحضور تفاعلي ومباشر من خلال تطبيق Zoom.": "Sessions are live and interactive on Zoom.",
-"عندك دورة تفاعلية وخبرة تدريس سابقة؟": "Have an interactive course and teaching experience?"
+"عندك دورة تفاعلية وخبرة تدريس سابقة؟": "Have an interactive course and teaching experience?",
+"فورم | Biosyn Egypt": "Form | Biosyn Egypt",
+"الفورم غير موجود": "Form not found",
+"تأكد من الرابط.": "Check the link.",
+"تعذّر تحميل الفورم": "Couldn't load the form",
+"الفورم غير متاح": "This form isn't available",
+"ممكن يكون اتقفل أو الرابط غلط.": "It may be closed, or the link is wrong.",
+"اختر…": "Choose…",
+"شكرًا! وصلنا ردك وفريق Biosyn هيتواصل معاك قريبًا.": "Thank you! We received your response and the Biosyn team will contact you soon.",
+"الرجوع للرئيسية": "Back to home",
+"فيه ضغط على الفورم، جرّب بعد دقيقة.": "The form is busy, please try again in a minute.",
+"املأ الفورم وفريق Biosyn Egypt هيتواصل معاك": "Fill in the form and the Biosyn Egypt team will contact you"
 };
 
 window.I18N_EN_PATTERNS = (function () {
@@ -979,6 +990,7 @@ window.I18N_EN_PATTERNS = (function () {
     [new RegExp('^' + N + ' مقعد$'), (m, n) => `${n} seats`],
     [new RegExp('^' + N + ' (?:برنامج|برامج)$'), (m, n) => `${n} programme${Number(n) === 1 ? '' : 's'}`],
     [/^يبدأ (.+)$/, (m, d) => `Starts ${d}`],
+    [/^من فضلك املأ: (.+)$/, (m, x) => `Please fill in: ${x}`],
     [new RegExp('^' + N + ' محاضر$'), (m, n) => `${n} instructor${Number(String(n).replace(/,/g, '')) === 1 ? '' : 's'}`],
     [new RegExp('^' + N + ' ساعة(?: و' + N + ' دقيقة)?$'), (m, h, mi) => `${h} h${mi ? ' ' + mi + ' min' : ''}`],
     [new RegExp('^' + N + ' ج\\.م$'), (m, n) => `EGP ${n}`],

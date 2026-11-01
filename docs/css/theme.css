@@ -206,3 +206,10 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .bx-aboutinst .bs-inst-wide h3 { color: #0a2a7a; } .bx-aboutinst .bs-inst-wide p { color: #2d4596; }
 .bs-teacher .bs-inst-photo img { border-width: 2px; }
 .bx-instbox .row2 { align-items: start; } .bx-instbox .bx-input { height: auto; }
+.bx-fchoices { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
+.bx-fchoices legend { font: 600 14px/22px var(--font-sans); margin-bottom: 6px; padding: 0; }
+.bx-fbfields { display: grid; gap: 10px; }
+.bx-fbrow { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-raised); }
+.bx-fbmain { display: grid; grid-template-columns: minmax(0, 1fr) 150px auto auto; gap: 8px; align-items: center; }
+@media (max-width: 640px) { .bx-fbmain { grid-template-columns: 1fr 1fr; } .bx-fbmain [data-l] { grid-column: 1 / -1; } }
+.bx-modal:has(#fbf), .bx-modal:has(#frcsv) { width: min(880px, 100%); }

@@ -277,4 +277,52 @@
     box.innerHTML = `<nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><a href="blog.html">المدونة</a></nav><small class="bx-hint">${esc(x.tag || 'مقال')} · ${fdate(x.published_at)}</small><h1>${esc(x.title)}</h1>${x.excerpt ? `<p class="bs-lead" style="color:var(--ink-muted)">${esc(x.excerpt)}</p>` : ''}<div class="bx-prose" style="margin-top:32px">${md(x.body)}</div><div class="bx-banner" style="display:block;margin-top:40px"><b>تعلّم أكثر مع Biosyn</b><p style="margin:6px 0 0">دورات مسجلة في العلوم الحيوية والطبية باشتراك واحد. <a class="bx-link" href="courses.html">تصفح الدورات</a></p></div>`;
   };
   window.renderPostBody = md;
+
+  // ---------- custom forms (built in Admin → الفورمز) ----------
+  P.form = async () => {
+    const root = $('#form-root'), slug = new URLSearchParams(location.search).get('f');
+    const fail = (h, t) => (root.innerHTML = `<div class="bx-empty-big"><b>${h}</b>${t}</div>`);
+    if (!slug) return fail('الفورم غير موجود', 'تأكد من الرابط.');
+    let f; try { f = await sb.one('forms', { select: 'slug,title,description,fields,submit_label,success_message', slug: 'eq.' + slug }); } catch (e) { return fail('تعذّر تحميل الفورم', esc(arErr(e))); }
+    if (!f) return fail('الفورم غير متاح', 'ممكن يكون اتقفل أو الرابط غلط.');
+    document.title = f.title + ' | Biosyn Egypt'; window.setMeta && setMeta(f.title + ' | Biosyn Egypt', (f.description || '').slice(0, 160));
+    const fld = (x) => {
+      const id = 'ff-' + x.id, req = x.required ? ' required' : '', star = x.required ? ' *' : '', opts = (x.options || []).filter(Boolean);
+      const lab = `<label for="${id}">${esc(x.label)}${star}</label>`;
+      if (x.type === 'textarea') return `<div class="bx-field">${lab}<textarea id="${id}" class="bx-textarea" rows="4" data-k="${x.id}"${req}></textarea></div>`;
+      if (x.type === 'select') return `<div class="bx-field">${lab}<select id="${id}" class="bx-select" data-k="${x.id}"${req}><option value="">اختر…</option>${opts.map((o) => `<option>${esc(o)}</option>`).join('')}</select></div>`;
+      if (x.type === 'radio' || x.type === 'checkbox') return `<fieldset class="bx-field bx-fchoices" data-k="${x.id}" data-type="${x.type}"${x.required ? ' data-req="1"' : ''}><legend>${esc(x.label)}${star}</legend>${opts.map((o, i) => `<label class="bx-check"><input type="${x.type}" name="${id}" value="${esc(o)}"> ${esc(o)}</label>`).join('')}</fieldset>`;
+      const type = { email: 'email', phone: 'tel', number: 'number', date: 'date' }[x.type] || 'text';
+      return `<div class="bx-field">${lab}<input id="${id}" class="bx-input" type="${type}" data-k="${x.id}"${type === 'email' || type === 'tel' || type === 'number' ? ' dir="ltr"' : ''}${req}></div>`;
+    };
+    root.innerHTML = `<nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><span>${esc(f.title)}</span></nav>
+      <h1>${esc(f.title)}</h1>${f.description ? `<p class="bx-hint" style="margin:0 0 24px;white-space:pre-line">${esc(f.description)}</p>` : ''}
+      <form class="bx-formcard bx-form2" id="cf" novalidate>${(f.fields || []).map(fld).join('')}
+        <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0 0 0 0);pointer-events:none" aria-hidden="true">
+        <div class="bx-formmsg" aria-live="polite"></div>
+        <button type="submit" class="bs-btn bs-btn-primary bs-btn-lg">${esc(f.submit_label || 'إرسال')}</button></form>`;
+    const form = $('#cf'), msg = $('.bx-formmsg', form), btn = $('button[type=submit]', form);
+    form.onsubmit = async (e) => {
+      e.preventDefault(); if (form.website.value) return;
+      const data = {}; let missing = null;
+      for (const x of f.fields || []) {
+        let v = '';
+        if (x.type === 'radio' || x.type === 'checkbox') v = $$(`[data-k="${x.id}"] input:checked`, form).map((i) => i.value).join('، ');
+        else { const el = $(`[data-k="${x.id}"]`, form); v = el ? el.value.trim() : ''; }
+        if (x.required && !v) { missing = missing || x.label; }
+        if (v && x.type === 'email' && !/^\S+@\S+\.\S+$/.test(v)) { msg.className = 'bx-formmsg err'; msg.textContent = `البريد الإلكتروني في "${x.label}" غير صحيح.`; return; }
+        data[x.id] = v;
+      }
+      if (missing) { msg.className = 'bx-formmsg err'; msg.textContent = `من فضلك املأ: ${missing}`; return; }
+      btn.disabled = true; msg.className = 'bx-formmsg'; msg.textContent = 'جارٍ الإرسال…';
+      try {
+        await sb.rpc('submit_form', { p_slug: f.slug, p_data: data });
+        window.track && track('lead', { type: 'form:' + f.slug });
+        root.innerHTML = `<div class="bx-formcard" style="text-align:center;display:grid;gap:12px;justify-items:center"><span class="bx-cat-ic" style="width:56px;height:56px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span><h1 style="margin:0">${esc(f.success_message || 'شكرًا! وصلنا ردك وفريق Biosyn هيتواصل معاك قريبًا.')}</h1><a class="bs-btn bs-btn-primary" href="index.html">الرجوع للرئيسية</a></div>`;
+      } catch (err) {
+        btn.disabled = false; msg.className = 'bx-formmsg err';
+        msg.textContent = /too many/.test(err.message) ? 'فيه ضغط على الفورم، جرّب بعد دقيقة.' : /missing: (.+)/.test(err.message) ? 'من فضلك املأ: ' + err.message.match(/missing: (.+)/)[1] : 'تعذّر الإرسال، حاول مرة أخرى.';
+      }
+    };
+  };
 })();

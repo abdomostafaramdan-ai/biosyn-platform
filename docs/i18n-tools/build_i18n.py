@@ -19,6 +19,7 @@ window.I18N_EN_PATTERNS = (function () {
     [new RegExp('^' + N + ' مقعد$'), (m, n) => `${n} seats`],
     [new RegExp('^' + N + ' (?:برنامج|برامج)$'), (m, n) => `${n} programme${Number(n) === 1 ? '' : 's'}`],
     [/^يبدأ (.+)$/, (m, d) => `Starts ${d}`],
+    [/^من فضلك املأ: (.+)$/, (m, x) => `Please fill in: ${x}`],
     [new RegExp('^' + N + ' محاضر$'), (m, n) => `${n} instructor${Number(String(n).replace(/,/g, '')) === 1 ? '' : 's'}`],
     [new RegExp('^' + N + ' ساعة(?: و' + N + ' دقيقة)?$'), (m, h, mi) => `${h} h${mi ? ' ' + mi + ' min' : ''}`],
     [new RegExp('^' + N + ' ج\\.م$'), (m, n) => `EGP ${n}`],
