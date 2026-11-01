@@ -11,7 +11,8 @@ create table if not exists featured_instructors (
   created_at  timestamptz not null default now()
 );
 alter table featured_instructors enable row level security;
-create policy fi_public_read on featured_instructors for select to anon, authenticated using (visible or is_admin());
+create policy fi_public_read on featured_instructors for select to authenticated using (visible or is_admin());
+create policy fi_anon_read on featured_instructors for select to anon using (visible); -- anon cannot call is_admin()
 create policy fi_admin_write on featured_instructors for all to authenticated using (is_admin()) with check (is_admin());
 create index if not exists featured_instructors_sort_idx on featured_instructors (sort, created_at);
 
