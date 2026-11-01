@@ -50,3 +50,5 @@
 .bx-mq-static .bx-mq-track { animation: none; }
 html[data-lang="en"] .bx-mq-half .bs-inst { direction: ltr; }
 @media (max-width: 600px) { .bx-mq-half .bs-inst { width: 220px; } }
+/* numbers band without its own box: tiles sit directly on the page */
+.bx-statband { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; border-radius: 0; overflow: visible; }
