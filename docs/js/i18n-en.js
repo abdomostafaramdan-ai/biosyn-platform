@@ -960,7 +960,11 @@ window.I18N_EN = {
 "متوسط ومتقدم": "Intermediate–Advanced",
 "كل المستويات": "All levels",
 "لكل الكليات": "All faculties",
-"عن المحاضر": "About the instructor"
+"عن المحاضر": "About the instructor",
+"تواصل وجروب واتساب": "WhatsApp group",
+"يتم التواصل معك وإضافتك لجروب واتساب، وعليه يكون التفاعل والمشاركة والمحتوى.": "We'll contact you and add you to a WhatsApp group for discussion, sharing and course materials.",
+"الحضور تفاعلي ومباشر من خلال تطبيق Zoom.": "Sessions are live and interactive on Zoom.",
+"عندك دورة تفاعلية وخبرة تدريس سابقة؟": "Have an interactive course and teaching experience?"
 };
 
 window.I18N_EN_PATTERNS = (function () {

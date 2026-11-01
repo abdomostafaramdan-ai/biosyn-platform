@@ -372,3 +372,5 @@ EXTRA.update({"الدفع إلكتروني عبر بوابات دفع آمنة (
 EXTRA.update({"البرامج المتاحة للتسجيل": "Programmes open for registration", "برنامج": "programme", "برامج": "programmes", "مباشر أونلاين": "Live online", "فريق Biosyn": "Biosyn team", "التفاصيل والتسجيل": "Details & registration",
 "التسجيلات تتاح بعد الجلسة، ويمكن استرداد الرسوم خلال 7 أيام من تاريخ الدفع.": "Recordings are available after each session, and fees are refundable within 7 days of payment.", "انضم كمحاضر": "Teach with us"})
 EXTRA.update({"مبتدئ ومتوسط": "Beginner–Intermediate", "متوسط ومتقدم": "Intermediate–Advanced", "كل المستويات": "All levels", "لكل الكليات": "All faculties", "كل التخصصات": "All specialties", "عن المحاضر": "About the instructor"})
+EXTRA.update({"تواصل وجروب واتساب": "WhatsApp group", "يتم التواصل معك وإضافتك لجروب واتساب، وعليه يكون التفاعل والمشاركة والمحتوى.": "We'll contact you and add you to a WhatsApp group for discussion, sharing and course materials.",
+"الحضور تفاعلي ومباشر من خلال تطبيق Zoom.": "Sessions are live and interactive on Zoom.", "عندك دورة تفاعلية وخبرة تدريس سابقة؟": "Have an interactive course and teaching experience?"})
