@@ -85,3 +85,12 @@ mark { background: var(--brand-gradient); color: var(--on-brand); padding: 0 .15
 [hidden] { display: none !important; }
 .bx-app { min-height: 100vh; }
 .bx-intg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 16px; align-items: start; } .bx-intg-grid .bx-panel { margin: 0; }
+
+/* navy "islands" keep light-on-dark text in both themes (buttons, eyebrows and links inside them use dark-theme tokens) */
+:is(.bx-darkhero, .bx-statband, .bx-balance, .bx-sidepromo, .bx-auth-side, .bx-cta[style*="navy-900"], .bs-footer, .bs-promo) {
+  --ink: #f4f6ff; --ink-muted: #aeb3d9; --ink-subtle: #8a8fc0; --accent-text: #c6f84a;
+  --line: rgba(255, 255, 255, .14); --line-strong: rgba(255, 255, 255, .38); --surface-raised: rgba(255, 255, 255, .08);
+}
+:is(.bx-darkhero, .bx-statband, .bx-balance, .bx-sidepromo, .bx-auth-side, .bx-cta[style*="navy-900"]) .bx-eyebrow { color: #c6f84a; }
+html { --danger-text: #ff8b8b; }
+html[data-theme="light"] { --danger-text: #b4232b; }

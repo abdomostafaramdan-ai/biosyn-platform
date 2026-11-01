@@ -1,7 +1,7 @@
 .bx-specs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: var(--space-4); }
 .bx-spec { display: flex; gap: var(--space-3); align-items: center; padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); color: var(--ink) !important; font: 600 15px/24px var(--font-display); }
 .bx-spec:hover { border-color: var(--line-strong); box-shadow: var(--shadow-card); }
-.bx-statband { border: 1px solid var(--line); background: var(--surface) !important; display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(5, minmax(0, 1fr)); gap: var(--space-6); align-items: center; padding: var(--space-8); border-radius: var(--radius-lg); background: #010232; color: rgba(255,255,255,.75); }
+.bx-statband { border: 1px solid rgba(255,255,255,.08); display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(5, minmax(0, 1fr)); gap: var(--space-6); align-items: center; padding: var(--space-8); border-radius: var(--radius-lg); background: #010232; color: rgba(255,255,255,.75); }
 .bx-statband h2 { margin: 4px 0; color: #fff; font: 600 24px/36px var(--font-display); }
 .bx-statband small { font: 400 12px/20px var(--font-sans); }
 .bx-statband > div:not(:first-child) { display: grid; gap: 2px; }
