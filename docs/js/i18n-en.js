@@ -937,8 +937,8 @@ window.I18N_EN = {
 "الأرقام تتحدّث تلقائيًا من المنصة.": "These numbers update automatically from the platform.",
 "حلول للمؤسسات": "Institutions",
 "استشارات": "Consultations",
-"خصم 50% على الباقة السنوية": "50% off the annual plan",
-"شوف الأسعار": "See pricing",
+"خصم 52% على الباقة السنوية": "52% off the annual plan",
+"تصفّح الأسعار": "See pricing",
 "استثمر في نفسك الآن": "Invest in yourself now",
 "تصفّح الكورسات المسجلة": "Browse recorded courses"
 };

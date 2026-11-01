@@ -144,6 +144,8 @@
     const h = $('#site-header'), f = $('#site-footer');
     if (h) h.outerHTML = LAYOUT.header;
     if (f) f.outerHTML = LAYOUT.footer;
+    const hd = $('.bs-header');
+    if (hd && LAYOUT.promo && !$('.bs-promo') && !/(admin|instructor)\.html/.test(location.pathname)) hd.insertAdjacentHTML('beforebegin', LAYOUT.promo);
     const cur = here();
     $$('.bs-nav a').forEach((a) => { if (a.getAttribute('href') === cur) a.setAttribute('aria-current', 'page'); });
     // search box -> course list
