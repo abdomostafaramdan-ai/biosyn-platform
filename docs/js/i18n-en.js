@@ -936,7 +936,11 @@ window.I18N_EN = {
 "دقيقة مشاهدة": "Minutes watched",
 "الأرقام تتحدّث تلقائيًا من المنصة.": "These numbers update automatically from the platform.",
 "حلول للمؤسسات": "Institutions",
-"استشارات": "Consultations"
+"استشارات": "Consultations",
+"خصم 50% على الباقة السنوية": "50% off the annual plan",
+"شوف الأسعار": "See pricing",
+"استثمر في نفسك الآن": "Invest in yourself now",
+"تصفّح الكورسات المسجلة": "Browse recorded courses"
 };
 
 window.I18N_EN_PATTERNS = (function () {

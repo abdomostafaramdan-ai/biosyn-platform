@@ -88,7 +88,7 @@ mark { background: var(--brand-gradient); color: var(--on-brand); padding: 0 .15
 .bx-intg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 16px; align-items: start; } .bx-intg-grid .bx-panel { margin: 0; }
 
 /* navy "islands" keep light-on-dark text in both themes (buttons, eyebrows and links inside them use dark-theme tokens) */
-:is(.bx-darkhero, .bx-statband, .bx-balance, .bx-sidepromo, .bx-auth-side, .bx-cta[style*="navy-900"], .bs-footer, .bs-promo) {
+:is(.bx-darkhero, .bx-statband, .bx-balance, .bx-sidepromo, .bx-auth-side, .bx-cta[style*="navy-900"], .bs-footer) {
   --ink: #f4f6ff; --ink-muted: #aeb3d9; --ink-subtle: #8a8fc0; --accent-text: #c6f84a;
   --line: rgba(255, 255, 255, .14); --line-strong: rgba(255, 255, 255, .38); --surface-raised: rgba(255, 255, 255, .08);
 }
@@ -125,3 +125,15 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .bs-pillar i { color: #010232; }
 .bx-svcpromo .bx-cat-ic { background: #e8eeff; color: #0b3aa8; }
 .bx-svcpromo:hover, .bs-inst:hover, .bx-mode:hover { transform: translateY(-2px); transition: transform .15s ease; }
+
+/* top promo bar: white with navy text, two lines with buttons */
+.bs-promo.bx-promo2 { display: grid; gap: 6px; justify-items: center; padding: 10px 16px; background: #ffffff !important; color: #010232 !important; border-bottom: 1px solid #d6def5; }
+.bx-pr-row { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.bx-pr-t { display: inline-flex; align-items: center; gap: 8px; font: 700 15px/24px var(--font-display); color: #010232; }
+.bx-pr-row + .bx-pr-row .bx-pr-t { font-weight: 600; color: #0b3aa8; }
+.bx-pr-t svg { color: #0b3aa8; }
+.bs-promo .bx-pr-btn { display: inline-flex; align-items: center; height: 30px; padding: 0 14px; border-radius: 999px; background: #010232; color: #c6f84a !important; font: 700 13px/1 var(--font-sans); text-decoration: none !important; margin: 0; white-space: nowrap; transition: background .15s ease; }
+.bs-promo .bx-pr-btn:hover { background: #0b3aa8; color: #fff !important; }
+.bs-promo .bx-pr-btn2 { background: transparent; color: #0b3aa8 !important; border: 1.5px solid #0b3aa8; }
+.bs-promo .bx-pr-btn2:hover { background: #0b3aa8; color: #fff !important; }
+@media (max-width: 600px) { .bx-pr-t { font-size: 13px; line-height: 20px; } .bs-promo .bx-pr-btn { height: 28px; padding: 0 12px; font-size: 12px; } .bx-pr-row { gap: 8px; } }
