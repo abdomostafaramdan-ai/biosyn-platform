@@ -947,7 +947,8 @@ window.I18N_EN = {
 "باحثون وأكاديميون من مصر والعالم يقدّمون كورسات Biosyn.": "Researchers and academics from Egypt and around the world who teach Biosyn courses.",
 "تعذّر تحميل المحاضرين": "Couldn't load instructors",
 "لا يوجد محاضرون بعد": "No instructors yet",
-"سنضيفهم هنا قريبًا.": "We'll add them here soon."
+"سنضيفهم هنا قريبًا.": "We'll add them here soon.",
+"الدفع إلكتروني عبر بوابات دفع آمنة (بطاقة بنكية - محافظ إلكترونية مثل فودافون كاش - فوري - أمان)، وتظهر لك وسائل الدفع المتاحة عند إتمام الطلب.": "Payment is online through secure payment gateways (bank card, e-wallets such as Vodafone Cash, Fawry, Aman). You'll see the available payment methods when you complete your order."
 };
 
 window.I18N_EN_PATTERNS = (function () {
