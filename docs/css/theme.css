@@ -140,3 +140,14 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 /* hero title: balanced size, highlight sits on its own line with even padding */
 .bs-hero h1 { font-size: clamp(34px, 3.6vw + 8px, 54px); line-height: 1.55; text-wrap: balance; }
 .bs-hero h1 mark { display: inline-block; margin-top: .3em; padding: 0 .32em .08em; line-height: 1.25; border-radius: .28em; box-shadow: 0 10px 30px rgba(198, 248, 74, .18); }
+
+/* every button that opens a page is green like the logo mark */
+:is(.bs-btn-primary, a.bs-btn, .bs-plan-cta, .bs-promo .bx-pr-btn) {
+  background: linear-gradient(135deg, #5fe04a 0%, #9cf04a 45%, #c6f84a 100%) !important;
+  color: #010232 !important; border-color: transparent !important; font-weight: 700;
+}
+:is(.bs-btn-primary, a.bs-btn, .bs-plan-cta, .bs-promo .bx-pr-btn):hover {
+  background: linear-gradient(135deg, #52d23e 0%, #8fe63f 45%, #b9ee3c 100%) !important;
+  color: #010232 !important; box-shadow: 0 8px 22px rgba(124, 240, 74, .28); transform: translateY(-1px);
+}
+.bs-btn { transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
