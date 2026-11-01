@@ -38,13 +38,15 @@
 .bx-sb-head { flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; }
 .bx-sb-head p { max-width: 40em; font-size: 17px; line-height: 30px; color: rgba(255,255,255,.85); }
 /* instructors strip (auto-scrolling) */
-.bx-marquee { position: relative; overflow: hidden; direction: ltr; padding: 8px 0 18px; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%); }
+.bx-marquee { position: relative; overflow: hidden; direction: ltr; padding: 10px 0 22px; width: 100vw; margin-inline: calc(50% - 50vw); }
+.bs-root:has(.bx-marquee) { overflow-x: clip; }
 .bx-mq-track { display: flex; width: max-content; animation: bxMarquee var(--mq-dur, 45s) linear infinite; }
 .bx-marquee:hover .bx-mq-track, .bx-marquee:focus-within .bx-mq-track { animation-play-state: paused; }
 .bx-mq-half { display: flex; gap: 16px; padding-right: 16px; }
-.bx-mq-half .bs-inst { direction: rtl; width: 260px; flex: none; }
+.bx-mq-half .bs-inst { direction: rtl; width: 270px; flex: none; justify-content: flex-start; }
+.bx-mq-half { align-items: stretch; }
 @keyframes bxMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-.bx-mq-static { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+.bx-mq-static { overflow-x: auto; }
 .bx-mq-static .bx-mq-track { animation: none; }
 html[data-lang="en"] .bx-mq-half .bs-inst { direction: ltr; }
 @media (max-width: 600px) { .bx-mq-half .bs-inst { width: 220px; } }
