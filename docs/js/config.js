@@ -26,4 +26,5 @@ window.FACULTIES = [
   { id: 'health_tech', name: 'كلية تكنولوجيا العلوم الصحية التطبيقية', icon: '<path d="M6 18h8M3 22h18"/><path d="M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/>',
     specs: ['المختبرات الطبية', 'الأشعة والتصوير الطبي', 'العلاج التنفسي', 'تكنولوجيا الأجهزة الطبية', 'الإسعاف والطوارئ', 'البصريات'] },
 ];
+window.FAC_ALL = { id: 'all', name: 'لكل الكليات', icon: '<path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/><path d="M22 10v6"/>', specs: [] };
 window.facultyOf = (c) => c.faculty || ((window.FACULTIES.find((f) => f.specs.includes(c.specialty)) || {}).id) || '';

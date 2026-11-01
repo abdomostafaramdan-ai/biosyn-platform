@@ -201,3 +201,8 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .bx-icover { display: grid; place-items: center; align-content: center; gap: 8px; background: radial-gradient(80% 120% at 85% 0%, #1b2a9a 0%, #010232 70%) !important; }
 .bx-ifacts { border-top: 0; padding-top: 0; margin: 4px 0 8px; }
 .bs-enroll .bx-ifacts li { color: var(--ink-muted); } .bs-enroll .bx-ifacts li svg { color: var(--accent-text); }
+.bx-instbox { padding: 14px; border: 1px dashed var(--line-strong); border-radius: 12px; display: grid; gap: 10px; }
+.bx-aboutinst .bs-inst-wide { background: #fff; border-color: #fff; color: #0a2a7a; }
+.bx-aboutinst .bs-inst-wide h3 { color: #0a2a7a; } .bx-aboutinst .bs-inst-wide p { color: #2d4596; }
+.bs-teacher .bs-inst-photo img { border-width: 2px; }
+.bx-instbox .row2 { align-items: start; } .bx-instbox .bx-input { height: auto; }

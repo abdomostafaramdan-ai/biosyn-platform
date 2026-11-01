@@ -955,7 +955,12 @@ window.I18N_EN = {
 "مباشر أونلاين": "Live online",
 "فريق Biosyn": "Biosyn team",
 "التفاصيل والتسجيل": "Details & registration",
-"التسجيلات تتاح بعد الجلسة، ويمكن استرداد الرسوم خلال 7 أيام من تاريخ الدفع.": "Recordings are available after each session, and fees are refundable within 7 days of payment."
+"التسجيلات تتاح بعد الجلسة، ويمكن استرداد الرسوم خلال 7 أيام من تاريخ الدفع.": "Recordings are available after each session, and fees are refundable within 7 days of payment.",
+"مبتدئ ومتوسط": "Beginner–Intermediate",
+"متوسط ومتقدم": "Intermediate–Advanced",
+"كل المستويات": "All levels",
+"لكل الكليات": "All faculties",
+"عن المحاضر": "About the instructor"
 };
 
 window.I18N_EN_PATTERNS = (function () {

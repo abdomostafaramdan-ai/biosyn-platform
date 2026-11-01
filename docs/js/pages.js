@@ -61,6 +61,17 @@
   }
   window.hasSubscription = hasSubscription;
 
+  // course instructor: the site profile (name + bio) if set, else the instructor account name
+  async function courseInst(c) {
+    if (c.featured_instructor_id) { const f = await sb.get('featured_instructors', { select: 'name,title,photo_url', id: 'eq.' + c.featured_instructor_id }).catch(() => []); if (f[0]) return f[0]; }
+    if (c.instructor_id) {
+      const f = await sb.get('featured_instructors', { select: 'name,title,photo_url', profile_id: 'eq.' + c.instructor_id }).catch(() => []); if (f[0]) return f[0];
+      const p = await sb.get('public_instructors', { select: '*', id: 'eq.' + c.instructor_id }).catch(() => []); if (p[0]) return { name: p[0].full_name };
+    }
+    return null;
+  }
+  const teacherChip = (t) => t ? `<div class="bs-teacher"><div class="bs-inst-photo">${t.photo_url ? `<img src="${esc(t.photo_url)}" alt="">` : `<span>${esc((window.instInitials ? window.instInitials(t.name) : t.name.charAt(0)) || '')}</span>`}</div><div><small>المحاضر</small><b>${esc(t.name)}</b></div></div>` : '';
+  const aboutInst = (t) => t && t.title ? `<section class="bs-block-sec bx-aboutinst"><h2>عن المحاضر</h2><div class="bs-inst-wide"><div class="bs-inst-photo">${t.photo_url ? `<img src="${esc(t.photo_url)}" alt="">` : `<span>${esc(window.instInitials ? window.instInitials(t.name) : '')}</span>`}</div><div><h3>${esc(t.name)}</h3><p>${esc(t.title)}</p></div></div></section>` : '';
   P.course = async () => {
     const root = $('#course-root'), slug = new URLSearchParams(location.search).get('c');
     if (!slug) { location.replace('courses.html'); return; }
@@ -69,17 +80,16 @@
     if (!c) { root.innerHTML = '<div class="bx-empty-big" style="margin:80px auto;max-width:560px"><b>هذه الدورة غير متاحة</b>قد تكون غير منشورة بعد. <a class="bx-link" href="courses.html">تصفح الدورات</a></div>'; return; }
     if (c.kind === 'interactive') {
       document.title = c.title + ' | Biosyn Egypt';
-      const ins = await sb.get('public_instructors', { select: '*', id: 'eq.' + (c.instructor_id || '00000000-0000-0000-0000-000000000000') }).catch(() => []);
-      const iname = ins[0] && ins[0].full_name;
+      const T = await courseInst(c);
       const fc = window.facOf ? window.facOf(c) : null, I = window.BX_ICO || {};
       root.innerHTML = `<section class="bs-course-hero"><span class="bs-wm" aria-hidden="true"></span><div class="bs-course-hero-in"><div>
         <nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><a href="interactive.html">دورات تفاعلية</a><span>/</span><span class="bs-latin">${esc(c.title)}</span></nav>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="bs-badge bs-badge-info">دورة تفاعلية</span>${fc ? `<span class="bs-badge bs-badge-member">${esc(fc.name)}</span>` : ''}${c.specialty ? `<span class="bs-badge bs-badge-member">${esc(c.specialty)}</span>` : ''}</div>
         <h1 dir="auto">${esc(c.title)}</h1>${c.summary ? `<p class="bs-lead">${esc(c.summary)}</p>` : ''}
-        ${iname ? `<div class="bs-teacher"><div class="bs-inst-photo"><span>${esc(iname.charAt(0))}</span></div><div><small>المحاضر</small><b class="bs-latin">${esc(iname)}</b></div></div>` : ''}
+        ${teacherChip(T)}
         </div><div class="bs-spacer"></div></div></section>
         <div class="bs-course-main"><div>${c.description ? `<section class="bs-block-sec" style="margin-top:48px"><h2>عن الدورة</h2>${c.description.split(/\n{2,}/).map((p) => `<p>${esc(p)}</p>`).join('')}</section>` : '<div style="height:48px"></div>'}
-        <section class="bs-block-sec"><h2>سياسة الاسترداد</h2><p>يمكن استرداد رسوم الدورة التفاعلية خلال 7 أيام من تاريخ الدفع.</p></section></div>
+        ${aboutInst(T)}<section class="bs-block-sec"><h2>سياسة الاسترداد</h2><p>يمكن استرداد رسوم الدورة التفاعلية خلال 7 أيام من تاريخ الدفع.</p></section></div>
         <aside class="bs-enroll"><div class="bs-cover bx-icover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span>${fc ? `<span class="bx-pcard-ic"><svg viewBox="0 0 24 24">${fc.icon}</svg></span><span class="bx-pcard-fac">${esc(fc.name)}</span>` : `<span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span>`}</div>
         <div class="bs-enroll-body"><div class="bs-enroll-access"><b>${EGP(c.price_egp)} ج.م</b></div>
         <ul class="bx-pcard-facts bx-ifacts">${c.starts_at ? `<li>${I.cal}<span>يبدأ ${esc(window.fmtDay(c.starts_at))}</span></li>` : ''}${c.seats ? `<li>${I.seat}<span>${c.seats} مقعد</span></li>` : ''}${LEVEL[c.level] ? `<li>${I.lvl}<span>${LEVEL[c.level]}</span></li>` : ''}<li>${I.live}<span>مباشر أونلاين</span></li></ul>
@@ -93,8 +103,8 @@
     window.setMeta && setMeta(c.title + ' | Biosyn Egypt', (c.summary || c.description || 'دورة مسجلة على منصة Biosyn Egypt').slice(0, 160));
     const lects = (c.lectures || []).sort((a, b) => a.position - b.position);
     const total = lects.reduce((s, l) => s + (l.duration_seconds || 0), 0);
-    const [insts, plans, subscribed] = await Promise.all([sb.get('public_instructors', { select: '*', id: 'eq.' + (c.instructor_id || '00000000-0000-0000-0000-000000000000') }).catch(() => []), sb.get('plans', { select: '*', active: 'eq.true', order: 'duration_months' }).catch(() => []), hasSubscription()]);
-    const inst = insts[0] && insts[0].full_name;
+    const [T, plans, subscribed] = await Promise.all([courseInst(c), sb.get('plans', { select: '*', active: 'eq.true', order: 'duration_months' }).catch(() => []), hasSubscription()]);
+    const inst = T && T.name;
     const from = plans[0];
     const first = lects[0];
     const cta = subscribed
@@ -106,13 +116,13 @@
       <h1>${esc(c.title)}</h1>
       ${c.summary ? `<p class="bs-lead">${esc(c.summary)}</p>` : ''}
       <div class="bs-stats"><span><b>${lects.length}</b> محاضرة</span>${total ? `<span><b>${esc(hoursText(total))}</b></span>` : ''}<span>بالعربية</span></div>
-      ${inst ? `<div class="bs-teacher"><div class="bs-inst-photo"><span>${esc(inst.charAt(0))}</span></div><div><small>المحاضر</small><b class="bs-latin">${esc(inst)}</b></div></div>` : ''}
+      ${teacherChip(T)}
       </div><div class="bs-spacer"></div></div></section>
     <div class="bs-course-main"><div>
       ${c.description ? `<section class="bs-block-sec" style="margin-top:48px"><h2>عن الدورة</h2>${c.description.split(/\n{2,}/).map((p) => `<p>${esc(p)}</p>`).join('')}</section>` : ''}
       <section class="bs-block-sec" style="${c.description ? '' : 'margin-top:48px'}"><h2>محتوى الدورة</h2>
         ${lects.length ? `<div class="bs-curr"><div class="bs-curr-head"><b>محتوى الدورة</b><span>${lects.length} محاضرة${total ? ' · ' + esc(hoursText(total)) : ''}</span></div><ol class="bs-curr-list">${lects.map((l, i) => `<li class="bs-curr-item"><span class="bs-curr-num bs-latin">${String(i + 1).padStart(2, '0')}</span><span class="bs-play" aria-hidden="true">${subscribed || l.is_preview ? ICON_PLAY : ICON_LOCK}</span><span class="bs-curr-title bs-latin">${subscribed || l.is_preview ? `<a href="watch.html?c=${esc(c.slug)}&l=${l.id}" style="color:inherit;text-decoration:none">${esc(l.title)}</a>` : esc(l.title)}${!subscribed && l.is_preview ? ' <span class="bs-badge bs-badge-new" style="margin-inline-start:6px">معاينة مجانية</span>' : ''}</span><span class="bs-curr-dur bs-latin">${l.duration_seconds ? dur(l.duration_seconds) : ''}</span></li>`).join('')}</ol></div>` : '<div class="bx-empty-big"><b>المحاضرات قيد الإضافة</b>سنعلن عند نشر الدورة كاملة.</div>'}
-      </section></div>
+      </section>${aboutInst(T)}</div>
       <aside class="bs-enroll"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span></div>
         <div class="bs-enroll-body"><div class="bs-enroll-access"><span>${subscribed ? 'اشتراكك ساري' : 'متاحة مع الاشتراك'}</span>${!subscribed && from ? `<b>تبدأ من ${EGP(from.price_egp)} ج.م / ${from.duration_months === 1 ? 'شهريًا' : from.duration_months + ' أشهر'}</b>` : ''}</div>
         ${cta}

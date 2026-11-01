@@ -6,7 +6,11 @@
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const EGP = (n) => Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
   const here = () => location.pathname.split('/').pop() || 'index.html';
-  const LEVEL = { beginner: 'مبتدئ', intermediate: 'متوسط', advanced: 'متقدم' };
+  const LEVEL = { beginner: 'مبتدئ', beginner_intermediate: 'مبتدئ ومتوسط', intermediate: 'متوسط', intermediate_advanced: 'متوسط ومتقدم', advanced: 'متقدم', all_levels: 'كل المستويات' };
+  // which basic levels each course level covers (for the level filter)
+  const LEVEL_SPAN = { beginner: ['beginner'], beginner_intermediate: ['beginner', 'intermediate'], intermediate: ['intermediate'], intermediate_advanced: ['intermediate', 'advanced'], advanced: ['advanced'], all_levels: ['beginner', 'intermediate', 'advanced'] };
+  window.LEVEL_SPAN = LEVEL_SPAN;
+  const ALL_SPECS = 'كل التخصصات'; window.ALL_SPECS = ALL_SPECS;
   const ERR = {
     'gateway not available': 'بوابة الدفع هذه غير مفعّلة بعد، جرّب بوابة أخرى.',
     'already enrolled': 'أنت مسجّل في هذا الكورس بالفعل.',
@@ -291,12 +295,14 @@
   window.courseCard = (c, inst, nLect, href) => `<a class="bs-course" href="${href || 'course.html?c=' + encodeURIComponent(c.slug)}"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span></div><div class="bs-course-body"><span class="bs-course-kind">${c.kind === 'interactive' ? 'دورة تفاعلية' : 'دورة مسجلة'}</span><h3 class="bs-course-title">${esc(c.title)}</h3><div class="bs-course-meta">${nLect != null ? `<span>${nLect} محاضرة</span>` : ''}${c.kind === 'recorded' ? `<span>${LEVEL[c.level] || ''}</span>` : `<span>${EGP(c.price_egp)} ج.م</span>`}${inst ? `<span>${esc(inst)}</span>` : ''}</div></div></a>`;
 
   async function loadCatalog(kind) {
-    const [courses, insts] = await Promise.all([
+    const [courses, insts, feat] = await Promise.all([
       sb.get('courses', { select: '*,lectures(id)', kind: 'eq.' + kind, status: 'eq.published', order: 'created_at.desc' }),
       sb.get('public_instructors', { select: '*' }).catch(() => []),
+      sb.get('featured_instructors', { select: 'id,name' }).catch(() => []),
     ]);
     const names = Object.fromEntries(insts.map((i) => [i.id, i.full_name]));
-    return courses.map((c) => ({ ...c, n: (c.lectures || []).length, inst: names[c.instructor_id] || '' }));
+    const fnames = Object.fromEntries(feat.map((i) => [i.id, i.name]));
+    return courses.map((c) => ({ ...c, n: (c.lectures || []).length, inst: fnames[c.featured_instructor_id] || names[c.instructor_id] || '' }));
   }
   window.loadCatalog = loadCatalog;
 
@@ -316,7 +322,7 @@
       if (!specSel) return;
       const f = FAC.find((x) => x.id === fac);
       const extra = [...new Set(all.filter((c) => (!fac || c.fac === fac) && c.specialty).map((c) => c.specialty))];
-      const list = [...new Set([...(f ? f.specs : FAC.flatMap((x) => x.specs)), ...extra])];
+      const list = [...new Set([...(f ? f.specs : FAC.flatMap((x) => x.specs)), ...extra])].filter((x) => x !== ALL_SPECS);
       if (spec && !list.includes(spec)) spec = '';
       specSel.innerHTML = '<option value="">كل التخصصات</option>' + list.map((s) => `<option ${s === spec ? 'selected' : ''}>${esc(s)}</option>`).join('');
     }
@@ -343,7 +349,7 @@
     function draw() {
       const t = (q ? q.value : '').trim().toLowerCase();
       const levels = lv.map((c, i) => (c.checked ? ['beginner', 'intermediate', 'advanced'][i] : null)).filter(Boolean);
-      let list = all.filter((c) => (!t || (c.title + ' ' + c.inst).toLowerCase().includes(t)) && (!fac || c.fac === fac) && (!spec || c.specialty === spec) && (!levels.length || levels.includes(c.level)) && (!sel || !sel.value || c.inst === sel.value));
+      let list = all.filter((c) => (!t || (c.title + ' ' + c.inst).toLowerCase().includes(t)) && (!fac || c.fac === fac || c.fac === 'all') && (!spec || c.specialty === spec || c.specialty === ALL_SPECS) && (!levels.length || (LEVEL_SPAN[c.level] || [c.level]).some((l) => levels.includes(l))) && (!sel || !sel.value || c.inst === sel.value));
       const s = sort ? sort.selectedIndex : 0;
       if (s === 3) list.sort((a, b) => a.title.localeCompare(b.title)); else if (s === 2) list.reverse();
       grid.innerHTML = list.length ? list.map((c) => courseCard(c, c.inst, c.n)).join('') : `<div class="bx-empty-big" style="grid-column:1/-1"><b>${all.length ? 'لا توجد نتائج مطابقة' : 'لا توجد دورات منشورة بعد'}</b>${all.length ? 'جرّب تغيير البحث أو الفلاتر.' : 'سنضيف الدورات هنا فور نشرها.'}</div>`;
@@ -357,7 +363,7 @@
   }
 
   // interactive programme card (also used on the course page facts)
-  const facOf = (c) => (window.FACULTIES || []).find((f) => f.id === (window.facultyOf ? window.facultyOf(c) : c.faculty));
+  const facOf = (c) => { const id = window.facultyOf ? window.facultyOf(c) : c.faculty; return id === 'all' ? window.FAC_ALL : (window.FACULTIES || []).find((f) => f.id === id); };
   const fmtDay = (d) => { try { return new Date(d).toLocaleDateString(window.LOC || 'ar-EG-u-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' }); } catch { return ''; } };
   window.facOf = facOf; window.fmtDay = fmtDay;
   const ICO = {
