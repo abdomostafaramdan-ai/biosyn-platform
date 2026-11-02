@@ -6,13 +6,16 @@ export const STREAM = 'https://video.bunnycdn.com';
 const CORE = 'https://api.bunny.net';
 const keys = new Map<string, string>();
 
+// account keys are 72 chars (two UUIDs); a library key is shorter. Accept an account key pasted into either field.
+const isAccountKey = (k: string) => /^[0-9a-f-]{70,}$/i.test(k.trim());
+const libApiKey = () => (isAccountKey(sec('BUNNY_API_KEY')) ? '' : sec('BUNNY_API_KEY'));
 export const defaultLib = () => sec('BUNNY_LIBRARY_ID');
-export const accountKey = () => sec('BUNNY_ACCOUNT_KEY');
-export const uploadsReady = () => !!(defaultLib() && (sec('BUNNY_API_KEY') || accountKey()));
+export const accountKey = () => sec('BUNNY_ACCOUNT_KEY') || (isAccountKey(sec('BUNNY_API_KEY')) ? sec('BUNNY_API_KEY') : '');
+export const uploadsReady = () => !!(defaultLib() && (libApiKey() || accountKey()));
 
 export async function libKey(lib: string) {
   if (!lib) throw new Error('no library');
-  if (lib === defaultLib() && sec('BUNNY_API_KEY')) return sec('BUNNY_API_KEY');
+  if (lib === defaultLib() && libApiKey()) return libApiKey();
   if (keys.has(lib)) return keys.get(lib)!;
   const ak = accountKey();
   if (!ak) throw new Error('uploads not configured');

@@ -1,7 +1,7 @@
 import { admin, asUser, currentUser } from './_shared/db.ts';
 import { bunnyEmbedUrl, cors, json, sha256Hex } from './_shared/lib.ts';
 import { loadSecrets, sec } from './_shared/secrets.ts';
-import { STREAM, defaultLib, libKey, listLibraries, listVideos, uploadsReady } from './_shared/bunny.ts';
+import { STREAM, accountKey, defaultLib, libKey, listLibraries, listVideos, uploadsReady } from './_shared/bunny.ts';
 
 // Bunny Stream bridge. The browser never sees a Bunny key.
 //   { action: 'status' }                               -> { ready }
@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
   const body = await req.json().catch(() => ({}));
   const sb = admin();
   await loadSecrets(sb);
-  if (body.action === 'status') return json({ ready: uploadsReady(), libraries: !!sec('BUNNY_ACCOUNT_KEY') });
+  if (body.action === 'status') return json({ ready: uploadsReady(), libraries: !!accountKey() });
 
   const user = await currentUser(req);
   if (!user) return json({ error: 'unauthorized' }, 401);
@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
   try {
     if (body.action === 'libraries' || body.action === 'library_videos') {
       if (!(await isRole('is_admin'))) return json({ error: 'admin only' }, 403);
-      if (!sec('BUNNY_ACCOUNT_KEY') && body.action === 'libraries') return json({ error: 'account key required' }, 503);
+      if (!accountKey() && body.action === 'libraries') return json({ error: 'account key required' }, 503);
       if (body.action === 'libraries') return json({ libraries: await listLibraries(), default_library: defaultLib() });
       return json({ videos: await listVideos(String(body.library_id ?? '')) });
     }
