@@ -450,6 +450,8 @@
       const consent = $('input[type=checkbox]', form);
       msg.className = 'bx-formmsg err';
       if (!name || !/^\S+@\S+\.\S+$/.test(email)) { msg.textContent = 'اكتب الاسم وبريدًا إلكترونيًا صحيحًا.'; return; }
+      const blank = $$('select', form).find((el) => !el.value && /\*/.test((el.id && $(`label[for="${el.id}"]`, form) || {}).textContent || ''));
+      if (blank) { msg.textContent = 'اختر ' + $(`label[for="${blank.id}"]`, form).textContent.replace('*', '').trim() + '.'; blank.focus(); return; }
       if (consent && !consent.checked) { msg.textContent = 'يرجى الموافقة على الشروط للمتابعة.'; return; }
       if (type === 'institution' && PERSONAL_MAIL.test(email)) { msg.textContent = 'من فضلك استخدم إيميل الجهة (مثل name@university.edu.eg)، مش إيميل شخصي زي Gmail أو Yahoo.'; return; }
       btn.disabled = true; msg.className = 'bx-formmsg'; msg.textContent = 'جارٍ الإرسال…';

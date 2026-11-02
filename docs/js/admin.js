@@ -430,6 +430,7 @@
     ui.modal(`<h3>${esc(p.title || 'كورس')}</h3>
       <dl class="bx-kv"><dt>المحاضر</dt><dd>${esc(p.name || '')} · <span dir="ltr">${esc(p.email || '')}</span>${p.phone ? ` · <span dir="ltr">${esc(p.phone)}</span>` : ''}</dd><dt>التخصص</dt><dd>${esc(p.specialty || '—')}</dd><dt>المستوى</dt><dd>${esc(p.level || '—')}</dd><dt>الفئة</dt><dd>${esc(p.audience || '—')}</dd></dl>
       ${p.summary ? `<p class="bx-hint" style="white-space:pre-line">${esc(p.summary)}</p>` : ''}
+      ${p.description ? `<details class="bx-hint"><summary>الوصف الكامل</summary><p style="white-space:pre-line;margin-top:6px">${esc(p.description)}</p></details>` : ''}
       <h4 style="margin:8px 0">الدروس (${ls.length})</h4>
       <ol class="bx-wzreview">${ls.map((l) => `<li><b>${esc(l.title)}</b> ${l.bunny_video_id ? `${l.uploaded ? '' : '<small class="bx-hint">(الرفع ما اكتملش)</small> '}<button class="bx-linkbtn" data-pv="${l.id}">مشاهدة</button>` : ''}${l.video_url ? ` <a class="bx-linkbtn" href="${esc(l.video_url)}" target="_blank" rel="noopener">فتح اللينك</a>` : ''}${!l.bunny_video_id && !l.video_url ? ' <small class="bx-hint">بدون فيديو</small>' : ''}</li>`).join('')}</ol>
       ${!done && ls.some((l) => l.video_url && !l.bunny_video_id) ? '<div class="bx-btnrow" style="margin:8px 0"><button class="bs-btn bs-btn-secondary bs-btn-sm" data-imp>نقل الفيديوهات من اللينكات لـ Bunny</button><small class="bx-hint" id="impst"></small></div>' : ''}

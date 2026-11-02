@@ -7,7 +7,8 @@
   const esc = window.esc || ((s) => String(s ?? ''));
   const err = (e) => (window.arErr ? window.arErr(e) : e.message);
   const LEVELS = ['مبتدئ', 'مبتدئ ومتوسط', 'متوسط', 'متوسط ومتقدم', 'متقدم', 'كل المستويات'];
-  const AUDIENCE = ['طلاب', 'باحثون', 'مهنيون', 'الكل'];
+  const AUDIENCE = ['طلاب فقط', 'باحثون فقط', 'طلاب وباحثون', 'ستاف جامعة فقط', 'مهنيون فقط', 'طلاب وباحثون وستاف جامعة ومهنيون'];
+  const NEW_SPEC = '__new';
   const MAX_BYTES = 6 * 1024 * 1024 * 1024; // 6 GB per video
   const fmtSize = (b) => (b >= 1073741824 ? (b / 1073741824).toFixed(1) + ' GB' : Math.max(1, Math.round(b / 1048576)) + ' MB');
 
@@ -48,27 +49,38 @@
   // ---------- steps ----------
   function stepInfo() {
     const v = P || { name: (me && me.full_name) || '', email: sb.user.email || '', phone: (me && (me.phone || me.whatsapp)) || '' };
-    const specs = (window.FACULTIES || []).map((f) => `<optgroup label="${esc(f.name)}">${f.specs.map((s) => `<option ${s === v.specialty ? 'selected' : ''}>${esc(s)}</option>`).join('')}</optgroup>`).join('');
+    const FAC = window.FACULTIES || [];
+    const known = !v.specialty || v.specialty === 'كل التخصصات' || FAC.some((f) => f.specs.includes(v.specialty));
+    const specs = FAC.map((f) => `<optgroup label="${esc(f.name)}">${f.specs.map((s) => `<option ${s === v.specialty ? 'selected' : ''}>${esc(s)}</option>`).join('')}</optgroup>`).join('');
+    const facOpts = FAC.map((f) => `<option value="${f.id}" ${!known && f.id === v.faculty ? 'selected' : ''}>${esc(f.name)}</option>`).join('');
     root.innerHTML = `<form class="bx-form" id="wz1" novalidate style="gap:20px">
       <h4 class="bx-stephead"><span>البيانات الأساسية<small>عرّف نفسك والكورس والفئة اللي معمول لها.</small></span></h4>
       <div class="bx-form-grid">
         <div class="bx-field"><label for="w-n">اسم المحاضر *</label><input id="w-n" class="bx-input" value="${esc(v.name || '')}" placeholder="الاسم الكامل"></div>
         <div class="bx-field"><label for="w-e">البريد الإلكتروني *</label><input id="w-e" class="bx-input" type="email" dir="ltr" value="${esc(v.email || '')}"></div>
         <div class="bx-field"><label for="w-p">رقم الموبايل (واتساب)</label><input id="w-p" class="bx-input" type="tel" dir="ltr" value="${esc(v.phone || '')}" placeholder="01xxxxxxxxx"></div>
-        <div class="bx-field"><label for="w-a">الفئة المستهدفة</label><select id="w-a" class="bx-select">${AUDIENCE.map((a) => `<option ${a === v.audience ? 'selected' : ''}>${a}</option>`).join('')}</select></div>
+        <div class="bx-field"><label for="w-a">الفئة المستهدفة</label><select id="w-a" class="bx-select">${(v.audience && !AUDIENCE.includes(v.audience) ? [v.audience] : []).concat(AUDIENCE).map((a) => `<option ${a === v.audience ? 'selected' : ''}>${a}</option>`).join('')}</select></div>
         <div class="bx-field bx-wide"><label for="w-t">عنوان الكورس *</label><input id="w-t" class="bx-input" value="${esc(v.title || '')}" placeholder="اسم الدورة العلمية"></div>
-        <div class="bx-field"><label for="w-s">التخصص العلمي *</label><select id="w-s" class="bx-select"><option value="">اختر التخصص</option><option ${v.specialty === 'كل التخصصات' ? 'selected' : ''}>كل التخصصات</option>${specs}</select></div>
+        <div class="bx-field"><label for="w-s">التخصص العلمي *</label><select id="w-s" class="bx-select"><option value="">اختر التخصص</option><option value="${NEW_SPEC}" ${known ? '' : 'selected'}>＋ تخصص مش موجود؟ أضفه</option><option ${v.specialty === 'كل التخصصات' ? 'selected' : ''}>كل التخصصات</option>${specs}</select></div>
+        <div class="bx-field" data-newspec ${known ? 'hidden' : ''}><label for="w-sx">اكتب التخصص *</label><input id="w-sx" class="bx-input" maxlength="80" value="${known ? '' : esc(v.specialty)}" placeholder="مثال: علم الأدوية الإكلينيكي"></div>
+        <div class="bx-field" data-newspec ${known ? 'hidden' : ''}><label for="w-sf">الكلية الأقرب</label><select id="w-sf" class="bx-select"><option value="">مش متأكد</option>${facOpts}</select></div>
         <div class="bx-field"><label for="w-l">المستوى *</label><select id="w-l" class="bx-select">${LEVELS.map((l) => `<option ${l === v.level ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
-        <div class="bx-field bx-wide"><label for="w-d">نبذة عن الكورس</label><textarea id="w-d" class="bx-textarea" rows="3" placeholder="الكورس بيغطي إيه، وهيستفيد منه مين؟">${esc(v.summary || '')}</textarea></div>
+        <div class="bx-field bx-wide"><label for="w-d">نبذة قصيرة عن الكورس *</label><textarea id="w-d" class="bx-textarea" rows="2" maxlength="300" placeholder="جملة أو اتنين بتظهر على كارت الكورس (لحد 300 حرف)">${esc(v.summary || '')}</textarea></div>
+        <div class="bx-field bx-wide"><label for="w-fd">الوصف الكامل للكورس *</label><textarea id="w-fd" class="bx-textarea" rows="7" placeholder="الكورس بيغطي إيه بالتفصيل، هيتعلم الطالب إيه في الآخر، المتطلبات السابقة، ومناسب لمين.">${esc(v.description || '')}</textarea></div>
       </div>${foot('', '<button type="submit" class="bs-btn bs-btn-primary bs-btn-lg">حفظ ومتابعة</button>')}</form>`;
+    const sSel = $('#w-s', root);
+    sSel.onchange = () => { const on = sSel.value === NEW_SPEC; $$('[data-newspec]', root).forEach((d) => (d.hidden = !on)); if (on) $('#w-sx', root).focus(); };
     $('#wz1', root).onsubmit = async (e) => {
       e.preventDefault();
       const g = (id) => $('#' + id, root).value.trim();
-      const row = { name: g('w-n'), email: g('w-e'), phone: g('w-p') || null, audience: g('w-a'), title: g('w-t'), specialty: g('w-s') || null, level: g('w-l'), summary: g('w-d') || null };
-      const fac = (window.FACULTIES || []).find((f) => f.specs.includes(row.specialty)); row.faculty = row.specialty === 'كل التخصصات' ? 'all' : fac ? fac.id : null;
+      const custom = g('w-s') === NEW_SPEC;
+      const row = { name: g('w-n'), email: g('w-e'), phone: g('w-p') || null, audience: g('w-a'), title: g('w-t'), specialty: (custom ? g('w-sx') : g('w-s')) || null, level: g('w-l'), summary: g('w-d') || null, description: g('w-fd') || null };
+      const fac = (window.FACULTIES || []).find((f) => f.specs.includes(row.specialty)); row.faculty = custom ? g('w-sf') || null : row.specialty === 'كل التخصصات' ? 'all' : fac ? fac.id : null;
       if (!row.name || !/^\S+@\S+\.\S+$/.test(row.email)) return say('اكتب اسمك وإيميل صحيح.', 'err');
       if (!row.title) return say('اكتب عنوان الكورس.', 'err');
-      if (!row.specialty) return say('اختر التخصص العلمي.', 'err');
+      if (!row.specialty) return say(custom ? 'اكتب اسم التخصص.' : 'اختر التخصص العلمي.', 'err');
+      if (!row.summary) return say('اكتب نبذة قصيرة عن الكورس.', 'err');
+      if (!row.description || row.description.length < 40) return say('اكتب وصف كامل للكورس (40 حرف على الأقل).', 'err');
       const b = e.submitter || $('button[type=submit]', root); b.disabled = true; say('جارٍ الحفظ…');
       try { await saveInfo(row); setStep(2); } catch (x) { b.disabled = false; say(err(x), 'err'); }
     };

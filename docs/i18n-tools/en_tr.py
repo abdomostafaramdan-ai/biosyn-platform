@@ -392,3 +392,4 @@ EXTRA.update({
 "راجع البيانات قبل ما تبعت. بعد الإرسال مش هتقدر تعدّل لحد ما الفريق يراجع.": "Review before submitting. You can't edit after submitting until the team reviews it.",
 })
 EXTRA.update({"لينك Google Drive أو Dropbox، والملف لازم يكون متشارك «Anyone with the link». الفيديو هيتنقل للمنصة تلقائي.": "A Google Drive or Dropbox link — the file must be shared as “Anyone with the link”. The video will be moved to the platform automatically."})
+EXTRA.update({"طلاب فقط": "Students only", "باحثون فقط": "Researchers only", "طلاب وباحثون": "Students & researchers", "ستاف جامعة فقط": "University staff only", "مهنيون فقط": "Professionals only", "طلاب وباحثون وستاف جامعة ومهنيون": "Students, researchers, university staff & professionals", "اختر الفئة": "Choose audience"})

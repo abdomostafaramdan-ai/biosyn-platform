@@ -1008,7 +1008,13 @@ window.I18N_EN = {
 "ارفع فيديو كل درس من جهازك (MP4 أفضل). الرفع بيكمل حتى لو النت فصل ورجع، بس خلّي الصفحة مفتوحة لحد ما يخلص.": "Upload each lesson's video from your device (MP4 preferred). Uploads resume if your connection drops — just keep the page open until they finish.",
 "فريق Biosyn هيراجع الكورس والفيديوهات ويتواصل معاك على إيميلك. تقديم الطلب لا يعني القبول.": "The Biosyn team will review the course and videos and contact you by email. Submitting doesn't guarantee acceptance.",
 "راجع البيانات قبل ما تبعت. بعد الإرسال مش هتقدر تعدّل لحد ما الفريق يراجع.": "Review before submitting. You can't edit after submitting until the team reviews it.",
-"لينك Google Drive أو Dropbox، والملف لازم يكون متشارك «Anyone with the link». الفيديو هيتنقل للمنصة تلقائي.": "A Google Drive or Dropbox link — the file must be shared as “Anyone with the link”. The video will be moved to the platform automatically."
+"لينك Google Drive أو Dropbox، والملف لازم يكون متشارك «Anyone with the link». الفيديو هيتنقل للمنصة تلقائي.": "A Google Drive or Dropbox link — the file must be shared as “Anyone with the link”. The video will be moved to the platform automatically.",
+"طلاب فقط": "Students only",
+"باحثون فقط": "Researchers only",
+"طلاب وباحثون": "Students & researchers",
+"ستاف جامعة فقط": "University staff only",
+"مهنيون فقط": "Professionals only",
+"طلاب وباحثون وستاف جامعة ومهنيون": "Students, researchers, university staff & professionals"
 };
 
 window.I18N_EN_PATTERNS = (function () {
