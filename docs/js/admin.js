@@ -99,9 +99,15 @@
       const [courses, insts, fl] = await Promise.all([sb.get('courses', { select: '*,lectures(id)', order: 'created_at.desc' }), sb.rpc('admin_users').then((u) => u.filter((x) => x.role === 'instructor')).catch(() => []), sb.get('featured_instructors', { select: 'id,name' }).catch(() => [])]);
       const nameOf = Object.fromEntries(insts.map((i) => [i.id, i.full_name || i.email])), fName = Object.fromEntries(fl.map((i) => [i.id, i.name]));
       main.innerHTML = D.panel('الدورات', D.table(['الدورة', 'النوع', 'المحاضر', 'المحاضرات', 'الحالة', ''], courses.map((c) => [`<b class="bs-latin">${esc(c.title)}</b>`, c.kind === 'interactive' ? 'تفاعلي' : 'مسجل', esc((c.featured_instructor_ids || []).map((id) => fName[id]).filter(Boolean).join('، ') || fName[c.featured_instructor_id] || nameOf[c.instructor_id] || '—'), (c.lectures || []).length, D.badge('course', c.status), isAdmin() ? `<button class="bx-linkbtn" data-edit="${c.id}">تعديل</button>` : '']), 'لا توجد دورات'),
-        isAdmin() ? '<button class="bs-btn bs-btn-primary bs-btn-sm" id="newc">+ دورة جديدة</button>' : '');
+        isAdmin() ? '<span class="bx-btnrow"><button class="bs-btn bs-btn-ghost bs-btn-sm" id="newbl">+ كورس من مكتبة Bunny</button><button class="bs-btn bs-btn-primary bs-btn-sm" id="newc">+ دورة جديدة</button></span>' : '');
       const open = (c) => courseForm(c, insts);
       const nc = $('#newc', main); if (nc) nc.onclick = () => open(null);
+      const nb = $('#newbl', main); if (nb) nb.onclick = () => pickLibrary(async (lib) => {
+        const slug = (lib.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'course') + '-' + lib.id;
+        const [c] = await sb.insert('courses', { title: lib.name, slug, kind: 'recorded', status: 'draft', level: 'beginner', cover_code: lib.name.split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || null });
+        const n = await addLibraryLectures(c.id, lib, []);
+        ui.toast(`اتعمل كورس «${lib.name}» بـ ${n} محاضرة كمسودة. كمّل بياناته وانشره.`); D.reload(); setTimeout(() => open(c), 400);
+      });
       $$('[data-edit]', main).forEach((b) => (b.onclick = () => open(courses.find((c) => c.id === b.dataset.edit))));
     },
 
@@ -323,8 +329,8 @@
           `<div class="row2">${field('FAWATERK_API_KEY', 'API key', '')}${field('FAWATERK_BASE_URL', 'رابط الخادم (اختياري)', 'https://staging.fawaterk.com', 'text')}</div>${fee('FAWATERK')}${hook('webhook-fawaterk')}`)}
         ${card('stripe', 'Stripe — بطاقات دولية', 'من لوحة Stripe: Developers ← API keys (Secret key)، وWebhooks ← أضف الرابط بالأسفل مع حدث checkout.session.completed ثم انسخ Signing secret.', ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET'],
           `<div class="row2">${field('STRIPE_SECRET_KEY', 'Secret key', 'sk_live_…')}${field('STRIPE_WEBHOOK_SECRET', 'Webhook signing secret', 'whsec_…')}</div>${fee('STRIPE')}${hook('webhook-stripe')}`)}
-        ${card('bunny', 'Bunny Stream — استضافة الفيديو', 'من Bunny: Stream ← مكتبتك ← API: انسخ Library ID وAPI Key (ده اللي بيخلّي المحاضرين وإنت ترفعوا فيديوهات من الموقع مباشرة). ومن Security فعّل Token Authentication وانسخ مفتاحه (لحماية الفيديوهات من التحميل).', ['BUNNY_LIBRARY_ID', 'BUNNY_API_KEY', 'BUNNY_TOKEN_KEY'],
-          `<div class="row2">${field('BUNNY_LIBRARY_ID', 'Library ID', '123456', 'text')}${field('BUNNY_API_KEY', 'API Key (للرفع)', '')}</div><div class="row2">${field('BUNNY_TOKEN_KEY', 'Token authentication key', '')}</div>`)}
+        ${card('bunny', 'Bunny Stream — استضافة الفيديو', 'الأسهل: من Bunny افتح Account settings ← API وانسخ «API Key» بتاع الحساب (Account API Key). ده لوحده بيخلّي المنصة تشوف كل مكتباتك وتستورد الكورسات منها وترفع فيديوهات جديدة. وفي Library ID اكتب رقم المكتبة اللي الفيديوهات الجديدة (من المحاضرين ومنك) تترفع فيها.', ['BUNNY_ACCOUNT_KEY', 'BUNNY_LIBRARY_ID'],
+          `<div class="row2">${field('BUNNY_ACCOUNT_KEY', 'Account API Key', '')}${field('BUNNY_LIBRARY_ID', 'Library ID (للرفع الجديد)', '614141', 'text')}</div><details><summary class="bx-hint">إعدادات اختيارية</summary><div class="row2">${field('BUNNY_API_KEY', 'API Key بتاع المكتبة (لو مش هتحط Account key)', '')}${field('BUNNY_TOKEN_KEY', 'Token authentication key (لو مفعّل في المكتبة)', '')}</div></details>`)}
         ${card('resend', 'Resend — إيميلات المنصة', 'من resend.com: API Keys، وفعّل دومين الإرسال من Domains. عنوان المرسل مثل: Biosyn &lt;no-reply@biosynegypt.com&gt;', ['RESEND_API_KEY', 'MAIL_FROM'],
           `<div class="row2">${field('RESEND_API_KEY', 'API key', 're_…')}${field('MAIL_FROM', 'عنوان المرسل', 'Biosyn <no-reply@biosynegypt.com>', 'text')}</div>`)}
         ${card('meta', 'Meta Pixel وGoogle Analytics — تتبع الإعلانات', 'رقم الـPixel من Events Manager، وتوكن Conversions API من إعدادات الـPixel (اختياري)، ومعرّف GA4 يبدأ بـ G-.', ['META_PIXEL_ID'],
@@ -536,6 +542,42 @@
     });
   }
 
+
+  // ---------- import lectures from a Bunny Stream library ----------
+  const natural = (a, b) => a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' });
+  async function pickLibrary(onPick) {
+    let libs;
+    try { const r = await sb.fn('bunny-upload', { action: 'libraries' }); libs = r.libraries || []; }
+    catch (e) { ui.toast(e.status === 503 ? 'حط «Account API Key» بتاع Bunny في صفحة التكاملات الأول.' : arErr(e), 'err'); return; }
+    ui.modal(`<h3>اختار مكتبة من Bunny</h3><p class="bx-hint" style="margin-top:0">كل فيديو في المكتبة هيبقى محاضرة.</p>
+      <div class="row2"><div class="bx-field"><label for="blsel">المكتبة</label><select id="blsel" class="bx-select">${libs.map((l) => `<option value="${esc(l.id)}" data-name="${esc(l.name)}">${esc(l.name)} (${l.videos} فيديو)</option>`).join('')}</select></div>
+      <div class="bx-field"><label for="blord">ترتيب المحاضرات</label><select id="blord" class="bx-select"><option value="title">حسب اسم الفيديو (1، 2، 3…)</option><option value="date">حسب تاريخ الرفع</option></select></div></div>
+      <div class="bx-formmsg" aria-live="polite"></div><div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" data-go>استيراد</button><button class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div>`,
+    (m, close) => {
+      $('[data-x]', m).onclick = close;
+      $('[data-go]', m).onclick = async (e) => {
+        const sel = $('#blsel', m), lib = sel.value, name = sel.selectedOptions[0] ? sel.selectedOptions[0].dataset.name : '';
+        e.target.disabled = true; say($('.bx-formmsg', m), 'بنجيب الفيديوهات…');
+        try { const r = await sb.fn('bunny-upload', { action: 'library_videos', library_id: lib }); let vids = r.videos || [];
+          vids = $('#blord', m).value === 'date' ? vids.sort((a, b) => a.date.localeCompare(b.date)) : vids.sort(natural);
+          await onPick({ id: lib, name, videos: vids }); close();
+        } catch (err) { e.target.disabled = false; say($('.bx-formmsg', m), arErr(err), 'err'); }
+      };
+    });
+  }
+  async function addLibraryLectures(courseId, lib, existing) {
+    const have = new Set((existing || []).map((l) => (l.lecture_videos && (l.lecture_videos.bunny_video_id || (l.lecture_videos[0] && l.lecture_videos[0].bunny_video_id))) || '').filter(Boolean));
+    let pos = existing && existing.length ? Math.max(...existing.map((l) => l.position)) : 0, n = 0;
+    for (const v of lib.videos) {
+      if (have.has(v.guid)) continue;
+      pos++;
+      const [row] = await sb.insert('lectures', { course_id: courseId, position: pos, title: (v.title || 'محاضرة ' + pos).replace(/\.(mp4|mov|mkv|webm|avi|m4v)$/i, '').slice(0, 200), duration_seconds: v.length || null });
+      await sb.insert('lecture_videos', { lecture_id: row.id, bunny_video_id: v.guid, bunny_library_id: lib.id });
+      n++;
+    }
+    return n;
+  }
+
   // ---------- course editor (modal) ----------
   async function courseForm(c, insts) {
     const isNew = !c; c = c || { kind: 'recorded', status: 'draft', level: 'beginner' };
@@ -564,7 +606,7 @@
         <div class="bx-formmsg" id="cm" aria-live="polite"></div>
         <div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">${isNew ? 'إنشاء' : 'حفظ'}</button><button class="bs-btn bs-btn-ghost" type="button" data-x>إغلاق</button></div>
       </form>
-      ${isNew ? '<p class="bx-hint">بعد الإنشاء يمكنك إضافة المحاضرات.</p>' : `<hr style="border:0;border-top:1px solid var(--line);width:100%"><h3>المحاضرات</h3><div id="ll"></div><div id="lfiles" style="margin-top:12px"></div>
+      ${isNew ? '<p class="bx-hint">بعد الإنشاء يمكنك إضافة المحاضرات.</p>' : `<hr style="border:0;border-top:1px solid var(--line);width:100%"><div class="bx-spread"><h3>المحاضرات</h3><button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" id="lbimp">استيراد من مكتبة Bunny</button></div><div id="ll"></div><div id="lfiles" style="margin-top:12px"></div>
       <form class="bx-form2" id="lf" novalidate><div class="row2"><div class="bx-field"><label for="lt">عنوان المحاضرة</label><input id="lt" class="bx-input"></div><div class="bx-field"><label for="lv">فيديو المحاضرة (Bunny)</label><input id="lv" class="bx-input" dir="ltr" placeholder="ارفع فيديو أو الصق GUID"><span class="bx-btnrow" style="margin-top:6px;align-items:center"><label class="bs-btn bs-btn-ghost bs-btn-sm" style="cursor:pointer">رفع فيديو من جهازك<input type="file" id="lfile" accept="video/*" hidden></label><small class="bx-hint" id="lup"></small></span></div><div class="bx-field"><label for="ld">المدة (دقائق:ثواني)</label><input id="ld" class="bx-input" dir="ltr" placeholder="12:30"></div></div><label class="bx-hint" style="display:flex;gap:6px;align-items:center;margin:8px 0"><input type="checkbox" id="lpv"> محاضرة معاينة مجانية (يشاهدها أي زائر مسجّل دخوله)</label><div class="bx-formmsg" id="lm" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-secondary" type="submit">+ إضافة محاضرة</button></div></form>`}`,
     (m, cl) => {
       $('[data-x]', m).onclick = cl;
@@ -674,6 +716,7 @@
             await reload();
           } catch (err) { ui.toast(arErr(err), 'err'); }
         });
+        $('#lbimp', m).onclick = () => pickLibrary(async (lib) => { const n = await addLibraryLectures(c.id, lib, lects); ui.toast(n ? `اتضاف ${n} محاضرة من «${lib.name}».` : 'كل فيديوهات المكتبة دي موجودة بالفعل.'); await reload(); });
         $('#lfile', m).onchange = async (ev) => {
           const f = ev.target.files[0]; if (!f) return; const st = $('#lup', m), sub = $('#lf button[type=submit]', m);
           sub.disabled = true; st.textContent = 'بنجهّز الرفع…';

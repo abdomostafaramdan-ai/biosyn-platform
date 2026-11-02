@@ -22,9 +22,12 @@ Deno.serve(async (req) => {
   const { data: devOk } = await sb.rpc('claim_device', { p_user: user.id, p_device: String(device_id ?? ''), p_label: String(device_label ?? '').slice(0, 80) });
   if (!devOk) return json({ error: 'device limit' }, 403);
 
-  const { data: v } = await sb.from('lecture_videos').select('bunny_video_id').eq('lecture_id', lecture_id).single();
+  const { data: v } = await sb.from('lecture_videos').select('bunny_video_id,bunny_library_id').eq('lecture_id', lecture_id).single();
   await loadSecrets(sb);
-  const lib = sec('BUNNY_LIBRARY_ID'), key = sec('BUNNY_TOKEN_KEY');
-  if (!v || !lib || !key) return json({ error: 'video not available yet' }, 404);
-  return json({ url: await bunnyEmbedUrl(lib, v.bunny_video_id, key) });
+  const def = sec('BUNNY_LIBRARY_ID'), key = sec('BUNNY_TOKEN_KEY');
+  const lib = (v && v.bunny_library_id) || def;
+  if (!v || !lib) return json({ error: 'video not available yet' }, 404);
+  // the default library is signed with its token key; other libraries (one per course) play through Bunny's
+  // own protection (MediaCage DRM + allowed domains) since their token keys aren't stored here
+  return json({ url: key && lib === def ? await bunnyEmbedUrl(lib, v.bunny_video_id, key) : `https://iframe.mediadelivery.net/embed/${lib}/${v.bunny_video_id}` });
 });
