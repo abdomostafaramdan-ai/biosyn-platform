@@ -391,3 +391,4 @@ EXTRA.update({
 "فريق Biosyn هيراجع الكورس والفيديوهات ويتواصل معاك على إيميلك. تقديم الطلب لا يعني القبول.": "The Biosyn team will review the course and videos and contact you by email. Submitting doesn't guarantee acceptance.",
 "راجع البيانات قبل ما تبعت. بعد الإرسال مش هتقدر تعدّل لحد ما الفريق يراجع.": "Review before submitting. You can't edit after submitting until the team reviews it.",
 })
+EXTRA.update({"لينك Google Drive أو Dropbox، والملف لازم يكون متشارك «Anyone with the link». الفيديو هيتنقل للمنصة تلقائي.": "A Google Drive or Dropbox link — the file must be shared as “Anyone with the link”. The video will be moved to the platform automatically."})

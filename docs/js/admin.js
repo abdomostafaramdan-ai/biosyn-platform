@@ -426,6 +426,7 @@
       ${p.summary ? `<p class="bx-hint" style="white-space:pre-line">${esc(p.summary)}</p>` : ''}
       <h4 style="margin:8px 0">الدروس (${ls.length})</h4>
       <ol class="bx-wzreview">${ls.map((l) => `<li><b>${esc(l.title)}</b> ${l.bunny_video_id ? `${l.uploaded ? '' : '<small class="bx-hint">(الرفع ما اكتملش)</small> '}<button class="bx-linkbtn" data-pv="${l.id}">مشاهدة</button>` : ''}${l.video_url ? ` <a class="bx-linkbtn" href="${esc(l.video_url)}" target="_blank" rel="noopener">فتح اللينك</a>` : ''}${!l.bunny_video_id && !l.video_url ? ' <small class="bx-hint">بدون فيديو</small>' : ''}</li>`).join('')}</ol>
+      ${!done && ls.some((l) => l.video_url && !l.bunny_video_id) ? '<div class="bx-btnrow" style="margin:8px 0"><button class="bs-btn bs-btn-secondary bs-btn-sm" data-imp>نقل الفيديوهات من اللينكات لـ Bunny</button><small class="bx-hint" id="impst"></small></div>' : ''}
       <div id="pvbox"></div>
       <div class="bx-formmsg" aria-live="polite"></div>
       <div class="bx-modal-actions">${done ? `<a class="bs-btn bs-btn-primary" href="admin.html#courses">الكورس اتعمل — روح للدورات</a>` : isAdmin() ? `<button class="bs-btn bs-btn-primary" data-acc>قبول وتحويل لكورس</button><button class="bs-btn bs-btn-ghost" data-rev>قيد المراجعة</button><button class="bs-btn bs-btn-ghost" data-rej style="color:var(--danger-text)">رفض</button>` : ''}<button class="bs-btn bs-btn-ghost" data-x>إغلاق</button></div>`,
@@ -438,13 +439,23 @@
         catch (e) { say(msg, e.status === 503 ? 'اربط Bunny من «التكاملات» عشان تشوف الفيديوهات.' : arErr(e), 'err'); }
         b.disabled = false;
       }));
+      const importAll = async () => {
+        const st = $('#impst', m); if (st) st.textContent = 'بننقل الفيديوهات… ممكن ياخد دقيقة.';
+        const r = await sb.fn('bunny-upload', { action: 'import_all', proposal_id: p.id });
+        const res = Object.values(r.results || {}); const okN = res.filter((x) => x.video_id).length, q = res.filter((x) => x.queued).length, bad = res.filter((x) => x.error && x.error !== 'no link');
+        const yt = bad.filter((x) => x.error === 'youtube').length;
+        const txt = `اتنقل ${okN}${q ? ` · ${q} في الطريق` : ''}${bad.length ? ` · ${bad.length} فشل${yt ? ' (لينكات YouTube مينفعش)' : ' (اتأكد إن الملفات متشاركة Anyone with the link)'}` : ''}`;
+        if (st) st.textContent = txt; return { okN, bad: bad.length };
+      };
+      const ib = $('[data-imp]', m); if (ib) ib.onclick = async () => { ib.disabled = true; try { await importAll(); } catch (e) { say(msg, e.status === 503 ? 'اربط Bunny من «التكاملات» الأول.' : arErr(e), 'err'); } ib.disabled = false; };
       const setSt = async (status) => { await sb.update('course_proposals', { id: 'eq.' + p.id }, { status, updated_at: new Date().toISOString() }); p.status = status; };
       const rev = $('[data-rev]', m); if (rev) rev.onclick = async () => { try { await setSt('in_review'); ui.toast('اتحوّل لقيد المراجعة.'); } catch (e) { say(msg, arErr(e), 'err'); } };
       const rej = $('[data-rej]', m); if (rej) rej.onclick = async () => { if (!confirm('رفض الكورس؟')) return; try { await setSt('rejected'); ui.toast('اترفض.'); close(); D.reload(); } catch (e) { say(msg, arErr(e), 'err'); } };
       const acc = $('[data-acc]', m); if (acc) acc.onclick = async () => {
         if (!confirm('هيتعمل كورس مسودة بالمحاضرات والفيديوهات، وحساب المحاضر هيتحوّل لمحاضر. نكمل؟')) return;
         acc.disabled = true; say(msg, 'جارٍ إنشاء الكورس…');
-        try { await sb.rpc('accept_course_proposal', { p_id: p.id }); ui.toast('اتعمل الكورس كمسودة في «الدورات». راجعه وانشره.'); close(); location.hash = '#courses'; }
+        try { if (ls.some((l) => l.video_url && !l.bunny_video_id)) { say(msg, 'بننقل الفيديوهات من اللينكات لـ Bunny الأول…'); try { await importAll(); } catch (e) { /* create the course anyway */ } }
+          await sb.rpc('accept_course_proposal', { p_id: p.id }); ui.toast('اتعمل الكورس كمسودة في «الدورات». راجعه وانشره.'); close(); location.hash = '#courses'; }
         catch (e) { acc.disabled = false; say(msg, arErr(e), 'err'); }
       };
     });

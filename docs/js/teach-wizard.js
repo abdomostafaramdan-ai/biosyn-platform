@@ -115,7 +115,7 @@
   function stepVideos() {
     const done = () => L.every((l) => l.uploaded || l.video_url);
     root.innerHTML = `<form class="bx-form" id="wz3" novalidate style="gap:16px">
-      <h4 class="bx-stephead"><span>الفيديوهات<small>${ready ? 'ارفع فيديو كل درس من جهازك (MP4 أفضل). الرفع بيكمل حتى لو النت فصل ورجع، بس خلّي الصفحة مفتوحة لحد ما يخلص.' : 'رفع الفيديوهات من الموقع هيتفعّل قريب. لحد ده حط لينك لكل فيديو (Google Drive أو YouTube غير مُدرج) والفريق هيتابع معاك.'}</small></span></h4>
+      <h4 class="bx-stephead"><span>الفيديوهات<small>${ready ? 'ارفع فيديو كل درس من جهازك (MP4 أفضل). الرفع بيكمل حتى لو النت فصل ورجع، بس خلّي الصفحة مفتوحة لحد ما يخلص.' : 'رفع الفيديوهات من الموقع هيتفعّل قريب. لحد ده حط لينك Google Drive لكل فيديو (متشارك Anyone with the link) والفيديو هيتنقل للمنصة.'}</small></span></h4>
       <div class="bx-wzlist">${L.map((l, i) => `<div class="bx-wzvid" data-l="${l.id}"><div class="bx-wzvid-top"><b class="bx-wznum">${i + 1}</b><b class="bx-wzvid-t">${esc(l.title)}</b><span data-state>${lessonState(l)}</span></div>
         ${ready ? `<div class="bx-wzvid-act"><label class="bs-btn bs-btn-ghost bs-btn-sm bx-filebtn">${l.uploaded ? 'استبدال الفيديو' : 'اختر فيديو'}<input type="file" accept="video/*" data-file hidden></label><div class="bx-prog" hidden><i></i></div><small class="bx-hint" data-pct></small></div>` : ''}
         <details class="bx-wzlink" ${!ready && !l.video_url ? 'open' : ''}><summary class="bx-hint">${ready ? 'أو حط لينك بدل الرفع' : 'لينك الفيديو'}</summary><div class="bx-btnrow"><input class="bx-input" dir="ltr" data-url value="${esc(l.video_url || '')}" placeholder="https://drive.google.com/…"><button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" data-saveurl>حفظ</button></div></details></div>`).join('')}</div>
@@ -157,7 +157,17 @@
       $('[data-saveurl]', box).onclick = async () => {
         const v = $('[data-url]', box).value.trim();
         if (v && !/^https:\/\/\S+$/.test(v)) return say('اللينك لازم يبدأ بـ https://', 'err');
-        try { await sb.update('proposal_lessons', { id: 'eq.' + l.id }, { video_url: v || null }); l.video_url = v || null; st.innerHTML = lessonState(l); say('اتحفظ اللينك.', 'ok'); } catch (x) { say(err(x), 'err'); }
+        if (v && /(youtube\.com|youtu\.be)\//i.test(v)) return say('لينكات YouTube مينفعش تتنقل للمنصة. ارفع الملف أو حط لينك Google Drive.', 'err');
+        try {
+          await sb.update('proposal_lessons', { id: 'eq.' + l.id }, { video_url: v || null }); l.video_url = v || null; st.innerHTML = lessonState(l); say('اتحفظ اللينك.', 'ok');
+          if (v && ready) {
+            say('بننقل الفيديو من اللينك للمنصة…');
+            const r = await sb.fn('bunny-upload', { action: 'import', lesson_id: l.id }); const res = (r.results || {})[l.id] || {};
+            if (res.video_id) { l.uploaded = true; l.bunny_video_id = res.video_id; st.innerHTML = lessonState(l); say('اتنقل الفيديو للمنصة ✓', 'ok'); }
+            else if (res.queued) say('اتبعت للمنصة وهيتنقل خلال دقايق.', 'ok');
+            else say('اتحفظ اللينك، بس النقل التلقائي ما نجحش. اتأكد إن الملف متشارك "Anyone with the link".', 'err');
+          }
+        } catch (x) { say(err(x), 'err'); }
       };
     });
     $('#wz3', root).onsubmit = (e) => {
