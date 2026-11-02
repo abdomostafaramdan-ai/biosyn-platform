@@ -50,31 +50,34 @@
       ]);
       const rev = pays.reduce((s, p) => s + Number(p.amount_egp), 0);
       const newReq = reqs.filter((r) => r.status === 'new');
-      D.setBadge('requests', newReq.length);
+      D.setBadge('requests', newReq.filter((r) => r.type !== 'refund').length);
+      if (reqs.some((r) => r.type === 'refund')) views._payTab = 'ref';
       main.innerHTML = `<div class="bx-stats">
           ${D.stat('اشتراكات سارية', subs.length)}
           ${D.stat('إيراد هذا الشهر', D.money(rev), 'مدفوعات مؤكدة (قبل رسوم البوابة)')}
           ${D.stat('طلبات جديدة', newReq.length, reqs.length + ' بانتظار إجراء')}
           ${D.stat('سحوبات معلّقة', pouts.length, pouts.length ? D.money(pouts.reduce((s, p) => s + Number(p.amount_egp), 0)) : '')}
         </div>
-        ${D.panel('ما يحتاج إجراءك اليوم', reqs.length || pouts.length ? `<ol class="bx-focus">${reqs.slice(0, 6).map((r) => `<li><div class="bx-date bx-date-sm"><small>${esc(D.reqType[r.type] || '')}</small><b>•</b></div><div><b>${esc(r.name)}</b><span>${D.dateTime(r.created_at)}</span></div><a class="bs-btn bs-btn-secondary bs-btn-sm" href="#requests">افتح</a></li>`).join('')}${pouts.length ? `<li><div class="bx-date bx-date-sm"><small>سحب</small><b>•</b></div><div><b>${pouts.length} طلب سحب أرباح</b><span>${D.money(pouts.reduce((s, p) => s + Number(p.amount_egp), 0))}</span></div><a class="bs-btn bs-btn-secondary bs-btn-sm" href="#payouts">افتح</a></li>` : ''}</ol>` : '<div class="bx-empty-big"><b>لا شيء ينتظرك الآن</b></div>')}
+        ${D.panel('ما يحتاج إجراءك اليوم', reqs.length || pouts.length ? `<ol class="bx-focus">${reqs.slice(0, 6).map((r) => `<li><div class="bx-date bx-date-sm"><small>${esc(D.reqType[r.type] || '')}</small><b>•</b></div><div><b>${esc(r.name)}</b><span>${D.dateTime(r.created_at)}</span></div><a class="bs-btn bs-btn-secondary bs-btn-sm" href="${r.type === 'refund' ? '#payments' : '#requests'}">افتح</a></li>`).join('')}${pouts.length ? `<li><div class="bx-date bx-date-sm"><small>سحب</small><b>•</b></div><div><b>${pouts.length} طلب سحب أرباح</b><span>${D.money(pouts.reduce((s, p) => s + Number(p.amount_egp), 0))}</span></div><a class="bs-btn bs-btn-secondary bs-btn-sm" href="#payouts">افتح</a></li>` : ''}</ol>` : '<div class="bx-empty-big"><b>لا شيء ينتظرك الآن</b></div>')}
         ${courses.filter((c) => c.status === 'draft').length ? `<p class="bx-hint">${courses.filter((c) => c.status === 'draft').length} دورة ما زالت مسودة. أضف محاضراتها من «الدورات» ثم انشرها.</p>` : ''}`;
     },
 
     async requests(main) {
-      const [reqs, users] = await Promise.all([sb.get('requests', { select: '*', order: 'created_at.desc', limit: 200 }), sb.rpc('admin_users').catch(() => [])]);
+      const [reqs, users] = await Promise.all([sb.get('requests', { select: '*', type: 'neq.refund', order: 'created_at.desc', limit: 200 }), sb.rpc('admin_users').catch(() => [])]);
       const byId = Object.fromEntries(users.map((u) => [u.id, u]));
       const pids = [...new Set(reqs.map((r) => r.payload && r.payload.proposal_id).filter(Boolean))];
       const lessonsByProp = {};
       if (pids.length) (await sb.get('proposal_lessons', { select: 'id,proposal_id,title,video_url,bunny_video_id,position', proposal_id: 'in.(' + pids.join(',') + ')', order: 'position.asc' }).catch(() => [])).forEach((l) => (lessonsByProp[l.proposal_id] = lessonsByProp[l.proposal_id] || []).push(l));
       D.setBadge('requests', reqs.filter((r) => r.status === 'new').length);
+      const nRef = (await sb.get('requests', { select: 'id', type: 'eq.refund', status: 'in.(new,in_review)' }).catch(() => [])).length;
       let type = '', status = 'open';
       const draw = () => {
         const list = reqs.filter((r) => (!type || r.type === type) && (status === 'all' || (status === 'open' ? ['new', 'in_review'].includes(r.status) : r.status === status)));
         $('#rl').innerHTML = list.length ? list.map((r) => reqCard(r, byId, lessonsByProp)).join('') : '<div class="bx-empty-big"><b>لا توجد طلبات</b></div>';
       };
-      main.innerHTML = `<div class="bx-btnrow" style="margin-bottom:16px"><div class="bx-field"><label for="ft" class="bx-hint">النوع</label><select id="ft" class="bx-select"><option value="">كل الأنواع</option>${Object.entries(D.reqType).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></div>
-        <div class="bx-field"><label for="fs" class="bx-hint">الحالة</label><select id="fs" class="bx-select"><option value="open">مفتوحة</option><option value="all">الكل</option><option value="accepted">مقبولة</option><option value="rejected">مرفوضة</option></select></div></div><div id="rl" style="display:grid;gap:12px"></div>`;
+      main.innerHTML = `<div class="bx-btnrow" style="margin-bottom:16px"><div class="bx-field"><label for="ft" class="bx-hint">النوع</label><select id="ft" class="bx-select"><option value="">كل الأنواع</option>${Object.entries(D.reqType).filter(([k]) => k !== 'refund').map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></div>
+        <div class="bx-field"><label for="fs" class="bx-hint">الحالة</label><select id="fs" class="bx-select"><option value="open">مفتوحة</option><option value="all">الكل</option><option value="accepted">مقبولة</option><option value="rejected">مرفوضة</option></select></div></div>${nRef ? `<p class="bx-hint" style="margin:0 0 12px">طلبات الاسترداد بقت في <a class="bx-link" href="#payments">المدفوعات ← طلبات الاسترداد</a> (${nRef} مفتوح).</p>` : ''}<div id="rl" style="display:grid;gap:12px"></div>`;
+      if (nRef) views._payTab = 'ref';
       $('#ft').onchange = (e) => { type = e.target.value; draw(); };
       $('#fs').onchange = (e) => { status = e.target.value; draw(); };
       $('#rl').addEventListener('click', async (e) => {
@@ -132,22 +135,164 @@
     },
 
     async payments(main) {
-      const rows = await sb.get('payments', { select: '*,profiles(full_name),plans(name),courses(title)', order: 'created_at.desc', limit: 200 });
-      main.innerHTML = D.panel('المدفوعات', D.table(['التاريخ', 'العميل', 'البند', 'السعر', 'الرسوم', 'البوابة', 'الحالة', ''], rows.map((p) => {
-        const ref = p.purpose === 'interactive_course' && p.status === 'paid' && p.paid_at && Date.now() <= new Date(p.paid_at).getTime() + 7 * 864e5;
-        const manual = p.gateway === 'manual' && p.status === 'pending' && isAdmin();
-        return [D.date(p.created_at), esc((p.profiles && p.profiles.full_name) || '—'), esc(p.plans ? p.plans.name : p.courses ? p.courses.title : '—') + (p.receipt_no ? `<br><small class="bx-hint">إيصال ${p.receipt_no}</small>` : ''), D.money(p.amount_egp) + (Number(p.discount_egp) ? `<br><small class="bx-hint">خصم ${D.money(p.discount_egp)}</small>` : ''), D.money(p.fee_egp), (D.gw[p.gateway] || p.gateway) + (p.gateway === 'manual' ? `<br><small class="bx-hint">${p.manual_method === 'instapay' ? 'إنستاباي' : 'فودافون كاش'} · <span class="bs-latin">${esc(p.manual_ref || '')}</span></small>` : ''), D.badge('pay', p.status), manual ? `<button class="bx-linkbtn" data-ma="${p.id}">تأكيد الاستلام</button> · <button class="bx-linkbtn" data-mr="${p.id}" style="color:var(--danger-text)">رفض</button>` : ref && isAdmin() ? `<button class="bx-linkbtn" data-rf="${p.id}">استرداد</button>` : ''];
-      }), 'لا توجد مدفوعات'));
-      $$('[data-ma],[data-mr]', main).forEach((b) => (b.onclick = async () => {
-        const ok = !!b.dataset.ma, id = b.dataset.ma || b.dataset.mr;
-        if (!confirm(ok ? 'تأكيد وصول التحويل وتفعيل الاشتراك/التسجيل؟' : 'رفض هذا التحويل؟')) return;
-        try { await sb.rpc('admin_review_manual', { p_payment: id, p_approve: ok }); ui.toast(ok ? 'تم التأكيد والتفعيل.' : 'تم الرفض.'); D.reload(); } catch (e) { ui.toast(arErr(e), 'err'); }
-      }));
-      $$('[data-rf]', main).forEach((b) => (b.onclick = async () => {
-        if (!confirm('تنفيذ الاسترداد وإلغاء تسجيل الطالب في الكورس؟')) return;
-        try { const r = await doRefund(b.dataset.rf); if (r.manual) { if (!confirm('هذه البوابة لا تدعم الاسترداد الآلي. هل نفّذته من لوحة البوابة؟')) return; await sb.fn('refund-payment', { payment_id: b.dataset.rf, manual_confirmed: true }); } ui.toast('تم الاسترداد.'); D.reload(); }
-        catch (e) { ui.toast((e.data && e.data.error) || arErr(e), 'err'); }
-      }));
+      const [rows, refs] = await Promise.all([
+        sb.get('payments', { select: '*,profiles(full_name),plans(name),courses(title)', order: 'created_at.desc', limit: 1000 }),
+        sb.get('requests', { select: '*', type: 'eq.refund', order: 'created_at.desc', limit: 500 }).catch(() => []),
+      ]);
+      const payById = Object.fromEntries(rows.map((p) => [p.id, p]));
+      const openRef = (r) => ['new', 'in_review'].includes(r.status);
+      const refByPay = {}; refs.forEach((r) => { const k = r.payload && r.payload.payment_id; if (k && (!refByPay[k] || openRef(r))) refByPay[k] = r; });
+      D.setBadge('payments', refs.filter(openRef).length);
+      const itemOf = (p) => (p ? (p.plans ? p.plans.name : p.courses ? p.courses.title : '—') : '—');
+      const paidSum = (list) => list.reduce((s, p) => s + Number(p.amount_egp || 0), 0);
+      const daysLeft = (p) => (p && p.paid_at ? Math.ceil((new Date(p.paid_at).getTime() + 7 * 864e5 - Date.now()) / 864e5) : null);
+      const inRange = (iso, from, to) => (!from || iso >= from) && (!to || iso.slice(0, 10) <= to);
+      const canRefund = (p) => p && p.purpose === 'interactive_course' && p.status === 'paid' && daysLeft(p) > 0;
+      const F = { tab: views._payTab || 'pay', q: '', status: '', kind: '', gw: '', from: '', to: '', rs: 'open' };
+      const csv = (name, head, data) => {
+        const cell = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob(['﻿' + [head, ...data].map((r) => r.map(cell).join(',')).join('\n')], { type: 'text/csv;charset=utf-8' }));
+        a.download = `${name}-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+      };
+      const match = (q, ...xs) => !q || xs.join(' ').toLowerCase().includes(q.toLowerCase());
+
+      const payList = () => rows.filter((p) => (!F.status || p.status === F.status) && (!F.kind || p.purpose === F.kind) && (!F.gw || p.gateway === F.gw)
+        && inRange(p.created_at, F.from, F.to) && match(F.q, (p.profiles && p.profiles.full_name) || '', itemOf(p), p.receipt_no || '', p.manual_ref || '', p.gateway_ref || ''));
+      const refList = () => refs.filter((r) => (F.rs === 'all' || (F.rs === 'open' ? openRef(r) : r.status === F.rs)) && inRange(r.created_at, F.from, F.to)
+        && match(F.q, r.name || '', r.email || '', (r.payload && r.payload.item) || itemOf(payById[r.payload && r.payload.payment_id])));
+
+      function stats() {
+        const paid = rows.filter((p) => p.status === 'paid' || p.status === 'refunded'), refunded = rows.filter((p) => p.status === 'refunded');
+        const open = refs.filter(openRef);
+        return `<div class="bx-stats">
+          ${D.stat('إجمالي المحصّل', D.money(paidSum(paid)), paid.length + ' عملية ناجحة')}
+          ${D.stat('المسترد', D.money(paidSum(refunded)), refunded.length + ' عملية')}
+          ${D.stat('صافي الدخل', D.money(paidSum(paid) - paidSum(refunded)), 'قبل رسوم البوابة')}
+          ${D.stat('طلبات استرداد مفتوحة', open.length, open.length ? 'محتاجة قرارك' : 'مفيش حاجة مستنية')}
+        </div>`;
+      }
+      const sel = (id, label, opts, v) => `<div class="bx-field"><label for="${id}" class="bx-hint">${label}</label><select id="${id}" class="bx-select">${opts.map(([k, t]) => `<option value="${k}" ${k === v ? 'selected' : ''}>${t}</option>`).join('')}</select></div>`;
+      function filters() {
+        const common = `<div class="bx-field bx-pf-q"><label for="pq" class="bx-hint">بحث</label><input id="pq" class="bx-input" type="search" value="${esc(F.q)}" placeholder="${F.tab === 'pay' ? 'اسم، كورس، رقم إيصال أو مرجع' : 'اسم الطالب، الإيميل أو الكورس'}"></div>
+          <div class="bx-field"><label for="pf" class="bx-hint">من</label><input id="pf" class="bx-input" type="date" value="${F.from}"></div>
+          <div class="bx-field"><label for="pt" class="bx-hint">إلى</label><input id="pt" class="bx-input" type="date" value="${F.to}"></div>`;
+        return F.tab === 'pay'
+          ? `${common}${sel('ps', 'الحالة', [['', 'كل الحالات'], ['paid', 'مدفوع'], ['pending', 'بانتظار الدفع'], ['failed', 'فشل'], ['refunded', 'مسترد']], F.status)}
+             ${sel('pk', 'النوع', [['', 'الكل'], ['subscription', 'اشتراك باقة'], ['interactive_course', 'كورس تفاعلي']], F.kind)}
+             ${sel('pg', 'البوابة', [['', 'كل البوابات'], ...Object.entries(D.gw)], F.gw)}`
+          : `${common}${sel('rs', 'الحالة', [['open', 'مفتوحة (محتاجة قرار)'], ['all', 'الكل'], ['accepted', 'تم الاسترداد'], ['rejected', 'مرفوضة']], F.rs)}`;
+      }
+      function payTable(list) {
+        return D.table(['التاريخ', 'العميل', 'البند', 'السعر', 'الرسوم', 'البوابة', 'الحالة', ''], list.map((p) => {
+          const manual = p.gateway === 'manual' && p.status === 'pending' && isAdmin();
+          const rq = refByPay[p.id];
+          const act = manual ? `<button class="bx-linkbtn" data-ma="${p.id}">تأكيد الاستلام</button> · <button class="bx-linkbtn" data-mr="${p.id}" style="color:var(--danger-text)">رفض</button>`
+            : rq && openRef(rq) ? `<button class="bx-linkbtn" data-goref="${rq.id}">طلب استرداد مفتوح ←</button>`
+            : canRefund(p) && isAdmin() ? `<button class="bx-linkbtn" data-rf="${p.id}">استرداد</button>` : '';
+          return [D.date(p.created_at), esc((p.profiles && p.profiles.full_name) || '—'), esc(itemOf(p)) + (p.receipt_no ? `<br><small class="bx-hint">إيصال ${p.receipt_no}</small>` : ''), D.money(p.amount_egp) + (Number(p.discount_egp) ? `<br><small class="bx-hint">خصم ${D.money(p.discount_egp)}</small>` : ''), D.money(p.fee_egp), (D.gw[p.gateway] || p.gateway) + (p.gateway === 'manual' ? `<br><small class="bx-hint">${p.manual_method === 'instapay' ? 'إنستاباي' : 'فودافون كاش'} · <span class="bs-latin">${esc(p.manual_ref || '')}</span></small>` : ''), D.badge('pay', p.status), act];
+        }), 'مفيش مدفوعات بالفلتر ده');
+      }
+      function refCard(r) {
+        const p = payById[r.payload && r.payload.payment_id], dl = daysLeft(p), pl = r.payload || {};
+        const st = r.status === 'accepted' ? ['تم الاسترداد', 'ok'] : r.status === 'rejected' ? ['مرفوض', 'mute'] : r.status === 'in_review' ? ['قيد المراجعة', 'info'] : ['جديد', 'warn'];
+        const window = !openRef(r) ? '' : !p ? '<span class="bx-st bx-st-mute">الدفعة مش موجودة</span>' : p.status === 'refunded' ? '<span class="bx-st bx-st-ok">اتردّت فعلًا</span>' : dl > 0 ? `<span class="bx-st ${dl <= 2 ? 'bx-st-danger' : 'bx-st-info'}">باقي ${dl} ${dl === 1 ? 'يوم' : dl === 2 ? 'يومين' : 'أيام'} في المهلة</span>` : '<span class="bx-st bx-st-danger">المهلة خلصت</span>';
+        return `<article class="bx-reqcard bx-refcard" data-ref="${r.id}">
+          <div class="bx-spread" style="gap:8px;flex-wrap:wrap"><div><b>${esc(r.name)}</b> <span class="bx-hint">· ${D.dateTime(r.created_at)}</span></div><span class="bx-btnrow" style="gap:6px">${window}<span class="bx-st bx-st-${st[1]}">${st[0]}</span></span></div>
+          <dl>
+            <div><dt>الكورس</dt><dd>${esc(pl.item || itemOf(p))}</dd></div>
+            <div><dt>المبلغ</dt><dd>${D.money(p ? p.amount_egp : pl.amount_egp || 0)}${p && Number(p.fee_egp) ? ` <small class="bx-hint">+ ${D.money(p.fee_egp)} رسوم بوابة</small>` : ''}</dd></div>
+            <div><dt>الدفع</dt><dd>${p ? `${esc(D.gw[p.gateway] || p.gateway)} · ${D.date(p.paid_at || p.created_at)}${p.receipt_no ? ` · إيصال ${p.receipt_no}` : ''}` : '—'}</dd></div>
+            <div><dt>التواصل</dt><dd class="bx-kbd">${esc(r.email || '')}</dd></div>
+            ${pl.reason ? `<div><dt>السبب</dt><dd>${esc(pl.reason)}</dd></div>` : ''}
+            ${pl.note ? `<div><dt>ملاحظة الطالب</dt><dd style="white-space:pre-line">${esc(pl.note)}</dd></div>` : ''}
+            ${pl.decision_note ? `<div><dt>ردّك</dt><dd style="white-space:pre-line">${esc(pl.decision_note)}</dd></div>` : ''}
+          </dl>
+          ${openRef(r) && isAdmin() ? `<div class="bx-btnrow">
+            ${p && p.status === 'refunded' ? `<button class="bs-btn bs-btn-secondary bs-btn-sm" data-ract="close">قفل الطلب (اتردّت)</button>` : p && p.status === 'paid' ? `<button class="bs-btn bs-btn-primary bs-btn-sm" data-ract="refund">تنفيذ الاسترداد</button>` : ''}
+            ${r.status === 'new' ? '<button class="bs-btn bs-btn-secondary bs-btn-sm" data-ract="in_review">قيد المراجعة</button>' : ''}
+            <button class="bs-btn bs-btn-ghost bs-btn-sm" data-ract="reject">رفض</button>
+            ${r.email ? `<a class="bs-btn bs-btn-ghost bs-btn-sm" href="mailto:${esc(r.email)}">مراسلة</a>` : ''}</div>` : ''}
+        </article>`;
+      }
+
+      function draw() {
+        views._payTab = F.tab;
+        const pl = F.tab === 'pay' ? payList() : null, rl = F.tab === 'ref' ? refList() : null, nOpen = refs.filter(openRef).length;
+        main.innerHTML = `${stats()}
+          <div class="bx-paytabs" role="tablist" aria-label="المدفوعات والاسترداد">
+            <button role="tab" data-tab="pay" aria-selected="${F.tab === 'pay'}">المدفوعات <span class="bx-hint">${rows.length}</span></button>
+            <button role="tab" data-tab="ref" aria-selected="${F.tab === 'ref'}">طلبات الاسترداد ${nOpen ? `<span class="bx-nav-n">${nOpen}</span>` : `<span class="bx-hint">${refs.length}</span>`}</button>
+          </div>
+          <div class="bx-payfilters">${filters()}<div class="bx-field bx-pf-act"><span class="bx-hint">&nbsp;</span><span class="bx-btnrow"><button class="bs-btn bs-btn-ghost bs-btn-sm" id="pclr">مسح الفلاتر</button><button class="bs-btn bs-btn-secondary bs-btn-sm" id="pcsv">تحميل Excel</button></span></div></div>
+          ${F.tab === 'pay'
+            ? D.panel(`المدفوعات`, payTable(pl), `<span class="bx-hint">${pl.length} عملية · ${D.money(paidSum(pl.filter((p) => p.status === 'paid')))} مدفوع</span>`)
+            : `<p class="bx-hint" style="margin:0 0 12px">الاسترداد متاح للكورسات التفاعلية بس، خلال 7 أيام من الدفع. التنفيذ بيرجّع الفلوس من البوابة ويلغي تسجيل الطالب، والطالب بيوصله إيميل بالقرار.</p>
+               <div id="rl" style="display:grid;gap:12px">${rl.length ? rl.map(refCard).join('') : `<div class="bx-empty-big"><b>${F.rs === 'open' ? 'مفيش طلبات استرداد مستنية' : 'مفيش طلبات بالفلتر ده'}</b></div>`}</div>`}`;
+        wire();
+      }
+      function wire() {
+        $$('[data-tab]', main).forEach((b) => (b.onclick = () => { F.tab = b.dataset.tab; draw(); }));
+        const bind = (id, k, ev) => { const el = $('#' + id, main); if (el) el.addEventListener(ev || 'change', () => { F[k] = el.value.trim(); if (k === 'q') { const pos = el.selectionStart; draw(); const n = $('#pq', main); n.focus(); n.setSelectionRange(pos, pos); } else draw(); }); };
+        bind('pq', 'q', 'input'); bind('pf', 'from'); bind('pt', 'to'); bind('ps', 'status'); bind('pk', 'kind'); bind('pg', 'gw'); bind('rs', 'rs');
+        $('#pclr', main).onclick = () => { Object.assign(F, { q: '', status: '', kind: '', gw: '', from: '', to: '', rs: 'open' }); draw(); };
+        $('#pcsv', main).onclick = () => F.tab === 'pay'
+          ? csv('payments', ['التاريخ', 'العميل', 'البند', 'النوع', 'السعر', 'الخصم', 'رسوم البوابة', 'البوابة', 'الحالة', 'رقم الإيصال', 'المرجع'], payList().map((p) => [p.created_at.slice(0, 10), (p.profiles && p.profiles.full_name) || '', itemOf(p), p.purpose === 'subscription' ? 'اشتراك' : 'كورس تفاعلي', p.amount_egp, p.discount_egp || 0, p.fee_egp || 0, D.gw[p.gateway] || p.gateway, ({ paid: 'مدفوع', pending: 'بانتظار الدفع', failed: 'فشل', refunded: 'مسترد' })[p.status] || p.status, p.receipt_no || '', p.manual_ref || p.gateway_ref || '']))
+          : csv('refunds', ['تاريخ الطلب', 'الطالب', 'الإيميل', 'الكورس', 'المبلغ', 'السبب', 'ملاحظة الطالب', 'الحالة', 'ردّك'], refList().map((r) => { const p = payById[r.payload && r.payload.payment_id], pl = r.payload || {}; return [r.created_at.slice(0, 10), r.name, r.email, pl.item || itemOf(p), p ? p.amount_egp : pl.amount_egp || '', pl.reason || '', pl.note || '', { new: 'جديد', in_review: 'قيد المراجعة', accepted: 'تم الاسترداد', rejected: 'مرفوض' }[r.status] || r.status, pl.decision_note || '']; }));
+        $$('[data-goref]', main).forEach((b) => (b.onclick = () => { F.tab = 'ref'; F.rs = 'open'; draw(); const c = $(`[data-ref="${b.dataset.goref}"]`, main); if (c) { c.scrollIntoView({ block: 'center' }); c.classList.add('bx-flash'); } }));
+        $$('[data-ma],[data-mr]', main).forEach((b) => (b.onclick = async () => {
+          const ok = !!b.dataset.ma, id = b.dataset.ma || b.dataset.mr;
+          if (!confirm(ok ? 'تأكيد وصول التحويل وتفعيل الاشتراك/التسجيل؟' : 'رفض هذا التحويل؟')) return;
+          try { await sb.rpc('admin_review_manual', { p_payment: id, p_approve: ok }); ui.toast(ok ? 'تم التأكيد والتفعيل.' : 'تم الرفض.'); D.reload(); } catch (e) { ui.toast(arErr(e), 'err'); }
+        }));
+        $$('[data-rf]', main).forEach((b) => (b.onclick = async () => {
+          if (!confirm('تنفيذ الاسترداد وإلغاء تسجيل الطالب في الكورس؟')) return;
+          b.disabled = true;
+          try { if (!(await runRefund(b.dataset.rf))) { b.disabled = false; return; } ui.toast('تم الاسترداد.'); D.reload(); }
+          catch (e) { b.disabled = false; ui.toast((e.data && e.data.error) || arErr(e), 'err'); }
+        }));
+        $$('[data-ract]', main).forEach((b) => (b.onclick = async () => {
+          const r = refs.find((x) => x.id === b.closest('[data-ref]').dataset.ref), act = b.dataset.ract, pid = r.payload.payment_id;
+          if (act === 'reject') return rejectModal(r);
+          b.disabled = true;
+          try {
+            if (act === 'refund') {
+              if (!confirm(`تنفيذ استرداد ${D.money(payById[pid].amount_egp)} لـ ${r.name} وإلغاء تسجيله في الكورس؟`)) { b.disabled = false; return; }
+              if (!(await runRefund(pid))) { b.disabled = false; return; }
+              await setReqStatus(r.id, 'accepted'); ui.toast('تم الاسترداد وإلغاء التسجيل، والطالب هيوصله إيميل.'); D.reload(); return;
+            }
+            if (act === 'close') { await setReqStatus(r.id, 'accepted'); r.status = 'accepted'; ui.toast('اتقفل الطلب.'); }
+            else { await setReqStatus(r.id, act); r.status = act; }
+            D.setBadge('payments', refs.filter(openRef).length); draw();
+          } catch (e) { b.disabled = false; ui.toast((e.data && e.data.error) || arErr(e), 'err'); }
+        }));
+      }
+      async function runRefund(pid) {
+        const res = await doRefund(pid);
+        if (res.manual) {
+          if (!confirm('البوابة دي مش بتدعم الاسترداد الآلي. رجّعت المبلغ للطالب من لوحة البوابة أو تحويل؟')) return false;
+          await sb.fn('refund-payment', { payment_id: pid, manual_confirmed: true });
+        }
+        const rq = refByPay[pid]; if (rq && openRef(rq)) await setReqStatus(rq.id, 'accepted').catch(() => {});
+        return true;
+      }
+      function rejectModal(r) {
+        ui.modal(`<h3>رفض طلب الاسترداد</h3><p class="bx-hint">${esc(r.name)} · ${esc((r.payload && r.payload.item) || '')}</p>
+          <div class="bx-field"><label for="rjn">سبب الرفض (هيوصل للطالب في الإيميل)</label><textarea id="rjn" class="bx-textarea" rows="3" placeholder="مثال: مهلة الـ 7 أيام انتهت، أو حضرت أكتر من نص الكورس."></textarea></div>
+          <div class="bx-formmsg" aria-live="polite"></div><div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" data-ok>رفض الطلب</button><button class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div>`, (m, close) => {
+          $('[data-x]', m).onclick = close;
+          $('[data-ok]', m).onclick = async (e) => {
+            const note = $('#rjn', m).value.trim(); e.target.disabled = true;
+            try {
+              const payload = Object.assign({}, r.payload, note ? { decision_note: note } : {});
+              await sb.update('requests', { id: 'eq.' + r.id }, { payload, status: 'rejected' });
+              Object.assign(r, { payload, status: 'rejected' }); close(); ui.toast('اترفض الطلب ووصل للطالب إيميل.');
+              D.setBadge('payments', refs.filter(openRef).length); draw();
+            } catch (x) { e.target.disabled = false; say($('.bx-formmsg', m), arErr(x), 'err'); }
+          };
+        });
+      }
+      draw();
     },
 
     async payouts(main) {
@@ -748,5 +893,18 @@
     me = await D.guard(['admin', 'support']); if (!me) return;
     const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'كورسات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'الفورمز والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرين في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
+    // live counters: new requests + open refund requests (refreshes every minute and when the tab regains focus)
+    let lastRef = -1;
+    const pulse = async () => {
+      try {
+        const open = await sb.get('requests', { select: 'id,type,status', status: 'in.(new,in_review)', limit: 500 });
+        const nRef = open.filter((r) => r.type === 'refund').length;
+        D.setBadge('payments', nRef); D.setBadge('requests', open.filter((r) => r.type !== 'refund' && r.status === 'new').length);
+        if (lastRef >= 0 && nRef > lastRef) ui.toast(`وصل طلب استرداد جديد (${nRef} مفتوح).`);
+        lastRef = nRef;
+      } catch (e) { /* offline: try next tick */ }
+    };
+    pulse(); setInterval(pulse, 60000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) pulse(); });
   };
 })();

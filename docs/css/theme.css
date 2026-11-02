@@ -234,3 +234,19 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .bx-modal:has([data-acc]), .bx-modal:has(#pvbox) { width: min(760px, 100%); }
 .bx-reqlessons { margin: 10px 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-raised); display: grid; gap: 8px; justify-items: start; }
 .bx-reqlessons ol { margin: 0; padding-inline-start: 20px; display: grid; gap: 4px; }
+
+/* ---------- admin payments: payments / refunds tabs + filters ---------- */
+.bx-paytabs { display: flex; gap: 4px; padding: 4px; margin: 20px 0 12px; border-radius: 14px; background: var(--surface-raised); width: fit-content; max-width: 100%; }
+.bx-paytabs button { display: inline-flex; align-items: center; gap: 8px; border: 0; background: transparent; color: var(--ink-muted); font: 600 14px/22px var(--font-sans); padding: 10px 18px; min-height: 44px; border-radius: 10px; cursor: pointer; white-space: nowrap; }
+.bx-paytabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-card); }
+.bx-paytabs .bx-nav-n { position: static; }
+.bx-payfilters { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 12px; align-items: end; margin-bottom: 16px; }
+.bx-payfilters .bx-field { margin: 0; min-width: 0; }
+.bx-payfilters .bx-pf-q { grid-column: span 2; }
+.bx-payfilters .bx-pf-act { grid-column: 1 / -1; }
+.bx-payfilters .bx-pf-act > .bx-hint { display: none; }
+@media (max-width: 700px) { .bx-payfilters { grid-template-columns: 1fr 1fr; } .bx-payfilters .bx-pf-q, .bx-payfilters .bx-pf-act { grid-column: 1 / -1; } .bx-paytabs { width: 100%; } .bx-paytabs button { flex: 1; justify-content: center; padding: 10px 8px; } }
+.bx-refcard dl { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.bx-flash { animation: bxFlash 1.6s ease; }
+@keyframes bxFlash { 0%, 40% { box-shadow: 0 0 0 3px var(--brand-lime); } 100% { box-shadow: none; } }
+.bx-warnnote { margin: 0 0 14px; padding: 10px 12px; border-radius: 10px; background: color-mix(in srgb, #f5b400 14%, transparent); border: 1px solid color-mix(in srgb, #f5b400 45%, transparent); font-size: 14px; line-height: 22px; }
