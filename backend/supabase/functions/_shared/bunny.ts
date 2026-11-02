@@ -28,6 +28,22 @@ export async function libKey(lib: string) {
   return k;
 }
 
+// Domains the player must accept. Added (never removed) on any library we import from, so new libraries just work.
+export const SITE_HOSTS = ['abdomostafaramdan-ai.github.io', 'biosynegypt.com', '*.biosynegypt.com', 'biosyneg.com', '*.biosyneg.com'];
+export async function ensureReferrers(lib: string) {
+  const ak = accountKey(); if (!ak || !lib) return [];
+  const r = await fetch(`${CORE}/videolibrary/${encodeURIComponent(lib)}`, { headers: { AccessKey: ak, accept: 'application/json' } });
+  if (!r.ok) return [];
+  const have: string[] = (await r.json()).AllowedReferrers ?? [];
+  const added: string[] = [];
+  for (const h of SITE_HOSTS) { // one at a time: Bunny rewrites the whole list on each add
+    if (have.includes(h)) continue;
+    const a = await fetch(`${CORE}/videolibrary/${encodeURIComponent(lib)}/addAllowedReferrer`, { method: 'POST', headers: { AccessKey: ak, 'Content-Type': 'application/json' }, body: JSON.stringify({ Hostname: h }) });
+    if (a.ok) added.push(h);
+  }
+  return added;
+}
+
 export async function listLibraries() {
   const ak = accountKey();
   if (!ak) throw new Error('account key required');

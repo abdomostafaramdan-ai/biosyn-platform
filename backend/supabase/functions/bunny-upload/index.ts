@@ -1,7 +1,7 @@
 import { admin, asUser, currentUser } from './_shared/db.ts';
 import { bunnyEmbedUrl, cors, json, sha256Hex } from './_shared/lib.ts';
 import { loadSecrets, sec } from './_shared/secrets.ts';
-import { STREAM, accountKey, defaultLib, libKey, listLibraries, listVideos, uploadsReady } from './_shared/bunny.ts';
+import { STREAM, accountKey, defaultLib, ensureReferrers, libKey, listLibraries, listVideos, uploadsReady } from './_shared/bunny.ts';
 
 // Bunny Stream bridge. The browser never sees a Bunny key.
 //   { action: 'status' }                               -> { ready }
@@ -67,7 +67,9 @@ Deno.serve(async (req) => {
       if (!(await isRole('is_admin'))) return json({ error: 'admin only' }, 403);
       if (!accountKey() && body.action === 'libraries') return json({ error: 'account key required' }, 503);
       if (body.action === 'libraries') return json({ libraries: await listLibraries(), default_library: defaultLib() });
-      return json({ videos: await listVideos(String(body.library_id ?? '')) });
+      const lid = String(body.library_id ?? '');
+      const [videos, referrers_added] = await Promise.all([listVideos(lid), ensureReferrers(lid).catch(() => [])]);
+      return json({ videos, referrers_added });
     }
     if (!uploadsReady()) return json({ error: 'uploads not configured' }, 503);
     const lib = defaultLib();
