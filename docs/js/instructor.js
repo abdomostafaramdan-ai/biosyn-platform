@@ -7,15 +7,16 @@
   const load = async () => {
     const courses = await sb.get('courses', { select: '*,lectures(id)', instructor_id: 'eq.' + sb.user.id, order: 'created_at.desc' });
     const ids = courses.map((c) => c.id);
-    const [views, earnings, payouts] = await Promise.all([
+    const [views, earnings, payouts, stats] = await Promise.all([
       ids.length ? sb.get('course_views', { select: 'month,course_id', course_id: 'in.(' + ids.join(',') + ')' }) : [],
       sb.get('earnings', { select: '*', instructor_id: 'eq.' + sb.user.id, order: 'month.desc' }),
       sb.get('payouts', { select: '*', instructor_id: 'eq.' + sb.user.id, order: 'requested_at.desc' }),
+      sb.rpc('course_stats').then((r) => (Array.isArray(r) ? r : [])).catch(() => []),
     ]);
     const available = earnings.filter((e) => !e.payout_id).reduce((s, e) => s + Number(e.amount_egp), 0);
     const live = payouts.filter((p) => p.status !== 'rejected');
     const nextOK = live[0] ? D.addMonths(live[0].requested_at, 3) : null;
-    return { courses, views, earnings, payouts, available, nextOK, canWithdraw: available > 0 && (!nextOK || nextOK <= new Date()) };
+    return { stats, courses, views, earnings, payouts, available, nextOK, canWithdraw: available > 0 && (!nextOK || nextOK <= new Date()) };
   };
 
   function requestPayout(d) {
@@ -44,7 +45,7 @@
       const thisMonth = months[months.length - 1].n;
       main.innerHTML = `<div class="bx-stats">
           ${D.stat('الرصيد المتراكم', D.money(d.available), d.canWithdraw ? 'متاح للسحب الآن' : d.nextOK && d.available > 0 ? 'السحب متاح في ' + D.date(d.nextOK) : 'يُضاف شهريًا')}
-          ${D.stat('مشاهدات هذا الشهر', thisMonth, 'مشاهدة معتمدة (50٪ من محاضرة)')}
+          ${D.stat('مشاهدات هذا الشهر', thisMonth, `<span class="bx-live"><i></i>${d.stats.reduce((s, r) => s + Number(r.watching_now || 0), 0)}</span> بيتفرجوا دلوقتي · <a class="bx-link" href="#live">التفاصيل لايف</a>`)}
           ${D.stat('كورساتي', d.courses.length, d.courses.filter((c) => c.status === 'published').length + ' منشور')}
           ${D.stat('أرباح آخر شهر مُقفل', d.earnings[0] ? D.money(d.earnings[0].amount_egp) : '—', d.earnings[0] ? D.month(d.earnings[0].month) : 'تُحتسب أول كل شهر')}
         </div>
@@ -58,6 +59,8 @@
         <p class="bx-hint">أرباح الكورسات المسجلة تُحتسب بنسبة 30٪ للمحاضر من قيمة المشاهدات. الكورسات التفاعلية لها اتفاقات مستقلة.</p>`;
       const w = $('#wd', main); if (w) w.onclick = () => requestPayout(d);
     },
+
+    async live(main) { await window.courseAnalytics(main, { admin: false }); },
 
     async courses(main) {
       const d = await load();
@@ -76,7 +79,7 @@
     me = await D.guard(['instructor', 'admin']); if (!me) return;
     await D.shell({
       title: 'لوحة المحاضر', who: me.full_name || sb.user.email, sub: D.roleAr[me.role],
-      items: [{ id: 'home', label: 'نظرة عامة', icon: 'home' }, { id: 'courses', label: 'كورساتي', icon: 'book' }, { id: 'earnings', label: 'الأرباح والسحب', icon: 'coin' }],
+      items: [{ id: 'home', label: 'نظرة عامة', icon: 'home' }, { id: 'live', label: 'المشاهدات لايف', icon: 'chart' }, { id: 'courses', label: 'كورساتي', icon: 'book' }, { id: 'earnings', label: 'الأرباح والسحب', icon: 'coin' }],
       views, topLink: '<a href="account.html" class="bs-btn bs-btn-secondary bs-btn-sm">حسابي</a>',
     });
   };

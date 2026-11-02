@@ -159,8 +159,16 @@
     await loadProg();
     const sub = await hasSubscription();
     const pool = sub ? lects : lects.filter((l) => l.is_preview).length ? lects.filter((l) => l.is_preview) : lects;
-    let cur = lects.find((l) => l.id === q.get('l')) || pool.find((l) => !(prog[l.id] && prog[l.id].completed)) || pool[0];
+    // lectures open in order: each one needs 50% of the previous one (free previews are always open)
+    const PASS = 50;
+    const seen = (l) => (prog[l.id] && Number(prog[l.id].max_pct)) || 0;
+    const unlocked = (l) => { const i = lects.indexOf(l); return l.is_preview || i === 0 || seen(lects[i - 1]) >= PASS; };
+    const lastOpen = () => [...pool].reverse().find((l) => unlocked(l) && !(prog[l.id] && prog[l.id].completed)) || [...pool].reverse().find(unlocked) || pool[0];
+    let cur = lects.find((l) => l.id === q.get('l'));
+    if (!cur || !unlocked(cur)) cur = pool.find((l) => unlocked(l) && !(prog[l.id] && prog[l.id].completed)) || lastOpen();
     const done = () => lects.filter((l) => prog[l.id] && prog[l.id].completed).length;
+    const lessonIcon = (l) => { const d = prog[l.id] && prog[l.id].completed; return `<span class="bx-lesson-ic ${d ? 'done' : l === cur ? 'now' : ''}">${d ? ICON_CHECK : (!sub && !l.is_preview) || !unlocked(l) ? ICON_LOCK : ICON_PLAY}</span>`; };
+    const nextLabel = (i) => i >= lects.length - 1 ? (seen(cur) >= 95 ? 'أكملت الكورس ✓' : 'آخر محاضرة') : seen(cur) >= PASS ? 'المحاضرة التالية ←' : `التالية تتفتح عند ${PASS}٪`;
     const pct = () => Math.round((done() / lects.length) * 100);
 
     function draw() {
@@ -168,34 +176,53 @@
       root.innerHTML = `<div class="bx-player"><main class="bx-stage">
         <div class="bx-video" role="group" aria-label="مشغل الفيديو" style="padding:0;overflow:hidden"><div id="vid" style="position:absolute;inset:0;display:grid;place-items:center;color:var(--ink-muted)">جارٍ تجهيز الفيديو…</div></div>
         <div class="bx-lesson-head"><div><span class="bx-eyebrow">المحاضرة ${i + 1} من ${lects.length}</span><h2>${esc(cur.title)}</h2></div>
-          <div class="bx-lesson-nav">${i > 0 ? '<button type="button" class="bs-btn bs-btn-secondary" id="prev">السابقة</button>' : ''}<button type="button" class="bs-btn bs-btn-primary" id="next">${i < lects.length - 1 ? 'أكملت المحاضرة · التالية' : 'أكملت المحاضرة'}</button></div></div>
+          <div class="bx-lesson-nav">${i > 0 ? '<button type="button" class="bs-btn bs-btn-secondary" id="prev">السابقة</button>' : ''}<button type="button" class="bs-btn bs-btn-primary" id="next" ${i < lects.length - 1 && seen(cur) >= PASS ? '' : 'disabled'}>${nextLabel(i)}</button></div></div>
+        <div class="bx-watchbar"><div class="bx-progress" aria-hidden="true"><i id="lpbar" style="width:${Math.round(seen(cur))}%"></i><s style="inset-inline-start:${PASS}%"></s></div><span class="bx-hint" id="lptxt">${lpText()}</span></div>
         <section class="bx-panel" id="files" style="margin-top:24px" hidden><div class="bx-panel-head"><h3>ملفات المحاضرة</h3></div><div id="filelist"></div></section>
         <section class="bx-panel" style="margin-top:24px"><div class="bx-panel-head"><h3>عن الدورة</h3></div><p style="margin:0">${esc(c.summary || c.title)}</p></section>
       </main>
       <aside class="bx-currside" aria-label="محتوى الدورة"><header><h2>${esc(c.title)}</h2>
         <div class="bx-progress" role="progressbar" aria-valuenow="${pct()}" aria-valuemin="0" aria-valuemax="100" aria-label="تقدمك"><i style="width:${pct()}%"></i></div>
         <span class="bx-hint">أنهيت ${done()} من ${lects.length} محاضرة · الشهادة تُفتح عند إتمام الدورة</span></header>
-        <div class="bx-module">${lects.map((l) => { const d = prog[l.id] && prog[l.id].completed; return `<a class="bx-lesson" href="watch.html?c=${esc(c.slug)}&l=${l.id}" data-l="${l.id}" aria-current="${l === cur}"><span class="bx-lesson-ic ${d ? 'done' : l === cur ? 'now' : ''}">${d ? ICON_CHECK : !sub && !l.is_preview ? ICON_LOCK : ICON_PLAY}</span><div><b>${esc(l.title)}</b>${l.is_preview && !sub ? '<small class="bx-hint" style="display:block">معاينة مجانية</small>' : ''}</div><span class="bx-lesson-dur">${l.duration_seconds ? dur(l.duration_seconds) : ''}</span></a>`; }).join('')}</div></aside></div>`;
-      $$('.bx-lesson', root).forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); cur = lects.find((l) => l.id === a.dataset.l); history.replaceState(null, '', `watch.html?c=${encodeURIComponent(c.slug)}&l=${cur.id}`); draw(); }));
+        <div class="bx-module">${lects.map((l) => `<a class="bx-lesson${unlocked(l) ? '' : ' bx-locked'}" href="watch.html?c=${esc(c.slug)}&l=${l.id}" data-l="${l.id}" aria-current="${l === cur}" ${unlocked(l) ? '' : 'aria-disabled="true"'}>${lessonIcon(l)}<div><b>${esc(l.title)}</b>${l.is_preview && !sub ? '<small class="bx-hint" style="display:block">معاينة مجانية</small>' : ''}</div><span class="bx-lesson-dur">${l.duration_seconds ? dur(l.duration_seconds) : ''}</span></a>`).join('')}</div></aside></div>`;
+      $$('.bx-lesson', root).forEach((a) => a.addEventListener('click', (e) => {
+        e.preventDefault(); const l = lects.find((x) => x.id === a.dataset.l);
+        if (!unlocked(l)) return toast(`المحاضرة دي هتتفتح لما تتفرج على ${PASS}٪ من المحاضرة اللي قبلها.`);
+        cur = l; history.replaceState(null, '', `watch.html?c=${encodeURIComponent(c.slug)}&l=${cur.id}`); draw();
+      }));
       const go = (j) => { cur = lects[j]; history.replaceState(null, '', `watch.html?c=${encodeURIComponent(c.slug)}&l=${cur.id}`); draw(); window.scrollTo(0, 0); };
       const pv = $('#prev'); if (pv) pv.onclick = () => go(i - 1);
-      $('#next').onclick = async () => { await report(100, true); if (i < lects.length - 1) go(i + 1); else draw(); };
+      $('#next').onclick = () => { if (i < lects.length - 1 && seen(cur) >= PASS) go(i + 1); };
       loadVideo();
     }
 
-    let lastSent = 0, lastPct = 0, certShown = false;
+    function lpText() { const v = Math.round(seen(cur)); return v >= 95 ? 'خلّصت المحاضرة دي ✓ تقدر ترجع لأي جزء فيها' : v >= PASS ? `اتفرجت على ${v}٪ · المحاضرة التالية اتفتحت` : `اتفرجت على ${v}٪ · كمّل لحد ${PASS}٪ عشان تفتح المحاضرة التالية`; }
+    // refresh the bits that depend on progress without reloading the video
+    function paintProgress() {
+      const i = lects.indexOf(cur);
+      $$('.bx-lesson', root).forEach((a) => { const l = lects.find((x) => x.id === a.dataset.l); a.classList.toggle('bx-locked', !unlocked(l)); a.toggleAttribute('aria-disabled', !unlocked(l)); const ic = $('.bx-lesson-ic', a); if (ic) ic.outerHTML = lessonIcon(l); });
+      const nx = $('#next', root); if (nx) { nx.disabled = !(i < lects.length - 1 && seen(cur) >= PASS); nx.textContent = nextLabel(i); }
+      const b = $('#lpbar', root); if (b) b.style.width = Math.round(seen(cur)) + '%';
+      const t = $('#lptxt', root); if (t) t.textContent = lpText();
+      const bar = $('.bx-currside .bx-progress i', root); if (bar) bar.style.width = pct() + '%';
+      const h = $('.bx-currside header .bx-hint', root); if (h) h.textContent = `أنهيت ${done()} من ${lects.length} محاضرة · الشهادة تُفتح عند إتمام الدورة`;
+    }
+    let lastSent = 0, lastPct = 0, certShown = false, busy = false;
     async function report(p, force) {
       const now = Date.now();
-      if (!force && now - lastSent < 15000 && !(p >= 50 && lastPct < 50) && !(p >= 95 && lastPct < 95)) return;
-      lastSent = now; lastPct = Math.max(lastPct, p);
+      if (busy || p <= lastPct + 0.05 && !force) return;
+      if (!force && now - lastSent < 15000 && !(p >= PASS && lastPct < PASS) && !(p >= 95 && lastPct < 95)) return;
+      busy = true; lastSent = now;
       try {
-        await sb.rpc('record_progress', { p_lecture: cur.id, p_pct: Math.min(100, Math.round(p * 100) / 100) });
+        const ok = Number(await sb.rpc('record_watch', { p_lecture: cur.id, p_pct: Math.min(100, Math.round(p * 100) / 100) }));
+        lastPct = Math.max(lastPct, isNaN(ok) ? p : ok);
         const r = (prog[cur.id] = prog[cur.id] || { lecture_id: cur.id, max_pct: 0, completed: false });
-        r.max_pct = Math.max(r.max_pct, p); if (p >= 95) r.completed = true;
-        const a = $(`.bx-lesson[data-l="${cur.id}"] .bx-lesson-ic`, root); if (a && r.completed) { a.className = 'bx-lesson-ic done'; a.innerHTML = ICON_CHECK; }
-        const bar = $('.bx-progress i', root); if (bar) bar.style.width = pct() + '%';
+        const before = seen(cur); r.max_pct = Math.max(r.max_pct, lastPct); if (lastPct >= 95) r.completed = true;
+        paintProgress();
+        if (before < PASS && lastPct >= PASS && lects.indexOf(cur) < lects.length - 1) toast('تمام! المحاضرة التالية اتفتحت.');
         if (done() === lects.length && !certShown) { certShown = true; toast('مبروك! أنهيت الدورة وحصلت على شهادة الإتمام. تجدها في حسابك.'); }
-      } catch (e) { if (force) toast(arErr(e), 'err'); }
+      } catch (e) { if (force) toast(/locked/.test(e.message || '') ? `لازم تتفرج على ${PASS}٪ من المحاضرة اللي قبلها الأول.` : arErr(e), 'err'); }
+      busy = false;
     }
 
     async function loadFiles() {
@@ -208,7 +235,8 @@
     }
     async function loadVideo() {
       loadFiles();
-      lastPct = (prog[cur.id] && prog[cur.id].max_pct) || 0; lastSent = 0;
+      lastPct = seen(cur); lastSent = 0;
+      let furthest = -1, warned = false;   // furthest second the student actually reached (no skipping ahead)
       const box = $('#vid'); if (!box) return;
       try {
         const r = await sb.fn('get-playback', { lecture_id: cur.id, device_id: deviceId(), device_label: deviceLabel() });
@@ -219,15 +247,25 @@
           if (e.source !== f.contentWindow) return; let d = e.data; if (typeof d === 'string') { try { d = JSON.parse(d); } catch { return; } }
           if (!d || d.context !== 'player.js') return;
           if (d.event === 'ready') ['timeupdate', 'ended'].forEach((ev) => post({ method: 'addEventListener', value: ev }));
-          else if (d.event === 'timeupdate' && d.value && d.value.duration) report((d.value.seconds / d.value.duration) * 100);
-          else if (d.event === 'ended') report(100, true);
+          else if (d.event === 'timeupdate' && d.value && d.value.duration) {
+            const D = d.value.duration, t = d.value.seconds;
+            if (furthest < 0) furthest = (seen(cur) / 100) * D;
+            if (seen(cur) < 95 && t > furthest + 3) {           // jumped ahead: send them back to where they were
+              post({ method: 'setCurrentTime', value: Math.max(0, furthest - 1) });
+              if (!warned) { warned = true; toast('مينفعش تقدّم الفيديو قبل ما تتفرج عليه. تقدر ترجع لورا عادي.'); }
+              return;
+            }
+            if (t > furthest) furthest = t;
+            report((furthest / D) * 100);
+          } else if (d.event === 'ended') { if (furthest < 0 || seen(cur) >= 95 || furthest >= (d.value && d.value.duration ? d.value.duration - 5 : 0)) report(100, true); }
         };
       } catch (e) {
         const m = (e.data && e.data.error) || e.message;
         box.innerHTML = m === 'subscription required'
           ? '<div style="text-align:center;padding:16px"><b style="display:block;color:var(--ink);font:600 18px/28px var(--font-display)">هذه الدورة متاحة للمشتركين</b>اشترك في إحدى الباقات لمشاهدة المحاضرات.<br><a class="bs-btn bs-btn-primary" style="margin-top:12px" href="pricing.html">عرض الباقات</a></div>'
           : m === 'device limit' ? '<div style="text-align:center;padding:16px"><b style="display:block;color:var(--ink);font:600 18px/28px var(--font-display)">وصلت للحد الأقصى من الأجهزة</b>حسابك مستخدم على جهازين بالفعل. أزل جهازًا قديمًا من <a class="bx-link" href="account.html#settings">حسابي ← الإعدادات</a> ثم حاول مجددًا.</div>'
-          : m === 'video not available yet' ? 'هذا الفيديو لم يُرفع بعد.' : esc(arErr(e));
+          : m === 'video not available yet' ? 'هذا الفيديو لم يُرفع بعد.'
+          : m === 'lecture locked' ? `المحاضرة دي هتتفتح لما تتفرج على ${PASS}٪ من المحاضرة اللي قبلها.` : esc(arErr(e));
       }
     }
     draw();

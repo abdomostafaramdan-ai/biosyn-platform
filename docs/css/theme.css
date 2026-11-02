@@ -250,3 +250,24 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .bx-flash { animation: bxFlash 1.6s ease; }
 @keyframes bxFlash { 0%, 40% { box-shadow: 0 0 0 3px var(--brand-lime); } 100% { box-shadow: none; } }
 .bx-warnnote { margin: 0 0 14px; padding: 10px 12px; border-radius: 10px; background: color-mix(in srgb, #f5b400 14%, transparent); border: 1px solid color-mix(in srgb, #f5b400 45%, transparent); font-size: 14px; line-height: 22px; }
+
+/* ---------- watch page: per-lecture progress + locked lectures ---------- */
+.bx-watchbar { display: grid; gap: 6px; margin-top: 14px; }
+.bx-watchbar .bx-progress { position: relative; overflow: visible; }
+.bx-watchbar .bx-progress s { position: absolute; top: -3px; bottom: -3px; width: 2px; border-radius: 2px; background: var(--ink-muted); opacity: .7; text-decoration: none; }
+.bx-lesson.bx-locked { opacity: .55; cursor: not-allowed; }
+.bx-lesson.bx-locked:hover { background: transparent; }
+.bx-lesson-nav .bs-btn[disabled] { opacity: .6; cursor: not-allowed; filter: grayscale(.4); }
+
+/* ---------- live indicator (analytics) ---------- */
+.bx-live { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--ink); }
+.bx-live i { width: 8px; height: 8px; border-radius: 50%; background: #3ddc84; box-shadow: 0 0 0 0 rgba(61, 220, 132, .6); animation: bxPulse 1.8s infinite; }
+.bx-live-lg i { width: 10px; height: 10px; }
+@keyframes bxPulse { 0% { box-shadow: 0 0 0 0 rgba(61, 220, 132, .55); } 70% { box-shadow: 0 0 0 8px rgba(61, 220, 132, 0); } 100% { box-shadow: 0 0 0 0 rgba(61, 220, 132, 0); } }
+@media (prefers-reduced-motion: reduce) { .bx-live i { animation: none; } }
+.bx-livestamp { display: inline-flex; align-items: center; gap: 6px; }
+.bx-stat .bx-live-lg { font: inherit; }
+.bx-an-title { display: grid; gap: 4px; min-width: 160px; }
+.bx-an-title small { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.bx-an-big { font-size: 18px; }
+.bx-an-sub { display: block; white-space: nowrap; }

@@ -18,6 +18,10 @@ Deno.serve(async (req) => {
   const { data: allowed } = await sb.rpc('can_watch_lecture', { uid: user.id, lid: lecture_id });
   if (!allowed) return json({ error: 'subscription required' }, 403);
 
+  // lectures open in order: the previous one must be watched to 50% first
+  const { data: unlocked } = await sb.rpc('lecture_unlocked', { uid: user.id, lid: lecture_id });
+  if (unlocked === false) return json({ error: 'lecture locked' }, 403);
+
   // account-sharing protection: max 2 devices per student account
   const { data: devOk } = await sb.rpc('claim_device', { p_user: user.id, p_device: String(device_id ?? ''), p_label: String(device_label ?? '').slice(0, 80) });
   if (!devOk) return json({ error: 'device limit' }, 403);

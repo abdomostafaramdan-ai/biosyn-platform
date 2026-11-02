@@ -39,6 +39,8 @@
   }
 
   const views = {
+    async analytics(main) { await window.courseAnalytics(main, { admin: true, edit: isAdmin() }); },
+
     async home(main) {
       const now = new Date(), som = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
       const [subs, pays, reqs, pouts, courses] = await Promise.all([
@@ -891,7 +893,7 @@
 
   window.BiosynPages.admin = async () => {
     me = await D.guard(['admin', 'support']); if (!me) return;
-    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'كورسات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'الفورمز والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرين في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
+    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'كورسات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'analytics', label: 'تحليلات الكورسات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'الفورمز والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرين في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
     // live counters: new requests + open refund requests (refreshes every minute and when the tab regains focus)
     let lastRef = -1;
