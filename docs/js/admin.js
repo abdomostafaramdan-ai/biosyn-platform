@@ -10,11 +10,14 @@
 
   // ---------- requests ----------
   async function setReqStatus(id, status) { await sb.update('requests', { id: 'eq.' + id }, { status }); }
-  function reqCard(r, usersById) {
-    const f = r.payload && typeof r.payload === 'object' ? Object.entries(r.payload).filter(([, v]) => v !== '' && v !== null) : [];
+  function reqCard(r, usersById, lessonsByProp) {
+    const pid = r.payload && r.payload.proposal_id;
+    const f = r.payload && typeof r.payload === 'object' ? Object.entries(r.payload).filter(([k, v]) => v !== '' && v !== null && k !== 'proposal_id') : [];
+    const ls = (pid && lessonsByProp && lessonsByProp[pid]) || [];
+    const lessonsHtml = pid ? `<div class="bx-reqlessons"><b>الدروس والفيديوهات</b><ol>${ls.map((l) => `<li>${esc(l.title)} ${l.video_url ? `<a class="bx-linkbtn" href="${esc(l.video_url)}" target="_blank" rel="noopener">فتح لينك الفيديو</a>` : ''}${l.bunny_video_id ? ` <span class="bx-st bx-st-ok">مرفوع على Bunny</span>` : ''}${!l.video_url && !l.bunny_video_id ? ' <small class="bx-hint">بدون فيديو</small>' : ''}</li>`).join('') || '<li class="bx-hint">لا توجد دروس</li>'}</ol><button class="bs-btn bs-btn-secondary bs-btn-sm" data-act="proposal" data-pid="${esc(pid)}">فتح الكورس المقدّم ومشاهدة الفيديوهات</button></div>` : '';
     const isRefund = r.type === 'refund';
     return `<article class="bx-reqcard" data-r="${r.id}"><div class="bx-spread" style="gap:8px;flex-wrap:wrap"><div><b>${esc(r.name)}</b> <span class="bx-hint">· ${esc(D.reqType[r.type] || r.type)} · ${D.dateTime(r.created_at)}</span></div>${D.badge('req', r.status)}</div>
-      <dl><div><dt>التواصل</dt><dd class="bx-kbd">${esc(r.email || '')}${r.phone ? ' · ' + esc(r.phone) : ''}</dd></div>${f.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(typeof v === 'object' ? JSON.stringify(v) : v)}</dd></div>`).join('')}</dl>
+      <dl><div><dt>التواصل</dt><dd class="bx-kbd">${esc(r.email || '')}${r.phone ? ' · ' + esc(r.phone) : ''}</dd></div>${f.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(typeof v === 'object' ? JSON.stringify(v) : v)}</dd></div>`).join('')}</dl>${lessonsHtml}
       <div class="bx-btnrow">
         ${isRefund && isAdmin() && ['new', 'in_review'].includes(r.status) ? `<button class="bs-btn bs-btn-primary bs-btn-sm" data-act="refund" data-pay="${esc(r.payload.payment_id)}">تنفيذ الاسترداد</button>` : ''}
         ${r.status === 'new' ? '<button class="bs-btn bs-btn-secondary bs-btn-sm" data-act="in_review">قيد المراجعة</button>' : ''}
@@ -61,11 +64,14 @@
     async requests(main) {
       const [reqs, users] = await Promise.all([sb.get('requests', { select: '*', order: 'created_at.desc', limit: 200 }), sb.rpc('admin_users').catch(() => [])]);
       const byId = Object.fromEntries(users.map((u) => [u.id, u]));
+      const pids = [...new Set(reqs.map((r) => r.payload && r.payload.proposal_id).filter(Boolean))];
+      const lessonsByProp = {};
+      if (pids.length) (await sb.get('proposal_lessons', { select: 'id,proposal_id,title,video_url,bunny_video_id,position', proposal_id: 'in.(' + pids.join(',') + ')', order: 'position.asc' }).catch(() => [])).forEach((l) => (lessonsByProp[l.proposal_id] = lessonsByProp[l.proposal_id] || []).push(l));
       D.setBadge('requests', reqs.filter((r) => r.status === 'new').length);
       let type = '', status = 'open';
       const draw = () => {
         const list = reqs.filter((r) => (!type || r.type === type) && (status === 'all' || (status === 'open' ? ['new', 'in_review'].includes(r.status) : r.status === status)));
-        $('#rl').innerHTML = list.length ? list.map((r) => reqCard(r, byId)).join('') : '<div class="bx-empty-big"><b>لا توجد طلبات</b></div>';
+        $('#rl').innerHTML = list.length ? list.map((r) => reqCard(r, byId, lessonsByProp)).join('') : '<div class="bx-empty-big"><b>لا توجد طلبات</b></div>';
       };
       main.innerHTML = `<div class="bx-btnrow" style="margin-bottom:16px"><div class="bx-field"><label for="ft" class="bx-hint">النوع</label><select id="ft" class="bx-select"><option value="">كل الأنواع</option>${Object.entries(D.reqType).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></div>
         <div class="bx-field"><label for="fs" class="bx-hint">الحالة</label><select id="fs" class="bx-select"><option value="open">مفتوحة</option><option value="all">الكل</option><option value="accepted">مقبولة</option><option value="rejected">مرفوضة</option></select></div></div><div id="rl" style="display:grid;gap:12px"></div>`;
@@ -74,6 +80,7 @@
       $('#rl').addEventListener('click', async (e) => {
         const b = e.target.closest('[data-act]'); if (!b) return;
         const card = b.closest('[data-r]'), id = card.dataset.r, r = reqs.find((x) => x.id === id), act = b.dataset.act;
+        if (act === 'proposal') { const pp = await sb.get('course_proposals', { select: '*', id: 'eq.' + b.dataset.pid }).catch(() => []); if (pp[0]) proposalModal(pp[0]); else ui.toast('الكورس مش موجود.', 'err'); return; }
         b.disabled = true;
         try {
           if (act === 'promote') { await sb.update('profiles', { id: 'eq.' + r.user_id }, { role: 'instructor' }); byId[r.user_id].role = 'instructor'; ui.toast('تمت ترقية الحساب إلى محاضر.'); }

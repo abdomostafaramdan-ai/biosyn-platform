@@ -232,3 +232,5 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .bx-wzsum { margin: 0; } .bx-wzreview { margin: 0; padding-inline-start: 22px; display: grid; gap: 4px; }
 .bx-wzdone { display: grid; gap: 10px; justify-items: start; } .bx-wzdone h4 { margin: 0; font: 700 20px/30px var(--font-display); }
 .bx-modal:has([data-acc]), .bx-modal:has(#pvbox) { width: min(760px, 100%); }
+.bx-reqlessons { margin: 10px 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-raised); display: grid; gap: 8px; justify-items: start; }
+.bx-reqlessons ol { margin: 0; padding-inline-start: 20px; display: grid; gap: 4px; }
