@@ -140,11 +140,11 @@
         <div class="bs-course-main"><div>${c.description ? `<section class="bs-block-sec" style="margin-top:48px"><h2>عن الدورة</h2>${c.description.split(/\n{2,}/).map((p) => `<p>${esc(p)}</p>`).join('')}</section>` : '<div style="height:48px"></div>'}
         ${aboutInst(T)}<section class="bs-block-sec"><h2>سياسة الاسترداد</h2><p>يمكن استرداد رسوم الدورة التفاعلية خلال 7 أيام من تاريخ الدفع.</p></section></div>
         <aside class="bs-enroll"><div class="bs-cover bx-icover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span>${fc ? `<span class="bx-pcard-ic"><svg viewBox="0 0 24 24">${fc.icon}</svg></span><span class="bx-pcard-fac">${esc(fc.name)}</span>` : `<span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span>`}</div>
-        <div class="bs-enroll-body"><div class="bs-enroll-access"><b>${priceTxt(c.price_egp, window.REGION_NOW)}</b></div>
+        <div class="bs-enroll-body"><div class="bs-enroll-access"><b>${priceTxt(c.price_egp, window.REGION_NOW, c.intl_price)}</b></div>
         <ul class="bx-pcard-facts bx-ifacts">${c.starts_at ? `<li>${I.cal}<span>يبدأ ${esc(window.fmtDay(c.starts_at))}</span></li>` : ''}${c.seats ? `<li>${I.seat}<span>${c.seats} مقعد</span></li>` : ''}${LEVEL[c.level] ? `<li>${I.lvl}<span>${LEVEL[c.level]}</span></li>` : ''}<li>${I.live}<span>مباشر أونلاين</span></li></ul>
         <button type="button" class="bs-btn bs-btn-primary bs-btn-lg bs-block" id="reg">سجّل الآن</button>
         <p class="bx-hint">دورة تفاعلية بجلسات مباشرة، منفصلة عن باقات الاشتراك.</p></div></aside></div>`;
-      $('#reg').onclick = () => window.checkout({ course_id: c.id, title: c.title, price: c.price_egp });
+      $('#reg').onclick = () => window.checkout({ course_id: c.id, title: c.title, price: c.price_egp, intl: c.intl_price });
       return;
     }
     document.title = c.title + ' | Biosyn Egypt';
@@ -157,7 +157,7 @@
     const from = plans[0];
     const first = lects[0];
     const cta = subscribed
-      ? `<a class="bs-btn bs-btn-primary bs-btn-lg bs-block" href="watch.html?c=${esc(c.slug)}">${lects.length ? 'ابدأ المشاهدة' : 'المحاضرات قريبًا'}</a>`
+      ? `<a class="bs-btn bs-btn-primary bs-btn-lg bs-block" href="watch.html?c=${esc(c.slug)}">${lects.length ? 'ابدأ المشاهدة' : 'المحاضرات قريبًا'}</a><button type="button" class="bs-btn bs-btn-secondary bs-block bx-askbtn" data-ask="${c.id}">💬 اسأل المحاضر</button>`
       : `<a class="bs-btn bs-btn-primary bs-btn-lg bs-block" href="#plans" id="cta-sub">اشترك لمشاهدة الدورة</a>`;
     root.innerHTML = `<section class="bs-course-hero"><span class="bs-wm" aria-hidden="true"></span><div class="bs-course-hero-in"><div>
       <nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><a href="courses.html">دورات مسجلة</a><span>/</span><span class="bs-latin">${esc(c.title)}</span></nav>
@@ -173,7 +173,7 @@
         ${lects.length ? `<div class="bs-curr"><div class="bs-curr-head"><b>محتوى الدورة</b><span>${lects.length} محاضرة${total ? ' · ' + esc(hoursText(total)) : ''}</span></div><ol class="bs-curr-list">${lects.map((l, i) => `<li class="bs-curr-item"><span class="bs-curr-num bs-latin">${String(i + 1).padStart(2, '0')}</span><span class="bs-play" aria-hidden="true">${subscribed || l.is_preview ? ICON_PLAY : ICON_LOCK}</span><span class="bs-curr-title bs-latin">${subscribed || l.is_preview ? `<a href="watch.html?c=${esc(c.slug)}&l=${l.id}" style="color:inherit;text-decoration:none">${esc(l.title)}</a>` : esc(l.title)}${!subscribed && l.is_preview ? ' <span class="bs-badge bs-badge-new" style="margin-inline-start:6px">معاينة مجانية</span>' : ''}</span><span class="bs-curr-dur bs-latin">${l.duration_seconds ? dur(l.duration_seconds) : ''}</span></li>`).join('')}</ol></div>` : '<div class="bx-empty-big"><b>المحاضرات قيد الإضافة</b>سنعلن عند نشر الدورة كاملة.</div>'}
       </section>${aboutInst(T)}</div>
       <aside class="bs-enroll"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span></div>
-        <div class="bs-enroll-body"><div class="bs-enroll-access"><span>${subscribed ? 'اشتراكك ساري' : 'متاحة مع الاشتراك'}</span>${!subscribed && from ? `<b>تبدأ من ${priceTxt(from.price_egp, window.REGION_NOW)} / ${from.duration_months === 1 ? 'شهريًا' : from.duration_months + ' أشهر'}</b>` : ''}</div>
+        <div class="bs-enroll-body"><div class="bs-enroll-access"><span>${subscribed ? 'اشتراكك ساري' : 'متاحة مع الاشتراك'}</span>${!subscribed && from ? `<b>تبدأ من ${priceTxt(from.price_egp, window.REGION_NOW, from.intl_price)} / ${from.duration_months === 1 ? 'شهريًا' : from.duration_months + ' أشهر'}</b>` : ''}</div>
         ${cta}
         <ul class="bs-checks bs-checks-sm"><li>${ICON_CHECK}<span>${lects.length} محاضرة مسجلة${total ? ' (حوالي ' + esc(hoursText(total)) + ')' : ''}</span></li><li>${ICON_CHECK}<span>شهادة إتمام عند إنهاء الكورس</span></li><li>${ICON_CHECK}<span>مستوى ${LEVEL[c.level] || 'مبتدئ'} · بالعربية</span></li></ul></div></aside></div>
     ${subscribed ? '' : `<section class="bs-section" id="plans"><div class="bs-section-head"><div><h2>متاحة مع باقات العضوية</h2><p>باشتراك واحد، ادرس كل الكورسات المسجلة على المنصة</p></div></div><div class="bs-plans">${plans.map(() => '<template-slot></template-slot>').join('')}</div></section>`}`;
@@ -182,6 +182,7 @@
     $$('template-slot', root).forEach((s) => s.replaceWith(tpl.content.cloneNode(true)));
     window.hydratePlansNow && window.hydratePlansNow();
     const cs = $('#cta-sub'); if (cs) cs.addEventListener('click', (e) => { e.preventDefault(); $('#plans').scrollIntoView({ behavior: 'smooth' }); });
+    $$('[data-ask]', root).forEach((b) => (b.onclick = () => window.Chat && Chat.askCourse(b.dataset.ask)));
   };
 
   // ---------- watch ----------
@@ -221,7 +222,7 @@
       root.innerHTML = `<div class="bx-player"><main class="bx-stage">
         <div class="bx-video" role="group" aria-label="مشغل الفيديو" style="padding:0;overflow:hidden"><div id="vid" style="position:absolute;inset:0;display:grid;place-items:center;color:var(--ink-muted)">جارٍ تجهيز الفيديو…</div></div>
         <div class="bx-lesson-head"><div><span class="bx-eyebrow">المحاضرة ${i + 1} من ${lects.length}</span><h2>${esc(cur.title)}</h2></div>
-          <div class="bx-lesson-nav">${i > 0 ? '<button type="button" class="bs-btn bs-btn-secondary" id="prev">السابقة</button>' : ''}<button type="button" class="bs-btn bs-btn-primary" id="next" ${i < lects.length - 1 && seen(cur) >= PASS ? '' : 'disabled'}>${nextLabel(i)}</button></div></div>
+          <div class="bx-lesson-nav">${sub ? `<button type="button" class="bs-btn bs-btn-ghost" data-ask="${c.id}" title="اسأل المحاضر">💬 اسأل المحاضر</button>` : ''}${i > 0 ? '<button type="button" class="bs-btn bs-btn-secondary" id="prev">السابقة</button>' : ''}<button type="button" class="bs-btn bs-btn-primary" id="next" ${i < lects.length - 1 && seen(cur) >= PASS ? '' : 'disabled'}>${nextLabel(i)}</button></div></div>
         <div class="bx-watchbar"><div class="bx-progress" aria-hidden="true"><i id="lpbar" style="width:${Math.round(seen(cur))}%"></i><s style="inset-inline-start:${PASS}%"></s></div><span class="bx-hint" id="lptxt">${lpText()}</span></div>
         <section class="bx-panel" id="files" style="margin-top:24px" hidden><div class="bx-panel-head"><h3>ملفات المحاضرة</h3></div><div id="filelist"></div></section>
         <section class="bx-panel" style="margin-top:24px"><div class="bx-panel-head"><h3>عن الدورة</h3></div><p style="margin:0">${esc(c.summary || c.title)}</p></section>
@@ -239,6 +240,7 @@
       const pv = $('#prev'); if (pv) pv.onclick = () => go(i - 1);
       $('#next').onclick = () => { if (i < lects.length - 1 && seen(cur) >= PASS) go(i + 1); };
       loadVideo();
+      $$('[data-ask]', root).forEach((b) => (b.onclick = () => window.Chat && Chat.askCourse(b.dataset.ask)));
     }
 
     function lpText() { const v = Math.round(seen(cur)); return v >= 95 ? 'خلّصت المحاضرة دي ✓ تقدر ترجع لأي جزء فيها' : v >= PASS ? `اتفرجت على ${v}٪ · المحاضرة التالية اتفتحت` : `اتفرجت على ${v}٪ · كمّل لحد ${PASS}٪ عشان تفتح المحاضرة التالية`; }

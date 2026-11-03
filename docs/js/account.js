@@ -104,6 +104,12 @@
       })));
     },
 
+    async messages(main) {
+      main.innerHTML = D.panel('الرسائل والدعم', `<p class="bx-hint" style="margin-top:0">هنا أسئلتك للمحاضرين (من زرار «اسأل المحاضر» في صفحة الكورس) وتذاكر الدعم والشكاوى مع فريق Biosyn.</p><div data-ib></div>`);
+      await Chat.inbox($('[data-ib]', main), { mode: 'student', newTicket: true, empty: 'مفيش رسايل لسه. لو عندك مشكلة افتح تذكرة جديدة.' });
+      D.setBadge('messages', 0);
+    },
+
     async certs(main) {
       const certs = await sb.get('certificates', { select: '*,courses(title)', order: 'issued_at.desc' });
       main.innerHTML = D.panel('شهاداتي', certs.length
@@ -151,8 +157,9 @@
     me = await D.guard(['student', 'instructor', 'support', 'admin']); if (!me) return;
     await D.shell({
       title: 'حسابي', who: me.full_name || sb.user.email, sub: D.roleAr[me.role],
-      items: [{ id: 'home', label: 'الرئيسية', icon: 'home' }, { id: 'payments', label: 'الاشتراك والمدفوعات', icon: 'card' }, { id: 'certs', label: 'الشهادات', icon: 'cert' }, { id: 'settings', label: 'الإعدادات', icon: 'cog' }],
+      items: [{ id: 'home', label: 'الرئيسية', icon: 'home' }, { id: 'payments', label: 'الاشتراك والمدفوعات', icon: 'card' }, { id: 'certs', label: 'الشهادات', icon: 'cert' }, { id: 'messages', label: 'الرسائل والدعم', icon: 'chat' }, { id: 'settings', label: 'الإعدادات', icon: 'cog' }],
       views, topLink: '<a href="courses.html" class="bs-btn bs-btn-secondary bs-btn-sm">تصفح الدورات</a>',
     });
+    if (window.Chat) Chat.unreadCounts().then((u) => D.setBadge('messages', (u && u.student) || 0));
   };
 })();

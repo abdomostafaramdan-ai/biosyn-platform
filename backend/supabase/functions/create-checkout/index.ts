@@ -26,15 +26,15 @@ Deno.serve(async (req) => {
     const ret = String(b.return_url ?? site);
     if (!site || !ret.startsWith(site)) return json({ error: 'bad return_url' }, 400);
 
-    let purpose: 'subscription' | 'interactive_course', planId: string | null = null, courseId: string | null = null, price = 0, title = '';
+    let purpose: 'subscription' | 'interactive_course', planId: string | null = null, courseId: string | null = null, price = 0, title = '', intl: number | null = null;
     if (b.plan_code) {
-      const { data: plan } = await sb.from('plans').select('id,name,price_egp').eq('code', b.plan_code).eq('active', true).single();
+      const { data: plan } = await sb.from('plans').select('id,name,price_egp,intl_price').eq('code', b.plan_code).eq('active', true).single();
       if (!plan) return json({ error: 'plan not found' }, 404);
-      purpose = 'subscription'; planId = plan.id; price = Number(plan.price_egp); title = `Biosyn: ${plan.name}`;
+      purpose = 'subscription'; planId = plan.id; price = Number(plan.price_egp); intl = plan.intl_price == null ? null : Number(plan.intl_price); title = `Biosyn: ${plan.name}`;
     } else if (b.course_id) {
-      const { data: c } = await sb.from('courses').select('id,title,price_egp').eq('id', b.course_id).single();
+      const { data: c } = await sb.from('courses').select('id,title,price_egp,intl_price').eq('id', b.course_id).single();
       if (!c) return json({ error: 'course not found' }, 404);
-      purpose = 'interactive_course'; courseId = c.id; price = Number(c.price_egp); title = `Biosyn: ${c.title}`;
+      purpose = 'interactive_course'; courseId = c.id; price = Number(c.price_egp); intl = c.intl_price == null ? null : Number(c.intl_price); title = `Biosyn: ${c.title}`;
     } else return json({ error: 'plan_code or course_id required' }, 400);
 
     const rates = feeRates(gw);
@@ -54,10 +54,13 @@ Deno.serve(async (req) => {
       return json({ url: `${ret}?payment=success&id=${p.id}`, payment_id: p.id, price: 0, fee: 0, total: 0, free: true });
     }
     // the DB price is authoritative: recompute the fee if it changed between lookup and insert
-    let g = grossUp(Number(p.amount_egp), rates.pct, rates.fixed);
+    let g = grossUp(Number(p.amount_egp), rates.pct, rates.fixed), localAmt = 0;
     if (region) {
       // same-number pricing in local currency; keep the EGP equivalent in amount_egp/fee_egp for revenue share
-      const amt = localPrice(Number(p.amount_egp), region);
+      // fixed international price (same number in every currency) if set, else EGP × factor; coupons keep their % off
+      const listEgp = Number(p.list_price_egp ?? p.amount_egp), listLocal = intl != null ? intl : localPrice(listEgp, region);
+      const amt = listEgp > 0 ? Math.round(listLocal * (Number(p.amount_egp) / listEgp) * 100) / 100 : 0;
+      localAmt = amt;
       const fx = region.egp_rate, gl = grossUp(amt, rates.pct, Math.round((rates.fixed / fx) * 100) / 100); // fixed fee is set in EGP
       g = gl;
       const { error: ue } = await sb.from('payments').update({
@@ -76,7 +79,7 @@ Deno.serve(async (req) => {
         webhookBase: `${Deno.env.get('SUPABASE_URL')}/functions/v1`,
       });
       if (res.gatewayRef) await sb.from('payments').update({ gateway_ref: res.gatewayRef }).eq('id', p.id);
-      return json({ url: res.url, payment_id: p.id, currency: cur, price: region ? localPrice(Number(p.amount_egp), region) : Number(p.amount_egp), list_price: Number(p.list_price_egp ?? p.amount_egp), discount: Number(p.discount_egp ?? 0), fee: g.fee, total: g.total });
+      return json({ url: res.url, payment_id: p.id, currency: cur, price: region ? localAmt : Number(p.amount_egp), list_price: Number(p.list_price_egp ?? p.amount_egp), discount: Number(p.discount_egp ?? 0), fee: g.fee, total: g.total });
     } catch (e) {
       await sb.rpc('fail_payment', { p_payment: p.id });
       return json({ error: 'could not start payment', detail: String(e) }, 502);

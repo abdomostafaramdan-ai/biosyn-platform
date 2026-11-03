@@ -39,7 +39,10 @@
   // price in the visitor's currency for an EGP list price (whole units, same rule as the server)
   const localOf = (egp, R) => (!R || R.currency === 'EGP' ? Number(egp) : Number(egp) <= 0 ? 0 : Math.max(1, Math.round(Number(egp) * Number(R.factor || 1))));
   const curOf = (R) => (R && R.currency !== 'EGP' ? R.symbol : 'ج.م');
-  const priceTxt = (egp, R) => `${EGP(localOf(egp, R))} ${curOf(R)}`;
+  // outside Egypt a fixed international price (same number in every currency) wins when set
+  const itemPrice = (egp, intl, R) => (R && R.currency !== 'EGP' && intl != null && intl !== '' ? Number(intl) : localOf(egp, R));
+  const priceTxt = (egp, R, intl) => `${EGP(itemPrice(egp, intl, R))} ${curOf(R)}`;
+  window.itemPrice = itemPrice;
   window.localOf = localOf; window.curOf = curOf; window.priceTxt = priceTxt;
   // amounts already charged (payments rows): local currency if paid outside Egypt
   window.paidTxt = (p, field) => { const loc = p.currency && p.currency !== 'EGP'; const v = loc ? (field === 'fee' ? p.fee_local : field === 'total' ? Number(p.amount_local) + Number(p.fee_local) : p.amount_local) : (field === 'fee' ? p.fee_egp : field === 'total' ? Number(p.amount_egp) + Number(p.fee_egp) : p.amount_egp); return `${EGP(v || 0)} ${loc ? p.currency : 'ج.م'}`; };
@@ -218,7 +221,7 @@
     if (!requireLogin()) return;
     const R = await REGION, loc = R.currency !== 'EGP';
     modal(`<h3>إتمام الدفع</h3>
-      <p><b>${esc(target.title)}</b> · ${priceTxt(target.price, R)}</p>
+      <p><b>${esc(target.title)}</b> · ${priceTxt(target.price, R, target.intl)}</p>
       <div role="radiogroup" aria-label="بوابة الدفع" style="display:grid;gap:10px"><div class="bx-loading" data-gwload>جارٍ تحميل طرق الدفع…</div></div>
       <div data-manual hidden class="bx-banner" style="display:block;margin-top:10px"></div>
       <div class="bx-coupon" style="margin:14px 0 4px"><label class="bx-hint" for="cpn" style="display:block;margin-bottom:6px">عندك كود خصم؟</label><div style="display:flex;gap:8px"><input id="cpn" class="bx-input" dir="ltr" autocomplete="off" placeholder="WELCOME20" style="flex:1"><button type="button" class="bs-btn bs-btn-secondary" data-cpn>تطبيق</button></div><div class="bx-formmsg" data-cpnmsg aria-live="polite"></div></div>
@@ -250,17 +253,20 @@
         drawManual();
       });
       const cm = $('[data-cpnmsg]', m), priceEl = $('p b', m).parentElement;
+      let saved = ''; try { saved = localStorage.getItem('biosyn.code') || ''; } catch {}
+      if (saved) setTimeout(() => { $('#cpn', m).value = saved; $('[data-cpn]', m).click(); }, 0);
       $('[data-cpn]', m).onclick = async (ev) => {
         const cbtn = ev.currentTarget, code = $('#cpn', m).value.trim(); coupon = ''; cm.className = 'bx-formmsg';
-        if (!code) { cm.textContent = ''; priceEl.innerHTML = `<b>${esc(target.title)}</b> · ${priceTxt(target.price, R)}`; return; }
+        if (!code) { cm.textContent = ''; priceEl.innerHTML = `<b>${esc(target.title)}</b> · ${priceTxt(target.price, R, target.intl)}`; return; }
         cbtn.disabled = true;
         try {
           const q = await sb.rpc('validate_coupon', { p_code: code, p_plan_code: target.plan_code || null, p_course: target.course_id || null });
           coupon = code; finalPrice = Number(q.final); drawManual && drawManual(); cm.className = 'bx-formmsg ok';
-          cm.textContent = `تم تطبيق الكود: خصم ${priceTxt(Number(q.list) - Number(q.final), R)}` + (Number(q.final) === 0 ? ' (مجاني بالكامل)' : '');
-          priceEl.innerHTML = `<b>${esc(target.title)}</b> · <s class="bx-muted">${EGP(localOf(q.list, R))}</s> <b>${priceTxt(q.final, R)}</b>`;
+          const L = itemPrice(target.price, target.intl, R), F = Number(q.list) > 0 ? Math.round(L * (Number(q.final) / Number(q.list)) * 100) / 100 : 0;
+          cm.textContent = `تم تطبيق الكود: خصم ${EGP(Math.round((L - F) * 100) / 100)} ${curOf(R)}` + (Number(q.final) === 0 ? ' (مجاني بالكامل)' : '');
+          priceEl.innerHTML = `<b>${esc(target.title)}</b> · <s class="bx-muted">${EGP(L)}</s> <b>${EGP(F)} ${curOf(R)}</b>`;
           track('add_coupon', { code });
-        } catch (e) { finalPrice = target.price; drawManual(); cm.className = 'bx-formmsg err'; cm.textContent = arErr(e); priceEl.innerHTML = `<b>${esc(target.title)}</b> · ${priceTxt(target.price, R)}`; }
+        } catch (e) { finalPrice = target.price; drawManual(); cm.className = 'bx-formmsg err'; cm.textContent = arErr(e); priceEl.innerHTML = `<b>${esc(target.title)}</b> · ${priceTxt(target.price, R, target.intl)}`; }
         cbtn.disabled = false;
       };
       $('[data-go]', m).onclick = async (ev) => {
@@ -305,14 +311,15 @@
       const p = plans[i];
       if (!p) { card.remove(); return; }
       $('.bs-plan-name', card).textContent = p.name;
-      $('.bs-plan-price b', card).textContent = EGP(localOf(p.price_egp, R));
+      const abroad = R.currency !== 'EGP';
+      $('.bs-plan-price b', card).textContent = EGP(itemPrice(p.price_egp, p.intl_price, R));
       const cu = $('.bs-plan-price span', card); if (cu) cu.textContent = curOf(R);
-      const old = Number(p.old_price_egp);
-      $('.bs-plan-period', card).textContent = (old > p.price_egp ? `السعر السابق ${EGP(localOf(old, R))} · ` : '') + periodAr(p.duration_months);
+      const old = abroad ? 0 : Number(p.old_price_egp);   // the "was" price is an Egypt-only promotion
+      $('.bs-plan-period', card).textContent = (old > p.price_egp ? `السعر السابق ${EGP(old)} · ` : '') + periodAr(p.duration_months);
       const badge = $('.bs-badge', card);
       if (badge) { if (old > p.price_egp) badge.textContent = `وفر ${Math.round((1 - p.price_egp / old) * 100)}٪`; else badge.remove(); }
       const cta = $('.bs-plan-cta', card);
-      if (cta) cta.addEventListener('click', () => checkout({ plan_code: p.code, title: p.name, price: p.price_egp, note: 'الاشتراك لا يتجدد تلقائيًا ولا يمكن استرداده.' }));
+      if (cta) cta.addEventListener('click', () => checkout({ plan_code: p.code, title: p.name, price: p.price_egp, intl: p.intl_price, note: 'الاشتراك لا يتجدد تلقائيًا ولا يمكن استرداده.' }));
     });
   }
 
@@ -420,7 +427,7 @@
         ${c.summary ? `<p class="bx-pcard-sum">${esc(c.summary)}</p>` : ''}
         <ul class="bx-pcard-facts">${facts}</ul>
       </div>
-      <div class="bx-pcard-foot"><div class="bx-pcard-price"><b>${EGP(localOf(c.price_egp, window.REGION_NOW))}</b><small>${curOf(window.REGION_NOW)}</small></div><a href="${href}" class="bs-btn bs-btn-primary">التفاصيل والتسجيل</a></div>
+      <div class="bx-pcard-foot"><div class="bx-pcard-price"><b>${EGP(itemPrice(c.price_egp, c.intl_price, window.REGION_NOW))}</b><small>${curOf(window.REGION_NOW)}</small></div><a href="${href}" class="bs-btn bs-btn-primary">التفاصيل والتسجيل</a></div>
     </article>`;
   }
   async function pageInteractive() {
@@ -573,6 +580,7 @@
   window.BiosynPages = window.BiosynPages || {};
   async function boot() {
     sb.auth.consumeHash();
+    try { const c = new URLSearchParams(location.search).get('code'); if (c && /^[\w-]{3,40}$/.test(c)) localStorage.setItem('biosyn.code', c.toUpperCase()); } catch {}
     mountLayout();
     mountToggles();
     mountUserMenu();

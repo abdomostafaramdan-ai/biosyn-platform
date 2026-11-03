@@ -39,6 +39,14 @@
   }
 
   const views = {
+    async tickets(main) {
+      main.innerHTML = D.panel('التذاكر والشكاوى', `<p class="bx-hint" style="margin-top:0">التذاكر اللي الطلاب بيفتحوها من «حسابي ← الرسائل والدعم». ردّك بيوصلهم هنا وعلى الإيميل.</p><div data-ib></div>`);
+      await Chat.inbox($('[data-ib]', main), { mode: 'staff', kind: 'ticket', status: 'open', empty: 'مفيش تذاكر بالفلتر ده' });
+    },
+    async questions(main) {
+      main.innerHTML = D.panel('أسئلة الطلاب للمحاضرين', `<p class="bx-hint" style="margin-top:0">كل أسئلة الطلاب في الكورسات. الكورسات اللي مش مربوطة بحساب محاضر بتيجي للفريق هنا عشان ترد عليها.</p><div data-ib></div>`);
+      await Chat.inbox($('[data-ib]', main), { mode: 'staff', kind: 'course', empty: 'مفيش أسئلة لسه' });
+    },
     async analytics(main) { await window.courseAnalytics(main, { admin: true, edit: isAdmin() }); },
 
     async home(main) {
@@ -319,13 +327,14 @@
     },
 
     async coupons(main) {
-      const [rows, paid] = await Promise.all([sb.get('coupons', { select: '*', order: 'created_at.desc' }).catch(() => []), sb.get('payments', { select: 'coupon_id', status: 'eq.paid', coupon_id: 'not.is.null' }).catch(() => [])]);
+      const [rows, paid, insts] = await Promise.all([sb.get('coupons', { select: '*', order: 'created_at.desc' }).catch(() => []), sb.get('payments', { select: 'coupon_id', status: 'eq.paid', coupon_id: 'not.is.null' }).catch(() => []), sb.rpc('admin_users').then((u) => u.filter((x) => x.role === 'instructor')).catch(() => [])]);
+      const iname = Object.fromEntries(insts.map((i) => [i.id, i.full_name || i.email]));
       const used = {}; paid.forEach((p) => (used[p.coupon_id] = (used[p.coupon_id] || 0) + 1));
       const scope = { any: 'الكل', subscription: 'الاشتراكات', interactive_course: 'الدورات التفاعلية' };
       const off = (c) => (c.percent_off ? c.percent_off + '٪' : D.money(c.amount_off_egp));
       main.innerHTML = D.panel('كوبونات الخصم', `<p class="bx-hint" style="margin-top:0">الخصم يُحسب على سعر الباقة، وتُحسب أرباح المحاضرين على المبلغ بعد الخصم. كل عميل يستخدم الكود مرة واحدة.</p>` +
-        (isAdmin() ? `<form class="bx-form2" id="cf" novalidate><div class="row2"><div class="bx-field"><label for="cc">الكود</label><input id="cc" class="bx-input" dir="ltr" placeholder="WELCOME20"></div><div class="bx-field"><label for="ct">النوع</label><select id="ct" class="bx-select"><option value="p">نسبة ٪</option><option value="a">مبلغ ثابت (ج.م)</option></select></div><div class="bx-field"><label for="cv">القيمة</label><input id="cv" class="bx-input" type="number" min="1" dir="ltr"></div></div><div class="row2"><div class="bx-field"><label for="cs">ينطبق على</label><select id="cs" class="bx-select"><option value="any">الكل</option><option value="subscription">الاشتراكات</option><option value="interactive_course">الدورات التفاعلية</option></select></div><div class="bx-field"><label for="cm">أقصى عدد استخدامات (اختياري)</label><input id="cm" class="bx-input" type="number" min="1" dir="ltr"></div><div class="bx-field"><label for="ce">ينتهي في (اختياري)</label><input id="ce" class="bx-input" type="date" dir="ltr"></div></div><div class="bx-formmsg" id="cmsg" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">إضافة كوبون</button></div></form><hr style="border:none;border-top:1px solid var(--line);margin:20px 0">` : '') +
-        D.table(['الكود', 'الخصم', 'ينطبق على', 'الاستخدام', 'ينتهي', 'مفعّل'], rows.map((c) => [`<b class="bs-latin">${esc(c.code)}</b>`, off(c), scope[c.applies_to], `${used[c.id] || 0}${c.max_redemptions ? ' / ' + c.max_redemptions : ''}`, c.expires_at ? D.date(c.expires_at) : '—', `<input type="checkbox" data-ca="${c.id}" ${c.active ? 'checked' : ''} ${isAdmin() ? '' : 'disabled'}>`]), 'لا توجد كوبونات بعد'));
+        (isAdmin() ? `<form class="bx-form2" id="cf" novalidate><div class="row2"><div class="bx-field"><label for="cc">الكود</label><input id="cc" class="bx-input" dir="ltr" placeholder="WELCOME20"></div><div class="bx-field"><label for="ct">النوع</label><select id="ct" class="bx-select"><option value="p">نسبة ٪</option><option value="a">مبلغ ثابت (ج.م)</option></select></div><div class="bx-field"><label for="cv">القيمة</label><input id="cv" class="bx-input" type="number" min="1" dir="ltr"></div></div><div class="row2"><div class="bx-field"><label for="cs">ينطبق على</label><select id="cs" class="bx-select"><option value="any">الكل</option><option value="subscription">الاشتراكات</option><option value="interactive_course">الدورات التفاعلية</option></select></div><div class="bx-field"><label for="cm">أقصى عدد استخدامات (اختياري)</label><input id="cm" class="bx-input" type="number" min="1" dir="ltr"></div><div class="bx-field"><label for="ce">ينتهي في (اختياري)</label><input id="ce" class="bx-input" type="date" dir="ltr"></div></div><div class="row2"><div class="bx-field"><label for="ci">كود محاضر؟ (اختياري)</label><select id="ci" class="bx-select"><option value="">لا، كود عادي للمنصة</option>${insts.map((i) => `<option value="${i.id}">${esc(i.full_name || i.email)}</option>`).join('')}</select></div><div class="bx-field"><label for="cip">نسبة المحاضر من الاشتراك</label><input id="cip" class="bx-input" type="number" min="0" max="100" value="50" dir="ltr"></div></div><p class="bx-hint" style="margin:0">كود المحاضر: أي اشتراك في باقة بالكود ده بياخد المحاضر عنه النسبة دي من قيمة الاشتراك (بدل الـ 30٪ من المشاهدات)، والاشتراك ده مش بيدخل في توزيع المشاهدات. ممكن تخلّي الخصم للطالب صغير (مثلًا 10٪) عشان يشجعه.</p><div class="bx-formmsg" id="cmsg" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">إضافة كوبون</button></div></form><hr style="border:none;border-top:1px solid var(--line);margin:20px 0">` : '') +
+        D.table(['الكود', 'الخصم', 'ينطبق على', 'المحاضر', 'الاستخدام', 'ينتهي', 'مفعّل'], rows.map((c) => [`<b class="bs-latin">${esc(c.code)}</b>`, off(c), scope[c.applies_to], c.instructor_id ? `${esc(iname[c.instructor_id] || 'محاضر')}<br><small class="bx-hint">${Number(c.instructor_pct)}٪ من الاشتراك</small>` : '—', `${used[c.id] || 0}${c.max_redemptions ? ' / ' + c.max_redemptions : ''}`, c.expires_at ? D.date(c.expires_at) : '—', `<input type="checkbox" data-ca="${c.id}" ${c.active ? 'checked' : ''} ${isAdmin() ? '' : 'disabled'}>`]), 'لا توجد كوبونات بعد'));
       const f = $('#cf', main);
       if (f) f.onsubmit = async (e) => {
         e.preventDefault(); const msg = $('#cmsg', main), code = $('#cc', f).value.trim().toUpperCase(), v = Number($('#cv', f).value), pct = $('#ct', f).value === 'p';
@@ -333,6 +342,7 @@
         if (!(v > 0) || (pct && v > 100)) return say(msg, 'قيمة الخصم غير صحيحة.', 'err');
         const row = { code, applies_to: $('#cs', f).value, [pct ? 'percent_off' : 'amount_off_egp']: v };
         if ($('#cm', f).value) row.max_redemptions = Number($('#cm', f).value);
+        if ($('#ci', f).value) { const ip = Number($('#cip', f).value); if (!(ip >= 0 && ip <= 100)) return say(msg, 'نسبة المحاضر لازم تكون بين 0 و100.', 'err'); row.instructor_id = $('#ci', f).value; row.instructor_pct = ip; }
         if ($('#ce', f).value) row.expires_at = new Date($('#ce', f).value + 'T23:59:59+02:00').toISOString();
         try { await sb.insert('coupons', row); ui.toast('تمت إضافة الكوبون.'); D.reload(); } catch (err) { say(msg, /duplicate|unique/i.test(err.message) ? 'هذا الكود موجود بالفعل.' : arErr(err), 'err'); }
       };
@@ -529,11 +539,11 @@
 
     async plans(main) {
       const plans = await sb.get('plans', { select: '*', order: 'duration_months' });
-      main.innerHTML = D.panel('الباقات والأسعار', `<p class="bx-hint" style="margin-top:0">الأسعار تُقرأ من هنا في الموقع وصفحة الدفع. التغيير يسري على المدفوعات الجديدة فقط.</p>` + D.table(['الباقة', 'المدة', 'السعر (ج.م)', 'السعر السابق', 'مفعّلة', ''], plans.map((p) => [esc(p.name), p.duration_months + ' شهر', `<input class="bx-input" type="number" min="0" style="max-width:110px" value="${p.price_egp}" data-f="price_egp" data-p="${p.id}" ${isAdmin() ? '' : 'disabled'}>`, `<input class="bx-input" type="number" min="0" style="max-width:110px" value="${p.old_price_egp ?? ''}" data-f="old_price_egp" data-p="${p.id}" ${isAdmin() ? '' : 'disabled'}>`, `<input type="checkbox" data-f="active" data-p="${p.id}" ${p.active ? 'checked' : ''} ${isAdmin() ? '' : 'disabled'}>`, isAdmin() ? `<button class="bs-btn bs-btn-secondary bs-btn-sm" data-save="${p.id}">حفظ</button>` : '']), 'لا توجد باقات'));
+      main.innerHTML = D.panel('الباقات والأسعار', `<p class="bx-hint" style="margin-top:0">الأسعار تُقرأ من هنا في الموقع وصفحة الدفع. التغيير يسري على المدفوعات الجديدة فقط.</p>` + D.table(['الباقة', 'المدة', 'السعر (ج.م)', 'برّه مصر (بعملة البلد)', 'السعر السابق', 'مفعّلة', ''], plans.map((p) => [esc(p.name), p.duration_months + ' شهر', `<input class="bx-input" type="number" min="0" style="max-width:110px" value="${p.price_egp}" data-f="price_egp" data-p="${p.id}" ${isAdmin() ? '' : 'disabled'}>`, `<input class="bx-input" type="number" min="0" step="0.5" style="max-width:110px" value="${p.intl_price ?? ''}" placeholder="—" data-f="intl_price" data-p="${p.id}" ${isAdmin() ? '' : 'disabled'} aria-label="السعر خارج مصر">`, `<input class="bx-input" type="number" min="0" style="max-width:110px" value="${p.old_price_egp ?? ''}" data-f="old_price_egp" data-p="${p.id}" ${isAdmin() ? '' : 'disabled'}>`, `<input type="checkbox" data-f="active" data-p="${p.id}" ${p.active ? 'checked' : ''} ${isAdmin() ? '' : 'disabled'}>`, isAdmin() ? `<button class="bs-btn bs-btn-secondary bs-btn-sm" data-save="${p.id}">حفظ</button>` : '']), 'لا توجد باقات'));
       $$('[data-save]', main).forEach((b) => (b.onclick = async () => {
         const id = b.dataset.save, g = (f) => $(`[data-f="${f}"][data-p="${id}"]`, main);
         const price = Number(g('price_egp').value); if (!(price >= 0)) return ui.toast('سعر غير صحيح', 'err');
-        try { await sb.update('plans', { id: 'eq.' + id }, { price_egp: price, old_price_egp: g('old_price_egp').value === '' ? null : Number(g('old_price_egp').value), active: g('active').checked }); ui.toast('تم حفظ الباقة.'); } catch (e) { ui.toast(arErr(e), 'err'); }
+        try { await sb.update('plans', { id: 'eq.' + id }, { price_egp: price, intl_price: g('intl_price').value === '' ? null : Number(g('intl_price').value), old_price_egp: g('old_price_egp').value === '' ? null : Number(g('old_price_egp').value), active: g('active').checked }); ui.toast('تم حفظ الباقة.'); } catch (e) { ui.toast(arErr(e), 'err'); }
       }));
       await regionsPanel(main, plans);
     },
@@ -544,9 +554,9 @@
     const rows = await sb.get('price_regions', { select: '*', order: 'country' }).catch(() => []);
     rows.sort((a, b) => (a.country === '*') - (b.country === '*'));
     const monthly = (plans.find((p) => p.duration_months === 1) || plans[0] || { price_egp: 200 });
-    const loc = (r) => Math.max(1, Math.round(Number(monthly.price_egp) * Number(r.factor)));
+    const loc = (r) => (monthly.intl_price != null ? Number(monthly.intl_price) : Math.max(1, Math.round(Number(monthly.price_egp) * Number(r.factor))));
     const box = document.createElement('div');
-    box.innerHTML = D.panel('الأسعار خارج مصر', `<p class="bx-hint" style="margin-top:0">الزائر من برّه مصر بيشوف السعر ويدفع بعملة بلده: <b>السعر = سعر الجنيه × المعامل</b>. المعامل 1 يعني نفس الرقم (الشهري ${EGP(monthly.price_egp)} ج.م ← ${EGP(monthly.price_egp)} ريال). «سعر الصرف» بيحوّل اللي اتدفع لجنيه عشان أرباح المحاضرين والتقارير. الدول اللي مش في الجدول بتاخد صف «باقي الدول». الدفع بره مصر بيكون بالبطاقة عن طريق Stripe أو Fawaterk.</p>
+    box.innerHTML = D.panel('الأسعار خارج مصر', `<p class="bx-hint" style="margin-top:0">الزائر من برّه مصر بيشوف السعر ويدفع بعملة بلده. <b>الباقات</b> بتاخد السعر الثابت اللي في خانة «برّه مصر» فوق، بنفس الرقم في كل العملات (مثلًا الشهري ${EGP(monthly.intl_price ?? 0)} ريال في السعودية و${EGP(monthly.intl_price ?? 0)} يورو في ألمانيا). <b>المعامل</b> بيتطبّق بس على أي حاجة ملهاش سعر ثابت برّه مصر (زي كورس تفاعلي من غير سعر دولي): السعر = سعر الجنيه × المعامل. «سعر الصرف» بيحوّل اللي اتدفع لجنيه عشان أرباح المحاضرين والتقارير. الدول اللي مش في الجدول بتاخد صف «باقي الدول». الدفع بره مصر بيكون بالبطاقة عن طريق Stripe أو Fawaterk.</p>
       ${D.table(['الدولة', 'العملة', 'الرمز', 'المعامل', 'سعر الصرف (ج.م لكل وحدة)', 'الشهري بعملتهم', 'يساوي بالجنيه', 'مفعّل', ''], rows.map((r) => [
         `<b>${esc(r.name)}</b> <small class="bx-hint bs-latin">${r.country === '*' ? 'الباقي' : r.country}</small>`, `<span class="bs-latin">${esc(r.currency)}</span>`, esc(r.symbol),
         `<input class="bx-input" type="number" step="0.01" min="0.01" data-rf="factor" data-rc="${r.country}" value="${Number(r.factor)}" style="width:90px" aria-label="المعامل">`,
@@ -559,7 +569,7 @@
     const v = (c, f) => $(`[data-rf="${f}"][data-rc="${CSS.escape(c)}"]`, main);
     $$('[data-rf="factor"],[data-rf="egp_rate"]', main).forEach((inp) => (inp.oninput = () => {
       const r = rows.find((x) => x.country === inp.dataset.rc), f = Number(v(r.country, 'factor').value) || 0, x = Number(v(r.country, 'egp_rate').value) || 0;
-      const l = Math.max(1, Math.round(Number(monthly.price_egp) * f));
+      const l = monthly.intl_price != null ? Number(monthly.intl_price) : Math.max(1, Math.round(Number(monthly.price_egp) * f));
       $(`[data-prev="${CSS.escape(r.country)}"]`, main).textContent = `${EGP(l)} ${r.symbol}`; $(`[data-eq="${CSS.escape(r.country)}"]`, main).textContent = D.money(l * x);
     }));
     $$('[data-rsave]', main).forEach((b) => (b.onclick = async () => {
@@ -781,7 +791,7 @@
         <div class="row2"><div class="bx-field"><label for="cfa">الكلية</label><select id="cfa" class="bx-select"><option value="">—</option><option value="all" ${c.faculty === 'all' ? 'selected' : ''}>كل الكليات</option>${(window.FACULTIES || []).map((f) => `<option value="${f.id}" ${f.id === (c.faculty || (window.facultyOf ? window.facultyOf(c) : '')) ? 'selected' : ''}>${esc(f.name)}</option>`).join('')}</select></div><div class="bx-field"><label for="csp">التخصص</label><input id="csp" class="bx-input" list="csp-l" value="${esc(c.specialty || '')}" placeholder="اختر من القائمة أو اكتب تخصصًا"><datalist id="csp-l"></datalist></div></div>
         <div class="bx-field"><label for="csu">وصف مختصر</label><input id="csu" class="bx-input" value="${esc(c.summary || '')}"></div>
         <div class="bx-field"><label for="cd">الوصف الكامل</label><textarea id="cd" class="bx-textarea">${esc(c.description || '')}</textarea></div>
-        <div class="row2" id="ia" ${c.kind === 'interactive' ? '' : 'hidden'}><div class="bx-field"><label for="cp">سعر الكورس (ج.م)</label><input id="cp" class="bx-input" type="number" min="0" value="${c.price_egp ?? ''}"></div><div class="bx-field"><label for="cse">المقاعد</label><input id="cse" class="bx-input" type="number" min="1" value="${c.seats ?? ''}"></div><div class="bx-field"><label for="cdt">تاريخ البدء</label><input id="cdt" class="bx-input" type="date" value="${c.starts_at ? String(c.starts_at).slice(0, 10) : ''}"></div></div>
+        <div class="row2" id="ia" ${c.kind === 'interactive' ? '' : 'hidden'}><div class="bx-field"><label for="cp">سعر الكورس (ج.م)</label><input id="cp" class="bx-input" type="number" min="0" value="${c.price_egp ?? ''}"></div><div class="bx-field"><label for="cpi">السعر برّه مصر (بعملة البلد)</label><input id="cpi" class="bx-input" type="number" min="0" step="0.5" value="${c.intl_price ?? ''}" placeholder="فاضي = سعر الجنيه × المعامل"></div><div class="bx-field"><label for="cse">المقاعد</label><input id="cse" class="bx-input" type="number" min="1" value="${c.seats ?? ''}"></div><div class="bx-field"><label for="cdt">تاريخ البدء</label><input id="cdt" class="bx-input" type="date" value="${c.starts_at ? String(c.starts_at).slice(0, 10) : ''}"></div></div>
         <div class="bx-formmsg" id="cm" aria-live="polite"></div>
         <div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">${isNew ? 'إنشاء' : 'حفظ'}</button><button class="bs-btn bs-btn-ghost" type="button" data-x>إغلاق</button></div>
       </form>
@@ -852,7 +862,7 @@
         e.preventDefault(); const msg = $('#cm', m), g = (id) => $('#' + id, m).value.trim();
         if (!g('ct') || !g('cs')) return say(msg, 'اكتب العنوان والرابط.', 'err');
         const kind = g('ck'), row = { title: g('ct'), slug: g('cs'), kind, status: g('cst'), level: g('cl'), cover_code: g('cc') || autoCode(g('ct')) || null, specialty: g('csp') || null, faculty: g('cfa') || null, summary: g('csu') || null, description: g('cd') || null,
-          price_egp: kind === 'interactive' && g('cp') !== '' ? Number(g('cp')) : null, seats: kind === 'interactive' && g('cse') !== '' ? Number(g('cse')) : null, starts_at: kind === 'interactive' && g('cdt') ? new Date(g('cdt')).toISOString() : null };
+          price_egp: kind === 'interactive' && g('cp') !== '' ? Number(g('cp')) : null, intl_price: kind === 'interactive' && g('cpi') !== '' ? Number(g('cpi')) : null, seats: kind === 'interactive' && g('cse') !== '' ? Number(g('cse')) : null, starts_at: kind === 'interactive' && g('cdt') ? new Date(g('cdt')).toISOString() : null };
         if (kind === 'interactive' && row.status === 'published' && row.price_egp === null) return say(msg, 'حدّد سعر الكورس التفاعلي قبل النشر.', 'err');
         if (kind === 'recorded' && row.status === 'published' && !lects.length) return say(msg, 'أضف محاضرة واحدة على الأقل قبل نشر الدورة.', 'err');
         try { Object.assign(row, await instFields()); isNew ? await sb.insert('courses', row) : await sb.update('courses', { id: 'eq.' + c.id }, row); ui.toast('تم الحفظ.'); cl(); D.reload(); }
@@ -924,7 +934,7 @@
 
   window.BiosynPages.admin = async () => {
     me = await D.guard(['admin', 'support']); if (!me) return;
-    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'كورسات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'analytics', label: 'تحليلات الكورسات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'الفورمز والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرين في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
+    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'كورسات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'analytics', label: 'تحليلات الكورسات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'الفورمز والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرين في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
     // live counters: new requests + open refund requests (refreshes every minute and when the tab regains focus)
     let lastRef = -1;
@@ -933,6 +943,7 @@
         const open = await sb.get('requests', { select: 'id,type,status', status: 'in.(new,in_review)', limit: 500 });
         const nRef = open.filter((r) => r.type === 'refund').length;
         D.setBadge('payments', nRef); D.setBadge('requests', open.filter((r) => r.type !== 'refund' && r.status === 'new').length);
+        if (window.Chat) Chat.unreadCounts().then((u) => { D.setBadge('tickets', (u && u.tickets) || 0); D.setBadge('questions', (u && u.course_unanswered) || 0); });
         if (lastRef >= 0 && nRef > lastRef) ui.toast(`وصل طلب استرداد جديد (${nRef} مفتوح).`);
         lastRef = nRef;
       } catch (e) { /* offline: try next tick */ }
