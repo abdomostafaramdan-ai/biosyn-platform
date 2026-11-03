@@ -323,8 +323,6 @@
     if (!cards.length) return;
     let plans; try { plans = await sb.get('plans', { select: '*', active: 'eq.true', order: 'duration_months' }); } catch { return; }
     const R = await REGION;
-    // abroad: say how to pay (once, under the plans)
-    if (R.currency !== 'EGP' && cards[0] && !$('.bx-abroad-pay')) cards[0].parentElement.insertAdjacentHTML('afterend', `<div class="bx-abroad-pay"><b>بتدفع من برّه مصر؟</b> الأسعار ظاهرة بعملة ${esc(R.name || 'بلدك')} (${esc(R.currency)}). تقدر تدفع ببطاقة بنكية (فيزا / ماستركارد) عن طريق فواتيرك ومعاها طرق دفع تانية، أو من حسابك على <b>PayPal</b>. الاشتراك بيتفعّل لوحده أول ما الدفع يتأكد.</div>`);
     cards.forEach((card, i) => {
       const p = plans[i];
       if (!p) { card.remove(); return; }
