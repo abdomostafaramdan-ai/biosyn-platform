@@ -93,7 +93,11 @@ Deno.serve(async (req) => {
         successUrl: `${ret}?payment=success&id=${p.id}`, cancelUrl: `${ret}?payment=cancelled&id=${p.id}`,
         webhookBase: `${Deno.env.get('SUPABASE_URL')}/functions/v1`,
       });
-      if (res.gatewayRef) await sb.from('payments').update({ gateway_ref: res.gatewayRef }).eq('id', p.id);
+      if (res.gatewayRef) {
+        await sb.from('payments').update({ gateway_ref: res.gatewayRef }).eq('id', p.id);
+        // Fawaterk hands back the same open invoice on a retry: the older attempt is superseded by this one
+        if (gw === 'fawaterk') await sb.from('payments').update({ status: 'failed' }).eq('gateway', 'fawaterk').eq('status', 'pending').eq('gateway_ref', res.gatewayRef).neq('id', p.id);
+      }
       return json({ url: res.url, payment_id: p.id, currency: cur, price: region ? localAmt : Number(p.amount_egp), list_price: Number(p.list_price_egp ?? p.amount_egp), discount: Number(p.discount_egp ?? 0), fee: g.fee, total: g.total });
     } catch (e) {
       await sb.rpc('fail_payment', { p_payment: p.id });

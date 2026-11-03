@@ -323,3 +323,11 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .bx-consprice small { color: var(--ink-muted); }
 .bx-abroad-pay { max-width: 860px; margin: 18px auto 0; padding: 12px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--brand-lime) 45%, transparent); color: var(--ink-muted); text-align: center; line-height: 1.8; }
 .bx-abroad-pay b { color: var(--ink); }
+
+/* manual transfer: required screenshot */
+.bx-proof{display:block;margin-top:10px;cursor:pointer}
+.bx-proof input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.bx-proof-box{display:flex;flex-direction:column;gap:2px;align-items:center;justify-content:center;text-align:center;padding:12px;border:1.5px dashed var(--line-strong, var(--line));border-radius:10px;background:var(--surface, transparent);transition:border-color .15s,background .15s}
+.bx-proof-box small{opacity:.75;font-size:12px}
+.bx-proof:hover .bx-proof-box,.bx-proof input:focus-visible+.bx-proof-box{border-color:var(--accent-text)}
+.bx-proof.ok .bx-proof-box{border-style:solid;border-color:var(--success);background:color-mix(in srgb, var(--success) 8%, transparent)}

@@ -105,7 +105,8 @@ export async function createCheckout(gw: Gateway, i: CheckoutInput): Promise<Che
   });
   const d = await r.json();
   if (!r.ok || d.status !== 'success') throw new Error(`fawaterk: ${JSON.stringify(d).slice(0, 200)}`);
-  return { url: d.data.url, gatewayRef: d.data.invoice_id ? String(d.data.invoice_id) : null };
+  const inv = d.data.invoiceId ?? d.data.invoice_id;   // Fawaterk answers with camelCase invoiceId
+  return { url: d.data.url, gatewayRef: inv ? String(inv) : null };
 }
 
 // Returns true when the refund was executed at the gateway, false when it must be done manually.

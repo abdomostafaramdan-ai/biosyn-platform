@@ -251,7 +251,14 @@
         }
         const isI = v === 'manual:instapay', to = isI ? pinfo.instapay : pinfo.vodafone_cash;
         mbox.hidden = false; $('[data-go]', m).textContent = 'أرسلت التحويل';
-        mbox.innerHTML = `<b>حوّل ${EGP(finalPrice)} ج.م ${isI ? 'عبر إنستاباي إلى' : 'على محفظة فودافون كاش رقم'}:</b> <span class="bs-latin" dir="ltr" style="font-weight:700">${esc(to)}</span><br><small>بعد التحويل اكتب رقم العملية أو الرقم الذي حوّلت منه. يتفعّل اشتراكك بعد مراجعة الفريق (عادة خلال ساعات العمل).</small><input id="mref" class="bx-input" dir="ltr" maxlength="120" placeholder="${isI ? 'رقم العملية' : '01xxxxxxxxx'}" style="margin-top:8px;width:100%">`;
+        mbox.innerHTML = `<b>حوّل ${EGP(finalPrice)} ج.م ${isI ? 'عبر إنستاباي إلى' : 'على محفظة فودافون كاش رقم'}:</b> <span class="bs-latin" dir="ltr" style="font-weight:700">${esc(to)}</span><br><small>بعد التحويل اكتب رقم العملية أو الرقم الذي حوّلت منه، وارفع صورة (سكرين) التحويل. يتفعّل اشتراكك بعد مراجعة الفريق (عادة خلال ساعات العمل).</small><input id="mref" class="bx-input" dir="ltr" maxlength="120" placeholder="${isI ? 'رقم العملية' : '01xxxxxxxxx'}" style="margin-top:8px;width:100%">
+          <label class="bx-proof" for="mproof"><input id="mproof" type="file" accept="image/*,application/pdf" required><span class="bx-proof-box" data-proofname><b>📎 ارفع سكرين التحويل</b><small>إجباري · صورة أو PDF حتى 6 ميجا</small></span></label>`;
+        const fi = $('#mproof', m);
+        fi.onchange = () => {
+          const f = fi.files[0], lab = $('[data-proofname]', m);
+          if (!f) { lab.innerHTML = '<b>📎 ارفع سكرين التحويل</b><small>إجباري · صورة أو PDF حتى 6 ميجا</small>'; lab.parentElement.classList.remove('ok'); return; }
+          lab.innerHTML = `<b>✓ ${esc(f.name.length > 34 ? f.name.slice(0, 31) + '…' : f.name)}</b><small>${(f.size / 1048576).toFixed(1)} ميجا · اضغط للتغيير</small>`; lab.parentElement.classList.add('ok');
+        };
       };
       Promise.all([window.SITE_SETTINGS, loc ? fxTable() : null]).then(([pi]) => {
         pinfo = pi || {};
@@ -291,9 +298,18 @@
         if (gwv.startsWith('manual:')) {
           const ref = ($('#mref', m) || {}).value || '';
           if (!ref.trim()) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = 'اكتب رقم العملية أو الرقم الذي حوّلت منه.'; return; }
+          const needProof = gwv !== 'manual:paypal', file = needProof && ($('#mproof', m) || {}).files ? $('#mproof', m).files[0] : null;
+          if (needProof && !file) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = 'ارفع صورة (سكرين) التحويل الأول.'; return; }
+          if (file && (file.size > 6 * 1048576 || !/^(image\/|application\/pdf)/.test(file.type || ''))) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = 'الملف لازم يكون صورة أو PDF وحجمه أقل من 6 ميجا.'; return; }
           try {
             const pp = gwv === 'manual:paypal' && ppAmt;
-            const r = await sb.rpc('create_manual_payment_v2', { p_method: gwv.slice(7), p_ref: ref.trim(), p_plan_code: target.plan_code || null, p_course: target.course_id || null, p_coupon: coupon || null, p_request: target.consultation || null, p_currency: pp ? ppAmt.cur : 'EGP', p_amount_local: pp ? ppAmt.amt : null });
+            let proof = null;
+            if (file) {
+              msg.textContent = 'جارٍ رفع صورة التحويل…';
+              const ext = ((file.name.match(/\.([a-z0-9]{2,5})$/i) || [])[1] || (file.type.split('/')[1] || 'jpg')).toLowerCase();
+              proof = await sb.storage.upload('payment-proofs', `${sb.user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`, file);
+            }
+            const r = await sb.rpc('create_manual_payment_v3', { p_method: gwv.slice(7), p_ref: ref.trim(), p_proof: proof, p_plan_code: target.plan_code || null, p_course: target.course_id || null, p_coupon: coupon || null, p_request: target.consultation || null, p_currency: pp ? ppAmt.cur : 'EGP', p_amount_local: pp ? ppAmt.amt : null });
             track('begin_checkout', { value: finalPrice, item: target.title, id: target.plan_code || target.course_id });
             msg.className = 'bx-formmsg ok';
             msg.textContent = r.status === 'paid' ? 'تم التفعيل!' : target.consultation ? 'استلمنا طلبك. هنراجع التحويل ونتواصل معاك لتحديد موعد الاستشارة.' : 'استلمنا طلبك. سنراجع التحويل ونفعّل اشتراكك، وسيصلك بريد بالتأكيد.';

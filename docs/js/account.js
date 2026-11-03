@@ -147,7 +147,10 @@
     const box = $('#paybanner'); if (!box || !id) return;
     box.innerHTML = '<div class="bx-banner bx-appmsg" role="status">استلمنا عودتك من صفحة الدفع، ننتظر تأكيد البوابة…</div>';
     for (let i = 0; i < 15; i++) {
-      try { const p = await sb.one('payments', { select: 'status,amount_egp,fee_egp', id: 'eq.' + id }); if (p && p.status === 'paid') { window.track && track('purchase', { id, value: Number(p.amount_egp) + Number(p.fee_egp) }); ui.toast('تم تأكيد الدفع. اشتراكك فعّال الآن!'); history.replaceState(null, '', 'account.html'); D.reload(); return; } if (p && p.status === 'failed') { box.innerHTML = '<div class="bx-banner bx-appmsg" role="alert">فشلت عملية الدفع. لم يُخصم منك أي مبلغ.</div>'; return; } } catch {}
+      try { const p = await sb.one('payments', { select: 'status,amount_egp,fee_egp,gateway', id: 'eq.' + id });
+        // Fawaterk: ask the server to check the invoice with Fawaterk right away (no waiting for the webhook)
+        if (p && p.status === 'pending' && p.gateway === 'fawaterk' && i % 2 === 0) { const v = await sb.fn('webhook-fawaterk', { verify: id }).catch(() => null); if (v && v.status === 'paid') p.status = 'paid'; }
+        if (p && p.status === 'paid') { window.track && track('purchase', { id, value: Number(p.amount_egp) + Number(p.fee_egp) }); ui.toast('تم تأكيد الدفع. اشتراكك فعّال الآن!'); history.replaceState(null, '', 'account.html'); D.reload(); return; } if (p && p.status === 'failed') { box.innerHTML = '<div class="bx-banner bx-appmsg" role="alert">فشلت عملية الدفع. لم يُخصم منك أي مبلغ.</div>'; return; } } catch {}
       await new Promise((r) => setTimeout(r, 3000));
     }
     box.innerHTML = '<div class="bx-banner bx-appmsg" role="status">ما زلنا في انتظار تأكيد البوابة. إذا خُصم المبلغ فسيتفعّل اشتراكك تلقائيًا خلال دقائق، وتجده في «الاشتراك والمدفوعات».</div>';
