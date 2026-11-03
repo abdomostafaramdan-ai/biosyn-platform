@@ -268,7 +268,11 @@
         if (loc && pinfo.paypal) opts.push(['manual:paypal', 'PayPal', 'ادفع من حسابك على PayPal']);
         if (!loc && pinfo.instapay) opts.push(['manual:instapay', 'إنستاباي', 'تحويل يدوي · بدون رسوم']);
         if (!loc && pinfo.vodafone_cash) opts.push(['manual:vodafone_cash', 'فودافون كاش', 'تحويل يدوي · بدون رسوم']);
-        rg.innerHTML = opts.length ? opts.map(([k, n, s], i) => `<label class="bx-opt"><input type="radio" name="gw" value="${k}" ${i === 0 ? 'checked' : ''}><b>${n}</b><small>${s}</small></label>`).join('')
+        // Fawaterk's own method logos (copied to our public bucket); Fawry / Aman / wallets are Egypt-only
+        const LOGO = (f) => `${BIOSYN.SUPABASE_URL}/storage/v1/object/public/site-assets/pay/${f}.png`;
+        const fwLogos = (loc ? [['visa-mastercard', 'Visa / Mastercard']] : [['visa-mastercard', 'Visa / Mastercard'], ['wallets', 'المحافظ الإلكترونية'], ['fawry', 'فوري'], ['aman', 'أمان']])
+          .map(([f, a]) => `<img src="${LOGO(f)}" alt="${a}" title="${a}" loading="lazy" onerror="this.remove()">`).join('');
+        rg.innerHTML = opts.length ? opts.map(([k, n, s], i) => `<label class="bx-opt"><input type="radio" name="gw" value="${k}" ${i === 0 ? 'checked' : ''}><b>${n}</b><small>${s}</small>${k === 'fawaterk' ? `<span class="bx-paylogos" aria-hidden="true">${fwLogos}</span>` : ''}</label>`).join('')
           : `<div class="bx-formmsg err">${loc ? `الدفع من بلدك مش متاح لسه. تواصل معنا على contact@biosynegypt.com ونفعّلك يدويًا.` : 'الدفع غير متاح حاليًا. تواصل معنا على contact@biosynegypt.com'}</div>`;
         $('[data-go]', m).disabled = !opts.length;
         $$('input[name=gw]', m).forEach((r) => (r.onchange = drawManual));
