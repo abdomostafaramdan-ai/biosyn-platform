@@ -5,7 +5,7 @@
   let me;
 
   async function subscription() {
-    const rows = await sb.get('subscriptions', { select: '*,plans(name)', order: 'ends_at.desc', limit: 10 });
+    const rows = await sb.get('subscriptions', { select: '*,plans(name,duration_months)', order: 'ends_at.desc', limit: 10 });
     const now = Date.now();
     const active = rows.filter((s) => new Date(s.starts_at) <= now && new Date(s.ends_at) >= now);
     const upcoming = rows.filter((s) => new Date(s.starts_at) > now);
@@ -69,7 +69,13 @@
         ${last ? `<section class="bx-resume" aria-labelledby="hi"><span class="bs-wm bs-wm-brand" aria-hidden="true"></span><div class="bx-resume-cover" aria-hidden="true"><span>${esc(last.cover_code || last.title.slice(0, 2).toUpperCase())}</span></div><div class="bx-resume-body"><span class="bx-eyebrow">أهلاً ${esc(first)} · تابع من حيث توقفت</span><h2 id="hi" class="bs-latin" style="direction:ltr;text-align:right">${esc(last.title)}</h2><p style="margin:0">أنهيت ${last.done} من ${last.total} محاضرة</p><div class="bx-progress" role="progressbar" aria-valuenow="${last.pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${last.pct}%"></i></div></div><a href="watch.html?c=${esc(last.slug)}" class="bs-btn bs-btn-primary bs-btn-lg">تابع التعلم ←</a></section>`
           : `<section class="bx-resume"><span class="bs-wm bs-wm-brand" aria-hidden="true"></span><div class="bx-resume-body"><span class="bx-eyebrow">أهلاً ${esc(first)}</span><h2 id="hi">ابدأ رحلتك التعليمية</h2><p style="margin:0">${sub.current ? 'اشتراكك ساري. اختر دورة وابدأ المشاهدة.' : 'اشترك في إحدى الباقات للوصول إلى كل الكورسات المسجلة.'}</p></div><a href="${sub.current ? 'courses.html' : 'pricing.html'}" class="bs-btn bs-btn-primary bs-btn-lg">${sub.current ? 'تصفح الدورات' : 'اختر باقة'}</a></section>`}
         <div class="bx-stats">
-          ${D.stat('الاشتراك', sub.current ? esc(sub.current.plans.name) : 'غير مشترك', sub.current ? 'ينتهي في ' + D.date(sub.current.ends_at) : '<a class="bx-link" href="pricing.html">عرض الباقات</a>')}
+          ${(() => {
+            if (!sub.current) return D.stat('الاشتراك', 'غير مشترك', '<a class="bx-link" href="pricing.html">عرض الباقات</a>');
+            const lastEnd = sub.rows.reduce((m, r) => (new Date(r.ends_at) > m ? new Date(r.ends_at) : m), new Date(0));
+            const soon = lastEnd - Date.now() <= 7 * 864e5, maxM = Math.max(...sub.rows.filter((r) => new Date(r.ends_at) > Date.now() && r.plans).map((r) => r.plans.duration_months || 0), 0);
+            const act = soon ? '<a class="bx-link" href="pricing.html">جدّد الآن</a>' : maxM < 12 ? '<a class="bx-link" href="pricing.html">ترقية الباقة ↑</a>' : '';
+            return D.stat('الاشتراك', esc(sub.current.plans.name), 'ساري حتى ' + D.date(lastEnd) + (act ? ' · ' + act : ''));
+          })()}
           ${D.stat('دورات بدأتها', courses.length)}
           ${D.stat('محاضرات مكتملة', courses.reduce((s, c) => s + c.done, 0))}
           ${D.stat('الشهادات', certs.length)}

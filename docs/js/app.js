@@ -355,7 +355,43 @@
       const badge = $('.bs-badge', card);
       if (badge) { if (old > p.price_egp) badge.textContent = `وفر ${Math.round((1 - p.price_egp / old) * 100)}٪`; else badge.remove(); }
       const cta = $('.bs-plan-cta', card);
-      if (cta) cta.addEventListener('click', () => checkout({ plan_code: p.code, title: p.name, price: p.price_egp, intl: p.intl_price, note: 'الاشتراك لا يتجدد تلقائيًا ولا يمكن استرداده.' }));
+      card.dataset.plan = p.code; card.dataset.months = p.duration_months;
+      if (cta) cta.addEventListener('click', () => checkout({ plan_code: p.code, title: p.name, price: p.price_egp, intl: p.intl_price, note: (card.dataset.upnote || '') + 'الاشتراك لا يتجدد تلقائيًا ولا يمكن استرداده.' }));
+    });
+    planState(cards);
+  }
+
+  // signed-in subscriber: mark the current plan, offer upgrades to longer plans, renewals only in the last 7 days
+  // (the server enforces the same rule in create_pending_payment)
+  async function planState(cards) {
+    if (!window.sb || !sb.user) return;
+    let st; try { st = await sb.rpc('my_plan_state'); } catch { return; }
+    if (!st || !st.plan_code) return;
+    const end = new Date(st.ends_at).toLocaleDateString(window.LOC || 'ar-EG-u-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' });
+    const left = st.days_left === 1 ? 'يوم واحد' : st.days_left === 2 ? 'يومين' : st.days_left <= 10 ? `${st.days_left} أيام` : `${st.days_left} يوم`;
+    const wrap = cards[0] && cards[0].closest('.bs-plans');
+    if (wrap && !document.querySelector('.bx-planstate')) {
+      wrap.insertAdjacentHTML('beforebegin', `<div class="bx-planstate" role="status"><span>إنت مشترك في <b>${esc(st.plan_name)}</b> لحد ${esc(end)} · فاضل ${left}</span>${st.renew_open ? '<span class="bx-hint">تقدر تجدّد دلوقتي، والمدة الجديدة هتبدأ بعد ما الحالية تخلص.</span>' : '<span class="bx-hint">تقدر ترقّي لباقة أطول في أي وقت، والأيام المتبقية مش هتضيع.</span>'}</div>`);
+    }
+    cards.forEach((card) => {
+      const cta = $('.bs-plan-cta', card); if (!cta || !card.dataset.plan) return;
+      const months = Number(card.dataset.months), same = card.dataset.plan === st.plan_code;
+      const note = (t) => { let n = $('.bx-plan-note', card); if (!n) { n = document.createElement('small'); n.className = 'bx-plan-note'; cta.after(n); } n.textContent = t; };
+      if (same) {
+        card.classList.add('is-current');
+        const b = $('.bs-badge', card) || $('.bs-plan-top', card).appendChild(Object.assign(document.createElement('span'), { className: 'bs-badge' }));
+        b.textContent = 'باقتك الحالية'; b.className = 'bs-badge bs-badge-new';
+      }
+      if (st.renew_open) { cta.textContent = same ? 'جدّد الباقة' : months > st.duration ? 'جدّد بباقة أطول ↑' : 'جدّد بالباقة دي'; card.dataset.upnote = `المدة الجديدة بتبدأ بعد ما اشتراكك الحالي يخلص (${end}). `; return; }
+      if (months > st.duration) {
+        cta.textContent = 'رقّي للباقة دي ↑'; cta.classList.replace('bs-btn-secondary', 'bs-btn-primary');
+        card.dataset.upnote = `الترقية بتتضاف بعد اشتراكك الحالي (${end})، فمش هتخسر ولا يوم. `;
+        note('الأيام المتبقية من باقتك محسوبة');
+        return;
+      }
+      cta.setAttribute('aria-disabled', 'true'); cta.disabled = true;
+      cta.textContent = same ? `مشترك لحد ${end}` : 'باقتك الحالية أطول';
+      note(same ? 'التجديد بيفتح في آخر 7 أيام' : 'متاحة للتجديد في آخر 7 أيام');
     });
   }
 

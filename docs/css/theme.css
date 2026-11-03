@@ -335,3 +335,30 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 /* Fawaterk payment-method logos under its checkout option */
 .bx-paylogos{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
 .bx-paylogos img{height:26px;width:auto;max-width:72px;object-fit:contain;padding:3px 6px;border-radius:6px;background:#fff;border:1px solid var(--line)}
+
+/* notification bell */
+.bx-bellwrap{position:relative;display:inline-flex}
+.bx-bell{position:relative;width:38px;height:38px;display:inline-grid;place-items:center;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;padding:0}
+.bx-bell:hover{border-color:var(--line-strong)}
+.bx-bell .ic{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bx-bell-n{position:absolute;top:-4px;inset-inline-end:-4px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:var(--danger, #e5484d);color:#fff;font:700 11px/18px var(--font-sans);text-align:center}
+.bx-bellpanel{position:absolute;top:calc(100% + 8px);inset-inline-end:0;width:min(360px,calc(100vw - 32px));max-height:min(480px,70vh);overflow:auto;background:var(--surface-raised, var(--surface));border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.28);z-index:60}
+.bx-bell-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:inherit}
+.bx-bell-list{list-style:none;margin:0;padding:6px}
+.bx-notif{display:flex;gap:10px;padding:10px;border-radius:10px;color:var(--ink);text-decoration:none}
+.bx-notif:hover{background:var(--surface)}
+.bx-notif b{display:block;font-size:14px;line-height:22px}
+.bx-notif small{display:block;color:var(--ink-muted);font-size:13px;line-height:20px}
+.bx-notif time{display:block;color:var(--ink-subtle);font-size:11px;margin-top:2px}
+.bx-notif-ic{flex:none;width:28px;height:28px;border-radius:999px;display:grid;place-items:center;background:var(--surface);font-size:13px}
+.bx-notif.unread{background:color-mix(in srgb, var(--accent-text) 8%, transparent)}
+.bx-notif.unread b::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent-text);margin-inline-start:6px;vertical-align:middle}
+.bx-bell-empty{padding:28px 14px;text-align:center;color:var(--ink-muted)}
+@media (max-width:560px){.bx-bellpanel{position:fixed;top:64px;inset-inline:16px;width:auto}}
+
+/* pricing: where the visitor stands */
+.bx-planstate{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;margin:0 0 18px;padding:14px 16px;border:1px solid var(--line-strong);border-radius:14px;background:var(--surface)}
+.bx-planstate b{color:var(--accent-text)}
+.bs-plan.is-current{outline:2px solid var(--accent-text);outline-offset:-2px}
+.bs-plan-cta[aria-disabled="true"]{opacity:.55;cursor:not-allowed;pointer-events:none}
+.bx-plan-note{display:block;margin-top:8px;font-size:12px;color:var(--ink-muted);text-align:center}
