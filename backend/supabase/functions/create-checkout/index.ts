@@ -24,7 +24,9 @@ Deno.serve(async (req) => {
     let site = sec('SITE_URL').replace(/\/$/, '');
     if (!site) { const { data: st } = await sb.from('app_settings').select('value').eq('key', 'site_url').maybeSingle(); site = String(st?.value ?? '').replace(/\/$/, ''); }
     const ret = String(b.return_url ?? site);
-    if (!site || !ret.startsWith(site)) return json({ error: 'bad return_url' }, 400);
+    // the site answers on its main domain and (during the move) on the GitHub Pages address
+    const okBases = [site, 'https://biosyneg.com', 'https://www.biosyneg.com', 'https://abdomostafaramdan-ai.github.io/biosyn-platform'].filter(Boolean);
+    if (!site || !okBases.some((o) => ret === o || ret.startsWith(o + '/'))) return json({ error: 'bad return_url' }, 400);
 
     let purpose: 'subscription' | 'interactive_course', planId: string | null = null, courseId: string | null = null, price = 0, title = '', intl: number | null = null, requestId: string | null = null;
     if (b.plan_code) {

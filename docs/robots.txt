@@ -3,4 +3,4 @@ Disallow: /account.html
 Disallow: /admin.html
 Disallow: /instructor.html
 Disallow: /watch.html
-Sitemap: https://biosynegypt.com/sitemap.xml
+Sitemap: https://biosyneg.com/sitemap.xml
