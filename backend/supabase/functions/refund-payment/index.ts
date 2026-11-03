@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
 
   try {
     const free = String(p.gateway_ref ?? '').startsWith('free:'); // 100% coupon: nothing was charged
-    const done = free ? true : p.gateway_ref ? await refundAtGateway(p.gateway as Gateway, p.gateway_ref, Number(p.amount_egp) + Number(p.fee_egp)) : false;
+    const done = free ? true : p.gateway_ref ? await refundAtGateway(p.gateway as Gateway, p.gateway_ref, p.currency && p.currency !== 'EGP' ? Number(p.amount_local) + Number(p.fee_local) : Number(p.amount_egp) + Number(p.fee_egp)) : false;
     if (!done && !manual_confirmed) {
       return json({ manual: true, message: 'Refund this payment from the gateway dashboard, then call again with manual_confirmed=true.' }, 202);
     }

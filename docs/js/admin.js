@@ -192,7 +192,7 @@
           const act = manual ? `<button class="bx-linkbtn" data-ma="${p.id}">تأكيد الاستلام</button> · <button class="bx-linkbtn" data-mr="${p.id}" style="color:var(--danger-text)">رفض</button>`
             : rq && openRef(rq) ? `<button class="bx-linkbtn" data-goref="${rq.id}">طلب استرداد مفتوح ←</button>`
             : canRefund(p) && isAdmin() ? `<button class="bx-linkbtn" data-rf="${p.id}">استرداد</button>` : '';
-          return [D.date(p.created_at), esc((p.profiles && p.profiles.full_name) || '—'), esc(itemOf(p)) + (p.receipt_no ? `<br><small class="bx-hint">إيصال ${p.receipt_no}</small>` : ''), D.money(p.amount_egp) + (Number(p.discount_egp) ? `<br><small class="bx-hint">خصم ${D.money(p.discount_egp)}</small>` : ''), D.money(p.fee_egp), (D.gw[p.gateway] || p.gateway) + (p.gateway === 'manual' ? `<br><small class="bx-hint">${p.manual_method === 'instapay' ? 'إنستاباي' : 'فودافون كاش'} · <span class="bs-latin">${esc(p.manual_ref || '')}</span></small>` : ''), D.badge('pay', p.status), act];
+          return [D.date(p.created_at), esc((p.profiles && p.profiles.full_name) || '—'), esc(itemOf(p)) + (p.receipt_no ? `<br><small class="bx-hint">إيصال ${p.receipt_no}</small>` : ''), (p.currency && p.currency !== 'EGP' ? `${paidTxt(p)}<br><small class="bx-hint">≈ ${D.money(p.amount_egp)}</small>` : D.money(p.amount_egp)) + (Number(p.discount_egp) ? `<br><small class="bx-hint">خصم ${D.money(p.discount_egp)}</small>` : ''), p.currency && p.currency !== 'EGP' ? paidTxt(p, 'fee') : D.money(p.fee_egp), (D.gw[p.gateway] || p.gateway) + (p.gateway === 'manual' ? `<br><small class="bx-hint">${p.manual_method === 'instapay' ? 'إنستاباي' : 'فودافون كاش'} · <span class="bs-latin">${esc(p.manual_ref || '')}</span></small>` : ''), D.badge('pay', p.status), act];
         }), 'مفيش مدفوعات بالفلتر ده');
       }
       function refCard(r) {
@@ -535,8 +535,39 @@
         const price = Number(g('price_egp').value); if (!(price >= 0)) return ui.toast('سعر غير صحيح', 'err');
         try { await sb.update('plans', { id: 'eq.' + id }, { price_egp: price, old_price_egp: g('old_price_egp').value === '' ? null : Number(g('old_price_egp').value), active: g('active').checked }); ui.toast('تم حفظ الباقة.'); } catch (e) { ui.toast(arErr(e), 'err'); }
       }));
+      await regionsPanel(main, plans);
     },
   };
+
+  // ---------- prices outside Egypt: same number in local currency × factor ----------
+  async function regionsPanel(main, plans) {
+    const rows = await sb.get('price_regions', { select: '*', order: 'country' }).catch(() => []);
+    rows.sort((a, b) => (a.country === '*') - (b.country === '*'));
+    const monthly = (plans.find((p) => p.duration_months === 1) || plans[0] || { price_egp: 200 });
+    const loc = (r) => Math.max(1, Math.round(Number(monthly.price_egp) * Number(r.factor)));
+    const box = document.createElement('div');
+    box.innerHTML = D.panel('الأسعار خارج مصر', `<p class="bx-hint" style="margin-top:0">الزائر من برّه مصر بيشوف السعر ويدفع بعملة بلده: <b>السعر = سعر الجنيه × المعامل</b>. المعامل 1 يعني نفس الرقم (الشهري ${EGP(monthly.price_egp)} ج.م ← ${EGP(monthly.price_egp)} ريال). «سعر الصرف» بيحوّل اللي اتدفع لجنيه عشان أرباح المحاضرين والتقارير. الدول اللي مش في الجدول بتاخد صف «باقي الدول». الدفع بره مصر بيكون بالبطاقة عن طريق Stripe أو Fawaterk.</p>
+      ${D.table(['الدولة', 'العملة', 'الرمز', 'المعامل', 'سعر الصرف (ج.م لكل وحدة)', 'الشهري بعملتهم', 'يساوي بالجنيه', 'مفعّل', ''], rows.map((r) => [
+        `<b>${esc(r.name)}</b> <small class="bx-hint bs-latin">${r.country === '*' ? 'الباقي' : r.country}</small>`, `<span class="bs-latin">${esc(r.currency)}</span>`, esc(r.symbol),
+        `<input class="bx-input" type="number" step="0.01" min="0.01" data-rf="factor" data-rc="${r.country}" value="${Number(r.factor)}" style="width:90px" aria-label="المعامل">`,
+        `<input class="bx-input" type="number" step="0.01" min="0.01" data-rf="egp_rate" data-rc="${r.country}" value="${Number(r.egp_rate)}" style="width:110px" aria-label="سعر الصرف">`,
+        `<b data-prev="${r.country}">${EGP(loc(r))} ${esc(r.symbol)}</b>`, `<span data-eq="${r.country}">${D.money(loc(r) * Number(r.egp_rate))}</span>`,
+        `<input type="checkbox" data-rf="active" data-rc="${r.country}" ${r.active ? 'checked' : ''} aria-label="مفعّل">`,
+        `<button class="bx-linkbtn" data-rsave="${r.country}">حفظ</button>`]), 'مفيش دول متضافة')}
+      <p class="bx-hint">لو قفلت دولة، زوارها بيشوفوا سعر «باقي الدول». لو قفلت «باقي الدول» كمان بيشوفوا الجنيه المصري.</p>`);
+    main.appendChild(box.firstElementChild);
+    const v = (c, f) => $(`[data-rf="${f}"][data-rc="${CSS.escape(c)}"]`, main);
+    $$('[data-rf="factor"],[data-rf="egp_rate"]', main).forEach((inp) => (inp.oninput = () => {
+      const r = rows.find((x) => x.country === inp.dataset.rc), f = Number(v(r.country, 'factor').value) || 0, x = Number(v(r.country, 'egp_rate').value) || 0;
+      const l = Math.max(1, Math.round(Number(monthly.price_egp) * f));
+      $(`[data-prev="${CSS.escape(r.country)}"]`, main).textContent = `${EGP(l)} ${r.symbol}`; $(`[data-eq="${CSS.escape(r.country)}"]`, main).textContent = D.money(l * x);
+    }));
+    $$('[data-rsave]', main).forEach((b) => (b.onclick = async () => {
+      const c = b.dataset.rsave, factor = Number(v(c, 'factor').value), egp_rate = Number(v(c, 'egp_rate').value);
+      if (!(factor > 0) || !(egp_rate > 0)) return ui.toast('المعامل وسعر الصرف لازم يكونوا أكبر من صفر.', 'err');
+      try { await sb.update('price_regions', { country: 'eq.' + c }, { factor, egp_rate, active: v(c, 'active').checked, updated_at: new Date().toISOString() }); ui.toast('اتحفظ. الزوار هيشوفوا السعر الجديد خلال دقايق.'); } catch (e) { ui.toast(arErr(e), 'err'); }
+    }));
+  }
 
 
 

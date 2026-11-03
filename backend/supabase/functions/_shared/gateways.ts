@@ -1,5 +1,6 @@
 import type { Gateway } from './lib.ts';
 import { sec } from './secrets.ts';
+import { fawaterkCode } from './geo.ts';
 
 const env = (k: string) => sec(k);
 const need = (k: string) => {
@@ -22,7 +23,9 @@ export function enabledGateways(): Gateway[] {
 
 export interface CheckoutInput {
   paymentId: string;
-  total: number;          // what the customer pays (price + gateway fee), EGP
+  total: number;          // what the customer pays (price + gateway fee), in `currency`
+  currency?: string;      // ISO code, default EGP
+  decimals?: number;      // minor-unit digits of the currency (KWD/BHD/OMR/JOD = 3)
   title: string;
   customer: { name: string; email: string; phone: string };
   successUrl: string;
@@ -38,6 +41,7 @@ const splitName = (n: string) => {
 };
 
 export async function createCheckout(gw: Gateway, i: CheckoutInput): Promise<CheckoutResult> {
+  const cur = (i.currency || 'EGP').toUpperCase(), dec = i.decimals ?? 2;
   if (gw === 'stripe') {
     const r = await fetch('https://api.stripe.com/v1/checkout/sessions', {
       method: 'POST',
@@ -50,8 +54,9 @@ export async function createCheckout(gw: Gateway, i: CheckoutInput): Promise<Che
         'metadata[payment_id]': i.paymentId,
         customer_email: i.customer.email,
         'line_items[0][quantity]': '1',
-        'line_items[0][price_data][currency]': 'egp',
-        'line_items[0][price_data][unit_amount]': String(Math.round(i.total * 100)),
+        'line_items[0][price_data][currency]': cur.toLowerCase(),
+        // 3-decimal currencies must be a multiple of 10 minor units on Stripe; totals are already 2-decimal
+        'line_items[0][price_data][unit_amount]': String(Math.round(i.total * 10 ** dec)),
         'line_items[0][price_data][product_data][name]': i.title,
       }),
     });
@@ -61,6 +66,7 @@ export async function createCheckout(gw: Gateway, i: CheckoutInput): Promise<Che
   }
 
   if (gw === 'paymob') {
+    if (cur !== 'EGP') throw new Error('paymob: EGP only');
     const n = splitName(i.customer.name);
     const r = await fetch('https://accept.paymob.com/v1/intention/', {
       method: 'POST',
@@ -90,7 +96,7 @@ export async function createCheckout(gw: Gateway, i: CheckoutInput): Promise<Che
     headers: { Authorization: `Bearer ${need('FAWATERK_API_KEY')}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       cartTotal: i.total.toFixed(2),
-      currency: 'EGP',
+      currency: fawaterkCode(cur) || (() => { throw new Error('fawaterk: currency not supported ' + cur); })(),
       customer: { first_name: n.first, last_name: n.last, email: i.customer.email, phone: i.customer.phone || '01000000000' },
       redirectionUrls: { successUrl: i.successUrl, failUrl: i.cancelUrl, pendingUrl: i.successUrl },
       cartItems: [{ name: i.title, price: i.total.toFixed(2), quantity: '1' }],

@@ -11,9 +11,52 @@
   const ICON_LOCK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 
   // ---------- login ----------
-  P.login = () => {
-    if (sb.user) { location.replace(nextUrl()); return; }
+  // phone: country select + national number -> +<dial><number>
+  const ccOptions = (iso) => (window.COUNTRIES || []).map(([c, n, d]) => `<option value="${c}" data-d="${d}" ${c === iso ? 'selected' : ''}>+${d} ${n}</option>`).join('');
+  function normPhone(iso, raw) {
+    const row = (window.COUNTRIES || []).find((x) => x[0] === iso); if (!row) return null;
+    const dial = row[2]; let d = String(raw || '').replace(/\D/g, '');
+    if (d.startsWith('00' + dial)) d = d.slice(2 + dial.length); else if (d.startsWith(dial) && d.length > dial.length + 7) d = d.slice(dial.length);
+    d = d.replace(/^0+/, '');
+    if (iso === 'EG' ? !/^1[0125]\d{8}$/.test(d) : !/^\d{6,12}$/.test(d)) return null;
+    return '+' + dial + d;
+  }
+  window.normPhone = normPhone; window.ccOptions = ccOptions;
+
+  P.login = async () => {
     const $ = window.$;
+    const R = await Promise.race([window.REGION, new Promise((r) => setTimeout(() => r({}), 2500))]).catch(() => ({}));
+    const iso0 = (window.COUNTRIES || []).some((x) => x[0] === R.country) ? R.country : 'EG';
+    $('#r-cc').innerHTML = ccOptions(iso0); $('#c-cc').innerHTML = ccOptions(iso0);
+    const phoneErr = (iso) => iso === 'EG' ? 'اكتب رقم موبايل مصري صحيح (11 رقم يبدأ بـ 01).' : 'اكتب رقم موبايل صحيح.';
+    // signed in (email or just back from Google): make sure we have a phone, then continue
+    if (sb.session) await sb.auth.ready;
+    if (sb.user) {
+      let prof = null; try { prof = await sb.one('profiles', { select: 'phone', id: 'eq.' + sb.user.id }); } catch {}
+      if (prof && prof.phone) { location.replace(nextUrl()); return; }
+      ['#f-in', '#f-up', '.bx-seg', '#oauth'].forEach((q) => { const el = $(q); if (el) el.hidden = true; });
+      $('#auth-h').textContent = 'كمّل بياناتك'; $('#auth-eb').textContent = 'أهلاً بيك في Biosyn'; $('#auth-sub').textContent = '';
+      const f = $('#f-ph'); f.hidden = false;
+      f.addEventListener('submit', async (ev) => {
+        ev.preventDefault(); const m = $('#m-ph'), iso = $('#c-cc').value, ph = normPhone(iso, $('#c-ph').value);
+        if (!ph) { m.className = 'bx-formmsg err'; m.textContent = phoneErr(iso); return; }
+        const b = $('button[type=submit]', f); b.disabled = true;
+        try { await sb.update('profiles', { id: 'eq.' + sb.user.id }, { phone: ph, country: iso }); location.replace(nextUrl()); }
+        catch (e) { b.disabled = false; m.className = 'bx-formmsg err'; m.textContent = window.arErr(e); }
+      });
+      return;
+    }
+    // Google sign-in: only shown once the provider is enabled in Supabase
+    sb.auth.providers().then((p) => {
+      if (!p.google) return;
+      $('#oauth').hidden = false;
+      $('#g-btn').onclick = () => {
+        const n = new URLSearchParams(location.search).get('next');
+        const back = location.origin + location.pathname + (n ? '?next=' + encodeURIComponent(n) : '');
+        window.track && track('sign_up', { method: 'google' });
+        location.href = sb.auth.oauthUrl('google', back);
+      };
+    });
     const show = (up) => {
       $('#f-in').hidden = up; $('#f-up').hidden = !up;
       $('#tab-in').setAttribute('aria-selected', String(!up)); $('#tab-up').setAttribute('aria-selected', String(up));
@@ -33,15 +76,16 @@
     });
     $('#f-up').addEventListener('submit', async (ev) => {
       ev.preventDefault(); const b = $('button[type=submit]', ev.target);
-      const n = $('#r-n').value.trim(), e = $('#r-e').value.trim(), p = $('#r-p').value;
+      const n = $('#r-n').value.trim(), e = $('#r-e').value.trim(), p = $('#r-p').value, iso = $('#r-cc').value, ph = normPhone(iso, $('#r-ph').value);
       if (!n) return say('#m-up', 'اكتب اسمك الكامل.', 'err');
       if (!/^\S+@\S+\.\S+$/.test(e)) return say('#m-up', 'اكتب بريدًا إلكترونيًا صحيحًا.', 'err');
+      if (!ph) return say('#m-up', phoneErr(iso), 'err');
       if (p.length < 8) return say('#m-up', 'كلمة المرور يجب ألا تقل عن 8 أحرف.', 'err');
       if (!$('#r-c').checked) return say('#m-up', 'يرجى الموافقة على الشروط للمتابعة.', 'err');
       b.disabled = true; say('#m-up', 'جارٍ إنشاء الحساب…');
       try {
         let ref = null; try { ref = localStorage.getItem('biosyn.ref'); } catch {}
-        const r = await sb.auth.signUp(e, p, n, ref ? { ref } : null);
+        const r = await sb.auth.signUp(e, p, n, { phone: ph, country: iso, ...(ref ? { ref } : {}) });
         window.track && track('sign_up');
         if (r.access_token) location.href = nextUrl();
         else { say('#m-up', 'أرسلنا لك رسالة تأكيد على بريدك الإلكتروني. افتحها لتفعيل حسابك ثم سجّل الدخول.', 'ok'); b.disabled = false; }
@@ -79,6 +123,7 @@
   P.course = async () => {
     const root = $('#course-root'), slug = new URLSearchParams(location.search).get('c');
     if (!slug) { location.replace('courses.html'); return; }
+    try { window.REGION_NOW = await window.REGION; } catch {}
     let c;
     try { c = await sb.one('courses', { select: '*,lectures(id,position,title,duration_seconds,is_preview)', slug: 'eq.' + slug }); } catch (e) { root.innerHTML = `<div class="bx-empty-big" style="margin:80px 16px"><b>تعذّر تحميل الدورة</b>${esc(arErr(e))}</div>`; return; }
     if (!c) { root.innerHTML = '<div class="bx-empty-big" style="margin:80px auto;max-width:560px"><b>هذه الدورة غير متاحة</b>قد تكون غير منشورة بعد. <a class="bx-link" href="courses.html">تصفح الدورات</a></div>'; return; }
@@ -95,7 +140,7 @@
         <div class="bs-course-main"><div>${c.description ? `<section class="bs-block-sec" style="margin-top:48px"><h2>عن الدورة</h2>${c.description.split(/\n{2,}/).map((p) => `<p>${esc(p)}</p>`).join('')}</section>` : '<div style="height:48px"></div>'}
         ${aboutInst(T)}<section class="bs-block-sec"><h2>سياسة الاسترداد</h2><p>يمكن استرداد رسوم الدورة التفاعلية خلال 7 أيام من تاريخ الدفع.</p></section></div>
         <aside class="bs-enroll"><div class="bs-cover bx-icover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span>${fc ? `<span class="bx-pcard-ic"><svg viewBox="0 0 24 24">${fc.icon}</svg></span><span class="bx-pcard-fac">${esc(fc.name)}</span>` : `<span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span>`}</div>
-        <div class="bs-enroll-body"><div class="bs-enroll-access"><b>${EGP(c.price_egp)} ج.م</b></div>
+        <div class="bs-enroll-body"><div class="bs-enroll-access"><b>${priceTxt(c.price_egp, window.REGION_NOW)}</b></div>
         <ul class="bx-pcard-facts bx-ifacts">${c.starts_at ? `<li>${I.cal}<span>يبدأ ${esc(window.fmtDay(c.starts_at))}</span></li>` : ''}${c.seats ? `<li>${I.seat}<span>${c.seats} مقعد</span></li>` : ''}${LEVEL[c.level] ? `<li>${I.lvl}<span>${LEVEL[c.level]}</span></li>` : ''}<li>${I.live}<span>مباشر أونلاين</span></li></ul>
         <button type="button" class="bs-btn bs-btn-primary bs-btn-lg bs-block" id="reg">سجّل الآن</button>
         <p class="bx-hint">دورة تفاعلية بجلسات مباشرة، منفصلة عن باقات الاشتراك.</p></div></aside></div>`;
@@ -128,7 +173,7 @@
         ${lects.length ? `<div class="bs-curr"><div class="bs-curr-head"><b>محتوى الدورة</b><span>${lects.length} محاضرة${total ? ' · ' + esc(hoursText(total)) : ''}</span></div><ol class="bs-curr-list">${lects.map((l, i) => `<li class="bs-curr-item"><span class="bs-curr-num bs-latin">${String(i + 1).padStart(2, '0')}</span><span class="bs-play" aria-hidden="true">${subscribed || l.is_preview ? ICON_PLAY : ICON_LOCK}</span><span class="bs-curr-title bs-latin">${subscribed || l.is_preview ? `<a href="watch.html?c=${esc(c.slug)}&l=${l.id}" style="color:inherit;text-decoration:none">${esc(l.title)}</a>` : esc(l.title)}${!subscribed && l.is_preview ? ' <span class="bs-badge bs-badge-new" style="margin-inline-start:6px">معاينة مجانية</span>' : ''}</span><span class="bs-curr-dur bs-latin">${l.duration_seconds ? dur(l.duration_seconds) : ''}</span></li>`).join('')}</ol></div>` : '<div class="bx-empty-big"><b>المحاضرات قيد الإضافة</b>سنعلن عند نشر الدورة كاملة.</div>'}
       </section>${aboutInst(T)}</div>
       <aside class="bs-enroll"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span></div>
-        <div class="bs-enroll-body"><div class="bs-enroll-access"><span>${subscribed ? 'اشتراكك ساري' : 'متاحة مع الاشتراك'}</span>${!subscribed && from ? `<b>تبدأ من ${EGP(from.price_egp)} ج.م / ${from.duration_months === 1 ? 'شهريًا' : from.duration_months + ' أشهر'}</b>` : ''}</div>
+        <div class="bs-enroll-body"><div class="bs-enroll-access"><span>${subscribed ? 'اشتراكك ساري' : 'متاحة مع الاشتراك'}</span>${!subscribed && from ? `<b>تبدأ من ${priceTxt(from.price_egp, window.REGION_NOW)} / ${from.duration_months === 1 ? 'شهريًا' : from.duration_months + ' أشهر'}</b>` : ''}</div>
         ${cta}
         <ul class="bs-checks bs-checks-sm"><li>${ICON_CHECK}<span>${lects.length} محاضرة مسجلة${total ? ' (حوالي ' + esc(hoursText(total)) + ')' : ''}</span></li><li>${ICON_CHECK}<span>شهادة إتمام عند إنهاء الكورس</span></li><li>${ICON_CHECK}<span>مستوى ${LEVEL[c.level] || 'مبتدئ'} · بالعربية</span></li></ul></div></aside></div>
     ${subscribed ? '' : `<section class="bs-section" id="plans"><div class="bs-section-head"><div><h2>متاحة مع باقات العضوية</h2><p>باشتراك واحد، ادرس كل الكورسات المسجلة على المنصة</p></div></div><div class="bs-plans">${plans.map(() => '<template-slot></template-slot>').join('')}</div></section>`}`;
@@ -233,6 +278,30 @@
       $('#filelist', sec).innerHTML = fs.map((f) => `<div class="bx-spread" style="padding:8px 0;border-bottom:1px solid var(--line)"><span>📄 ${esc(f.name)} <small class="bx-hint">${f.size_bytes ? (f.size_bytes / 1048576).toFixed(1) + ' MB' : ''}</small></span><button class="bx-linkbtn" data-f="${esc(f.path)}" data-n="${esc(f.name)}">تنزيل</button></div>`).join('');
       $$('[data-f]', sec).forEach((b) => (b.onclick = async () => { try { location.href = await sb.storage.signedUrl('lecture-files', b.dataset.f, 300, b.dataset.n); } catch (e) { ui.toast(arErr(e), 'err'); } }));
     }
+    // ---------- anti-recording: moving personal watermark, own fullscreen, blackout on screenshot keys ----------
+    let wmId = null;
+    async function guardPlayer(stage) {
+      if (!stage || stage.dataset.guarded) return; stage.dataset.guarded = '1';
+      if (wmId === null) { wmId = ''; try { const pr = await sb.one('profiles', { select: 'phone', id: 'eq.' + sb.user.id }); wmId = (pr && pr.phone) || ''; } catch {} }
+      const stamp = [sb.user.email, wmId, sb.user.id.slice(0, 8)].filter(Boolean).join(' · ');
+      stage.insertAdjacentHTML('beforeend', `<div class="bx-wm-layer" aria-hidden="true"><span class="bx-wm-tag">${esc(stamp)}</span><span class="bx-wm-tile">${esc(stamp)}</span></div>
+        <div class="bx-shield" hidden><b>التسجيل والتصوير ممنوعين</b><small>المحتوى محمي ومربوط بحسابك: ${esc(sb.user.email)}</small></div>
+        <button type="button" class="bx-fsbtn" aria-label="ملء الشاشة" title="ملء الشاشة"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>`);
+      const tag = $('.bx-wm-tag', stage), shield = $('.bx-shield', stage);
+      const move = () => { tag.style.insetInlineStart = (5 + Math.random() * 55) + '%'; tag.style.top = (6 + Math.random() * 78) + '%'; };
+      move(); const t = setInterval(() => { if (!stage.isConnected) return clearInterval(t); move(); }, 3500);
+      $('.bx-fsbtn', stage).onclick = () => (document.fullscreenElement ? document.exitFullscreen() : (stage.requestFullscreen || stage.webkitRequestFullscreen || (() => {})).call(stage));
+      stage.addEventListener('contextmenu', (e) => e.preventDefault());
+      const blackout = (ms) => { shield.hidden = false; clearTimeout(blackout.t); blackout.t = setTimeout(() => (shield.hidden = true), ms || 2500); };
+      const keys = (e) => {
+        const k = (e.key || '').toLowerCase();
+        if (k === 'printscreen' || (e.metaKey && e.shiftKey && ['3', '4', '5', 's'].includes(k)) || (e.ctrlKey && e.shiftKey && k === 's') || (e.key === 'Meta' && e.shiftKey)) {
+          blackout(3000); try { navigator.clipboard && navigator.clipboard.writeText(''); } catch {}
+        }
+      };
+      if (!window.__bxKeys) { window.__bxKeys = true; document.addEventListener('keydown', keys, true); document.addEventListener('keyup', keys, true); }
+    }
+
     async function loadVideo() {
       loadFiles();
       lastPct = seen(cur); lastSent = 0;
@@ -240,7 +309,9 @@
       const box = $('#vid'); if (!box) return;
       try {
         const r = await sb.fn('get-playback', { lecture_id: cur.id, device_id: deviceId(), device_label: deviceLabel() });
-        box.style.display = 'block'; box.innerHTML = `<iframe id="bunny" src="${esc(r.url)}" style="width:100%;height:100%;border:0" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="${esc(cur.title)}"></iframe>`;
+        // no native fullscreen on the iframe: our own fullscreen keeps the watermark on top of the video
+        box.style.display = 'block'; box.innerHTML = `<iframe id="bunny" src="${esc(r.url)}" style="width:100%;height:100%;border:0" allow="accelerometer; gyroscope; autoplay; encrypted-media" title="${esc(cur.title)}"></iframe>`;
+        guardPlayer(box.closest('.bx-video'));
         const f = $('#bunny'); const post = (o) => f.contentWindow && f.contentWindow.postMessage(JSON.stringify({ context: 'player.js', version: '0.0.11', ...o }), '*');
         f.addEventListener('load', () => post({ method: 'addEventListener', value: 'ready' }));
         window.onmessage = (e) => {

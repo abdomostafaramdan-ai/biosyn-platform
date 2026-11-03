@@ -66,10 +66,14 @@
         if (!location.hash.includes('access_token=')) return false;
         const p = new URLSearchParams(location.hash.slice(1));
         setSession({ access_token: p.get('access_token'), refresh_token: p.get('refresh_token'), expires_in: +p.get('expires_in') });
-        raw('/auth/v1/user').then((u) => { session.user = u; store.set(session); emit(); }).catch(() => {});
+        this.ready = raw('/auth/v1/user').then((u) => { session.user = u; store.set(session); emit(); }).catch(() => {});
         history.replaceState(null, '', location.pathname + location.search);
         return true;
       },
+      ready: Promise.resolve(),
+      // OAuth (Google): Supabase sends the user back to redirectTo with #access_token=...
+      oauthUrl(provider, redirectTo) { return `${C.SUPABASE_URL}/auth/v1/authorize?provider=${encodeURIComponent(provider)}&redirect_to=${encodeURIComponent(redirectTo)}`; },
+      async providers() { try { const s = await raw('/auth/v1/settings', { auth: false }); return (s && s.external) || {}; } catch { return {}; } },
     },
     // PostgREST: sb.get('courses', { select: '*', status: 'eq.published', order: 'title' })
     get: (table, params) => raw(`/rest/v1/${table}?${qs(params)}`),

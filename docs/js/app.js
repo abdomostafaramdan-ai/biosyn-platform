@@ -21,6 +21,29 @@
   const arErr = (e) => ERR[e && e.message] || (e && e.message) || 'حدث خطأ غير متوقع، حاول مرة أخرى.';
   window.$ = $; window.$$ = $$; window.esc = esc; window.EGP = EGP; window.LEVEL = LEVEL; window.arErr = arErr;
 
+  // ---------- regional pricing: outside Egypt prices show in the visitor's currency (same number × factor) ----------
+  const EG_REGION = { country: 'EG', currency: 'EGP', symbol: 'ج.م', factor: 1, decimals: 2, gateways: null, manual: true };
+  const REGION = (async () => {
+    try { const c = JSON.parse(sessionStorage.getItem('biosyn.region') || 'null'); if (c && c.currency && Date.now() - (c.at || 0) < 30 * 60e3) return c; } catch {}
+    try {
+      const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 4000);
+      const r = await fetch(BIOSYN.SUPABASE_URL + '/functions/v1/geo', { method: 'POST', signal: ctl.signal, headers: { apikey: BIOSYN.SUPABASE_KEY, Authorization: 'Bearer ' + BIOSYN.SUPABASE_KEY, 'Content-Type': 'application/json' }, body: '{}' });
+      clearTimeout(t);
+      const d = r.ok ? await r.json() : null;
+      const out = d && d.currency ? { ...EG_REGION, ...d, at: Date.now() } : EG_REGION;
+      try { sessionStorage.setItem('biosyn.region', JSON.stringify(out)); } catch {}
+      return out;
+    } catch { return EG_REGION; }
+  })();
+  window.REGION = REGION; window.REGION_NOW = EG_REGION; REGION.then((r) => (window.REGION_NOW = r));
+  // price in the visitor's currency for an EGP list price (whole units, same rule as the server)
+  const localOf = (egp, R) => (!R || R.currency === 'EGP' ? Number(egp) : Number(egp) <= 0 ? 0 : Math.max(1, Math.round(Number(egp) * Number(R.factor || 1))));
+  const curOf = (R) => (R && R.currency !== 'EGP' ? R.symbol : 'ج.م');
+  const priceTxt = (egp, R) => `${EGP(localOf(egp, R))} ${curOf(R)}`;
+  window.localOf = localOf; window.curOf = curOf; window.priceTxt = priceTxt;
+  // amounts already charged (payments rows): local currency if paid outside Egypt
+  window.paidTxt = (p, field) => { const loc = p.currency && p.currency !== 'EGP'; const v = loc ? (field === 'fee' ? p.fee_local : field === 'total' ? Number(p.amount_local) + Number(p.fee_local) : p.amount_local) : (field === 'fee' ? p.fee_egp : field === 'total' ? Number(p.amount_egp) + Number(p.fee_egp) : p.amount_egp); return `${EGP(v || 0)} ${loc ? p.currency : 'ج.م'}`; };
+
 
   // ---------- tracking (Meta Pixel / GA4). Inactive until the IDs are set in config.js ----------
   // public, non-secret settings (gateways enabled, manual payment numbers, tracking IDs) from the database
@@ -191,14 +214,15 @@
 
   // ---------- plans + checkout ----------
   const GW = { paymob: 'Paymob', stripe: 'Stripe', fawaterk: 'Fawaterk' };
-  function checkout(target) {
+  async function checkout(target) {
     if (!requireLogin()) return;
+    const R = await REGION, loc = R.currency !== 'EGP';
     modal(`<h3>إتمام الدفع</h3>
-      <p><b>${esc(target.title)}</b> · ${EGP(target.price)} ج.م</p>
+      <p><b>${esc(target.title)}</b> · ${priceTxt(target.price, R)}</p>
       <div role="radiogroup" aria-label="بوابة الدفع" style="display:grid;gap:10px"><div class="bx-loading" data-gwload>جارٍ تحميل طرق الدفع…</div></div>
       <div data-manual hidden class="bx-banner" style="display:block;margin-top:10px"></div>
       <div class="bx-coupon" style="margin:14px 0 4px"><label class="bx-hint" for="cpn" style="display:block;margin-bottom:6px">عندك كود خصم؟</label><div style="display:flex;gap:8px"><input id="cpn" class="bx-input" dir="ltr" autocomplete="off" placeholder="WELCOME20" style="flex:1"><button type="button" class="bs-btn bs-btn-secondary" data-cpn>تطبيق</button></div><div class="bx-formmsg" data-cpnmsg aria-live="polite"></div></div>
-      <p class="bx-hint">تُضاف رسوم بوابة الدفع على المبلغ، وتظهر لك قيمتها النهائية في صفحة الدفع. ${target.note || ''} بالمتابعة فأنت توافق على <a class="bx-link" href="terms.html" target="_blank">الشروط</a> و<a class="bx-link" href="refund.html" target="_blank">سياسة الاسترداد</a>.</p>
+      <p class="bx-hint">تُضاف رسوم بوابة الدفع على المبلغ، وتظهر لك قيمتها النهائية في صفحة الدفع.${loc ? ` الأسعار ظاهرة بعملة ${esc(R.name || 'بلدك')} (${esc(R.currency)}).` : ''} ${target.note || ''} بالمتابعة فأنت توافق على <a class="bx-link" href="terms.html" target="_blank">الشروط</a> و<a class="bx-link" href="refund.html" target="_blank">سياسة الاسترداد</a>.</p>
       <div class="bx-formmsg" aria-live="polite"></div>
       <div class="bx-modal-actions"><button type="button" class="bs-btn bs-btn-primary" data-go>متابعة للدفع</button><button type="button" class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div>`,
     (m, close) => {
@@ -214,12 +238,13 @@
       };
       window.SITE_SETTINGS.then((pi) => {
         pinfo = pi || {};
-        const online = (Array.isArray(pinfo.gateways) && pinfo.gateways.length ? pinfo.gateways : (BIOSYN.GATEWAYS_FALLBACK || [])).filter((g) => GW[g]);
-        const opts = online.map((g) => [g, GW[g], 'دفع إلكتروني آمن · بطاقة أو محفظة']);
-        if (pinfo.instapay) opts.push(['manual:instapay', 'إنستاباي', 'تحويل يدوي · بدون رسوم']);
-        if (pinfo.vodafone_cash) opts.push(['manual:vodafone_cash', 'فودافون كاش', 'تحويل يدوي · بدون رسوم']);
+        let online = (Array.isArray(pinfo.gateways) && pinfo.gateways.length ? pinfo.gateways : (BIOSYN.GATEWAYS_FALLBACK || [])).filter((g) => GW[g]);
+        if (loc) online = online.filter((g) => (R.gateways || ['stripe']).includes(g));   // foreign currency: card gateways only
+        const opts = online.map((g) => [g, GW[g], loc ? `دفع بالبطاقة بـ${R.currency}` : 'دفع إلكتروني آمن · بطاقة أو محفظة']);
+        if (!loc && pinfo.instapay) opts.push(['manual:instapay', 'إنستاباي', 'تحويل يدوي · بدون رسوم']);
+        if (!loc && pinfo.vodafone_cash) opts.push(['manual:vodafone_cash', 'فودافون كاش', 'تحويل يدوي · بدون رسوم']);
         rg.innerHTML = opts.length ? opts.map(([k, n, s], i) => `<label class="bx-opt"><input type="radio" name="gw" value="${k}" ${i === 0 ? 'checked' : ''}><b>${n}</b><small>${s}</small></label>`).join('')
-          : '<div class="bx-formmsg err">الدفع غير متاح حاليًا. تواصل معنا على contact@biosynegypt.com</div>';
+          : `<div class="bx-formmsg err">${loc ? `الدفع بـ${R.currency} من بلدك مش متاح لسه. تواصل معنا على contact@biosynegypt.com ونفعّلك يدويًا.` : 'الدفع غير متاح حاليًا. تواصل معنا على contact@biosynegypt.com'}</div>`;
         $('[data-go]', m).disabled = !opts.length;
         $$('input[name=gw]', m).forEach((r) => (r.onchange = drawManual));
         drawManual();
@@ -227,15 +252,15 @@
       const cm = $('[data-cpnmsg]', m), priceEl = $('p b', m).parentElement;
       $('[data-cpn]', m).onclick = async (ev) => {
         const cbtn = ev.currentTarget, code = $('#cpn', m).value.trim(); coupon = ''; cm.className = 'bx-formmsg';
-        if (!code) { cm.textContent = ''; priceEl.innerHTML = `<b>${esc(target.title)}</b> · ${EGP(target.price)} ج.م`; return; }
+        if (!code) { cm.textContent = ''; priceEl.innerHTML = `<b>${esc(target.title)}</b> · ${priceTxt(target.price, R)}`; return; }
         cbtn.disabled = true;
         try {
           const q = await sb.rpc('validate_coupon', { p_code: code, p_plan_code: target.plan_code || null, p_course: target.course_id || null });
           coupon = code; finalPrice = Number(q.final); drawManual && drawManual(); cm.className = 'bx-formmsg ok';
-          cm.textContent = `تم تطبيق الكود: خصم ${EGP(q.discount)} ج.م` + (Number(q.final) === 0 ? ' (مجاني بالكامل)' : '');
-          priceEl.innerHTML = `<b>${esc(target.title)}</b> · <s class="bx-muted">${EGP(q.list)}</s> <b>${EGP(q.final)} ج.م</b>`;
+          cm.textContent = `تم تطبيق الكود: خصم ${priceTxt(Number(q.list) - Number(q.final), R)}` + (Number(q.final) === 0 ? ' (مجاني بالكامل)' : '');
+          priceEl.innerHTML = `<b>${esc(target.title)}</b> · <s class="bx-muted">${EGP(localOf(q.list, R))}</s> <b>${priceTxt(q.final, R)}</b>`;
           track('add_coupon', { code });
-        } catch (e) { finalPrice = target.price; drawManual(); cm.className = 'bx-formmsg err'; cm.textContent = arErr(e); priceEl.innerHTML = `<b>${esc(target.title)}</b> · ${EGP(target.price)} ج.م`; }
+        } catch (e) { finalPrice = target.price; drawManual(); cm.className = 'bx-formmsg err'; cm.textContent = arErr(e); priceEl.innerHTML = `<b>${esc(target.title)}</b> · ${priceTxt(target.price, R)}`; }
         cbtn.disabled = false;
       };
       $('[data-go]', m).onclick = async (ev) => {
@@ -275,13 +300,15 @@
     const cards = $$('.bs-plan');
     if (!cards.length) return;
     let plans; try { plans = await sb.get('plans', { select: '*', active: 'eq.true', order: 'duration_months' }); } catch { return; }
+    const R = await REGION;
     cards.forEach((card, i) => {
       const p = plans[i];
       if (!p) { card.remove(); return; }
       $('.bs-plan-name', card).textContent = p.name;
-      $('.bs-plan-price b', card).textContent = EGP(p.price_egp);
+      $('.bs-plan-price b', card).textContent = EGP(localOf(p.price_egp, R));
+      const cu = $('.bs-plan-price span', card); if (cu) cu.textContent = curOf(R);
       const old = Number(p.old_price_egp);
-      $('.bs-plan-period', card).textContent = (old > p.price_egp ? `السعر السابق ${EGP(old)} · ` : '') + periodAr(p.duration_months);
+      $('.bs-plan-period', card).textContent = (old > p.price_egp ? `السعر السابق ${EGP(localOf(old, R))} · ` : '') + periodAr(p.duration_months);
       const badge = $('.bs-badge', card);
       if (badge) { if (old > p.price_egp) badge.textContent = `وفر ${Math.round((1 - p.price_egp / old) * 100)}٪`; else badge.remove(); }
       const cta = $('.bs-plan-cta', card);
@@ -393,12 +420,12 @@
         ${c.summary ? `<p class="bx-pcard-sum">${esc(c.summary)}</p>` : ''}
         <ul class="bx-pcard-facts">${facts}</ul>
       </div>
-      <div class="bx-pcard-foot"><div class="bx-pcard-price"><b>${EGP(c.price_egp)}</b><small>ج.م</small></div><a href="${href}" class="bs-btn bs-btn-primary">التفاصيل والتسجيل</a></div>
+      <div class="bx-pcard-foot"><div class="bx-pcard-price"><b>${EGP(localOf(c.price_egp, window.REGION_NOW))}</b><small>${curOf(window.REGION_NOW)}</small></div><a href="${href}" class="bs-btn bs-btn-primary">التفاصيل والتسجيل</a></div>
     </article>`;
   }
   async function pageInteractive() {
     const box = $('.bx-programs'); if (!box) return;
-    let all = []; try { all = await loadCatalog('interactive'); } catch { all = []; }
+    let all = []; try { [all] = await Promise.all([loadCatalog('interactive'), REGION]); } catch { all = []; }
     const cnt = $('#ic-count'); if (cnt) cnt.textContent = all.length ? `${all.length} ${all.length === 1 ? 'برنامج' : 'برامج'}` : '';
     if (all.length) { box.innerHTML = all.map(programCard).join(''); box.classList.toggle('bx-pgrid-one', all.length === 1); }
     else box.innerHTML = '<div class="bx-empty-big" style="grid-column:1/-1"><b>لا توجد دورات تفاعلية مفتوحة للتسجيل حاليًا</b>سنعلن عن الدفعة القادمة قريبًا. <a class="bx-link" href="consultations.html">تواصل معنا</a></div>';

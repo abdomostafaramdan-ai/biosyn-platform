@@ -15,7 +15,8 @@ Deno.serve(async (req) => {
 
   const o = ev.data?.object;
   if (['checkout.session.completed', 'checkout.session.async_payment_succeeded'].includes(ev.type) && o?.payment_status === 'paid') {
-    const r = await settle(sb, o.metadata?.payment_id, o.amount_total ?? null, o.id);
+    const dec = ['kwd', 'bhd', 'omr', 'jod', 'tnd'].includes(String(o.currency || '').toLowerCase()) ? 3 : 2;
+    const r = await settle(sb, o.metadata?.payment_id, o.amount_total ?? null, o.id, dec);
     if (!r.ok) { console.error('stripe settle failed', r.reason); return new Response(r.reason, { status: 500 }); }
   }
   await markProcessed(sb, 'stripe', ev.id);

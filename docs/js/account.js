@@ -44,13 +44,16 @@
   const GWN = { paymob: 'Paymob', stripe: 'Stripe', fawaterk: 'Fawaterk', manual: 'تحويل يدوي' };
   function receiptModal(p) {
     const item = p.plans ? 'اشتراك: ' + p.plans.name : p.courses ? 'دورة تفاعلية: ' + p.courses.title : '—';
-    const list = Number(p.list_price_egp ?? p.amount_egp), disc = Number(p.discount_egp || 0), fee = Number(p.fee_egp || 0), total = Number(p.amount_egp) + fee;
+    const loc = p.currency && p.currency !== 'EGP';
+    const amt = loc ? Number(p.amount_local) : Number(p.amount_egp), fee = loc ? Number(p.fee_local || 0) : Number(p.fee_egp || 0), total = amt + fee;
+    const disc = loc ? 0 : Number(p.discount_egp || 0), list = loc ? amt : Number(p.list_price_egp ?? p.amount_egp);
+    const M = (v) => (loc ? `${EGP(v)} ${p.currency}` : D.money(v));
     const row = (k, v) => `<tr><td style="padding:6px 0;color:inherit;opacity:.75">${k}</td><td style="padding:6px 0;text-align:left">${v}</td></tr>`;
     ui.modal(`<div class="bx-cert" style="text-align:right"><h4 style="text-align:center">Biosyn Egypt</h4><small style="display:block;text-align:center">إيصال دفع</small>
       <table style="width:100%;border-collapse:collapse;margin-top:12px;font-size:14px">
       ${row('رقم الإيصال', `<b class="bs-latin">${esc(String(p.receipt_no || '—'))}</b>`)}${row('التاريخ', D.dateTime(p.paid_at || p.created_at))}${row('العميل', esc(me.full_name || '') + '<br><span class="bs-latin">' + esc(sb.user.email) + '</span>')}
-      ${row('البند', esc(item))}${row('السعر', D.money(list))}${disc ? row('الخصم', '− ' + D.money(disc)) : ''}${fee ? row('رسوم بوابة الدفع', D.money(fee)) : ''}
-      <tr><td style="padding:10px 0;border-top:1px solid currentColor"><b>الإجمالي المدفوع</b></td><td style="padding:10px 0;border-top:1px solid currentColor;text-align:left"><b>${D.money(total)}</b></td></tr>
+      ${row('البند', esc(item))}${row('السعر', M(list))}${disc ? row('الخصم', '− ' + M(disc)) : ''}${fee ? row('رسوم بوابة الدفع', M(fee)) : ''}
+      <tr><td style="padding:10px 0;border-top:1px solid currentColor"><b>الإجمالي المدفوع</b></td><td style="padding:10px 0;border-top:1px solid currentColor;text-align:left"><b>${M(total)}</b></td></tr>
       ${row('طريقة الدفع', esc(GWN[p.gateway] || p.gateway))}${row('الحالة', p.status === 'refunded' ? 'مُسترد' : 'مدفوع')}</table>
       <small style="display:block;margin-top:12px;text-align:center">هذا إيصال إلكتروني صادر من المنصة · contact@biosynegypt.com</small></div>
       <div class="bx-modal-actions"><button type="button" class="bs-btn bs-btn-primary" data-print>طباعة / حفظ PDF</button><button type="button" class="bs-btn bs-btn-ghost" data-x>إغلاق</button></div>`,
@@ -90,7 +93,7 @@
           const rq = refOf[p.id];
           const refundable = !rq && p.purpose === 'interactive_course' && p.status === 'paid' && p.paid_at && Date.now() <= new Date(p.paid_at).getTime() + 7 * 864e5;
           const rqTag = rq && p.status !== 'refunded' ? `<br><span class="bx-st bx-st-${REF_ST[rq.status][1]}" style="margin-top:4px">${REF_ST[rq.status][0]}</span>${rq.status === 'rejected' && rq.payload.decision_note ? `<br><small class="bx-hint">${esc(rq.payload.decision_note)}</small>` : ''}` : '';
-          return [D.date(p.created_at), esc(p.plans ? p.plans.name : p.courses ? p.courses.title : '—'), D.money(Number(p.amount_egp) + Number(p.fee_egp)) + (Number(p.fee_egp) ? `<br><small class="bx-hint">منها ${D.money(p.fee_egp)} رسوم البوابة</small>` : ''), D.badge('pay', p.status) + (p.gateway === 'manual' && p.status === 'pending' ? '<br><small class="bx-hint">تحويل يدوي قيد المراجعة</small>' : '') + rqTag, [p.receipt_no ? `<button class="bx-linkbtn" data-rc="${p.id}">الإيصال</button>` : '', refundable ? `<button class="bx-linkbtn" data-refund="${p.id}">اطلب الاسترداد</button>` : ''].filter(Boolean).join(' · ')];
+          return [D.date(p.created_at), esc(p.plans ? p.plans.name : p.courses ? p.courses.title : '—'), paidTxt(p, 'total') + (Number(p.fee_egp) ? `<br><small class="bx-hint">منها ${paidTxt(p, 'fee')} رسوم البوابة</small>` : ''), D.badge('pay', p.status) + (p.gateway === 'manual' && p.status === 'pending' ? '<br><small class="bx-hint">تحويل يدوي قيد المراجعة</small>' : '') + rqTag, [p.receipt_no ? `<button class="bx-linkbtn" data-rc="${p.id}">الإيصال</button>` : '', refundable ? `<button class="bx-linkbtn" data-refund="${p.id}">اطلب الاسترداد</button>` : ''].filter(Boolean).join(' · ')];
         }), 'لا توجد مدفوعات بعد'));
       $$('[data-rc]', main).forEach((b) => (b.onclick = () => receiptModal(rows.find((p) => p.id === b.dataset.rc))));
       $$('[data-refund]', main).forEach((b) => (b.onclick = () => ui.modal(`<h3>طلب استرداد</h3><p>يمكن استرداد رسوم الكورس التفاعلي خلال أسبوع من الدفع، وبعد الاسترداد بيتلغي تسجيلك في الكورس.</p><p class="bx-warnnote"><b>تنبيه:</b> تقدر تطلب الاسترداد مرة واحدة بس لكل عملية دفع، فاتأكد من قرارك قبل الإرسال.</p>

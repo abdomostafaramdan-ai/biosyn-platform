@@ -271,3 +271,24 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .bx-an-title small { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .bx-an-big { font-size: 18px; }
 .bx-an-sub { display: block; white-space: nowrap; }
+
+/* ---------- auth: Google button + phone with country code ---------- */
+.bx-oauth { display: grid; gap: 14px; margin-top: 4px; }
+.bx-gbtn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: #fff; color: #1f1f1f; border: 1px solid #dadce0; font-weight: 600; }
+.bx-gbtn:hover { background: #f5f7fa; }
+.bx-or { display: flex; align-items: center; gap: 12px; color: var(--ink-muted); font-size: 13px; }
+.bx-or::before, .bx-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.bx-phone { display: grid; grid-template-columns: minmax(110px, 38%) 1fr; gap: 8px; }
+.bx-phone .bx-select { padding-inline: 10px; }
+
+/* ---------- player protection: watermark + shield + own fullscreen ---------- */
+.bx-video { position: relative; }
+.bx-video:fullscreen { width: 100vw; height: 100vh; aspect-ratio: auto; border-radius: 0; background: #000; }
+.bx-wm-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 3; user-select: none; }
+.bx-wm-tag { position: absolute; font: 600 13px/18px var(--font-sans); color: rgba(255, 255, 255, .5); text-shadow: 0 1px 2px rgba(0, 0, 0, .6); white-space: nowrap; transition: top 1.2s ease, inset-inline-start 1.2s ease; direction: ltr; }
+.bx-wm-tile { position: absolute; inset: auto 12px 52px auto; font: 500 11px/16px var(--font-sans); color: rgba(255, 255, 255, .22); direction: ltr; white-space: nowrap; }
+.bx-shield { position: absolute; inset: 0; z-index: 5; display: grid; place-content: center; gap: 6px; text-align: center; background: #000; color: #fff; padding: 16px; }
+.bx-shield[hidden] { display: none; }
+.bx-shield small { color: rgba(255, 255, 255, .7); }
+.bx-fsbtn { position: absolute; z-index: 4; top: 10px; inset-inline-end: 10px; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; border: 0; background: rgba(0, 0, 0, .45); color: #fff; cursor: pointer; opacity: .75; }
+.bx-fsbtn:hover { opacity: 1; }

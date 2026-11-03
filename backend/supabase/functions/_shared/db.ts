@@ -35,11 +35,14 @@ export const markProcessed = (sb: ReturnType<typeof admin>, gateway: string, eve
   sb.from('webhook_events').update({ processed_at: new Date().toISOString() }).eq('gateway', gateway).eq('event_id', eventId);
 
 // Confirms the amount the gateway says it collected matches what we asked for, then grants access.
-export async function settle(sb: ReturnType<typeof admin>, paymentId: string, paidCents: number | null, gatewayRef: string | null) {
-  const { data: p, error } = await sb.from('payments').select('id,status,amount_egp,fee_egp').eq('id', paymentId).single();
+// paidMinor is in minor units with `decimals` digits (Stripe KWD/BHD/OMR/JOD = 3, everything else 2).
+export async function settle(sb: ReturnType<typeof admin>, paymentId: string, paidMinor: number | null, gatewayRef: string | null, decimals = 2) {
+  const { data: p, error } = await sb.from('payments').select('id,status,amount_egp,fee_egp,currency,amount_local,fee_local').eq('id', paymentId).single();
   if (error || !p) return { ok: false, reason: 'payment not found' };
   if (p.status === 'paid') return { ok: true, reason: 'already paid' };
-  const expected = Math.round((Number(p.amount_egp) + Number(p.fee_egp)) * 100);
+  const local = p.currency && p.currency !== 'EGP';
+  const total = local ? Number(p.amount_local) + Number(p.fee_local) : Number(p.amount_egp) + Number(p.fee_egp);
+  const expected = Math.round(total * 10 ** decimals), paidCents = paidMinor;
   if (paidCents !== null && paidCents !== expected) return { ok: false, reason: `amount mismatch: got ${paidCents}, expected ${expected}` };
   const { error: e2 } = await sb.rpc('fulfil_payment', { p_payment: paymentId, p_gateway_ref: gatewayRef });
   if (e2) return { ok: false, reason: e2.message };
