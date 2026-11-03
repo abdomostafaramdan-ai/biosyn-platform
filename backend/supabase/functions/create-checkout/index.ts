@@ -2,9 +2,9 @@ import { admin, currentUser, afterPaid } from './_shared/db.ts';
 import { cors, json, grossUp, type Gateway } from './_shared/lib.ts';
 import { createCheckout, enabledGateways, feeRates } from './_shared/gateways.ts';
 import { loadSecrets, sec } from './_shared/secrets.ts';
-import { countryOf, gatewaysForCurrency, localPrice, regionFor } from './_shared/geo.ts';
+import { countryOf, fawaterkCode, gatewaysForCurrency, localPrice, regionFor } from './_shared/geo.ts';
 
-// POST { gateway, plan_code } | { gateway, course_id }, plus { return_url }
+// POST { gateway, plan_code } | { gateway, course_id } | { gateway, consultation: <request id> }, plus { return_url }
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   try {
@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
     const sb = admin();
     // outside Egypt the price is charged in the visitor's currency (decided here, never by the browser)
     const region = await regionFor(sb, await countryOf(req));
-    const cur = region ? region.currency : 'EGP';
+    let cur = region ? region.currency : 'EGP';
     if (!gatewaysForCurrency(enabledGateways(), cur).includes(gw)) return json({ error: 'gateway not available' }, 400);
 
     // SITE_URL secret, or the site_url saved in the admin settings
@@ -26,7 +26,7 @@ Deno.serve(async (req) => {
     const ret = String(b.return_url ?? site);
     if (!site || !ret.startsWith(site)) return json({ error: 'bad return_url' }, 400);
 
-    let purpose: 'subscription' | 'interactive_course', planId: string | null = null, courseId: string | null = null, price = 0, title = '', intl: number | null = null;
+    let purpose: 'subscription' | 'interactive_course', planId: string | null = null, courseId: string | null = null, price = 0, title = '', intl: number | null = null, requestId: string | null = null;
     if (b.plan_code) {
       const { data: plan } = await sb.from('plans').select('id,name,price_egp,intl_price').eq('code', b.plan_code).eq('active', true).single();
       if (!plan) return json({ error: 'plan not found' }, 404);
@@ -35,7 +35,13 @@ Deno.serve(async (req) => {
       const { data: c } = await sb.from('courses').select('id,title,price_egp,intl_price').eq('id', b.course_id).single();
       if (!c) return json({ error: 'course not found' }, 404);
       purpose = 'interactive_course'; courseId = c.id; price = Number(c.price_egp); intl = c.intl_price == null ? null : Number(c.intl_price); title = `Biosyn: ${c.title}`;
-    } else return json({ error: 'plan_code or course_id required' }, 400);
+    } else if (b.consultation) {
+      const { data: rq } = await sb.from('requests').select('id,user_id,type').eq('id', String(b.consultation)).single();
+      if (!rq || rq.user_id !== user.id || rq.type !== 'consultation') return json({ error: 'not found' }, 404);
+      const { data: st } = await sb.from('app_settings').select('key,value').in('key', ['consultation_price_egp', 'consultation_intl_price']);
+      const g = (k: string) => (st ?? []).find((x: any) => x.key === k)?.value;
+      purpose = 'consultation' as any; requestId = rq.id; price = Number(g('consultation_price_egp') || 0); intl = g('consultation_intl_price') ? Number(g('consultation_intl_price')) : null; title = 'Biosyn: استشارة';
+    } else return json({ error: 'plan_code, course_id or consultation required' }, 400);
 
     const rates = feeRates(gw);
     // fee on the EGP price for now; for a foreign currency it's recomputed on the local amount below
@@ -45,6 +51,7 @@ Deno.serve(async (req) => {
       p_coupon: typeof b.coupon === 'string' && b.coupon.trim() ? b.coupon.trim() : null,
     });
     if (error) return json({ error: error.message }, 400);
+    if (requestId) await sb.from('payments').update({ request_id: requestId }).eq('id', p.id);
 
     // a 100% coupon: nothing to charge, grant access directly
     if (Number(p.amount_egp) === 0) {
@@ -61,11 +68,19 @@ Deno.serve(async (req) => {
       const listEgp = Number(p.list_price_egp ?? p.amount_egp), listLocal = intl != null ? intl : localPrice(listEgp, region);
       const amt = listEgp > 0 ? Math.round(listLocal * (Number(p.amount_egp) / listEgp) * 100) / 100 : 0;
       localAmt = amt;
-      const fx = region.egp_rate, gl = grossUp(amt, rates.pct, Math.round((rates.fixed / fx) * 100) / 100); // fixed fee is set in EGP
+      let fx = region.egp_rate, amtC = amt;
+      // Fawaterk doesn't take every currency (EUR, GBP…): charge the same value in USD there
+      if (gw === 'fawaterk' && !fawaterkCode(cur)) {
+        const { data: usd } = await sb.from('price_regions').select('egp_rate').eq('currency', 'USD').eq('active', true).limit(1).maybeSingle();
+        const usdRate = Number(usd?.egp_rate || 0);
+        if (!usdRate) return json({ error: 'gateway not available' }, 400);
+        amtC = Math.ceil((amt * fx / usdRate) * 100) / 100; fx = usdRate; cur = 'USD'; localAmt = amtC;
+      }
+      const gl = grossUp(amtC, rates.pct, Math.round((rates.fixed / fx) * 100) / 100); // fixed fee is set in EGP
       g = gl;
       const { error: ue } = await sb.from('payments').update({
-        currency: cur, country: region.country, fx_egp: fx, amount_local: amt, fee_local: gl.fee,
-        amount_egp: Math.round(amt * fx * 100) / 100, fee_egp: Math.round(gl.fee * fx * 100) / 100,
+        currency: cur, country: region.country, fx_egp: fx, amount_local: amtC, fee_local: gl.fee,
+        amount_egp: Math.round(amtC * fx * 100) / 100, fee_egp: Math.round(gl.fee * fx * 100) / 100,
       }).eq('id', p.id);
       if (ue) { await sb.rpc('fail_payment', { p_payment: p.id }); return json({ error: ue.message }, 500); }
     } else if (g.fee !== Number(p.fee_egp)) await sb.from('payments').update({ fee_egp: g.fee }).eq('id', p.id);
@@ -73,7 +88,7 @@ Deno.serve(async (req) => {
     const { data: prof } = await sb.from('profiles').select('full_name,phone').eq('id', user.id).single();
     try {
       const res = await createCheckout(gw, {
-        paymentId: p.id, total: g.total, title, currency: cur, decimals: region ? region.decimals : 2,
+        paymentId: p.id, total: g.total, title, currency: cur, decimals: cur === 'USD' ? 2 : region ? region.decimals : 2,
         customer: { name: prof?.full_name || 'Student', email: user.email ?? '', phone: prof?.phone ?? '' },
         successUrl: `${ret}?payment=success&id=${p.id}`, cancelUrl: `${ret}?payment=cancelled&id=${p.id}`,
         webhookBase: `${Deno.env.get('SUPABASE_URL')}/functions/v1`,

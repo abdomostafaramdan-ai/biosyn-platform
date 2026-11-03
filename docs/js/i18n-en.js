@@ -1014,7 +1014,13 @@ window.I18N_EN = {
 "طلاب وباحثون": "Students & researchers",
 "ستاف جامعة فقط": "University staff only",
 "مهنيون فقط": "Professionals only",
-"طلاب وباحثون وستاف جامعة ومهنيون": "Students, researchers, university staff & professionals"
+"طلاب وباحثون وستاف جامعة ومهنيون": "Students, researchers, university staff & professionals",
+"داخل مصر: الدفع إلكتروني عبر بوابات دفع آمنة (بطاقة بنكية - محافظ إلكترونية مثل فودافون كاش - فوري - أمان) أو تحويل إنستاباي، وتظهر لك وسائل الدفع المتاحة عند إتمام الطلب.": "Inside Egypt: pay online through secure gateways (bank card, e-wallets like Vodafone Cash, Fawry, Aman) or an InstaPay transfer; the available methods appear at checkout.",
+"من خارج مصر (حتى لو مصري مقيم برّه): الأسعار بتظهر بعملة بلدك، وتدفع ببطاقة بنكية (فيزا / ماستركارد) عن طريق فواتيرك، ومعاها طرق الدفع التانية اللي بتظهرلك هناك، أو من حسابك على PayPal.": "Outside Egypt (including Egyptians living abroad): prices show in your local currency and you pay by bank card (Visa / Mastercard) through Fawaterk, plus the other methods shown there, or with your PayPal account.",
+"رسوم الاستشارة": "Consultation fee",
+"جلسة استشارة فردية · الدفع أونلاين وبعده بنتواصل معاك لتحديد الموعد": "One-to-one consultation session · pay online, then we contact you to book the time",
+"احجز وادفع رسوم الاستشارة": "Book and pay the consultation fee",
+"ادفع واحجز موعدك": "Pay and book your session"
 };
 
 window.I18N_EN_PATTERNS = (function () {

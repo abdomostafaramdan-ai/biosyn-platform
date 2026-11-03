@@ -216,7 +216,10 @@
   }
 
   // ---------- plans + checkout ----------
-  const GW = { paymob: 'Paymob', stripe: 'Stripe', fawaterk: 'Fawaterk' };
+  const GW = { paymob: 'Paymob', stripe: 'Stripe', fawaterk: 'فواتيرك (Fawaterk)' };
+  const PAYPAL_CUR = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'CHF'];
+  let FX = null; // currency -> EGP per unit (public table), for PayPal amounts in USD
+  const fxTable = async () => { if (!FX) { FX = {}; try { (await sb.get('price_regions', { select: 'currency,egp_rate' })).forEach((r) => (FX[r.currency] = Number(r.egp_rate))); } catch {} } return FX; };
   async function checkout(target) {
     if (!requireLogin()) return;
     const R = await REGION, loc = R.currency !== 'EGP';
@@ -224,30 +227,42 @@
       <p><b>${esc(target.title)}</b> · ${priceTxt(target.price, R, target.intl)}</p>
       <div role="radiogroup" aria-label="بوابة الدفع" style="display:grid;gap:10px"><div class="bx-loading" data-gwload>جارٍ تحميل طرق الدفع…</div></div>
       <div data-manual hidden class="bx-banner" style="display:block;margin-top:10px"></div>
-      <div class="bx-coupon" style="margin:14px 0 4px"><label class="bx-hint" for="cpn" style="display:block;margin-bottom:6px">عندك كود خصم؟</label><div style="display:flex;gap:8px"><input id="cpn" class="bx-input" dir="ltr" autocomplete="off" placeholder="WELCOME20" style="flex:1"><button type="button" class="bs-btn bs-btn-secondary" data-cpn>تطبيق</button></div><div class="bx-formmsg" data-cpnmsg aria-live="polite"></div></div>
+      <div class="bx-coupon" style="margin:14px 0 4px" ${target.consultation ? 'hidden' : ''}><label class="bx-hint" for="cpn" style="display:block;margin-bottom:6px">عندك كود خصم؟</label><div style="display:flex;gap:8px"><input id="cpn" class="bx-input" dir="ltr" autocomplete="off" placeholder="WELCOME20" style="flex:1"><button type="button" class="bs-btn bs-btn-secondary" data-cpn>تطبيق</button></div><div class="bx-formmsg" data-cpnmsg aria-live="polite"></div></div>
       <p class="bx-hint">تُضاف رسوم بوابة الدفع على المبلغ، وتظهر لك قيمتها النهائية في صفحة الدفع.${loc ? ` الأسعار ظاهرة بعملة ${esc(R.name || 'بلدك')} (${esc(R.currency)}).` : ''} ${target.note || ''} بالمتابعة فأنت توافق على <a class="bx-link" href="terms.html" target="_blank">الشروط</a> و<a class="bx-link" href="refund.html" target="_blank">سياسة الاسترداد</a>.</p>
       <div class="bx-formmsg" aria-live="polite"></div>
       <div class="bx-modal-actions"><button type="button" class="bs-btn bs-btn-primary" data-go>متابعة للدفع</button><button type="button" class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div>`,
     (m, close) => {
       $('[data-x]', m).onclick = close;
-      let coupon = '', finalPrice = target.price, pinfo = null;
+      let coupon = '', finalPrice = target.price, pinfo = null, ppAmt = null;
       const mbox = $('[data-manual]', m), rg = $('[role=radiogroup]', m);
       const drawManual = () => {
         const v = ($('input[name=gw]:checked', m) || {}).value || '';
         if (!v.startsWith('manual:')) { mbox.hidden = true; $('[data-go]', m).textContent = 'متابعة للدفع'; return; }
+        if (v === 'manual:paypal') {
+          // PayPal takes the visitor's currency when it can, otherwise the same value in USD
+          const L0 = itemPrice(target.price, target.intl, R), L = Number(target.price) > 0 ? Math.round(L0 * (finalPrice / Number(target.price)) * 100) / 100 : 0;
+          let cur = R.currency, amt = L;
+          if (!PAYPAL_CUR.includes(cur)) { const f = FX || {}; amt = f[cur] && f.USD ? Math.ceil((L * f[cur] / f.USD) * 100) / 100 : L; cur = 'USD'; }
+          ppAmt = { cur, amt };
+          const link = `https://paypal.me/${encodeURIComponent(pinfo.paypal)}/${amt}${cur}`;
+          mbox.hidden = false; $('[data-go]', m).textContent = 'دفعت على PayPal';
+          mbox.innerHTML = `<b>ادفع ${EGP(amt)} ${cur} على PayPal</b>${cur !== R.currency ? `<small> (تعادل ${EGP(L)} ${esc(R.symbol)})</small>` : ''}<br><a class="bs-btn bs-btn-secondary bs-btn-sm" style="margin:8px 0" href="${esc(link)}" target="_blank" rel="noopener">افتح PayPal وادفع ←</a><br><small>بعد الدفع اكتب رقم العملية (Transaction ID) أو إيميل PayPal اللي دفعت منه. التفعيل بيحصل لوحده أول ما الفريق يأكّد وصول المبلغ (عادة خلال ساعات).</small><input id="mref" class="bx-input" dir="ltr" maxlength="120" placeholder="Transaction ID / PayPal email" style="margin-top:8px;width:100%">`;
+          return;
+        }
         const isI = v === 'manual:instapay', to = isI ? pinfo.instapay : pinfo.vodafone_cash;
         mbox.hidden = false; $('[data-go]', m).textContent = 'أرسلت التحويل';
         mbox.innerHTML = `<b>حوّل ${EGP(finalPrice)} ج.م ${isI ? 'عبر إنستاباي إلى' : 'على محفظة فودافون كاش رقم'}:</b> <span class="bs-latin" dir="ltr" style="font-weight:700">${esc(to)}</span><br><small>بعد التحويل اكتب رقم العملية أو الرقم الذي حوّلت منه. يتفعّل اشتراكك بعد مراجعة الفريق (عادة خلال ساعات العمل).</small><input id="mref" class="bx-input" dir="ltr" maxlength="120" placeholder="${isI ? 'رقم العملية' : '01xxxxxxxxx'}" style="margin-top:8px;width:100%">`;
       };
-      window.SITE_SETTINGS.then((pi) => {
+      Promise.all([window.SITE_SETTINGS, loc ? fxTable() : null]).then(([pi]) => {
         pinfo = pi || {};
         let online = (Array.isArray(pinfo.gateways) && pinfo.gateways.length ? pinfo.gateways : (BIOSYN.GATEWAYS_FALLBACK || [])).filter((g) => GW[g]);
         if (loc) online = online.filter((g) => (R.gateways || ['stripe']).includes(g));   // foreign currency: card gateways only
-        const opts = online.map((g) => [g, GW[g], loc ? `دفع بالبطاقة بـ${R.currency}` : 'دفع إلكتروني آمن · بطاقة أو محفظة']);
+        const opts = online.map((g) => [g, GW[g], g === 'fawaterk' ? (loc ? 'بطاقة بنكية (فيزا / ماستركارد) ومحافظ وطرق دفع تانية' : 'بطاقة، محافظ إلكترونية، فوري، أمان') : loc ? `دفع بالبطاقة بـ${R.currency}` : 'دفع إلكتروني آمن · بطاقة أو محفظة']);
+        if (loc && pinfo.paypal) opts.push(['manual:paypal', 'PayPal', 'ادفع من حسابك على PayPal']);
         if (!loc && pinfo.instapay) opts.push(['manual:instapay', 'إنستاباي', 'تحويل يدوي · بدون رسوم']);
         if (!loc && pinfo.vodafone_cash) opts.push(['manual:vodafone_cash', 'فودافون كاش', 'تحويل يدوي · بدون رسوم']);
         rg.innerHTML = opts.length ? opts.map(([k, n, s], i) => `<label class="bx-opt"><input type="radio" name="gw" value="${k}" ${i === 0 ? 'checked' : ''}><b>${n}</b><small>${s}</small></label>`).join('')
-          : `<div class="bx-formmsg err">${loc ? `الدفع بـ${R.currency} من بلدك مش متاح لسه. تواصل معنا على contact@biosynegypt.com ونفعّلك يدويًا.` : 'الدفع غير متاح حاليًا. تواصل معنا على contact@biosynegypt.com'}</div>`;
+          : `<div class="bx-formmsg err">${loc ? `الدفع من بلدك مش متاح لسه. تواصل معنا على contact@biosynegypt.com ونفعّلك يدويًا.` : 'الدفع غير متاح حاليًا. تواصل معنا على contact@biosynegypt.com'}</div>`;
         $('[data-go]', m).disabled = !opts.length;
         $$('input[name=gw]', m).forEach((r) => (r.onchange = drawManual));
         drawManual();
@@ -277,17 +292,18 @@
           const ref = ($('#mref', m) || {}).value || '';
           if (!ref.trim()) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = 'اكتب رقم العملية أو الرقم الذي حوّلت منه.'; return; }
           try {
-            const r = await sb.rpc('create_manual_payment', { p_method: gwv.slice(7), p_ref: ref.trim(), p_plan_code: target.plan_code || null, p_course: target.course_id || null, p_coupon: coupon || null });
+            const pp = gwv === 'manual:paypal' && ppAmt;
+            const r = await sb.rpc('create_manual_payment_v2', { p_method: gwv.slice(7), p_ref: ref.trim(), p_plan_code: target.plan_code || null, p_course: target.course_id || null, p_coupon: coupon || null, p_request: target.consultation || null, p_currency: pp ? ppAmt.cur : 'EGP', p_amount_local: pp ? ppAmt.amt : null });
             track('begin_checkout', { value: finalPrice, item: target.title, id: target.plan_code || target.course_id });
             msg.className = 'bx-formmsg ok';
-            msg.textContent = r.status === 'paid' ? 'تم التفعيل!' : 'استلمنا طلبك. سنراجع التحويل ونفعّل اشتراكك، وسيصلك بريد بالتأكيد.';
+            msg.textContent = r.status === 'paid' ? 'تم التفعيل!' : target.consultation ? 'استلمنا طلبك. هنراجع التحويل ونتواصل معاك لتحديد موعد الاستشارة.' : 'استلمنا طلبك. سنراجع التحويل ونفعّل اشتراكك، وسيصلك بريد بالتأكيد.';
             setTimeout(() => (location.href = 'account.html#payments'), 2500);
           } catch (e) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = arErr(e); }
           return;
         }
         try {
           const body = { gateway: gwv, return_url: new URL('account.html', location.href).href };
-          if (target.plan_code) body.plan_code = target.plan_code; else body.course_id = target.course_id;
+          if (target.plan_code) body.plan_code = target.plan_code; else if (target.consultation) body.consultation = target.consultation; else body.course_id = target.course_id;
           if (coupon) body.coupon = coupon;
           track('begin_checkout', { value: target.price, item: target.title, id: target.plan_code || target.course_id });
           const r = await sb.fn('create-checkout', body);
@@ -307,6 +323,8 @@
     if (!cards.length) return;
     let plans; try { plans = await sb.get('plans', { select: '*', active: 'eq.true', order: 'duration_months' }); } catch { return; }
     const R = await REGION;
+    // abroad: say how to pay (once, under the plans)
+    if (R.currency !== 'EGP' && cards[0] && !$('.bx-abroad-pay')) cards[0].parentElement.insertAdjacentHTML('afterend', `<div class="bx-abroad-pay"><b>بتدفع من برّه مصر؟</b> الأسعار ظاهرة بعملة ${esc(R.name || 'بلدك')} (${esc(R.currency)}). تقدر تدفع ببطاقة بنكية (فيزا / ماستركارد) عن طريق فواتيرك ومعاها طرق دفع تانية، أو من حسابك على <b>PayPal</b>. الاشتراك بيتفعّل لوحده أول ما الدفع يتأكد.</div>`);
     cards.forEach((card, i) => {
       const p = plans[i];
       if (!p) { card.remove(); return; }
@@ -518,7 +536,40 @@
   }
 
   function pageInstitutions() { wireRequestForm($('form.bx-formcard'), 'institution', { name: 'o-c', email: 'o-e', phone: 'o-p' }); }
-  function pageConsultations() { wireRequestForm($('form.bx-formcard'), 'consultation', { name: 'c-n', email: 'c-e', phone: 'c-p' }); }
+  // paid consultation: fixed price (EGP in Egypt, intl price in the visitor's currency abroad), request first then checkout
+  async function pageConsultations() {
+    const form = $('form.bx-formcard'); if (!form) return;
+    const [S, R] = await Promise.all([window.SITE_SETTINGS.catch(() => ({})), REGION]);
+    const price = Number((S && S.consultation_price) || 1500), intl = S && S.consultation_intl != null ? Number(S.consultation_intl) : null;
+    const cp = $('[data-cp]', form); if (cp) cp.textContent = priceTxt(price, R, intl);
+    const btn = $('button.bs-btn-primary', form);
+    const msg = document.createElement('div'); msg.className = 'bx-formmsg'; msg.setAttribute('aria-live', 'polite'); btn.parentElement.after(msg);
+    const fields = () => { const f = {}; $$('input,select,textarea', form).forEach((el) => { const lab = el.id && $(`label[for="${el.id}"]`, form); if (lab) f[lab.textContent.replace('*', '').trim()] = el.tagName === 'SELECT' ? (el.selectedIndex > 0 ? el.options[el.selectedIndex].text : '') : el.value.trim(); }); return f; };
+    const KEY = 'biosyn.cons';
+    // back from login/signup: restore what they typed
+    try { const saved = JSON.parse(sessionStorage.getItem(KEY) || 'null'); if (saved && sb.user) { Object.entries(saved).forEach(([id, v]) => { const el = $('#' + id, form); if (el) el.value = v; }); msg.className = 'bx-formmsg ok'; msg.textContent = 'رجعنا بياناتك. اضغط «احجز وادفع» عشان تكمّل.'; } } catch {}
+    if (sb.user && !$('#c-e', form).value) $('#c-e', form).value = sb.user.email || '';
+    btn.addEventListener('click', async () => {
+      const g = (id) => $('#' + id, form).value.trim();
+      msg.className = 'bx-formmsg err';
+      if ($('#c-s', form).selectedIndex < 1) { msg.textContent = 'اختر نوع الاستشارة.'; return; }
+      if (!g('c-n') || !/^\S+@\S+\.\S+$/.test(g('c-e'))) { msg.textContent = 'اكتب الاسم وبريدًا إلكترونيًا صحيحًا.'; return; }
+      if (g('c-m').length < 10) { msg.textContent = 'اكتب ملخص احتياجك (10 حروف على الأقل).'; return; }
+      if (!sb.user) {
+        try { const keep = {}; $$('input,select,textarea', form).forEach((el) => el.id && (keep[el.id] = el.value)); sessionStorage.setItem(KEY, JSON.stringify(keep)); } catch {}
+        location.href = 'login.html?mode=signup&next=consultations.html'; return;
+      }
+      btn.disabled = true; msg.className = 'bx-formmsg'; msg.textContent = 'جارٍ تجهيز الحجز…';
+      try {
+        const id = await sb.rpc('create_consultation', { p_name: g('c-n'), p_email: g('c-e'), p_phone: g('c-p') || null, p_payload: fields() });
+        try { sessionStorage.removeItem(KEY); } catch {}
+        window.track && track('lead', { type: 'consultation' });
+        msg.className = 'bx-formmsg ok'; msg.textContent = 'اتسجل طلبك. كمّل الدفع عشان نأكد الحجز ونحدد الموعد.';
+        checkout({ consultation: id, title: 'استشارة: ' + $('#c-s', form).options[$('#c-s', form).selectedIndex].text, price, intl, note: 'بعد الدفع فريق Biosyn هيتواصل معاك لتحديد موعد الاستشارة.' });
+      } catch (e) { msg.className = 'bx-formmsg err'; msg.textContent = arErr(e); }
+      btn.disabled = false;
+    });
+  }
 
 
   // ---------- instructors (featured_instructors table, managed from Admin) ----------

@@ -153,7 +153,7 @@
       const openRef = (r) => ['new', 'in_review'].includes(r.status);
       const refByPay = {}; refs.forEach((r) => { const k = r.payload && r.payload.payment_id; if (k && (!refByPay[k] || openRef(r))) refByPay[k] = r; });
       D.setBadge('payments', refs.filter(openRef).length);
-      const itemOf = (p) => (p ? (p.plans ? p.plans.name : p.courses ? p.courses.title : '—') : '—');
+      const itemOf = (p) => (p ? (p.plans ? p.plans.name : p.courses ? p.courses.title : p.purpose === 'consultation' ? 'استشارة' : '—') : '—');
       const paidSum = (list) => list.reduce((s, p) => s + Number(p.amount_egp || 0), 0);
       const daysLeft = (p) => (p && p.paid_at ? Math.ceil((new Date(p.paid_at).getTime() + 7 * 864e5 - Date.now()) / 864e5) : null);
       const inRange = (iso, from, to) => (!from || iso >= from) && (!to || iso.slice(0, 10) <= to);
@@ -189,7 +189,7 @@
           <div class="bx-field"><label for="pt" class="bx-hint">إلى</label><input id="pt" class="bx-input" type="date" value="${F.to}"></div>`;
         return F.tab === 'pay'
           ? `${common}${sel('ps', 'الحالة', [['', 'كل الحالات'], ['paid', 'مدفوع'], ['pending', 'بانتظار الدفع'], ['failed', 'فشل'], ['refunded', 'مسترد']], F.status)}
-             ${sel('pk', 'النوع', [['', 'الكل'], ['subscription', 'اشتراك باقة'], ['interactive_course', 'كورس تفاعلي']], F.kind)}
+             ${sel('pk', 'النوع', [['', 'الكل'], ['subscription', 'اشتراك باقة'], ['interactive_course', 'كورس تفاعلي'], ['consultation', 'استشارة']], F.kind)}
              ${sel('pg', 'البوابة', [['', 'كل البوابات'], ...Object.entries(D.gw)], F.gw)}`
           : `${common}${sel('rs', 'الحالة', [['open', 'مفتوحة (محتاجة قرار)'], ['all', 'الكل'], ['accepted', 'تم الاسترداد'], ['rejected', 'مرفوضة']], F.rs)}`;
       }
@@ -200,7 +200,7 @@
           const act = manual ? `<button class="bx-linkbtn" data-ma="${p.id}">تأكيد الاستلام</button> · <button class="bx-linkbtn" data-mr="${p.id}" style="color:var(--danger-text)">رفض</button>`
             : rq && openRef(rq) ? `<button class="bx-linkbtn" data-goref="${rq.id}">طلب استرداد مفتوح ←</button>`
             : canRefund(p) && isAdmin() ? `<button class="bx-linkbtn" data-rf="${p.id}">استرداد</button>` : '';
-          return [D.date(p.created_at), esc((p.profiles && p.profiles.full_name) || '—'), esc(itemOf(p)) + (p.receipt_no ? `<br><small class="bx-hint">إيصال ${p.receipt_no}</small>` : ''), (p.currency && p.currency !== 'EGP' ? `${paidTxt(p)}<br><small class="bx-hint">≈ ${D.money(p.amount_egp)}</small>` : D.money(p.amount_egp)) + (Number(p.discount_egp) ? `<br><small class="bx-hint">خصم ${D.money(p.discount_egp)}</small>` : ''), p.currency && p.currency !== 'EGP' ? paidTxt(p, 'fee') : D.money(p.fee_egp), (D.gw[p.gateway] || p.gateway) + (p.gateway === 'manual' ? `<br><small class="bx-hint">${p.manual_method === 'instapay' ? 'إنستاباي' : 'فودافون كاش'} · <span class="bs-latin">${esc(p.manual_ref || '')}</span></small>` : ''), D.badge('pay', p.status), act];
+          return [D.date(p.created_at), esc((p.profiles && p.profiles.full_name) || '—'), esc(itemOf(p)) + (p.receipt_no ? `<br><small class="bx-hint">إيصال ${p.receipt_no}</small>` : ''), (p.currency && p.currency !== 'EGP' ? `${paidTxt(p)}<br><small class="bx-hint">≈ ${D.money(p.amount_egp)}</small>` : D.money(p.amount_egp)) + (Number(p.discount_egp) ? `<br><small class="bx-hint">خصم ${D.money(p.discount_egp)}</small>` : ''), p.currency && p.currency !== 'EGP' ? paidTxt(p, 'fee') : D.money(p.fee_egp), (D.gw[p.gateway] || p.gateway) + (p.gateway === 'manual' ? `<br><small class="bx-hint">${({ instapay: 'إنستاباي', vodafone_cash: 'فودافون كاش', paypal: 'PayPal' })[p.manual_method] || ''} · <span class="bs-latin">${esc(p.manual_ref || '')}</span></small>` : ''), D.badge('pay', p.status), act];
         }), 'مفيش مدفوعات بالفلتر ده');
       }
       function refCard(r) {
@@ -247,7 +247,7 @@
         bind('pq', 'q', 'input'); bind('pf', 'from'); bind('pt', 'to'); bind('ps', 'status'); bind('pk', 'kind'); bind('pg', 'gw'); bind('rs', 'rs');
         $('#pclr', main).onclick = () => { Object.assign(F, { q: '', status: '', kind: '', gw: '', from: '', to: '', rs: 'open' }); draw(); };
         $('#pcsv', main).onclick = () => F.tab === 'pay'
-          ? csv('payments', ['التاريخ', 'العميل', 'البند', 'النوع', 'السعر', 'الخصم', 'رسوم البوابة', 'البوابة', 'الحالة', 'رقم الإيصال', 'المرجع'], payList().map((p) => [p.created_at.slice(0, 10), (p.profiles && p.profiles.full_name) || '', itemOf(p), p.purpose === 'subscription' ? 'اشتراك' : 'كورس تفاعلي', p.amount_egp, p.discount_egp || 0, p.fee_egp || 0, D.gw[p.gateway] || p.gateway, ({ paid: 'مدفوع', pending: 'بانتظار الدفع', failed: 'فشل', refunded: 'مسترد' })[p.status] || p.status, p.receipt_no || '', p.manual_ref || p.gateway_ref || '']))
+          ? csv('payments', ['التاريخ', 'العميل', 'البند', 'النوع', 'السعر', 'الخصم', 'رسوم البوابة', 'البوابة', 'الحالة', 'رقم الإيصال', 'المرجع'], payList().map((p) => [p.created_at.slice(0, 10), (p.profiles && p.profiles.full_name) || '', itemOf(p), ({ subscription: 'اشتراك', interactive_course: 'كورس تفاعلي', consultation: 'استشارة' })[p.purpose] || p.purpose, p.amount_egp, p.discount_egp || 0, p.fee_egp || 0, D.gw[p.gateway] || p.gateway, ({ paid: 'مدفوع', pending: 'بانتظار الدفع', failed: 'فشل', refunded: 'مسترد' })[p.status] || p.status, p.receipt_no || '', p.manual_ref || p.gateway_ref || '']))
           : csv('refunds', ['تاريخ الطلب', 'الطالب', 'الإيميل', 'الكورس', 'المبلغ', 'السبب', 'ملاحظة الطالب', 'الحالة', 'ردّك'], refList().map((r) => { const p = payById[r.payload && r.payload.payment_id], pl = r.payload || {}; return [r.created_at.slice(0, 10), r.name, r.email, pl.item || itemOf(p), p ? p.amount_egp : pl.amount_egp || '', pl.reason || '', pl.note || '', { new: 'جديد', in_review: 'قيد المراجعة', accepted: 'تم الاسترداد', rejected: 'مرفوض' }[r.status] || r.status, pl.decision_note || '']; }));
         $$('[data-goref]', main).forEach((b) => (b.onclick = () => { F.tab = 'ref'; F.rs = 'open'; draw(); const c = $(`[data-ref="${b.dataset.goref}"]`, main); if (c) { c.scrollIntoView({ block: 'center' }); c.classList.add('bx-flash'); } }));
         $$('[data-ma],[data-mr]', main).forEach((b) => (b.onclick = async () => {

@@ -33,7 +33,8 @@ export const localPrice = (egp: number, r: Region) => (egp <= 0 ? 0 : Math.max(1
 // Fawaterk takes these currency codes (it spells SAR as "SR"); Paymob Egypt is EGP only; Stripe takes all.
 const FAWATERK: Record<string, string> = { USD: 'USD', EGP: 'EGP', SAR: 'SR', AED: 'AED', KWD: 'KWD', QAR: 'QAR', BHD: 'BHD' };
 export const fawaterkCode = (cur: string) => FAWATERK[cur] || null;
+// Abroad: card gateways only. Fawaterk always shows (cards, wallets, Fawry…); a currency it doesn't take is charged in USD.
 export function gatewaysForCurrency(all: string[], cur: string) {
   if (cur === 'EGP') return all;
-  return all.filter((g) => g === 'stripe' || (g === 'fawaterk' && !!fawaterkCode(cur)));
+  return all.filter((g) => g === 'stripe' || g === 'fawaterk');
 }
