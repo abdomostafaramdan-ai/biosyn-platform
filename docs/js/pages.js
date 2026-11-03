@@ -127,6 +127,8 @@
     let c;
     try { c = await sb.one('courses', { select: '*,lectures(id,position,title,duration_seconds,is_preview)', slug: 'eq.' + slug }); } catch (e) { root.innerHTML = `<div class="bx-empty-big" style="margin:80px 16px"><b>تعذّر تحميل الدورة</b>${esc(arErr(e))}</div>`; return; }
     if (!c) { root.innerHTML = '<div class="bx-empty-big" style="margin:80px auto;max-width:560px"><b>هذه الدورة غير متاحة</b>قد تكون غير منشورة بعد. <a class="bx-link" href="courses.html">تصفح الدورات</a></div>'; return; }
+    const nL = Number(await sb.rpc('course_learners', { p_course: c.id }).catch(() => 0)) || 0;
+    const learnersTxt = (verb, one) => nL > 0 ? `<span class="bx-learners">👥 ${nL === 1 ? `طالب واحد ${one}` : `<b>${EGP(nL)}</b> ${nL === 2 ? 'طالبين' : nL <= 10 ? 'طلاب' : 'طالب'} ${verb}`}</span>` : `<span class="bx-learners">👥 كن من أوائل المشتركين</span>`;
     if (c.kind === 'interactive') {
       document.title = c.title + ' | Biosyn Egypt';
       const T = await courseInst(c);
@@ -135,6 +137,7 @@
         <nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><a href="interactive.html">دورات تفاعلية</a><span>/</span><span class="bs-latin">${esc(c.title)}</span></nav>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="bs-badge bs-badge-info">دورة تفاعلية</span>${fc ? `<span class="bs-badge bs-badge-member">${esc(fc.name)}</span>` : ''}${c.specialty ? `<span class="bs-badge bs-badge-member">${esc(c.specialty)}</span>` : ''}</div>
         <h1 dir="auto">${esc(c.title)}</h1>${c.summary ? `<p class="bs-lead">${esc(c.summary)}</p>` : ''}
+        <div class="bs-stats">${learnersTxt('اشتركوا في الدورة', 'اشترك في الدورة')}</div>
         ${teacherChip(T)}
         </div><div class="bs-spacer"></div></div></section>
         <div class="bs-course-main"><div>${c.description ? `<section class="bs-block-sec" style="margin-top:48px"><h2>عن الدورة</h2>${c.description.split(/\n{2,}/).map((p) => `<p>${esc(p)}</p>`).join('')}</section>` : '<div style="height:48px"></div>'}
@@ -164,7 +167,7 @@
       <div style="display:flex;gap:8px"><span class="bs-badge bs-badge-neutral">${LEVEL[c.level] || 'مبتدئ'}</span><span class="bs-badge bs-badge-info">دورة مسجلة</span></div>
       <h1>${esc(c.title)}</h1>
       ${c.summary ? `<p class="bs-lead">${esc(c.summary)}</p>` : ''}
-      <div class="bs-stats"><span><b>${lects.length}</b> محاضرة</span>${total ? `<span><b>${esc(hoursText(total))}</b></span>` : ''}<span>بالعربية</span></div>
+      <div class="bs-stats"><span><b>${lects.length}</b> محاضرة</span>${total ? `<span><b>${esc(hoursText(total))}</b></span>` : ''}<span>بالعربية</span>${learnersTxt('اتفرجوا على الكورس', 'اتفرج على الكورس')}</div>
       ${teacherChip(T)}
       </div><div class="bs-spacer"></div></div></section>
     <div class="bs-course-main"><div>
