@@ -437,3 +437,4 @@ EXTRA.update({
   "شارك رابطك. صاحبك بيتحسب لما يشترك في أي باقة مدفوعة لأول مرة.": "Share your link. A friend counts once they subscribe to any paid plan for the first time.",
   "الشهر المجاني الجاي": "Next free month", "6 شهور مجانًا": "6 free months", "كسبتها 🎉": "Earned 🎉", "هيتضاف تلقائي": "Will be added automatically",
 })
+EXTRA.update({"جميع الحقوق محفوظة": "All rights reserved"})

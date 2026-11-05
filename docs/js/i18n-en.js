@@ -1081,7 +1081,8 @@ window.I18N_EN = {
 "الشهر المجاني الجاي": "Next free month",
 "6 شهور مجانًا": "6 free months",
 "كسبتها 🎉": "Earned 🎉",
-"هيتضاف تلقائي": "Will be added automatically"
+"هيتضاف تلقائي": "Will be added automatically",
+"جميع الحقوق محفوظة": "All rights reserved"
 };
 
 window.I18N_EN_PATTERNS = (function () {
