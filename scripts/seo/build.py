@@ -51,7 +51,7 @@ def config():
 
 
 def rest(url, key, path):
-    req = urllib.request.Request(f'{url}/rest/v1/{path}', headers={'apikey': key, 'Authorization': f'Bearer {key}', 'Accept': 'application/json'})
+    req = urllib.request.Request(f'{url}/rest/v1/{path}', headers={'apikey': key, 'Accept': 'application/json'})
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.loads(r.read().decode('utf-8'))
 
