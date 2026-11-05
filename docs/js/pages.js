@@ -55,6 +55,9 @@
       return;
     }
     if (sb.user) {
+      // Google sign-ups: the ?ref= invite code can't travel through OAuth, so claim it now (no-op for older accounts)
+      try { const rc = localStorage.getItem('biosyn.ref'); if (rc) { await sb.rpc('claim_referral', { p_code: rc }).catch(() => null); localStorage.removeItem('biosyn.ref'); } } catch {}
+      try { if (sessionStorage.getItem('biosyn.oauth')) { sessionStorage.removeItem('biosyn.oauth'); window.track && track('login', { method: 'google' }); } } catch {}
       let prof = null; try { prof = await sb.one('profiles', { select: 'phone', id: 'eq.' + sb.user.id }); } catch {}
       if (prof && prof.phone) { location.replace(nextUrl()); return; }
       ['#f-in', '#f-up', '.bx-seg', '#oauth'].forEach((q) => { const el = $(q); if (el) el.hidden = true; });
@@ -76,7 +79,7 @@
       $('#g-btn').onclick = () => {
         const n = new URLSearchParams(location.search).get('next');
         const back = location.origin + location.pathname + (n ? '?next=' + encodeURIComponent(n) : '');
-        window.track && track('sign_up', { method: 'google' });
+        try { sessionStorage.setItem('biosyn.oauth', '1'); } catch {}
         location.href = sb.auth.oauthUrl('google', back);
       };
     });
