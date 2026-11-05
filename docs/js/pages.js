@@ -442,17 +442,22 @@
   };
 
   // ---------- blog ----------
+  const inl = (t) => {
+    let o = '', i = 0, m; const re = /\[([^\]]+)\]\((https:\/\/[^\s)]+|[\w./#?=&%-]+)\)|\*\*(.+?)\*\*/g;
+    while ((m = re.exec(t))) { o += esc(t.slice(i, m.index)) + (m[1] ? `<a class="bx-link" href="${esc(m[2])}">${esc(m[1])}</a>` : `<b>${esc(m[3])}</b>`); i = re.lastIndex; }
+    return o + esc(t.slice(i));
+  };
   const md = (t) => {
     const out = []; let list = null;
     String(t || '').split(/\n/).forEach((line) => {
       const l = line.trim();
       if (/^[-•] /.test(l)) { if (!list) { list = []; out.push(list); } list.push(l.slice(2)); return; }
       list = null;
-      if (!l) out.push(''); else if (l.startsWith('## ')) out.push({ h: l.slice(3) }); else out.push({ p: l });
+      if (!l) out.push(''); else if (l.startsWith('### ')) out.push({ h3: l.slice(4) }); else if (l.startsWith('## ')) out.push({ h: l.slice(3) }); else out.push({ p: l });
     });
     let html = '', para = [];
-    const flush = () => { if (para.length) { html += `<p>${para.map(esc).join('<br>')}</p>`; para = []; } };
-    out.forEach((b) => { if (Array.isArray(b)) { flush(); html += `<ul>${b.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`; } else if (b === '') flush(); else if (b.h) { flush(); html += `<h2>${esc(b.h)}</h2>`; } else para.push(b.p); });
+    const flush = () => { if (para.length) { html += `<p>${para.map(inl).join('<br>')}</p>`; para = []; } };
+    out.forEach((b) => { if (Array.isArray(b)) { flush(); html += `<ul>${b.map((x) => `<li>${inl(x)}</li>`).join('')}</ul>`; } else if (b === '') flush(); else if (b.h3) { flush(); html += `<h3>${inl(b.h3)}</h3>`; } else if (b.h) { flush(); html += `<h2>${inl(b.h)}</h2>`; } else para.push(b.p); });
     flush(); return html;
   };
   const fdate = (d) => (d ? new Date(d).toLocaleDateString(window.LOC || 'ar-EG-u-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' }) : '');
@@ -460,12 +465,13 @@
     const box = $('#posts');
     try {
       const posts = await sb.get('posts', { select: 'slug,title,excerpt,tag,published_at', published: 'eq.true', order: 'published_at.desc', limit: 50 });
-      box.innerHTML = posts.length ? posts.map((x) => `<a class="bx-post" href="article.html?p=${encodeURIComponent(x.slug)}"><small class="bx-hint">${esc(x.tag || 'مقال')} · ${fdate(x.published_at)}</small><h2>${esc(x.title)}</h2>${x.excerpt ? `<p>${esc(x.excerpt)}</p>` : ''}</a>`).join('') : '<div class="bx-empty-big"><b>لا توجد مقالات بعد</b>تابعنا قريبًا.</div>';
-    } catch (e) { box.innerHTML = `<div class="bx-empty-big"><b>تعذّر التحميل</b>${esc(arErr(e))}</div>`; }
+      box.innerHTML = posts.length ? posts.map((x) => `<a class="bx-post" href="blog-${encodeURIComponent(x.slug)}.html"><small class="bx-hint">${esc(x.tag || 'مقال')} · ${fdate(x.published_at)}</small><h2>${esc(x.title)}</h2>${x.excerpt ? `<p>${esc(x.excerpt)}</p>` : ''}</a>`).join('') : '<div class="bx-empty-big"><b>لا توجد مقالات بعد</b>تابعنا قريبًا.</div>';
+    } catch (e) { if (!box.querySelector('.bx-post')) box.innerHTML = `<div class="bx-empty-big"><b>تعذّر التحميل</b>${esc(arErr(e))}</div>`; }
   };
   P.article = async () => {
-    const box = $('#art'), slug = new URLSearchParams(location.search).get('p');
+    const box = $('#art'), slug = document.body.dataset.slug || new URLSearchParams(location.search).get('p');
     if (!slug) { location.replace('blog.html'); return; }
+    if (document.body.dataset.slug && !box.querySelector('.bx-loading')) return;   // pre-rendered SEO page
     let x; try { x = await sb.one('posts', { select: '*', slug: 'eq.' + slug, published: 'eq.true' }); } catch (e) { box.innerHTML = `<div class="bx-empty-big"><b>تعذّر التحميل</b>${esc(arErr(e))}</div>`; return; }
     if (!x) { box.innerHTML = '<div class="bx-empty-big"><b>المقال غير موجود</b><a class="bx-link" href="blog.html">كل المقالات</a></div>'; return; }
     window.setMeta && setMeta(x.title + ' | Biosyn Egypt', (x.excerpt || x.body || '').slice(0, 160));

@@ -77,13 +77,14 @@ def load(fixture):
             'courses': rest(url, key, 'courses?select=*,lectures(title,position,duration_seconds,is_preview)&status=eq.published&order=created_at'),
             'featured_instructors': rest(url, key, 'featured_instructors?select=id,name,title,photo_url,profile_id,visible,faculty'),
             'plans': rest(url, key, 'plans?select=code,name,price_egp,old_price_egp,intl_price,duration_months&active=eq.true&order=duration_months'),
-            'posts': rest(url, key, 'posts?select=slug,title,excerpt,tag,published_at,updated_at&published=eq.true&order=published_at.desc'),
+            'posts': rest(url, key, 'posts?select=slug,title,excerpt,body,tag,published_at,updated_at&published=eq.true&order=published_at.desc'),
             'settings': (rest(url, key, 'seo_settings?select=data,rebuild_requested_at&id=eq.1') or [{}])[0],
             'fp': rpc(url, key, 'seo_fingerprint'),
             'about': ((rest(url, key, 'site_content?select=data&key=eq.about') or [{}])[0]).get('data') or {},
             'about_stats': rpc(url, key, 'about_stats'),
         }
     d['faculties'] = facs
+    d.setdefault('posts', [])
     S.clear(); S.update(((d.get('settings') or {}).get('data')) or {})
     ABOUT.clear(); ABOUT.update(d.get('about') or {}); ABOUT['_stats'] = d.get('about_stats') or {}
     for c in d['courses']:
@@ -185,12 +186,13 @@ def faq_ld(qas):
     return {'@type': 'FAQPage', 'mainEntity': [{'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': a}} for q, a in qas]}
 
 
-def head_block(url, title, desc, graph, robots=None, kind='website'):
+def head_block(url, title, desc, graph, robots=None, kind='website', image=None):
+    img = image or OG_IMAGE; wh = ('1280', '720') if image else ('1200', '630')
     tags = [f'<link rel="canonical" href="{e(url)}">',
             f'<meta property="og:url" content="{e(url)}">', f'<meta property="og:type" content="{kind}">',
             f'<meta property="og:site_name" content="{BRAND}">', '<meta property="og:locale" content="ar_EG">',
-            f'<meta property="og:image" content="{OG_IMAGE}">', '<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">',
-            '<meta name="twitter:card" content="summary_large_image">', f'<meta name="twitter:title" content="{e(title)}">', f'<meta name="twitter:description" content="{e(desc)}">', f'<meta name="twitter:image" content="{OG_IMAGE}">']
+            f'<meta property="og:image" content="{e(img)}">', f'<meta property="og:image:width" content="{wh[0]}"><meta property="og:image:height" content="{wh[1]}">',
+            '<meta name="twitter:card" content="summary_large_image">', f'<meta name="twitter:title" content="{e(title)}">', f'<meta name="twitter:description" content="{e(desc)}">', f'<meta name="twitter:image" content="{e(img)}">']
     if robots: tags.append(f'<meta name="robots" content="{robots}">')
     if graph: tags.append(ld({'@context': 'https://schema.org', '@graph': graph}))
     return '<!--seo:start-->' + ''.join(tags) + '<!--seo:end-->'
@@ -275,7 +277,7 @@ def course_page(tpl, c, d, related):
     # JSON-LD
     course = {'@type': 'Course', '@id': url + '#course', 'name': c['title'], 'description': plain(c.get('description') or c.get('summary') or desc, 500),
               'url': url, 'inLanguage': 'ar', 'provider': ORG_REF, 'educationalLevel': LEVEL_EN.get(c.get('level'), 'Beginner'),
-              'isAccessibleForFree': False, 'image': OG_IMAGE,
+              'isAccessibleForFree': False, 'image': c.get('cover_url') or OG_IMAGE,
               'educationalCredentialAwarded': 'Certificate of Completion (Biosyn Egypt)',
               'hasCourseInstance': [{'@type': 'CourseInstance', 'courseMode': 'Online' if rec else 'Synchronous', 'inLanguage': 'ar'}]}
     inst = course['hasCourseInstance'][0]
@@ -297,7 +299,7 @@ def course_page(tpl, c, d, related):
         course['offers'] = [{'@type': 'Offer', 'category': 'Paid', 'price': float(c['price_egp']), 'priceCurrency': 'EGP', 'availability': 'https://schema.org/InStock', 'url': url}]
     cat = ('الدورات المسجلة', SITE + '/courses.html') if rec else ('الدورات التفاعلية', SITE + '/interactive.html')
     graph = [ORG, course, crumbs([('الرئيسية', SITE + '/'), cat, (c['title'], url)]), faq_ld(faq)]
-    doc = put_head(tpl, head_block(url, title, desc, graph, None if ok else 'noindex,follow', 'website'), title, desc)
+    doc = put_head(tpl, head_block(url, title, desc, graph, None if ok else 'noindex,follow', 'website', c.get('cover_url')), title, desc)
     doc = doc.replace('<body data-page="course">', f'<body data-page="course" data-slug="{e(c["slug"])}">', 1)
     # pre-rendered body (same facts the app shows after hydration)
     def li(i, l):
@@ -324,6 +326,9 @@ def course_page(tpl, c, d, related):
         ''.join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in faq) + '</div>'
     if related:
         extra += '<h3 style="margin:28px 0 12px">دورات ذات صلة قد تهمك</h3><ul class="bx-seo-links">' + ''.join(f'<li><a href="course-{e(r["slug"])}.html" dir="auto">{e(r["title"])}</a></li>' for r in related) + '</ul>'
+    arts = [p for p in d.get('posts') or [] if f"course-{c['slug']}.html" in (p.get('body') or '')]
+    if arts:
+        extra += '<h3 style="margin:28px 0 12px">مقالات عن الدورة</h3><ul class="bx-seo-links">' + ''.join(f'<li><a href="blog-{e(p["slug"])}.html">{e(p["title"])}</a></li>' for p in arts) + '</ul>'
     if fac and fac['id'] in TOPICS_OK:
         extra += f'<p style="margin-top:16px"><a class="bx-link" href="topic-{fac["id"]}.html">جميع دورات {e(fac["name"])} ←</a></p>'
     if insts:
@@ -391,6 +396,92 @@ def teacher_page(tpl, t, cs, d):
     return url, shell(tpl, url, title, desc, graph, main)
 
 
+# ---------------------------------------------------------------- blog
+MONTHS = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
+INLINE = re.compile(r'\[([^\]]+)\]\((https://[^\s)]+|[\w./#?=&%-]+)\)|\*\*(.+?)\*\*')
+
+
+def ar_date(iso):
+    if not iso: return ''
+    y, m, dd = iso[:10].split('-'); return f'{int(dd)} {MONTHS[int(m) - 1]} {y}'
+
+
+def inline_md(t):
+    out, i = '', 0
+    for m in INLINE.finditer(t):
+        out += e(t[i:m.start()])
+        out += f'<a class="bx-link" href="{e(m.group(2))}">{e(m.group(1))}</a>' if m.group(1) else f'<b>{e(m.group(3))}</b>'
+        i = m.end()
+    return out + e(t[i:])
+
+
+def md_html(t):
+    """Same tiny markdown as pages.js: ## / ### headings, - lists, [text](url), **bold**, blank line = new paragraph."""
+    html_, para, lst = '', [], []
+    def flush():
+        nonlocal html_, para, lst
+        if para: html_ += '<p>' + '<br>'.join(inline_md(x) for x in para) + '</p>'; para = []
+        if lst: html_ += '<ul>' + ''.join(f'<li>{inline_md(x)}</li>' for x in lst) + '</ul>'; lst = []
+    for line in (t or '').split('\n'):
+        l = line.strip()
+        if re.match(r'^[-•] ', l):
+            if para: html_ += '<p>' + '<br>'.join(inline_md(x) for x in para) + '</p>'; para = []
+            lst.append(l[2:]); continue
+        if lst: flush()
+        if not l: flush()
+        elif l.startswith('### '): flush(); html_ += f'<h3>{inline_md(l[4:])}</h3>'
+        elif l.startswith('## '): flush(); html_ += f'<h2>{inline_md(l[3:])}</h2>'
+        else: para.append(l)
+    flush(); return html_
+
+
+def post_faq(body):
+    """Q&A pairs written as «س: …» then «ج: …» lines (any section) → FAQPage schema."""
+    out, q = [], None
+    for line in (body or '').split('\n'):
+        l = line.strip()
+        if l.startswith('س:'): q = l[2:].strip()
+        elif l.startswith('ج:') and q: out.append((q, re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', l[2:].strip()).replace('**', ''))); q = None
+    return out
+
+
+def post_course(p, courses):
+    return next((c for c in courses if f"course-{c['slug']}.html" in (p.get('body') or '')), None)
+
+
+def post_page(tpl, p, d):
+    url = f"{SITE}/blog-{p['slug']}.html"
+    c = post_course(p, d['courses'])
+    img = (c or {}).get('cover_url')
+    title = f"{p['title']} | مدونة {BRAND}"
+    desc = plain(p.get('excerpt') or p.get('body'))
+    faq = post_faq(p.get('body'))
+    words = len(re.findall(r'\w+', p.get('body') or ''))
+    art = {'@type': 'BlogPosting', '@id': url + '#article', 'headline': p['title'][:110], 'description': desc, 'url': url, 'mainEntityOfPage': url,
+           'inLanguage': 'ar', 'author': ORG_REF, 'publisher': ORG_REF, 'image': img or OG_IMAGE, 'wordCount': words,
+           'datePublished': (p.get('published_at') or TODAY)[:10], 'dateModified': (p.get('updated_at') or p.get('published_at') or TODAY)[:10]}
+    if p.get('tag'): art['articleSection'] = p['tag']
+    if c: art['about'] = {'@id': f"{SITE}/course-{c['slug']}.html#course"}; art['mentions'] = {'@type': 'Course', 'name': c['title'], 'url': f"{SITE}/course-{c['slug']}.html", 'provider': ORG_REF}
+    graph = [ORG, art, crumbs([('الرئيسية', SITE + '/'), ('المدونة', SITE + '/blog.html'), (p['title'], url)])]
+    if faq: graph.append(faq_ld(faq))
+    doc = put_head(tpl, head_block(url, title, desc, graph, None, 'article', img), title, desc)
+    doc = doc.replace('<body data-page="article">', f'<body data-page="article" data-slug="{e(p["slug"])}">', 1)
+    cta = (f'<div class="bx-banner" style="display:block;margin-top:40px"><b>ابدأ دورة {e(c["title"])}</b><p style="margin:6px 0 12px">{e(c.get("summary") or "")}</p><a class="bs-btn bs-btn-primary" href="course-{e(c["slug"])}.html">تفاصيل الدورة ومحتواها</a></div>' if c else
+           '<div class="bx-banner" style="display:block;margin-top:40px"><b>تعلّم أكثر مع Biosyn</b><p style="margin:6px 0 0">دورات مسجلة في العلوم الحيوية والطبية باشتراك واحد. <a class="bx-link" href="courses.html">تصفح الدورات</a></p></div>')
+    body = (f'<nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><a href="blog.html">المدونة</a></nav>'
+            f'<small class="bx-hint">{e(p.get("tag") or "مقال")} · <time datetime="{e((p.get("published_at") or "")[:10])}">{e(ar_date(p.get("published_at")))}</time></small><h1>{e(p["title"])}</h1>'
+            + (f'<p class="bs-lead" style="color:var(--ink-muted)">{e(p["excerpt"])}</p>' if p.get('excerpt') else '')
+            + (f'<img class="bx-art-hero" src="{e(img)}" alt="{e(c["title"])}" width="1280" height="720">' if img else '')
+            + f'<div class="bx-prose" style="margin-top:32px">{md_html(p.get("body"))}</div>{cta}')
+    doc = re.sub(r'<article id="art">.*?</article>', lambda m: f'<article id="art">{body}</article>', doc, count=1, flags=re.S)
+    return url, doc
+
+
+def post_card(p):
+    return (f'<a class="bx-post" href="blog-{e(p["slug"])}.html"><small class="bx-hint">{e(p.get("tag") or "مقال")} · {e(ar_date(p.get("published_at")))}</small>'
+            f'<h2>{e(p["title"])}</h2>' + (f'<p>{e(p["excerpt"])}</p>' if p.get('excerpt') else '') + '</a>')
+
+
 def llms(d, courses, topics, teachers):
     plans = d['plans']
     L = [f'# {BRAND}', '', '> منصة مصرية للتعليم العلمي والطبي باللغة العربية (biosyneg.com): دورات مسجلة باشتراك واحد، وبرامج تفاعلية مباشرة، واستشارات وخدمات بحثية، وشهادات إتمام قابلة للتحقق. Egyptian EdTech platform for life-science, medical and bioinformatics education in Arabic.', '',
@@ -417,6 +508,7 @@ def llms(d, courses, topics, teachers):
         L.append(f"- [{c['title']}]({SITE}/course-{c['slug']}.html): {'recorded course' if c['kind'] == 'recorded' else 'live interactive course'}" + (f', {n} lectures' if n else '') + (f', ~{round(total / 3600, 1)} hours' if total >= 360 else '') + (f", {c['specialty']}" if c.get('specialty') and c['specialty'] != 'كل التخصصات' else '') + (f" — {plain(c.get('summary'), 180)}" if c.get('summary') else ''))
     if topics: L += ['', '## Courses by faculty'] + [f'- [{f["name"]}]({SITE}/topic-{f["id"]}.html)' for f in topics]
     if teachers: L += ['', '## Instructors'] + [f'- [{t["name"]}]({SITE}/teacher-{t["id"][:8]}.html): {plain(t.get("title"), 160)}' for t in teachers]
+    if d.get('posts'): L += ['', '## Articles'] + [f"- [{p['title']}]({SITE}/blog-{p['slug']}.html)" + (f": {plain(p.get('excerpt'), 160)}" if p.get('excerpt') else '') for p in d['posts']]
     L += ['', '## Main pages'] + [f'- [{n}]({SITE}/{"" if f == "index.html" else f})' for f, n, _ in STATIC]
     L += ['', '## Optional', f'- [Full content for LLMs]({SITE}/llms-full.txt)']
     return '\n'.join(L) + '\n'
@@ -529,7 +621,7 @@ def main():
     # skip when neither the data (remote fingerprint) nor the page templates / this script changed
     spath = os.path.join(HERE, 'state.json')
     state = json.load(open(spath)) if os.path.exists(spath) else {}
-    local = hashlib.sha1(b''.join(SEO_RE.sub('', open(os.path.join(DOCS, f), encoding='utf-8').read()).encode() for f, _, _ in STATIC + [('course.html', 0, 0), ('verify.html', 0, 0)]) + open(__file__, 'rb').read()).hexdigest()
+    local = hashlib.sha1(b''.join(SEO_RE.sub('', open(os.path.join(DOCS, f), encoding='utf-8').read()).encode() for f, _, _ in STATIC + [('course.html', 0, 0), ('verify.html', 0, 0), ('article.html', 0, 0)]) + open(__file__, 'rb').read()).hexdigest()
     fp = f"{d.get('fp') or ''}:{local}"
     if not a.force and not a.fixture and state.get('fp') == fp:
         print('no changes since last build'); open(os.path.join(HERE, 'changed.txt'), 'w').write(''); return
@@ -568,6 +660,10 @@ def main():
         if f == 'interactive.html' and ok_courses:
             graph.append({'@type': 'ItemList', 'name': 'الدورات التفاعلية', 'itemListElement': [{'@type': 'ListItem', 'position': i + 1, 'url': f'{SITE}/course-{c["slug"]}.html', 'name': c['title']} for i, c in enumerate([c for c in ok_courses if c['kind'] == 'interactive'])]})
         if f == 'index.html': doc = inject_faq(doc)
+        if f == 'blog.html' and d['posts']:
+            graph.append({'@type': 'Blog', '@id': url + '#blog', 'name': 'مدونة ' + BRAND, 'url': url, 'inLanguage': 'ar', 'publisher': ORG_REF,
+                          'blogPost': [{'@type': 'BlogPosting', 'headline': p['title'], 'url': f"{SITE}/blog-{p['slug']}.html", 'datePublished': (p.get('published_at') or TODAY)[:10]} for p in d['posts'][:30]]})
+            doc = re.sub(r'(<div id="posts"[^>]*>).*?(</div></main>)', lambda m: m.group(1) + ''.join(post_card(p) for p in d['posts']) + m.group(2), doc, count=1, flags=re.S)
         if f == 'about.html':
             doc = render_about(doc)
             graph.append({'@type': 'AboutPage', '@id': url, 'url': url, 'name': 'من نحن | ' + BRAND, 'inLanguage': 'ar', 'about': ORG_REF, 'mainEntity': ORG_REF})
@@ -597,12 +693,16 @@ def main():
     for f, cs in topics:
         url, doc = topic_page(tpl_shell, f, cs, d); fn = f'topic-{f["id"]}.html'; made.add(fn)
         write(fn, doc, changed, manifest, url); sitemap.append((url, '0.7'))
+    tpl_article = SEO_RE.sub('', open(os.path.join(DOCS, 'article.html'), encoding='utf-8').read())
+    for p in d['posts']:
+        url, doc = post_page(tpl_article, p, d); fn = f"blog-{p['slug']}.html"; made.add(fn)
+        write(fn, doc, changed, manifest, url); sitemap.append((url, '0.6'))
     for t, cs in teachers:
         url, doc = teacher_page(tpl_shell, t, cs, d); fn = f'teacher-{t["id"][:8]}.html'; made.add(fn)
         write(fn, doc, changed, manifest, url); sitemap.append((url, '0.5'))
     # remove pages whose course/topic/instructor is gone
     for fn in os.listdir(DOCS):
-        if re.match(r'(course|topic|teacher)-.+\.html$', fn) and fn not in made:
+        if re.match(r'(course|topic|teacher|blog)-.+\.html$', fn) and fn not in made:
             os.remove(os.path.join(DOCS, fn)); manifest.pop(f'{SITE}/{fn}', None); changed.append(f'{SITE}/{fn}')
 
     # 3) sitemap, robots, llms

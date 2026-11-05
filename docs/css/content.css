@@ -89,3 +89,6 @@
   .bx-cycle { grid-template-columns: 1fr; }
   .bx-prose { font-size: 17px; line-height: 32px; }
 }
+.bx-art-hero { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--radius-lg, 16px); margin: 24px 0 0; background: var(--surface-raised); }
+.bx-prose h3 { font: 700 21px/32px var(--font-display); margin: var(--space-8, 32px) 0 var(--space-3, 12px); }
+.bx-prose a.bx-link { text-decoration: underline; text-underline-offset: 3px; }
