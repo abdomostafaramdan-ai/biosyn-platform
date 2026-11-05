@@ -1074,7 +1074,8 @@ window.I18N_EN = {
 "تاريخ الانتهاء (تصدر الشهادات تلقائيًا فيه)": "End date (certificates are issued automatically)",
 "عدد ساعات التدريب (يُطبع على الشهادة)": "Training hours (printed on the certificate)",
 "تاريخ الانتهاء لازم يكون بعد تاريخ البدء.": "The end date must be after the start date.",
-"الاسم اللي بيظهر على الشهادة بييجي من «الاسم على الشهادة» في الإعدادات، ويتثبت على كل شهادة وقت صدورها.": "The name printed on certificates comes from “Name on certificate” in Settings and is fixed on each certificate when it is issued."
+"الاسم اللي بيظهر على الشهادة بييجي من «الاسم على الشهادة» في الإعدادات، ويتثبت على كل شهادة وقت صدورها.": "The name printed on certificates comes from “Name on certificate” in Settings and is fixed on each certificate when it is issued.",
+"شهادة إتمام عند الانتهاء من الكورس": "Certificate of completion when you finish a course"
 };
 
 window.I18N_EN_PATTERNS = (function () {

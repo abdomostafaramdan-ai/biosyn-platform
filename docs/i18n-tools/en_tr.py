@@ -431,3 +431,4 @@ EXTRA.update({
   "تاريخ الانتهاء لازم يكون بعد تاريخ البدء.": "The end date must be after the start date.",
   "الاسم اللي بيظهر على الشهادة بييجي من «الاسم على الشهادة» في الإعدادات، ويتثبت على كل شهادة وقت صدورها.": "The name printed on certificates comes from “Name on certificate” in Settings and is fixed on each certificate when it is issued.",
 })
+EXTRA.update({"شهادة إتمام عند الانتهاء من الكورس": "Certificate of completion when you finish a course"})
