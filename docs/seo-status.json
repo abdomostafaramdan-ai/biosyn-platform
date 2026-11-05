@@ -1,5 +1,5 @@
 {
- "built_at": "2026-11-05T23:14:14+00:00",
+ "built_at": "2026-11-05T23:27:25+00:00",
  "sitemap_urls": 43,
  "indexable": [
   {
@@ -19,12 +19,12 @@
   },
   {
    "slug": "bioinformtics-diploma",
-   "title": "Bioinformtics Diploma",
+   "title": "Bioinformatics Diploma",
    "url": "https://biosyneg.com/course-bioinformtics-diploma.html"
   },
   {
    "slug": "molecular-biology-course-614141",
-   "title": "Molecular Biology Course",
+   "title": "Molecular Biology",
    "url": "https://biosyneg.com/course-molecular-biology-course-614141.html"
   },
   {
@@ -95,5 +95,5 @@
   }
  ],
  "ai_training": true,
- "changed": 0
+ "changed": 42
 }
