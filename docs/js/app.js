@@ -413,7 +413,7 @@
   window.hydratePlansNow = hydratePlans;
 
   // ---------- catalogue ----------
-  window.courseCard = (c, inst, nLect, href) => `<a class="bs-course" href="${href || 'course-' + encodeURIComponent(c.slug) + '.html'}"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span></div><div class="bs-course-body"><span class="bs-course-kind">${c.kind === 'interactive' ? 'دورة تفاعلية' : 'دورة مسجلة'}</span><h3 class="bs-course-title">${esc(c.title)}</h3><div class="bs-course-meta">${nLect != null ? `<span>${nLect} محاضرة</span>` : ''}${c.kind === 'recorded' ? `<span>${LEVEL[c.level] || ''}</span>` : `<span>${EGP(c.price_egp)} ج.م</span>`}${inst ? `<span>${esc(inst)}</span>` : ''}</div></div></a>`;
+  window.courseCard = (c, inst, nLect, href) => `<a class="bs-course" href="${href || 'course-' + encodeURIComponent(c.slug) + '.html'}"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span>${c.cover_url ? `<img class="bs-cover-img" src="${esc(c.cover_url)}" alt="" loading="lazy">` : ''}</div><div class="bs-course-body"><span class="bs-course-kind">${c.kind === 'interactive' ? 'دورة تفاعلية' : 'دورة مسجلة'}</span><h3 class="bs-course-title">${esc(c.title)}</h3><div class="bs-course-meta">${nLect != null ? `<span>${nLect} محاضرة</span>` : ''}${c.kind === 'recorded' ? `<span>${LEVEL[c.level] || ''}</span>` : `<span>${EGP(c.price_egp)} ج.م</span>`}${inst ? `<span>${esc(inst)}</span>` : ''}</div></div></a>`;
 
   async function loadCatalog(kind) {
     const [courses, insts, feat] = await Promise.all([

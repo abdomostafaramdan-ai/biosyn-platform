@@ -40,9 +40,12 @@
 
   async function mountHomeNews() {
     const box = $('[data-news-home]'); if (!box) return;
-    let list = []; try { list = await sb.get('news_items', { select: 'id,kind,title,summary,body,cover_url,event_date,location,published_at', visible: 'eq.true', order: 'featured.desc,published_at.desc', limit: 3 }); } catch (e) { list = []; }
+    let list = []; try { list = await sb.get('news_items', { select: 'id,kind,title,summary,body,cover_url,event_date,location,published_at', visible: 'eq.true', order: 'featured.desc,published_at.desc', limit: 12 }); } catch (e) { list = []; }
     if (!list.length) { box.closest('section').hidden = true; return; }
-    box.innerHTML = list.map(card).join('');
+    const cards = list.map(card).join(''), reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    box.innerHTML = `<div class="bx-mq-track"><div class="bx-mq-half">${cards}</div>${reduce ? '' : `<div class="bx-mq-half" aria-hidden="true">${cards.replace(/<a /g, '<a tabindex="-1" ')}</div>`}</div>`;
+    box.classList.toggle('bx-mq-static', reduce);
+    box.style.setProperty('--mq-dur', Math.max(36, list.length * 9) + 's');
   }
 
   async function pageNews() {

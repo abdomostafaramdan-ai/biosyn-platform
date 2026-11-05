@@ -966,10 +966,10 @@ window.I18N_EN = {
 "الحضور تفاعلي ومباشر من خلال تطبيق Zoom.": "Sessions are live and interactive on Zoom.",
 "لديك دورة تفاعلية وخبرة تدريس سابقة؟": "Have an interactive course and teaching experience?",
 "نموذج | Biosyn Egypt": "Form | Biosyn Egypt",
-"الفورم غير موجود": "Form not found",
+"النموذج غير موجود": "Form not found",
 "تأكد من الرابط.": "Check the link.",
-"تعذّر تحميل الفورم": "Couldn't load the form",
-"الفورم غير متاح": "This form isn't available",
+"تعذّر تحميل النموذج": "Couldn't load the form",
+"النموذج غير متاح": "This form isn't available",
 "قد يكون مغلقًا أو الرابط غير صحيح.": "It may be closed, or the link is wrong.",
 "اختر…": "Choose…",
 "شكرًا! وصلنا ردك وسيتواصل معك فريق Biosyn قريبًا.": "Thank you! We received your response and the Biosyn team will contact you soon.",
@@ -1235,6 +1235,19 @@ window.I18N_EN = {
 "الأخبار والفعاليات | Biosyn Egypt": "News & events | Biosyn Egypt",
 "السابق": "Previous",
 "أخبار Biosyn Egypt وفعالياتها: الشراكات العلمية والمشاركات في الجامعات والمؤتمرات والأبحاث المنشورة.": "Biosyn Egypt news and events: scientific partnerships, university and conference appearances, and published research.",
+"⏱ نموذج مؤقت": "⏱ Timed form",
+"ابدأ الآن": "Start now",
+"التالي ←": "Next →",
+"بعض الأسئلة لها وقت محدد يظهر أعلاها، وعند انتهائه تنتقل تلقائيًا للسؤال التالي.": "Some questions have a time limit shown above them; when it runs out you move to the next question automatically.",
+"تظهر الأسئلة سؤالًا تلو الآخر، ولا يمكن الرجوع إلى سؤال سابق.": "Questions appear one at a time and you can't go back.",
+"إذا غادرت الصفحة أو بدّلت التبويب أو التطبيق، يُغلق النموذج فورًا ويُرسل ما أجبت عنه حتى تلك اللحظة.": "If you leave the page or switch tab or app, the form closes immediately and submits what you've answered so far.",
+"لا يمكن بدء النموذج أكثر من مرة.": "The form can only be started once.",
+"أُغلق النموذج": "The form is closed",
+"أُغلق هذا النموذج": "This form is closed",
+"غادرت الصفحة أثناء الإجابة، فأُرسلت إجاباتك حتى تلك اللحظة ولا يمكن إكمال النموذج.": "You left the page while answering, so your answers so far were submitted and the form can't be completed.",
+"سبق أن بدأته من هذا الجهاز، ولا يمكن فتحه مرة أخرى.": "You already started it on this device, and it can't be opened again.",
+"العودة إلى الرئيسية": "Back to home",
+"شكرًا! وصلت إجاباتك.": "Thanks! Your answers were received.",
 };
 
 window.I18N_EN_PATTERNS = (function () {
@@ -1242,6 +1255,8 @@ window.I18N_EN_PATTERNS = (function () {
   const T = (s) => (window.t ? window.t(s) : s);
   const lec = (n) => (Number(String(n).replace(/,/g, '')) === 1 ? 'lecture' : 'lectures');
   return [
+    [/^السؤال (\d+) من (\d+)(?: · متبقٍّ (\d+) ثانية)?$/, (m, a, b, c) => `Question ${a} of ${b}${c ? ` · ${c}s left` : ''}`],
+    [/^الوقت الكلي: (\d+) دقيقة، ويُرسل النموذج تلقائيًا عند انتهائه\.$/, (m, a) => `Total time: ${a} minutes; the form submits automatically when it ends.`],
     [/^([\d.]+) ميجابايت · اضغط للتغيير$/, (m, n) => `${n} MB · click to change`],
     [/^شاهدت (\d+)٪ · تابع حتى (\d+)٪ لتفتح المحاضرة التالية$/, (m, a, b) => `Watched ${a}% · keep going to ${b}% to unlock the next lecture`],
     [/^شاهدت (\d+)٪ · فُتحت المحاضرة التالية$/, (m, a) => `Watched ${a}% · next lecture unlocked`],

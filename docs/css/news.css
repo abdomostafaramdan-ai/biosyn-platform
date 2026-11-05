@@ -37,3 +37,6 @@ html[data-lang="en"] .bx-fb-text { direction: ltr; }
 .nw-lightbox .nw-prev, .nw-lightbox .nw-next { top: 50%; transform: translateY(-50%); }
 .nw-lightbox .nw-prev { inset-inline-end: auto; inset-inline-start: 14px; }
 .nw-lightbox .nw-next { inset-inline-end: 14px; }
+
+.bx-marquee .nw-card { flex: none; width: 320px; }
+@media (max-width: 600px) { .bx-marquee .nw-card { width: 260px; } }

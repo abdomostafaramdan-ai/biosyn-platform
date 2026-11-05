@@ -347,7 +347,7 @@ def card(c, d):
     total, n, price = course_facts(c, d['plans'])
     meta_ = (f'<span>{n} محاضرة</span>' if n else '') + (f'<span>{e(hours_ar(total))}</span>' if total else '') + \
         (f'<span>{e(LEVEL.get(c.get("level"), ""))}</span>' if c['kind'] == 'recorded' else f'<span>{e(price)}</span>')
-    return (f'<a class="bs-course" href="course-{e(c["slug"])}.html"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">{e((c.get("cover_code") or c["title"][:2]).upper())}</span></div>'
+    return (f'<a class="bs-course" href="course-{e(c["slug"])}.html"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">{e((c.get("cover_code") or c["title"][:2]).upper())}</span>{('<img class="bs-cover-img" src="' + e(c["cover_url"]) + '" alt="" loading="lazy">') if c.get("cover_url") else ''}</div>'
             f'<div class="bs-course-body"><span class="bs-course-kind">{"دورة مسجلة" if c["kind"] == "recorded" else "دورة تفاعلية"}</span><h3 class="bs-course-title" dir="auto">{e(c["title"])}</h3><div class="bs-course-meta">{meta_}</div></div></a>')
 
 

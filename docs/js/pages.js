@@ -5,7 +5,7 @@
   const { toast } = window.ui;
   const dur = (s) => { s = Math.round(s || 0); const m = Math.floor(s / 60), r = s % 60; return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0'); };
   const hoursText = (secs) => { const m = Math.round(secs / 60); return m >= 60 ? `${Math.floor(m / 60)} ساعة${m % 60 ? ' و' + (m % 60) + ' دقيقة' : ''}` : `${m} دقيقة`; };
-  const nextUrl = () => { const n = new URLSearchParams(location.search).get('next') || ''; return /^[a-z0-9-]+\.html(\?[\w=&%.-]*)?$/i.test(n) ? n : 'account.html'; };
+  const nextUrl = () => { const n = new URLSearchParams(location.search).get('next') || ''; return /^[a-z0-9-]+\.html(\?[\w=&%.-]*)?(#[a-z-]+)?$/i.test(n) ? n : 'account.html'; };
   const ICON_CHECK = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>';
   const ICON_PLAY = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
   const ICON_LOCK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
@@ -204,7 +204,7 @@
       <section class="bs-block-sec" style="${c.description ? '' : 'margin-top:48px'}"><h2>محتوى الدورة</h2>
         ${lects.length ? `<div class="bs-curr"><div class="bs-curr-head"><b>محتوى الدورة</b><span>${lects.length} محاضرة${total ? ' · ' + esc(hoursText(total)) : ''}</span></div><ol class="bs-curr-list">${lects.map((l, i) => `<li class="bs-curr-item"><span class="bs-curr-num bs-latin">${String(i + 1).padStart(2, '0')}</span><span class="bs-play" aria-hidden="true">${subscribed || l.is_preview ? ICON_PLAY : ICON_LOCK}</span><span class="bs-curr-title bs-latin">${subscribed || l.is_preview ? `<a href="watch.html?c=${esc(c.slug)}&l=${l.id}" style="color:inherit;text-decoration:none">${esc(l.title)}</a>` : esc(l.title)}${!subscribed && l.is_preview ? ' <span class="bs-badge bs-badge-new" style="margin-inline-start:6px">معاينة مجانية</span>' : ''}</span><span class="bs-curr-dur bs-latin">${l.duration_seconds ? dur(l.duration_seconds) : ''}</span></li>`).join('')}</ol></div>` : '<div class="bx-empty-big"><b>المحاضرات قيد الإضافة</b>سنعلن عند نشر الدورة كاملة.</div>'}
       </section>${aboutInst(T)}</div>
-      <aside class="bs-enroll"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span></div>
+      <aside class="bs-enroll"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span>${c.cover_url ? `<img class="bs-cover-img" src="${esc(c.cover_url)}" alt="">` : ''}</div>
         <div class="bs-enroll-body"><div class="bs-enroll-access"><span>${subscribed ? 'اشتراكك ساري' : 'متاحة مع الاشتراك'}</span>${!subscribed && from ? `<b>تبدأ من ${priceTxt(from.price_egp, window.REGION_NOW, from.intl_price)} / ${from.duration_months === 1 ? 'شهريًا' : from.duration_months + ' أشهر'}</b>` : ''}</div>
         ${cta}
         <ul class="bs-checks bs-checks-sm"><li>${ICON_CHECK}<span>${lects.length} محاضرة مسجلة${total ? ' (حوالي ' + esc(hoursText(total)) + ')' : ''}</span></li><li>${ICON_CHECK}<span>شهادة إتمام عند إنهاء الدورة</span></li><li>${ICON_CHECK}<span>مستوى ${LEVEL[c.level] || 'مبتدئ'} · بالعربية</span></li></ul></div></aside></div>
@@ -477,9 +477,9 @@
   P.form = async () => {
     const root = $('#form-root'), slug = new URLSearchParams(location.search).get('f');
     const fail = (h, t) => (root.innerHTML = `<div class="bx-empty-big"><b>${h}</b>${t}</div>`);
-    if (!slug) return fail('الفورم غير موجود', 'تأكد من الرابط.');
-    let f; try { f = await sb.one('forms', { select: 'slug,title,description,fields,submit_label,success_message', slug: 'eq.' + slug }); } catch (e) { return fail('تعذّر تحميل الفورم', esc(arErr(e))); }
-    if (!f) return fail('الفورم غير متاح', 'قد يكون مغلقًا أو الرابط غير صحيح.');
+    if (!slug) return fail('النموذج غير موجود', 'تأكد من الرابط.');
+    let f; try { f = await sb.one('forms', { select: 'slug,title,description,fields,submit_label,success_message,settings', slug: 'eq.' + slug }); } catch (e) { return fail('تعذّر تحميل النموذج', esc(arErr(e))); }
+    if (!f) return fail('النموذج غير متاح', 'قد يكون مغلقًا أو الرابط غير صحيح.');
     document.title = f.title + ' | Biosyn Egypt'; window.setMeta && setMeta(f.title + ' | Biosyn Egypt', (f.description || '').slice(0, 160));
     const fld = (x) => {
       const id = 'ff-' + x.id, req = x.required ? ' required' : '', star = x.required ? ' *' : '', opts = (x.options || []).filter(Boolean);
@@ -490,34 +490,114 @@
       const type = { email: 'email', phone: 'tel', number: 'number', date: 'date' }[x.type] || 'text';
       return `<div class="bx-field">${lab}<input id="${id}" class="bx-input" type="${type}" data-k="${x.id}"${type === 'email' || type === 'tel' || type === 'number' ? ' dir="ltr"' : ''}${req}></div>`;
     };
-    root.innerHTML = `<nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><span>${esc(f.title)}</span></nav>
-      <h1>${esc(f.title)}</h1>${f.description ? `<p class="bx-hint" style="margin:0 0 24px;white-space:pre-line">${esc(f.description)}</p>` : ''}
-      <form class="bx-formcard bx-form2" id="cf" novalidate>${(f.fields || []).map(fld).join('')}
+    const ST = f.settings || {}, FL = f.fields || [];
+    const timed = !!(ST.lock_on_leave || ST.total_minutes || FL.some((x) => x.time_limit));
+    const lockKey = 'biosyn.formlock.' + f.slug;
+    const head = `<nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><span>${esc(f.title)}</span></nav>
+      <h1>${esc(f.title)}</h1>${f.description ? `<p class="bx-hint" style="margin:0 0 24px;white-space:pre-line">${esc(f.description)}</p>` : ''}`;
+    const done = (title, text) => (root.innerHTML = head.replace(/<p class="bx-hint"[\s\S]*<\/p>$/, '') + `<div class="bx-formcard" style="text-align:center;display:grid;gap:12px;justify-items:center"><span class="bx-cat-ic" style="width:56px;height:56px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span><h2 style="margin:0">${title}</h2>${text ? `<p class="bx-hint" style="margin:0">${text}</p>` : ''}<a class="bs-btn bs-btn-secondary" href="index.html">العودة إلى الرئيسية</a></div>`);
+    const readField = (form, x) => {
+      if (x.type === 'radio' || x.type === 'checkbox') return $$(`[data-k="${x.id}"] input:checked`, form).map((i) => i.value).join('، ');
+      const el = $(`[data-k="${x.id}"]`, form); return el ? el.value.trim() : '';
+    };
+    const send = (data) => sb.rpc('submit_form', { p_slug: f.slug, p_data: data });
+    const errText = (err) => /too many/.test(err.message) ? 'يوجد ضغط على النموذج، حاول بعد دقيقة.' : /form locked/.test(err.message) ? 'سبق أن بدأت هذا النموذج ولا يمكن فتحه مرة أخرى.' : /missing: (.+)/.test(err.message) ? 'من فضلك املأ: ' + err.message.match(/missing: (.+)/)[1] : 'تعذّر الإرسال، حاول مرة أخرى.';
+
+    if (!timed) {
+      root.innerHTML = `${head}
+      <form class="bx-formcard bx-form2" id="cf" novalidate>${FL.map(fld).join('')}
         <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0 0 0 0);pointer-events:none" aria-hidden="true">
         <div class="bx-formmsg" aria-live="polite"></div>
         <button type="submit" class="bs-btn bs-btn-primary bs-btn-lg">${esc(f.submit_label || 'إرسال')}</button></form>`;
-    const form = $('#cf'), msg = $('.bx-formmsg', form), btn = $('button[type=submit]', form);
-    form.onsubmit = async (e) => {
-      e.preventDefault(); if (form.website.value) return;
-      const data = {}; let missing = null;
-      for (const x of f.fields || []) {
-        let v = '';
-        if (x.type === 'radio' || x.type === 'checkbox') v = $$(`[data-k="${x.id}"] input:checked`, form).map((i) => i.value).join('، ');
-        else { const el = $(`[data-k="${x.id}"]`, form); v = el ? el.value.trim() : ''; }
-        if (x.required && !v) { missing = missing || x.label; }
-        if (v && x.type === 'email' && !/^\S+@\S+\.\S+$/.test(v)) { msg.className = 'bx-formmsg err'; msg.textContent = `البريد الإلكتروني في "${x.label}" غير صحيح.`; return; }
-        data[x.id] = v;
-      }
-      if (missing) { msg.className = 'bx-formmsg err'; msg.textContent = `من فضلك املأ: ${missing}`; return; }
-      btn.disabled = true; msg.className = 'bx-formmsg'; msg.textContent = 'جارٍ الإرسال…';
-      try {
-        await sb.rpc('submit_form', { p_slug: f.slug, p_data: data });
-        window.track && track('lead', { type: 'form:' + f.slug });
-        root.innerHTML = `<div class="bx-formcard" style="text-align:center;display:grid;gap:12px;justify-items:center"><span class="bx-cat-ic" style="width:56px;height:56px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span><h1 style="margin:0">${esc(f.success_message || 'شكرًا! وصلنا ردك وسيتواصل معك فريق Biosyn قريبًا.')}</h1><a class="bs-btn bs-btn-primary" href="index.html">الرجوع للرئيسية</a></div>`;
-      } catch (err) {
-        btn.disabled = false; msg.className = 'bx-formmsg err';
-        msg.textContent = /too many/.test(err.message) ? 'يوجد ضغط على النموذج، حاول بعد دقيقة.' : /missing: (.+)/.test(err.message) ? 'من فضلك املأ: ' + err.message.match(/missing: (.+)/)[1] : 'تعذّر الإرسال، حاول مرة أخرى.';
-      }
+      const form = $('#cf'), msg = $('.bx-formmsg', form), btn = $('button[type=submit]', form);
+      form.onsubmit = async (e) => {
+        e.preventDefault(); if (form.website.value) return;
+        const data = {}; let missing = null;
+        for (const x of FL) {
+          const v = readField(form, x);
+          if (x.required && !v) { missing = missing || x.label; }
+          if (v && x.type === 'email' && !/^\S+@\S+\.\S+$/.test(v)) { msg.className = 'bx-formmsg err'; msg.textContent = `البريد الإلكتروني في "${x.label}" غير صحيح.`; return; }
+          data[x.id] = v;
+        }
+        if (missing) { msg.className = 'bx-formmsg err'; msg.textContent = `من فضلك املأ: ${missing}`; return; }
+        btn.disabled = true; msg.className = 'bx-formmsg'; msg.textContent = 'جارٍ الإرسال…';
+        try { await send(data); window.track && track('lead', { type: 'form:' + f.slug }); done(esc(f.success_message || 'شكرًا! وصلنا ردك وسيتواصل معك فريق Biosyn قريبًا.')); }
+        catch (err) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = errText(err); }
+      };
+      return;
+    }
+
+    // ---- timed form: intro → one question at a time → auto submit; leaving the page closes it ----
+    let locked = false; try { locked = localStorage.getItem(lockKey) === '1'; } catch (e) {}
+    if (locked) { root.innerHTML = head + '<div class="bx-empty-big"><b>أُغلق هذا النموذج</b>سبق أن بدأته من هذا الجهاز، ولا يمكن فتحه مرة أخرى.</div>'; return; }
+    const perQ = FL.some((x) => x.time_limit), totalSec = ST.total_minutes ? ST.total_minutes * 60 : 0;
+    const rules = [totalSec ? `الوقت الكلي: <b>${ST.total_minutes} دقيقة</b>، ويُرسل النموذج تلقائيًا عند انتهائه.` : '', perQ ? 'بعض الأسئلة لها وقت محدد يظهر أعلاها، وعند انتهائه تنتقل تلقائيًا للسؤال التالي.' : '', perQ ? 'تظهر الأسئلة سؤالًا تلو الآخر، ولا يمكن الرجوع إلى سؤال سابق.' : '',
+      ST.lock_on_leave ? '<b>إذا غادرت الصفحة أو بدّلت التبويب أو التطبيق، يُغلق النموذج فورًا ويُرسل ما أجبت عنه حتى تلك اللحظة.</b>' : '', 'لا يمكن بدء النموذج أكثر من مرة.'].filter(Boolean);
+    root.innerHTML = `${head}<div class="bx-formcard" style="display:grid;gap:14px"><h2 style="margin:0">⏱ نموذج مؤقت</h2><ul class="bx-hint" style="margin:0;padding-inline-start:20px;display:grid;gap:6px">${rules.map((r) => `<li>${r}</li>`).join('')}</ul>
+      <div class="bx-formmsg" aria-live="polite"></div><button type="button" class="bs-btn bs-btn-primary bs-btn-lg" id="fstart" style="justify-self:start">ابدأ الآن</button></div>`;
+    $('#fstart').onclick = async (ev) => {
+      const b = ev.target; b.disabled = true;
+      let att = null; try { att = await sb.rpc('form_start', { p_slug: f.slug }); } catch (err) { b.disabled = false; const m = $('.bx-formmsg', root); m.className = 'bx-formmsg err'; m.textContent = errText(err); return; }
+      try { localStorage.setItem(lockKey, '1'); } catch (e) {}
+      run(att && att.attempt);
     };
+    function run(attempt) {
+      const data = {}, timedOut = [], t0 = Date.now(); let i = 0, qTimer = null, tTimer = null, finished = false, qEnd = 0;
+      const steps = perQ ? FL.map((x) => [x]) : [FL];
+      root.innerHTML = `${head.replace(/<p class="bx-hint"[\s\S]*<\/p>$/, '')}<div class="bx-formcard bx-form2" id="tf">
+        <div class="bx-row" style="justify-content:space-between;gap:12px;flex-wrap:wrap"><span class="bx-hint" id="tstep"></span><b id="ttotal" dir="ltr" style="font-variant-numeric:tabular-nums"></b></div>
+        <div id="tq"></div><div style="height:6px;border-radius:6px;background:var(--surface-raised);overflow:hidden" id="tbarw" hidden><div id="tbar" style="height:100%;width:100%;background:var(--brand-lime);transition:width .25s linear"></div></div>
+        <div class="bx-formmsg" aria-live="polite"></div><button type="button" class="bs-btn bs-btn-primary bs-btn-lg" id="tnext" style="justify-self:start"></button></div>`;
+      const card = $('#tf'), msg = $('.bx-formmsg', card), nextB = $('#tnext');
+      const fmt = (sec) => `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+      const collect = () => steps[i].forEach((x) => { data[x.id] = readField(card, x); });
+      const finish = async (left) => {
+        if (finished) return; finished = true; clearInterval(qTimer); clearInterval(tTimer);
+        document.removeEventListener('visibilitychange', onHide); window.removeEventListener('blur', onBlur); window.removeEventListener('pagehide', onHide);
+        try { collect(); } catch (e) {}
+        const payload = { ...data, __meta: { attempt, left_page: !!left, timed_out: timedOut } };
+        if (left) {
+          try { fetch(`${BIOSYN.SUPABASE_URL}/rest/v1/rpc/submit_form`, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json', apikey: BIOSYN.SUPABASE_KEY, Authorization: 'Bearer ' + ((sb.session && sb.session.access_token) || BIOSYN.SUPABASE_KEY) }, body: JSON.stringify({ p_slug: f.slug, p_data: payload }) }).catch(() => {}); } catch (e) {}
+          root.innerHTML = head.replace(/<p class="bx-hint"[\s\S]*<\/p>$/, '') + '<div class="bx-empty-big"><b>أُغلق النموذج</b>غادرت الصفحة أثناء الإجابة، فأُرسلت إجاباتك حتى تلك اللحظة ولا يمكن إكمال النموذج.</div>';
+          return;
+        }
+        nextB.disabled = true; msg.className = 'bx-formmsg'; msg.textContent = 'جارٍ الإرسال…';
+        try { await send(payload); window.track && track('lead', { type: 'form:' + f.slug }); done(esc(f.success_message || 'شكرًا! وصلت إجاباتك.'), timedOut.length ? `انتهى وقت ${timedOut.length} من الأسئلة قبل الإجابة عنها.` : ''); }
+        catch (err) { finished = false; nextB.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = errText(err); }
+      };
+      const onHide = (e) => { if (!ST.lock_on_leave || finished) return; if (document.visibilityState === 'hidden' || (e && e.type === 'pagehide')) finish(true); };
+      const onBlur = () => { if (!ST.lock_on_leave) return; setTimeout(() => { if (!document.hasFocus() && !finished) finish(true); }, 1500); };
+      if (ST.lock_on_leave) { document.addEventListener('visibilitychange', onHide); window.addEventListener('blur', onBlur); window.addEventListener('pagehide', onHide); }
+      if (totalSec) {
+        const tick = () => { const left = Math.max(0, totalSec - Math.floor((Date.now() - t0) / 1000)); $('#ttotal').textContent = '⏱ ' + fmt(left); if (!left) { steps.slice(i).forEach((st) => st.forEach((x) => { if (!readField(card, x)) timedOut.push(x.id); })); finish(false); } };
+        tick(); tTimer = setInterval(tick, 500);
+      }
+      const show = () => {
+        clearInterval(qTimer); msg.textContent = ''; msg.className = 'bx-formmsg';
+        $('#tq').innerHTML = steps[i].map(fld).join('');
+        $('#tstep').textContent = perQ ? `السؤال ${i + 1} من ${steps.length}` : '';
+        nextB.textContent = i === steps.length - 1 ? (f.submit_label || 'إرسال') : 'التالي ←';
+        const lim = perQ ? steps[i][0].time_limit : 0;
+        $('#tbarw').hidden = !lim;
+        if (lim) {
+          qEnd = Date.now() + lim * 1000;
+          const tick = () => { const left = Math.max(0, qEnd - Date.now()); $('#tbar').style.width = (left / (lim * 1000)) * 100 + '%'; $('#tstep').textContent = `السؤال ${i + 1} من ${steps.length} · متبقٍّ ${Math.ceil(left / 1000)} ثانية`;
+            if (!left) { collect(); steps[i].forEach((x) => { if (!data[x.id]) timedOut.push(x.id); }); advance(true); } };
+          tick(); qTimer = setInterval(tick, 250);
+        }
+        const first = $('#tq input, #tq textarea, #tq select'); if (first) first.focus();
+      };
+      const advance = (auto) => {
+        if (!auto) {
+          collect();
+          const miss = steps[i].find((x) => x.required && !data[x.id]); if (miss) { msg.className = 'bx-formmsg err'; msg.textContent = `من فضلك أجب عن: ${miss.label}`; return; }
+          const badMail = steps[i].find((x) => x.type === 'email' && data[x.id] && !/^\S+@\S+\.\S+$/.test(data[x.id])); if (badMail) { msg.className = 'bx-formmsg err'; msg.textContent = `البريد الإلكتروني في "${badMail.label}" غير صحيح.`; return; }
+        }
+        if (i >= steps.length - 1) { finish(false); return; }
+        i++; show();
+      };
+      nextB.onclick = () => advance(false);
+      show();
+    }
   };
 })();

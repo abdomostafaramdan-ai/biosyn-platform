@@ -7,11 +7,11 @@
   const err = (e) => {
     const m = (e && e.message) || '';
     return /slow down/.test(m) ? 'رسائل كثيرة متتالية، انتظر دقيقة.' : /thread closed/.test(m) ? 'أُغلقت هذه المحادثة. افتح تذكرة جديدة إذا احتجت إلى شيء.'
-      : /subscription required/.test(m) ? 'يجب أن تكون مشتركًا في الدورة لتسأل المحاضر.' : /too many tickets/.test(m) ? 'فتحت تذاكر كتير النهارده، استنى رد الفريق.'
+      : /subscription required/.test(m) ? 'يجب أن تكون مشتركًا في الدورة لتسأل المحاضر.' : /too many tickets/.test(m) ? 'فتحت تذاكر كثيرة اليوم، انتظر رد الفريق.'
       : window.arErr ? window.arErr(e) : m;
   };
-  const CAT = { payment: 'الدفع والاشتراك', technical: 'مشكلة تقنية', content: 'محتوى الدورة', instructor: 'شكوى من محاضر', account: 'الحساب', other: 'أخرى' };
-  const ST = { open: ['مفتوحة', 'warn'], pending: ['بانتظار ردّك', 'info'], resolved: ['اتحلّت', 'ok'], closed: ['مقفولة', 'mute'] };
+  const CAT = { payment: 'الدفع والاشتراك', technical: 'مشكلة تقنية', content: 'محتوى الدورة', instructor: 'شكوى من محاضر', account: 'الحساب', request: 'طلب مقدّم', other: 'أخرى' };
+  const ST = { open: ['مفتوحة', 'warn'], pending: ['بانتظار ردّك', 'info'], resolved: ['تم الحل', 'ok'], closed: ['مغلقة', 'mute'] };
   const ROLE = { student: 'الطالب', instructor: 'المحاضر', staff: 'فريق Biosyn' };
   const when = (d) => new Date(d).toLocaleString(window.LOC || 'ar-EG-u-nu-latn', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
   const badge = (s) => `<span class="bx-st bx-st-${(ST[s] || ['', 'mute'])[1]}">${(ST[s] || [s])[0]}</span>`;
@@ -37,7 +37,7 @@
           : '<p class="bx-hint" style="text-align:center;margin:24px 0">لا توجد رسائل بعد. اكتب سؤالك بالأسفل.</p>';
         log.scrollTop = log.scrollHeight;
         const acts = $('[data-acts]', m);
-        acts.innerHTML = (t && t.kind === 'ticket' && t.status !== 'closed' ? (mine === 'staff' ? '<button type="button" class="bs-btn bs-btn-secondary bs-btn-sm" data-s="resolved">اتحلّت</button><button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" data-s="closed">قفل التذكرة</button>' : '<button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" data-s="closed">المشكلة اتحلت، اقفل التذكرة</button>') : '')
+        acts.innerHTML = (t && t.kind === 'ticket' && t.status !== 'closed' ? (mine === 'staff' ? '<button type="button" class="bs-btn bs-btn-secondary bs-btn-sm" data-s="resolved">تم الحل</button><button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" data-s="closed">قفل التذكرة</button>' : '<button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" data-s="closed">المشكلة اتحلت، اقفل التذكرة</button>') : '')
           + '<button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" data-x>إغلاق</button>';
         $$('[data-s]', acts).forEach((b) => (b.onclick = async () => { try { await sb.rpc('set_thread_status', { p_thread: id, p_status: b.dataset.s }); t.status = b.dataset.s; paint(); opt.onChange && opt.onChange(); } catch (e) { say(err(e), 'err'); } }));
         $('[data-x]', acts).onclick = () => { clearInterval(timer); close(); };

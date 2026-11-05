@@ -24,7 +24,7 @@
         ${['new', 'in_review'].includes(r.status) && !isRefund ? '<button class="bs-btn bs-btn-secondary bs-btn-sm" data-act="accepted">قبول</button>' : ''}
         ${['new', 'in_review'].includes(r.status) ? '<button class="bs-btn bs-btn-ghost bs-btn-sm" data-act="rejected">رفض</button>' : ''}
         ${r.type.startsWith('instructor') && r.user_id && isAdmin() && usersById[r.user_id] && usersById[r.user_id].role === 'student' ? '<button class="bs-btn bs-btn-ghost bs-btn-sm" data-act="promote">ترقية الحساب لمحاضر</button>' : ''}
-        ${r.email ? `<a class="bs-btn bs-btn-ghost bs-btn-sm" href="mailto:${esc(r.email)}">مراسلة</a>` : ''}
+        ${r.email || r.user_id ? `<button type="button" class="bs-btn bs-btn-secondary bs-btn-sm" data-act="chat">💬 مراسلة عبر المنصة</button>` : ''}
       </div></article>`;
   }
 
@@ -54,6 +54,9 @@
     async contracts(main) { await window.contractsAdmin(main, isAdmin()); },
     async campaign(main) { await window.campaignAdmin(main); },
     async news(main) { await window.newsAdmin(main); },
+    async emails(main) { await window.emailsAdmin(main); },
+    async mailcampaigns(main) { await window.campaignsAdmin(main); },
+    async texts(main) { await window.textsAdmin(main); },
     async testimonials(main) { await window.testimonialsAdmin(main); },
 
     async home(main) {
@@ -100,6 +103,12 @@
       $('#rl').addEventListener('click', async (e) => {
         const b = e.target.closest('[data-act]'); if (!b) return;
         const card = b.closest('[data-r]'), id = card.dataset.r, r = reqs.find((x) => x.id === id), act = b.dataset.act;
+        if (act === 'chat') {
+          b.disabled = true;
+          try { const tid = await sb.rpc('request_thread', { p_request: r.id, p_subject: 'بخصوص طلبك: ' + (D.reqType[r.type] || 'طلب') }); if (r.status === 'new') r.status = 'in_review'; window.Chat.openThread(tid, { onChange: () => {} }); }
+          catch (err) { ui.toast(/no contact/.test(err.message || '') ? 'لا يوجد بريد إلكتروني لصاحب الطلب.' : arErr(err), 'err'); }
+          b.disabled = false; return;
+        }
         if (act === 'proposal') { const pp = await sb.get('course_proposals', { select: '*', id: 'eq.' + b.dataset.pid }).catch(() => []); if (pp[0]) proposalModal(pp[0]); else ui.toast('الدورة غير موجودة.', 'err'); return; }
         b.disabled = true;
         try {
@@ -137,8 +146,9 @@
         const list = users.filter((u) => !t || (u.full_name + ' ' + u.email + ' ' + (u.phone || '')).toLowerCase().includes(t.toLowerCase()));
         $('#ul').innerHTML = D.table(['الاسم', 'البريد', 'الهاتف', 'التسجيل', 'الدور', ''], list.map((u) => [esc(u.full_name || '—'), `<span class="bx-kbd">${esc(u.email)}</span>`, `<span class="bx-kbd">${esc(u.phone || '—')}</span>`, D.date(u.created_at), isAdmin() && u.id !== sb.user.id ? `<select class="bx-select" data-u="${u.id}" aria-label="دور ${esc(u.full_name || u.email)}">${Object.entries(D.roleAr).map(([k, v]) => `<option value="${k}" ${k === u.role ? 'selected' : ''}>${v}</option>`).join('')}</select>` : D.roleAr[u.role], isAdmin() ? `<button class="bx-linkbtn" data-dev="${u.id}">مسح الأجهزة</button>` : '']), 'لا يوجد مستخدمون');
       };
-      main.innerHTML = D.panel('المستخدمون', `<div class="bx-search" style="margin-bottom:12px"><input id="us" class="bx-input" type="search" placeholder="ابحث بالاسم أو البريد أو الهاتف" aria-label="بحث"></div><div id="ul"></div>`, `<span class="bx-hint">${users.length} مستخدم</span>`);
+      main.innerHTML = D.panel('المستخدمون', `<div class="bx-search" style="margin-bottom:12px"><input id="us" class="bx-input" type="search" placeholder="ابحث بالاسم أو البريد أو الهاتف" aria-label="بحث"></div><div id="ul"></div>`, `<span class="bx-hint">${users.length >= 500 ? 'آخر 500' : users.length} مستخدم</span> <button class="bs-btn bs-btn-secondary bs-btn-sm" type="button" id="uxl">⬇ تحميل Excel</button>`);
       $('#us').oninput = (e) => draw(e.target.value); draw('');
+      $('#uxl').onclick = (ev) => window.exportUsersXlsx(ev.target);
       $('#ul').addEventListener('click', async (e) => {
         const b = e.target.closest('[data-dev]'); if (!b) return;
         if (!confirm('مسح كل الأجهزة المسجلة لهذا الحساب؟ سيتمكن من المشاهدة من جهازين جديدين.')) return;
@@ -429,9 +439,9 @@
       const rc = {}; reqs.forEach((r) => { const c = (rc[r.type] = rc[r.type] || { all: 0, new: 0 }); c.all++; if (r.status === 'new') c.new++; });
       const siteForms = SITE_FORMS.map((sf) => { const c = sf.types.reduce((a, t) => ({ all: a.all + ((rc[t] || {}).all || 0), new: a.new + ((rc[t] || {}).new || 0) }), { all: 0, new: 0 });
         return [`<b>${sf.title}</b><br><small class="bx-hint">نموذج ثابت في الموقع</small>`, `<a class="bx-linkbtn" href="${sf.page}" target="_blank" rel="noopener">فتح الصفحة</a>`, `${c.all}${c.new ? ` <span class="bx-st bx-st-warn">${c.new} جديد</span>` : ''}`, '<span class="bx-st bx-st-ok">يعمل</span>', `<button class="bx-linkbtn" data-sf="${sf.key}">الردود</button>`]; });
-      main.innerHTML = D.panel('نماذج الموقع', D.table(['الفورم', 'الصفحة', 'الردود', 'الحالة', ''], siteForms)) + D.panel('الفورمز والردود', `<p class="bx-hint" style="margin-top:0">أنشئ أي نموذج (تسجيل اهتمام، استبيان، طلب خدمة…) وخذ رابطه وانشره على وسائل التواصل أو واتساب. يصل كل رد إلى هنا وإلى بريد التنبيهات، وإذا تضمّن بريدًا إلكترونيًا أو رقم هاتف يُرسل إلى الـ CRM بوصفه Lead.</p>
+      main.innerHTML = D.panel('نماذج الموقع', D.table(['النموذج', 'الصفحة', 'الردود', 'الحالة', ''], siteForms)) + D.panel('النماذج والردود', `<p class="bx-hint" style="margin-top:0">أنشئ أي نموذج (تسجيل اهتمام، استبيان، طلب خدمة…) وخذ رابطه وانشره على وسائل التواصل أو واتساب. يصل كل رد إلى هنا وإلى بريد التنبيهات، وإذا تضمّن بريدًا إلكترونيًا أو رقم هاتف يُرسل إلى الـ CRM بوصفه Lead.</p>
         ${isAdmin() ? '<div class="bx-btnrow" style="margin-bottom:12px"><button class="bs-btn bs-btn-primary" id="fm-new">+ نموذج جديد</button></div>' : ''}` +
-        D.table(['الفورم', 'الرابط', 'الردود', 'الحالة', ''], forms.map((f) => {
+        D.table(['النموذج', 'الرابط', 'الردود', 'الحالة', ''], forms.map((f) => {
           const c = cnt[f.id] || { all: 0, new: 0 };
           return [`<b>${esc(f.title)}</b><br><small class="bx-hint">${(f.fields || []).length} حقل</small>`,
             `<button class="bx-linkbtn" data-copy="${esc(link(f))}">نسخ الرابط</button> · <a class="bx-linkbtn" href="${esc(link(f))}" target="_blank" rel="noopener">فتح</a>`,
@@ -440,7 +450,7 @@
             `<button class="bx-linkbtn" data-fr="${f.id}">الردود</button>${isAdmin() ? ` · <button class="bx-linkbtn" data-fe="${f.id}">تعديل</button>` : ''}`];
         }), 'لا توجد نماذج بعد. اضغط «نموذج جديد».'));
       $$('[data-copy]', main).forEach((b) => (b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.copy); ui.toast('تم نسخ الرابط.'); } catch { prompt('انسخ الرابط:', b.dataset.copy); } }));
-      $$('[data-fa]', main).forEach((i) => (i.onchange = async () => { try { await sb.update('forms', { id: 'eq.' + i.dataset.fa }, { active: i.checked }); ui.toast(i.checked ? 'الفورم مفتوح.' : 'تم إغلاق النموذج.'); D.reload(); } catch (err) { i.checked = !i.checked; ui.toast(arErr(err), 'err'); } }));
+      $$('[data-fa]', main).forEach((i) => (i.onchange = async () => { try { await sb.update('forms', { id: 'eq.' + i.dataset.fa }, { active: i.checked }); ui.toast(i.checked ? 'النموذج مفتوح.' : 'تم إغلاق النموذج.'); D.reload(); } catch (err) { i.checked = !i.checked; ui.toast(arErr(err), 'err'); } }));
       const nb = $('#fm-new', main); if (nb) nb.onclick = () => formBuilder(null);
       $$('[data-fe]', main).forEach((b) => (b.onclick = () => formBuilder(forms.find((f) => f.id === b.dataset.fe))));
       $$('[data-fr]', main).forEach((b) => (b.onclick = () => formResponses(forms.find((f) => f.id === b.dataset.fr))));
@@ -675,26 +685,30 @@
     const isNew = !f;
     f = f ? JSON.parse(JSON.stringify(f)) : { title: '', slug: '', description: '', submit_label: '', success_message: '', active: true, notify: true,
       fields: [{ id: rid(), label: 'الاسم', type: 'text', required: true }, { id: rid(), label: 'رقم الهاتف المحمول (واتساب)', type: 'phone', required: true }, { id: rid(), label: 'البريد الإلكتروني', type: 'email', required: false }] };
-    ui.modal(`<h3>${isNew ? 'نموذج جديد' : 'تعديل الفورم'}</h3><form class="bx-form2" id="fbf" novalidate>
-      <div class="row2"><div class="bx-field"><label for="fbt">عنوان الفورم</label><input id="fbt" class="bx-input" maxlength="120" value="${esc(f.title)}" placeholder="مثلًا: سجّل اهتمامك بدبلومة المعلوماتية الحيوية"></div>
+    ui.modal(`<h3>${isNew ? 'نموذج جديد' : 'تعديل النموذج'}</h3><form class="bx-form2" id="fbf" novalidate>
+      <div class="row2"><div class="bx-field"><label for="fbt">عنوان النموذج</label><input id="fbt" class="bx-input" maxlength="120" value="${esc(f.title)}" placeholder="مثلًا: سجّل اهتمامك بدبلومة المعلوماتية الحيوية"></div>
       <div class="bx-field"><label for="fbs">الرابط (بالإنجليزي)</label><input id="fbs" class="bx-input" dir="ltr" maxlength="60" value="${esc(f.slug)}" placeholder="bioinformatics-interest"></div></div>
-      <div class="bx-field"><label for="fbd">وصف يظهر فوق الفورم (اختياري)</label><textarea id="fbd" class="bx-textarea" rows="2">${esc(f.description || '')}</textarea></div>
+      <div class="bx-field"><label for="fbd">وصف يظهر فوق النموذج (اختياري)</label><textarea id="fbd" class="bx-textarea" rows="2">${esc(f.description || '')}</textarea></div>
       <div class="bx-field"><label>الحقول</label><div id="fbfields" class="bx-fbfields"></div><button type="button" class="bs-btn bs-btn-ghost" id="fbadd" style="justify-self:start">+ إضافة حقل</button></div>
-      <div class="row2"><div class="bx-field"><label for="fbb">كلمة زرار الإرسال</label><input id="fbb" class="bx-input" value="${esc(f.submit_label || '')}" placeholder="إرسال"></div>
+      <div class="row2"><div class="bx-field"><label for="fbb">نص زر الإرسال</label><input id="fbb" class="bx-input" value="${esc(f.submit_label || '')}" placeholder="إرسال"></div>
       <div class="bx-field"><label for="fbm">رسالة بعد الإرسال</label><input id="fbm" class="bx-input" value="${esc(f.success_message || '')}" placeholder="شكرًا! وصلنا ردك وسنتواصل معك قريبًا."></div></div>
-      <div class="bx-row" style="gap:18px"><label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="fba" ${f.active ? 'checked' : ''}> الفورم مفتوح لاستقبال ردود</label><label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="fbn" ${f.notify ? 'checked' : ''}> أرسل لي بريدًا إلكترونيًا مع كل رد</label></div>
+      <div class="bx-row" style="gap:18px"><label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="fba" ${f.active ? 'checked' : ''}> النموذج مفتوح لاستقبال الردود</label><label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="fbn" ${f.notify ? 'checked' : ''}> أرسل لي بريدًا إلكترونيًا مع كل رد</label></div>
+      <fieldset class="bx-field" style="border:1px solid var(--line);border-radius:12px;padding:12px 14px"><legend style="padding:0 6px">⏱ نموذج مؤقت (اختبار أو مسابقة)</legend>
+        <label class="bx-check" style="min-height:auto"><input type="checkbox" id="fblock" ${f.settings && f.settings.lock_on_leave ? 'checked' : ''}> إغلاق النموذج إذا غادر الشخص الصفحة أو بدّل التبويب، وإرسال ما أجاب عنه حتى تلك اللحظة</label>
+        <div class="bx-field" style="margin-top:8px"><label for="fbtm">الوقت الكلي للنموذج بالدقائق (اختياري)</label><input id="fbtm" class="bx-input" type="number" min="1" max="600" value="${(f.settings && f.settings.total_minutes) || ''}" dir="ltr" style="max-width:160px"></div>
+        <small class="bx-hint">لتحديد وقت لكل سؤال اكتب عدد الثواني في خانة ⏱ بجوار السؤال. عند وجود مؤقت تظهر الأسئلة سؤالًا تلو الآخر، وينتقل النموذج تلقائيًا للسؤال التالي عند انتهاء الوقت. لا يمكن الرجوع لسؤال سابق.</small></fieldset>
       <div class="bx-formmsg" aria-live="polite"></div>
-      <div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" type="submit">حفظ</button>${isNew ? '' : '<button type="button" class="bs-btn bs-btn-ghost" data-del style="color:var(--danger-text)">حذف الفورم</button>'}<button type="button" class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div></form>`,
+      <div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" type="submit">حفظ</button>${isNew ? '' : '<button type="button" class="bs-btn bs-btn-ghost" data-del style="color:var(--danger-text)">حذف النموذج</button>'}<button type="button" class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div></form>`,
     (m, close) => {
       $('[data-x]', m).onclick = close;
       const t = $('#fbt', m), sl = $('#fbs', m);
       if (isNew) t.oninput = () => { if (!sl.dataset.touched) sl.value = t.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || ''; };
       sl.oninput = () => (sl.dataset.touched = '1');
       const box = $('#fbfields', m);
-      const read = () => { $$('.bx-fbrow', box).forEach((r, i) => { const x = f.fields[i]; x.label = $('[data-l]', r).value.trim(); x.type = $('[data-t]', r).value; x.required = $('[data-r]', r).checked; const o = $('[data-o]', r); x.options = o ? o.value.split('\n').map((v) => v.trim()).filter(Boolean) : []; }); };
+      const read = () => { $$('.bx-fbrow', box).forEach((r, i) => { const x = f.fields[i]; x.label = $('[data-l]', r).value.trim(); x.type = $('[data-t]', r).value; x.required = $('[data-r]', r).checked; const o = $('[data-o]', r); x.options = o ? o.value.split('\n').map((v) => v.trim()).filter(Boolean) : []; const tl = parseInt($('[data-tl]', r).value, 10); x.time_limit = tl >= 5 ? Math.min(3600, tl) : null; }); };
       const draw = () => {
         box.innerHTML = f.fields.map((x, i) => `<div class="bx-fbrow"><div class="bx-fbmain"><input class="bx-input" data-l value="${esc(x.label)}" placeholder="اسم الحقل (السؤال)" aria-label="اسم الحقل"><select class="bx-select" data-t aria-label="نوع الحقل">${Object.entries(FTYPES).map(([k, v]) => `<option value="${k}" ${k === x.type ? 'selected' : ''}>${v}</option>`).join('')}</select>
-          <label class="bx-hint" style="display:flex;gap:4px;align-items:center;white-space:nowrap"><input type="checkbox" data-r ${x.required ? 'checked' : ''}> إجباري</label>
+          <label class="bx-hint" style="display:flex;gap:4px;align-items:center;white-space:nowrap"><input type="checkbox" data-r ${x.required ? 'checked' : ''}> إجباري</label><label class="bx-hint" style="display:flex;gap:4px;align-items:center;white-space:nowrap" title="اتركه فارغًا لسؤال بلا وقت">⏱ <input class="bx-input" data-tl type="number" min="5" max="3600" step="5" value="${x.time_limit || ''}" placeholder="ثوانٍ" aria-label="مؤقت السؤال بالثواني" style="width:84px;padding:6px 8px" dir="ltr"></label>
           <span class="bx-btnrow" style="gap:2px"><button type="button" class="bx-linkbtn" data-up="${i}" ${i ? '' : 'disabled'} aria-label="للأعلى">↑</button><button type="button" class="bx-linkbtn" data-dn="${i}" ${i < f.fields.length - 1 ? '' : 'disabled'} aria-label="للأسفل">↓</button><button type="button" class="bx-linkbtn" data-rm="${i}" style="color:var(--danger-text)" aria-label="حذف">✕</button></span></div>
           ${hasOpts(x.type) ? `<textarea class="bx-textarea" data-o rows="3" placeholder="كل اختيار في سطر">${esc((x.options || []).join('\n'))}</textarea>` : ''}</div>`).join('') || '<p class="bx-hint">لا توجد حقول. أضف حقلًا.</p>';
         $$('[data-t]', box).forEach((sel) => (sel.onchange = () => { read(); draw(); }));
@@ -704,17 +718,19 @@
       };
       draw();
       $('#fbadd', m).onclick = () => { read(); f.fields.push({ id: rid(), label: '', type: 'text', required: false }); draw(); const ls = $$('[data-l]', box); ls[ls.length - 1].focus(); };
-      const del = $('[data-del]', m); if (del) del.onclick = async () => { if (!confirm('حذف الفورم وكل الردود عليه نهائيًا؟')) return; try { await sb.remove('forms', { id: 'eq.' + f.id }); close(); D.reload(); } catch (e) { ui.toast(arErr(e), 'err'); } };
+      const del = $('[data-del]', m); if (del) del.onclick = async () => { if (!confirm('حذف النموذج وكل الردود عليه نهائيًا؟')) return; try { await sb.remove('forms', { id: 'eq.' + f.id }); close(); D.reload(); } catch (e) { ui.toast(arErr(e), 'err'); } };
       $('#fbf', m).onsubmit = async (e) => {
         e.preventDefault(); read(); const msg = $('.bx-formmsg', m);
         const row = { title: t.value.trim(), slug: sl.value.trim().toLowerCase(), description: $('#fbd', m).value.trim() || null, submit_label: $('#fbb', m).value.trim() || null, success_message: $('#fbm', m).value.trim() || null, active: $('#fba', m).checked, notify: $('#fbn', m).checked, updated_at: new Date().toISOString() };
-        if (row.title.length < 2) return say(msg, 'اكتب عنوان الفورم.', 'err');
+        if (row.title.length < 2) return say(msg, 'اكتب عنوان النموذج.', 'err');
         if (!/^[a-z0-9][a-z0-9-]{1,60}$/.test(row.slug)) return say(msg, 'يجب أن يتكون الرابط من حروف إنجليزية صغيرة وأرقام وشرطة (-) فقط.', 'err');
         const fields = f.fields.filter((x) => x.label);
         if (!fields.length) return say(msg, 'أضف حقلًا واحدًا على الأقل.', 'err');
         const bad = fields.find((x) => hasOpts(x.type) && !(x.options || []).length); if (bad) return say(msg, `اكتب اختيارات الحقل "${bad.label}".`, 'err');
-        row.fields = fields.map((x) => ({ id: x.id, label: x.label, type: x.type, required: !!x.required, ...(hasOpts(x.type) ? { options: x.options } : {}) }));
-        try { if (isNew) await sb.insert('forms', row); else await sb.update('forms', { id: 'eq.' + f.id }, row); ui.toast('تم حفظ الفورم.'); close(); D.reload(); }
+        row.fields = fields.map((x) => ({ id: x.id, label: x.label, type: x.type, required: !!x.required, ...(hasOpts(x.type) ? { options: x.options } : {}), ...(x.time_limit ? { time_limit: x.time_limit } : {}) }));
+        const tm = parseInt($('#fbtm', m).value, 10);
+        row.settings = { ...(f.settings || {}), lock_on_leave: $('#fblock', m).checked, total_minutes: tm >= 1 ? Math.min(600, tm) : null };
+        try { if (isNew) await sb.insert('forms', row); else await sb.update('forms', { id: 'eq.' + f.id }, row); ui.toast('تم حفظ النموذج.'); close(); D.reload(); }
         catch (err) { say(msg, /duplicate|unique/i.test(err.message) ? 'هذا الرابط مستخدم لنموذج آخر.' : arErr(err), 'err'); }
       };
     });
@@ -736,7 +752,7 @@
       $('[data-x]', m).onclick = () => { close(); D.reload(); };
       const cb = $('#frcsv', m); if (cb) cb.onclick = csv;
       $$('[data-rs]', m).forEach((sel) => (sel.onchange = async () => { try { await sb.update('form_submissions', { id: 'eq.' + sel.dataset.rs }, { status: sel.value }); const r = rows.find((x) => x.id === sel.dataset.rs); if (r) r.status = sel.value; ui.toast('تم التحديث.'); } catch (e) { ui.toast(arErr(e), 'err'); } }));
-      $$('[data-rd]', m).forEach((b) => (b.onclick = async () => { if (!confirm('حذف الرد ده؟')) return; try { await sb.remove('form_submissions', { id: 'eq.' + b.dataset.rd }); rows = rows.filter((x) => x.id !== b.dataset.rd); b.closest('tr').remove(); } catch (e) { ui.toast(arErr(e), 'err'); } }));
+      $$('[data-rd]', m).forEach((b) => (b.onclick = async () => { if (!confirm('حذف هذا الرد؟')) return; try { await sb.remove('form_submissions', { id: 'eq.' + b.dataset.rd }); rows = rows.filter((x) => x.id !== b.dataset.rd); b.closest('tr').remove(); } catch (e) { ui.toast(arErr(e), 'err'); } }));
       // opening the list marks new responses as seen
       const fresh = rows.filter((r) => r.status === 'new').map((r) => r.id);
       if (fresh.length) sb.update('form_submissions', { id: 'in.(' + fresh.join(',') + ')' }, { status: 'read' }).catch(() => {});
@@ -799,6 +815,11 @@
         <div class="row2"><div class="bx-field"><label for="ck">النوع</label><select id="ck" class="bx-select" ${isNew ? '' : 'disabled'}>${opt({ recorded: 'مسجل', interactive: 'تفاعلي' }, c.kind)}</select></div><div class="bx-field"><label for="cst">الحالة</label><select id="cst" class="bx-select">${opt({ draft: 'مسودة', review: 'قيد المراجعة', published: 'منشور', archived: 'مؤرشف' }, c.status)}</select></div><div class="bx-field"><label for="cl">المستوى</label><select id="cl" class="bx-select">${opt(LV, c.level)}</select></div></div>
         <div class="bx-field"><label>المحاضرين</label><div id="cinsts" class="bx-fbfields"></div><button type="button" class="bs-btn bs-btn-ghost" id="ciadd" style="justify-self:start">+ إضافة محاضر آخر</button>
           <small class="bx-hint">أول محاضر له حساب على المنصة هو من تُحتسب له أرباح المشاهدات.</small></div>
+        <div class="bx-field"><label for="cimg">صورة الغلاف</label>
+          <div id="cimg-prev" style="width:100%;max-width:360px;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--surface-raised);display:grid;place-items:center;border:1px dashed var(--line);margin-bottom:8px">${c.cover_url ? `<img src="${esc(c.cover_url)}" alt="" style="width:100%;height:100%;object-fit:cover">` : '<small class="bx-hint" style="margin:0">لا توجد صورة · يظهر الاختصار بدلًا منها</small>'}</div>
+          <input id="cimg" type="file" accept="image/png,image/jpeg,image/webp" class="bx-input"><input type="hidden" id="cimgu" value="${esc(c.cover_url || '')}">
+          <small class="bx-hint"><b>المقاس المناسب: 1280 × 720 بكسل (نسبة 16:9)</b>، بصيغة JPG أو WebP وبحجم أقل من 1 ميجابايت. اترك هامشًا حول النص المهم لأن الصورة تُقص قليلًا في بعض الشاشات.</small>
+          ${c.cover_url ? '<button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" id="cimg-rm" style="justify-self:start">إزالة الصورة</button>' : ''}</div>
         <div class="bx-field"><label for="cc">اختصار الغلاف (اختياري)</label><input id="cc" class="bx-input" dir="ltr" maxlength="3" value="${esc(c.cover_code || '')}" placeholder="مثلًا BD"><small class="bx-hint">حرفان يظهران بخط كبير على غلاف الدورة إذا لم توجد صورة، مثل MB لـ Molecular Biology. إذا تركته فارغًا يُنشأ تلقائيًا من أول حرفين في العنوان.</small></div>
         <div class="row2"><div class="bx-field"><label for="cfa">الكلية</label><select id="cfa" class="bx-select"><option value="">—</option><option value="all" ${c.faculty === 'all' ? 'selected' : ''}>كل الكليات</option>${(window.FACULTIES || []).map((f) => `<option value="${f.id}" ${f.id === (c.faculty || (window.facultyOf ? window.facultyOf(c) : '')) ? 'selected' : ''}>${esc(f.name)}</option>`).join('')}</select></div><div class="bx-field"><label for="csp">التخصص</label><input id="csp" class="bx-input" list="csp-l" value="${esc(c.specialty || '')}" placeholder="اختر من القائمة أو اكتب تخصصًا"><datalist id="csp-l"></datalist></div></div>
         <div class="bx-field"><label for="csu">وصف مختصر</label><input id="csu" class="bx-input" value="${esc(c.summary || '')}"></div>
@@ -870,10 +891,26 @@
         return { instructor_id: account, featured_instructor_id: ids[0] || null, featured_instructor_ids: ids };
       };
       const autoCode = (t) => { const w = String(t || '').replace(/[^\p{L}\p{N}\s]/gu, ' ').trim().split(/\s+/).filter(Boolean); return (w.length > 1 ? w[0][0] + w[1][0] : (w[0] || '').slice(0, 2)).toUpperCase(); };
+      $('#cimg', m).onchange = async (ev) => {
+        const f = ev.target.files[0], msg = $('#cm', m); if (!f) return;
+        if (!/^image\/(png|jpeg|webp)$/.test(f.type)) return say(msg, 'يجب أن تكون الصورة PNG أو JPG أو WebP.', 'err');
+        if (f.size > 3 * 1024 * 1024) return say(msg, 'حجم الصورة أكبر من 3 ميجابايت.', 'err');
+        const dims = await new Promise((res) => { const im = new Image(); im.onload = () => res([im.naturalWidth, im.naturalHeight]); im.onerror = () => res([0, 0]); im.src = URL.createObjectURL(f); });
+        try {
+          say(msg, 'جارٍ رفع الصورة…');
+          const path = `courses/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${f.type.split('/')[1].replace('jpeg', 'jpg')}`;
+          await sb.storage.upload('site-media', path, f);
+          const url = `${BIOSYN.SUPABASE_URL}/storage/v1/object/public/site-media/${path}`;
+          $('#cimgu', m).value = url; $('#cimg-prev', m).innerHTML = `<img src="${url}" alt="" style="width:100%;height:100%;object-fit:cover">`;
+          const r = dims[0] && dims[1] ? dims[0] / dims[1] : 0;
+          say(msg, `تم رفع الصورة (${dims[0]} × ${dims[1]}). ` + (r && Math.abs(r - 16 / 9) > 0.08 ? 'تنبيه: النسبة ليست 16:9 وسيتم قص الصورة. المقاس المناسب 1280 × 720.' : dims[0] && dims[0] < 960 ? 'تنبيه: الصورة صغيرة وقد تظهر غير واضحة؛ يُفضّل 1280 × 720.' : 'اضغط «حفظ» لتثبيتها.'), r && Math.abs(r - 16 / 9) > 0.08 ? 'err' : 'ok');
+        } catch (err) { say(msg, arErr(err), 'err'); }
+      };
+      if ($('#cimg-rm', m)) $('#cimg-rm', m).onclick = () => { $('#cimgu', m).value = ''; $('#cimg-prev', m).innerHTML = '<small class="bx-hint" style="margin:0">ستُزال الصورة عند الحفظ</small>'; };
       $('#cf', m).onsubmit = async (e) => {
         e.preventDefault(); const msg = $('#cm', m), g = (id) => $('#' + id, m).value.trim();
         if (!g('ct') || !g('cs')) return say(msg, 'اكتب العنوان والرابط.', 'err');
-        const kind = g('ck'), row = { title: g('ct'), slug: g('cs'), kind, status: g('cst'), level: g('cl'), cover_code: g('cc') || autoCode(g('ct')) || null, specialty: g('csp') || null, faculty: g('cfa') || null, summary: g('csu') || null, description: g('cd') || null,
+        const kind = g('ck'), row = { title: g('ct'), slug: g('cs'), kind, status: g('cst'), level: g('cl'), cover_code: g('cc') || autoCode(g('ct')) || null, cover_url: $('#cimgu', m).value || null, specialty: g('csp') || null, faculty: g('cfa') || null, summary: g('csu') || null, description: g('cd') || null,
           price_egp: kind === 'interactive' && g('cp') !== '' ? Number(g('cp')) : null, intl_price: kind === 'interactive' && g('cpi') !== '' ? Number(g('cpi')) : null, seats: kind === 'interactive' && g('cse') !== '' ? Number(g('cse')) : null, starts_at: kind === 'interactive' && g('cdt') ? new Date(g('cdt')).toISOString() : null,
           ends_at: kind === 'interactive' && g('cde') ? new Date(g('cde') + 'T20:00:00Z').toISOString() : null, hours: kind === 'interactive' && g('chr') !== '' ? Number(g('chr')) : null };
         if (row.starts_at && row.ends_at && row.ends_at < row.starts_at) return say(msg, 'يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء.', 'err');
@@ -948,7 +985,7 @@
 
   window.BiosynPages.admin = async () => {
     me = await D.guard(['admin', 'support']); if (!me) return;
-    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'news', label: 'الأخبار والفعاليات', icon: 'book' }, { id: 'testimonials', label: 'آراء الطلاب', icon: 'chat' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
+    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'texts', label: 'نصوص الموقع', icon: 'book' }, { id: 'news', label: 'الأخبار والفعاليات', icon: 'book' }, { id: 'testimonials', label: 'آراء الطلاب', icon: 'chat' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'mailcampaigns', label: 'حملات البريد', icon: 'inbox' }, { id: 'emails', label: 'رسائل البريد', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
     // live counters: new requests + open refund requests (refreshes every minute and when the tab regains focus)
     let lastRef = -1;
