@@ -12,7 +12,7 @@ Quality gates keep thin pages out of the index (noindex + not in the sitemap) in
 Run:  python3 scripts/seo/build.py                 (live data)
       python3 scripts/seo/build.py --fixture f.json (offline test)
 """
-import argparse, datetime, hashlib, html, json, os, re, subprocess, sys, urllib.request
+import argparse, datetime, hashlib, html, json, os, re, subprocess, sys, urllib.error, urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DOCS = os.path.join(ROOT, 'docs')
@@ -51,9 +51,12 @@ def config():
 
 
 def rest(url, key, path):
-    req = urllib.request.Request(f'{url}/rest/v1/{path}', headers={'apikey': key, 'Accept': 'application/json'})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read().decode('utf-8'))
+    req = urllib.request.Request(f'{url}/rest/v1/{path}', headers={'apikey': key, 'Accept': 'application/json', 'User-Agent': 'biosyn-seo-build/1.0'})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return json.loads(r.read().decode('utf-8'))
+    except urllib.error.HTTPError as x:
+        sys.exit(f'Supabase {x.code} on {path}: {x.read().decode("utf-8", "replace")[:400]}')
 
 
 def load(fixture):
