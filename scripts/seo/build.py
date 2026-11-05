@@ -475,7 +475,7 @@ def apply_org():
     if re.match(r'^\d{4}$', str(S.get('founded') or '')): ORG['foundingDate'] = str(S['founded'])
     ORG['foundingDate'] = str(ABOUT.get('founded') or ORG.get('foundingDate') or 2020)
     ORG['founder'] = {'@type': 'Person', 'name': (ABOUT.get('founder_name') or 'Abdo Mostafa').strip(), 'jobTitle': 'Founder',
-                      'image': SITE + '/img/founder.jpg', 'url': SITE + '/about.html#founder'}
+                      'image': SITE + '/img/founder-v2.jpg', 'url': SITE + '/about.html#founder'}
 
 
 FAQ_RE = re.compile(r'<!--seo-faq:start-->.*?<!--seo-faq:end-->', re.S)

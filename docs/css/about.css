@@ -40,10 +40,9 @@
 
 .ab-founder{display:grid;grid-template-columns:minmax(260px,400px) 1fr;gap:56px;align-items:center}
 .ab-photo{position:relative;max-width:400px;width:100%;margin:0 auto}
-.ab-photo picture,.ab-photo img{display:block;width:100%;height:auto;border-radius:28px;position:relative;z-index:1;box-shadow:0 30px 60px rgba(0,0,0,.45)}
-.ab-shape{position:absolute;border-radius:28px;z-index:0}
-.ab-shape1{inset:18px -18px -18px 18px;border:2px solid var(--lime)}
-.ab-shape2{width:120px;height:120px;inset-inline-start:-30px;top:-30px;background:radial-gradient(circle,rgba(198,248,74,.35),transparent 70%);border-radius:50%}
+.ab-photo picture,.ab-photo img{display:block;width:100%;height:auto;border-radius:32px;position:relative;z-index:1}
+.ab-photo picture{box-shadow:0 0 0 1px rgba(198,248,74,.35),0 30px 70px rgba(0,0,0,.5),0 0 90px rgba(198,248,74,.12)}
+.ab-shape{display:none}
 .ab-badge{position:absolute;z-index:2;bottom:22px;inset-inline-start:-16px;background:var(--lime);color:#010232;font:600 14px/1 var(--font-display);padding:12px 16px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);direction:ltr}
 .ab-badge b{font-weight:800}
 .ab-fbody h2{font:800 clamp(28px,4vw,40px)/1.2 var(--font-display);margin:14px 0 6px}
