@@ -447,13 +447,14 @@
             `<button class="bx-linkbtn" data-copy="${esc(link(f))}">نسخ الرابط</button> · <a class="bx-linkbtn" href="${esc(link(f))}" target="_blank" rel="noopener">فتح</a>`,
             `${c.all}${c.new ? ` <span class="bx-st bx-st-warn">${c.new} جديد</span>` : ''}`,
             `<label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-fa="${f.id}" ${f.active ? 'checked' : ''} ${isAdmin() ? '' : 'disabled'}> ${f.active ? 'مفتوح' : 'مقفول'}</label>`,
-            `<button class="bx-linkbtn" data-fr="${f.id}">الردود</button>${isAdmin() ? ` · <button class="bx-linkbtn" data-fe="${f.id}">تعديل</button>` : ''}`];
+            `<button class="bx-linkbtn" data-fr="${f.id}">الردود</button>${isAdmin() ? ` · <button class="bx-linkbtn" data-fe="${f.id}">تعديل</button> · <button class="bx-linkbtn" data-fs="${f.id}">مشاركة</button>` : ''}`];
         }), 'لا توجد نماذج بعد. اضغط «نموذج جديد».'));
       $$('[data-copy]', main).forEach((b) => (b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.copy); ui.toast('تم نسخ الرابط.'); } catch { prompt('انسخ الرابط:', b.dataset.copy); } }));
       $$('[data-fa]', main).forEach((i) => (i.onchange = async () => { try { await sb.update('forms', { id: 'eq.' + i.dataset.fa }, { active: i.checked }); ui.toast(i.checked ? 'النموذج مفتوح.' : 'تم إغلاق النموذج.'); D.reload(); } catch (err) { i.checked = !i.checked; ui.toast(arErr(err), 'err'); } }));
       const nb = $('#fm-new', main); if (nb) nb.onclick = () => formBuilder(null);
       $$('[data-fe]', main).forEach((b) => (b.onclick = () => formBuilder(forms.find((f) => f.id === b.dataset.fe))));
       $$('[data-fr]', main).forEach((b) => (b.onclick = () => formResponses(forms.find((f) => f.id === b.dataset.fr))));
+      $$('[data-fs]', main).forEach((b) => (b.onclick = () => window.FormsUI.share(forms.find((f) => f.id === b.dataset.fs))));
       $$('[data-sf]', main).forEach((b) => (b.onclick = () => siteFormResponses(SITE_FORMS.find((x) => x.key === b.dataset.sf))));
     },
 
@@ -677,88 +678,7 @@
       };
     });
   }
-  // ---------- form builder + responses ----------
-  const FTYPES = { text: 'نص قصير', textarea: 'نص طويل', email: 'بريد إلكتروني', phone: 'هاتف محمول', number: 'رقم', date: 'تاريخ', select: 'قائمة اختيار', radio: 'اختيار واحد', checkbox: 'اختيارات متعددة' };
-  const hasOpts = (t) => t === 'select' || t === 'radio' || t === 'checkbox';
-  const rid = () => Math.random().toString(36).slice(2, 9);
-  function formBuilder(f) {
-    const isNew = !f;
-    f = f ? JSON.parse(JSON.stringify(f)) : { title: '', slug: '', description: '', submit_label: '', success_message: '', active: true, notify: true,
-      fields: [{ id: rid(), label: 'الاسم', type: 'text', required: true }, { id: rid(), label: 'رقم الهاتف المحمول (واتساب)', type: 'phone', required: true }, { id: rid(), label: 'البريد الإلكتروني', type: 'email', required: false }] };
-    ui.modal(`<h3>${isNew ? 'نموذج جديد' : 'تعديل النموذج'}</h3><form class="bx-form2" id="fbf" novalidate>
-      <div class="row2"><div class="bx-field"><label for="fbt">عنوان النموذج</label><input id="fbt" class="bx-input" maxlength="120" value="${esc(f.title)}" placeholder="مثلًا: سجّل اهتمامك بدبلومة المعلوماتية الحيوية"></div>
-      <div class="bx-field"><label for="fbs">الرابط (بالإنجليزي)</label><input id="fbs" class="bx-input" dir="ltr" maxlength="60" value="${esc(f.slug)}" placeholder="bioinformatics-interest"></div></div>
-      <div class="bx-field"><label for="fbd">وصف يظهر فوق النموذج (اختياري)</label><textarea id="fbd" class="bx-textarea" rows="2">${esc(f.description || '')}</textarea></div>
-      <div class="bx-field"><label>الحقول</label><div id="fbfields" class="bx-fbfields"></div><button type="button" class="bs-btn bs-btn-ghost" id="fbadd" style="justify-self:start">+ إضافة حقل</button></div>
-      <div class="row2"><div class="bx-field"><label for="fbb">نص زر الإرسال</label><input id="fbb" class="bx-input" value="${esc(f.submit_label || '')}" placeholder="إرسال"></div>
-      <div class="bx-field"><label for="fbm">رسالة بعد الإرسال</label><input id="fbm" class="bx-input" value="${esc(f.success_message || '')}" placeholder="شكرًا! وصلنا ردك وسنتواصل معك قريبًا."></div></div>
-      <div class="bx-row" style="gap:18px"><label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="fba" ${f.active ? 'checked' : ''}> النموذج مفتوح لاستقبال الردود</label><label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="fbn" ${f.notify ? 'checked' : ''}> أرسل لي بريدًا إلكترونيًا مع كل رد</label></div>
-      <fieldset class="bx-field" style="border:1px solid var(--line);border-radius:12px;padding:12px 14px"><legend style="padding:0 6px">⏱ نموذج مؤقت (اختبار أو مسابقة)</legend>
-        <label class="bx-check" style="min-height:auto"><input type="checkbox" id="fblock" ${f.settings && f.settings.lock_on_leave ? 'checked' : ''}> إغلاق النموذج إذا غادر الشخص الصفحة أو بدّل التبويب، وإرسال ما أجاب عنه حتى تلك اللحظة</label>
-        <div class="bx-field" style="margin-top:8px"><label for="fbtm">الوقت الكلي للنموذج بالدقائق (اختياري)</label><input id="fbtm" class="bx-input" type="number" min="1" max="600" value="${(f.settings && f.settings.total_minutes) || ''}" dir="ltr" style="max-width:160px"></div>
-        <small class="bx-hint">لتحديد وقت لكل سؤال اكتب عدد الثواني في خانة ⏱ بجوار السؤال. عند وجود مؤقت تظهر الأسئلة سؤالًا تلو الآخر، وينتقل النموذج تلقائيًا للسؤال التالي عند انتهاء الوقت. لا يمكن الرجوع لسؤال سابق.</small></fieldset>
-      <div class="bx-formmsg" aria-live="polite"></div>
-      <div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" type="submit">حفظ</button>${isNew ? '' : '<button type="button" class="bs-btn bs-btn-ghost" data-del style="color:var(--danger-text)">حذف النموذج</button>'}<button type="button" class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div></form>`,
-    (m, close) => {
-      $('[data-x]', m).onclick = close;
-      const t = $('#fbt', m), sl = $('#fbs', m);
-      if (isNew) t.oninput = () => { if (!sl.dataset.touched) sl.value = t.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || ''; };
-      sl.oninput = () => (sl.dataset.touched = '1');
-      const box = $('#fbfields', m);
-      const read = () => { $$('.bx-fbrow', box).forEach((r, i) => { const x = f.fields[i]; x.label = $('[data-l]', r).value.trim(); x.type = $('[data-t]', r).value; x.required = $('[data-r]', r).checked; const o = $('[data-o]', r); x.options = o ? o.value.split('\n').map((v) => v.trim()).filter(Boolean) : []; const tl = parseInt($('[data-tl]', r).value, 10); x.time_limit = tl >= 5 ? Math.min(3600, tl) : null; }); };
-      const draw = () => {
-        box.innerHTML = f.fields.map((x, i) => `<div class="bx-fbrow"><div class="bx-fbmain"><input class="bx-input" data-l value="${esc(x.label)}" placeholder="اسم الحقل (السؤال)" aria-label="اسم الحقل"><select class="bx-select" data-t aria-label="نوع الحقل">${Object.entries(FTYPES).map(([k, v]) => `<option value="${k}" ${k === x.type ? 'selected' : ''}>${v}</option>`).join('')}</select>
-          <label class="bx-hint" style="display:flex;gap:4px;align-items:center;white-space:nowrap"><input type="checkbox" data-r ${x.required ? 'checked' : ''}> إجباري</label><label class="bx-hint" style="display:flex;gap:4px;align-items:center;white-space:nowrap" title="اتركه فارغًا لسؤال بلا وقت">⏱ <input class="bx-input" data-tl type="number" min="5" max="3600" step="5" value="${x.time_limit || ''}" placeholder="ثوانٍ" aria-label="مؤقت السؤال بالثواني" style="width:84px;padding:6px 8px" dir="ltr"></label>
-          <span class="bx-btnrow" style="gap:2px"><button type="button" class="bx-linkbtn" data-up="${i}" ${i ? '' : 'disabled'} aria-label="للأعلى">↑</button><button type="button" class="bx-linkbtn" data-dn="${i}" ${i < f.fields.length - 1 ? '' : 'disabled'} aria-label="للأسفل">↓</button><button type="button" class="bx-linkbtn" data-rm="${i}" style="color:var(--danger-text)" aria-label="حذف">✕</button></span></div>
-          ${hasOpts(x.type) ? `<textarea class="bx-textarea" data-o rows="3" placeholder="كل اختيار في سطر">${esc((x.options || []).join('\n'))}</textarea>` : ''}</div>`).join('') || '<p class="bx-hint">لا توجد حقول. أضف حقلًا.</p>';
-        $$('[data-t]', box).forEach((sel) => (sel.onchange = () => { read(); draw(); }));
-        $$('[data-up]', box).forEach((b) => (b.onclick = () => { read(); const i = +b.dataset.up; [f.fields[i - 1], f.fields[i]] = [f.fields[i], f.fields[i - 1]]; draw(); }));
-        $$('[data-dn]', box).forEach((b) => (b.onclick = () => { read(); const i = +b.dataset.dn; [f.fields[i + 1], f.fields[i]] = [f.fields[i], f.fields[i + 1]]; draw(); }));
-        $$('[data-rm]', box).forEach((b) => (b.onclick = () => { read(); f.fields.splice(+b.dataset.rm, 1); draw(); }));
-      };
-      draw();
-      $('#fbadd', m).onclick = () => { read(); f.fields.push({ id: rid(), label: '', type: 'text', required: false }); draw(); const ls = $$('[data-l]', box); ls[ls.length - 1].focus(); };
-      const del = $('[data-del]', m); if (del) del.onclick = async () => { if (!confirm('حذف النموذج وكل الردود عليه نهائيًا؟')) return; try { await sb.remove('forms', { id: 'eq.' + f.id }); close(); D.reload(); } catch (e) { ui.toast(arErr(e), 'err'); } };
-      $('#fbf', m).onsubmit = async (e) => {
-        e.preventDefault(); read(); const msg = $('.bx-formmsg', m);
-        const row = { title: t.value.trim(), slug: sl.value.trim().toLowerCase(), description: $('#fbd', m).value.trim() || null, submit_label: $('#fbb', m).value.trim() || null, success_message: $('#fbm', m).value.trim() || null, active: $('#fba', m).checked, notify: $('#fbn', m).checked, updated_at: new Date().toISOString() };
-        if (row.title.length < 2) return say(msg, 'اكتب عنوان النموذج.', 'err');
-        if (!/^[a-z0-9][a-z0-9-]{1,60}$/.test(row.slug)) return say(msg, 'يجب أن يتكون الرابط من حروف إنجليزية صغيرة وأرقام وشرطة (-) فقط.', 'err');
-        const fields = f.fields.filter((x) => x.label);
-        if (!fields.length) return say(msg, 'أضف حقلًا واحدًا على الأقل.', 'err');
-        const bad = fields.find((x) => hasOpts(x.type) && !(x.options || []).length); if (bad) return say(msg, `اكتب اختيارات الحقل "${bad.label}".`, 'err');
-        row.fields = fields.map((x) => ({ id: x.id, label: x.label, type: x.type, required: !!x.required, ...(hasOpts(x.type) ? { options: x.options } : {}), ...(x.time_limit ? { time_limit: x.time_limit } : {}) }));
-        const tm = parseInt($('#fbtm', m).value, 10);
-        row.settings = { ...(f.settings || {}), lock_on_leave: $('#fblock', m).checked, total_minutes: tm >= 1 ? Math.min(600, tm) : null };
-        try { if (isNew) await sb.insert('forms', row); else await sb.update('forms', { id: 'eq.' + f.id }, row); ui.toast('تم حفظ النموذج.'); close(); D.reload(); }
-        catch (err) { say(msg, /duplicate|unique/i.test(err.message) ? 'هذا الرابط مستخدم لنموذج آخر.' : arErr(err), 'err'); }
-      };
-    });
-  }
-  async function formResponses(f) {
-    let rows = await sb.get('form_submissions', { select: '*', form_id: 'eq.' + f.id, order: 'created_at.desc' }).catch(() => []);
-    const cols = [...new Set([...(f.fields || []).map((x) => x.label), ...rows.flatMap((r) => Object.keys(r.data || {}))])];
-    const ST = { new: ['جديد', 'warn'], read: ['تمت المشاهدة', 'info'], done: ['تم', 'ok'] };
-    const csv = () => {
-      const q = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
-      const lines = [['التاريخ', ...cols, 'الحالة'].map(q).join(','), ...rows.map((r) => [new Date(r.created_at).toLocaleString('en-GB'), ...cols.map((c) => r.data[c]), (ST[r.status] || [r.status])[0]].map(q).join(','))];
-      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' })); a.download = `${f.slug}-responses.csv`; a.click();
-    };
-    ui.modal(`<h3>ردود: ${esc(f.title)}</h3><p class="bx-hint" style="margin:0">${rows.length} رد</p>
-      <div class="bx-btnrow" style="margin:8px 0 12px"><button class="bs-btn bs-btn-primary bs-btn-sm" id="frcsv" ${rows.length ? '' : 'disabled'}>تحميل Excel (CSV)</button><button class="bs-btn bs-btn-ghost bs-btn-sm" data-x>إغلاق</button></div>
-      <div class="bx-scroll" style="max-height:60vh">${rows.length ? `<table class="bx-table"><thead><tr><th>التاريخ</th>${cols.map((c) => `<th>${esc(c)}</th>`).join('')}<th>الحالة</th>${isAdmin() ? '<th></th>' : ''}</tr></thead><tbody>${rows.map((r) => `<tr><td style="white-space:nowrap">${D.date(r.created_at)}</td>${cols.map((c) => `<td>${esc(r.data[c] ?? '')}</td>`).join('')}
-        <td><select class="bx-select" data-rs="${r.id}" style="min-width:90px;height:34px;padding:0 8px">${Object.entries(ST).map(([k, v]) => `<option value="${k}" ${k === r.status ? 'selected' : ''}>${v[0]}</option>`).join('')}</select></td>${isAdmin() ? `<td><button class="bx-linkbtn" data-rd="${r.id}" style="color:var(--danger-text)">حذف</button></td>` : ''}</tr>`).join('')}</tbody></table>` : '<p class="bx-hint">لا توجد ردود بعد. انشر رابط النموذج.</p>'}</div>`,
-    (m, close) => {
-      $('[data-x]', m).onclick = () => { close(); D.reload(); };
-      const cb = $('#frcsv', m); if (cb) cb.onclick = csv;
-      $$('[data-rs]', m).forEach((sel) => (sel.onchange = async () => { try { await sb.update('form_submissions', { id: 'eq.' + sel.dataset.rs }, { status: sel.value }); const r = rows.find((x) => x.id === sel.dataset.rs); if (r) r.status = sel.value; ui.toast('تم التحديث.'); } catch (e) { ui.toast(arErr(e), 'err'); } }));
-      $$('[data-rd]', m).forEach((b) => (b.onclick = async () => { if (!confirm('حذف هذا الرد؟')) return; try { await sb.remove('form_submissions', { id: 'eq.' + b.dataset.rd }); rows = rows.filter((x) => x.id !== b.dataset.rd); b.closest('tr').remove(); } catch (e) { ui.toast(arErr(e), 'err'); } }));
-      // opening the list marks new responses as seen
-      const fresh = rows.filter((r) => r.status === 'new').map((r) => r.id);
-      if (fresh.length) sb.update('form_submissions', { id: 'in.(' + fresh.join(',') + ')' }, { status: 'read' }).catch(() => {});
-    });
-  }
-
+  const formBuilder = (f) => window.FormsUI.builder(f), formResponses = (f) => window.FormsUI.responses(f);
 
   // ---------- import lectures from a Bunny Stream library ----------
   const natural = (a, b) => a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' });

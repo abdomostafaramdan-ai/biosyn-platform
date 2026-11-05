@@ -495,12 +495,18 @@
     const lockKey = 'biosyn.formlock.' + f.slug;
     const head = `<nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><span>${esc(f.title)}</span></nav>
       <h1>${esc(f.title)}</h1>${f.description ? `<p class="bx-hint" style="margin:0 0 24px;white-space:pre-line">${esc(f.description)}</p>` : ''}`;
-    const done = (title, text) => (root.innerHTML = head.replace(/<p class="bx-hint"[\s\S]*<\/p>$/, '') + `<div class="bx-formcard" style="text-align:center;display:grid;gap:12px;justify-items:center"><span class="bx-cat-ic" style="width:56px;height:56px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span><h2 style="margin:0">${title}</h2>${text ? `<p class="bx-hint" style="margin:0">${text}</p>` : ''}<a class="bs-btn bs-btn-secondary" href="index.html">العودة إلى الرئيسية</a></div>`);
+    const done = (title, text, extra) => (root.innerHTML = head.replace(/<p class="bx-hint"[\s\S]*<\/p>$/, '') + `<div class="bx-formcard" style="text-align:center;display:grid;gap:12px;justify-items:center"><span class="bx-cat-ic" style="width:56px;height:56px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span><h2 style="margin:0">${title}</h2>${text ? `<p class="bx-hint" style="margin:0">${text}</p>` : ''}${extra || ''}<a class="bs-btn bs-btn-secondary" href="index.html">العودة إلى الرئيسية</a></div>`);
     const readField = (form, x) => {
       if (x.type === 'radio' || x.type === 'checkbox') return $$(`[data-k="${x.id}"] input:checked`, form).map((i) => i.value).join('، ');
       const el = $(`[data-k="${x.id}"]`, form); return el ? el.value.trim() : '';
     };
-    const send = (data) => sb.rpc('submit_form', { p_slug: f.slug, p_data: data });
+    const send = (data) => sb.rpc('submit_form_graded', { p_slug: f.slug, p_data: data });
+    const result = (r) => {
+      if (!r || !r.graded || r.hidden) return '';
+      const ok = r.passed, det = r.details || [];
+      return `<div style="display:grid;gap:6px;justify-items:center"><b style="font-size:40px;line-height:1.1" dir="ltr">${r.score} / ${r.max}</b><span class="bx-st bx-st-${ok === false ? 'warn' : 'ok'}" style="font-size:15px">${r.percent}٪${ok === true ? ' · ناجح 🎉' : ok === false ? ` · لم تجتز (النجاح من ${r.pass_percent}٪)` : ''}</span></div>
+        ${det.length ? `<ol style="text-align:start;display:grid;gap:8px;margin:8px 0 0;padding-inline-start:20px;width:100%">${det.map((d) => `<li><b dir="auto">${esc(d.label)}</b> ${d.ok ? '<span class="bx-st bx-st-ok">✓ صحيحة</span>' : '<span class="bx-st bx-st-warn">✗ خاطئة</span>'}<br><small class="bx-hint" dir="auto">إجابتك: ${esc(d.your || '—')}${d.answer && !d.ok ? ` · الإجابة الصحيحة: ${esc(d.answer)}` : ''}</small></li>`).join('')}</ol>` : ''}`;
+    };
     const errText = (err) => /too many/.test(err.message) ? 'يوجد ضغط على النموذج، حاول بعد دقيقة.' : /form locked/.test(err.message) ? 'سبق أن بدأت هذا النموذج ولا يمكن فتحه مرة أخرى.' : /missing: (.+)/.test(err.message) ? 'من فضلك املأ: ' + err.message.match(/missing: (.+)/)[1] : 'تعذّر الإرسال، حاول مرة أخرى.';
 
     if (!timed) {
@@ -521,7 +527,7 @@
         }
         if (missing) { msg.className = 'bx-formmsg err'; msg.textContent = `من فضلك املأ: ${missing}`; return; }
         btn.disabled = true; msg.className = 'bx-formmsg'; msg.textContent = 'جارٍ الإرسال…';
-        try { await send(data); window.track && track('lead', { type: 'form:' + f.slug }); done(esc(f.success_message || 'شكرًا! وصلنا ردك وسيتواصل معك فريق Biosyn قريبًا.')); }
+        try { const r = await send(data); window.track && track('lead', { type: 'form:' + f.slug }); done(esc(f.success_message || (r && r.graded ? 'شكرًا! هذه نتيجتك.' : 'شكرًا! وصلنا ردك وسيتواصل معك فريق Biosyn قريبًا.')), '', result(r)); }
         catch (err) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = errText(err); }
       };
       return;
@@ -557,12 +563,12 @@
         try { collect(); } catch (e) {}
         const payload = { ...data, __meta: { attempt, left_page: !!left, timed_out: timedOut } };
         if (left) {
-          try { fetch(`${BIOSYN.SUPABASE_URL}/rest/v1/rpc/submit_form`, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json', apikey: BIOSYN.SUPABASE_KEY, Authorization: 'Bearer ' + ((sb.session && sb.session.access_token) || BIOSYN.SUPABASE_KEY) }, body: JSON.stringify({ p_slug: f.slug, p_data: payload }) }).catch(() => {}); } catch (e) {}
+          try { fetch(`${BIOSYN.SUPABASE_URL}/rest/v1/rpc/submit_form_graded`, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json', apikey: BIOSYN.SUPABASE_KEY, Authorization: 'Bearer ' + ((sb.session && sb.session.access_token) || BIOSYN.SUPABASE_KEY) }, body: JSON.stringify({ p_slug: f.slug, p_data: payload }) }).catch(() => {}); } catch (e) {}
           root.innerHTML = head.replace(/<p class="bx-hint"[\s\S]*<\/p>$/, '') + '<div class="bx-empty-big"><b>أُغلق النموذج</b>غادرت الصفحة أثناء الإجابة، فأُرسلت إجاباتك حتى تلك اللحظة ولا يمكن إكمال النموذج.</div>';
           return;
         }
         nextB.disabled = true; msg.className = 'bx-formmsg'; msg.textContent = 'جارٍ الإرسال…';
-        try { await send(payload); window.track && track('lead', { type: 'form:' + f.slug }); done(esc(f.success_message || 'شكرًا! وصلت إجاباتك.'), timedOut.length ? `انتهى وقت ${timedOut.length} من الأسئلة قبل الإجابة عنها.` : ''); }
+        try { const r = await send(payload); window.track && track('lead', { type: 'form:' + f.slug }); done(esc(f.success_message || 'شكرًا! وصلت إجاباتك.'), timedOut.length ? `انتهى وقت ${timedOut.length} من الأسئلة قبل الإجابة عنها.` : '', result(r)); }
         catch (err) { finished = false; nextB.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = errText(err); }
       };
       const onHide = (e) => { if (!ST.lock_on_leave || finished) return; if (document.visibilityState === 'hidden' || (e && e.type === 'pagehide')) finish(true); };

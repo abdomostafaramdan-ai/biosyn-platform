@@ -25,3 +25,16 @@ create table if not exists public.email_campaigns (id uuid primary key default g
   total int not null default 0, sent int not null default 0, created_at timestamptz not null default now(), started_at timestamptz, finished_at timestamptz);
 create table if not exists public.campaign_recipients (id uuid primary key default gen_random_uuid(), campaign_id uuid not null references public.email_campaigns(id) on delete cascade,
   email text not null, name text, user_id uuid, token uuid not null default gen_random_uuid() unique, status text not null default 'queued' check (status in ('queued','sent','skipped')), sent_at timestamptz);
+
+-- 0056/0057 (2026-11-06): form sharing + auto-grading
+--   form_collaborators (viewer|editor by email), my_email(), form_role(); RLS lets collaborators read forms/responses,
+--   editors update the form and response status. form_answer_keys (never public). form_submissions.score/max_score/graded.
+--   norm_answer(), submit_form_graded() (grades on the server, returns the result), form_invite() (sends the invitation email),
+--   my_shared_forms() for «نماذج مشتركة معي».
+create table if not exists public.form_collaborators (id uuid primary key default gen_random_uuid(), form_id uuid not null references public.forms(id) on delete cascade,
+  email text not null, role text not null default 'viewer' check (role in ('viewer','editor')), invited_by uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now(), last_seen_at timestamptz);
+create table if not exists public.form_answer_keys (form_id uuid primary key references public.forms(id) on delete cascade, answers jsonb not null default '{}', updated_at timestamptz not null default now());
+alter table public.form_submissions add column if not exists score numeric;
+alter table public.form_submissions add column if not exists max_score numeric;
+alter table public.form_submissions add column if not exists graded jsonb;

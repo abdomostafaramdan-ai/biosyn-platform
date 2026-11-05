@@ -178,9 +178,11 @@
 
   window.BiosynPages.account = async () => {
     me = await D.guard(['student', 'instructor', 'support', 'admin']); if (!me) return;
+    const shared = await sb.rpc('my_shared_forms').catch(() => []);
+    if (shared && shared.length) views.forms = (main) => window.FormsUI.shared(main);
     await D.shell({
       title: 'حسابي', who: me.full_name || sb.user.email, sub: D.roleAr[me.role],
-      items: [{ id: 'home', label: 'الرئيسية', icon: 'home' }, { id: 'payments', label: 'الاشتراك والمدفوعات', icon: 'card' }, { id: 'certs', label: 'الشهادات', icon: 'cert' }, { id: 'invite', label: 'شهر مجاني', icon: 'gift' }, { id: 'messages', label: 'الرسائل والدعم', icon: 'chat' }, { id: 'settings', label: 'الإعدادات', icon: 'cog' }],
+      items: [{ id: 'home', label: 'الرئيسية', icon: 'home' }, { id: 'payments', label: 'الاشتراك والمدفوعات', icon: 'card' }, { id: 'certs', label: 'الشهادات', icon: 'cert' }, { id: 'invite', label: 'شهر مجاني', icon: 'gift' }, { id: 'messages', label: 'الرسائل والدعم', icon: 'chat' }, ...(shared && shared.length ? [{ id: 'forms', label: 'نماذج مشتركة معي', icon: 'list' }] : []), { id: 'settings', label: 'الإعدادات', icon: 'cog' }],
       views, topLink: '<a href="courses.html" class="bs-btn bs-btn-secondary bs-btn-sm">تصفح الدورات</a>',
     });
     if (window.Chat) Chat.unreadCounts().then((u) => D.setBadge('messages', (u && u.student) || 0));

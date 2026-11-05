@@ -1248,6 +1248,10 @@ window.I18N_EN = {
 "سبق أن بدأته من هذا الجهاز، ولا يمكن فتحه مرة أخرى.": "You already started it on this device, and it can't be opened again.",
 "العودة إلى الرئيسية": "Back to home",
 "شكرًا! وصلت إجاباتك.": "Thanks! Your answers were received.",
+"شكرًا! هذه نتيجتك.": "Thanks! Here's your result.",
+"✓ صحيحة": "✓ Correct",
+"✗ خاطئة": "✗ Wrong",
+"نماذج مشتركة معي": "Forms shared with me",
 };
 
 window.I18N_EN_PATTERNS = (function () {
@@ -1255,6 +1259,8 @@ window.I18N_EN_PATTERNS = (function () {
   const T = (s) => (window.t ? window.t(s) : s);
   const lec = (n) => (Number(String(n).replace(/,/g, '')) === 1 ? 'lecture' : 'lectures');
   return [
+    [/^إجابتك: (.*?)(?: · الإجابة الصحيحة: (.*))?$/, (m, a, b) => `Your answer: ${a}${b ? ` · Correct answer: ${b}` : ''}`],
+    [/^([\d.]+)٪(?: · ناجح 🎉| · لم تجتز \(النجاح من ([\d.]+)٪\))?$/, (m, p, need) => `${p}%${/ناجح/.test(m) ? ' · Passed 🎉' : need ? ` · Not passed (pass mark ${need}%)` : ''}`],
     [/^السؤال (\d+) من (\d+)(?: · متبقٍّ (\d+) ثانية)?$/, (m, a, b, c) => `Question ${a} of ${b}${c ? ` · ${c}s left` : ''}`],
     [/^الوقت الكلي: (\d+) دقيقة، ويُرسل النموذج تلقائيًا عند انتهائه\.$/, (m, a) => `Total time: ${a} minutes; the form submits automatically when it ends.`],
     [/^([\d.]+) ميجابايت · اضغط للتغيير$/, (m, n) => `${n} MB · click to change`],
