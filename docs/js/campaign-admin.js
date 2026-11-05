@@ -51,7 +51,7 @@
           <button class="bs-btn bs-btn-ghost" type="button" id="cp-test">إرسال رسالة تجريبية إلى بريدي</button>
           <button class="bs-btn bs-btn-ghost" type="button" id="cp-now">إرسال دفعة اليوم الآن</button></div>`)}
       ${D.panel('مقارنة العنوانين', `<div class="bx-stats" style="margin:0">${D.stat('العنوان (أ)', pct(s.a_act || 0, s.a_sent || 0), (s.a_act || 0) + ' تفعيل من ' + (s.a_sent || 0))}${D.stat('العنوان (ب)', pct(s.b_act || 0, s.b_sent || 0), (s.b_act || 0) + ' تفعيل من ' + (s.b_sent || 0))}</div>`)}
-      ${D.panel('استيراد المستخدمين', `<p class="bx-hint" style="margin-top:0">ارفع ملف CSV فيه عمود للبريد الإلكتروني على الأقل (ويُفضّل الاسم والهاتف وتاريخ التسجيل وآخر دخول). البريد المكرر يُتجاهل، ومن لديه حساب على المنصة الجديدة بالفعل يُستبعد من الإرسال تلقائيًا. يُرسل أولًا لمن دخل مؤخرًا.</p>
+      ${D.panel('استيراد المستخدمين', `<p class="bx-hint" style="margin-top:0">ارفع ملف CSV يحتوي على عمود للبريد الإلكتروني على الأقل (ويُفضّل الاسم والهاتف وتاريخ التسجيل وآخر دخول). البريد المكرر يُتجاهل، ومن لديه حساب على المنصة الجديدة بالفعل يُستبعد من الإرسال تلقائيًا. يُرسل أولًا لمن دخل مؤخرًا.</p>
         <input type="file" id="cp-file" accept=".csv,text/csv,text/plain" class="bx-input"><div class="bx-formmsg" id="cp-imsg" aria-live="polite"></div>`)}
       ${D.panel('آخر النشاط', D.table(['المستخدم', 'الحالة', 'العنوان', 'أُرسلت', 'فعّل'], recent.map((r) => [
         `<b dir="auto">${esc(r.full_name || '—')}</b><br><small class="bx-muted" dir="ltr">${esc(r.email)}</small>`,

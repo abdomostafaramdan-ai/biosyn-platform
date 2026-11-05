@@ -242,7 +242,7 @@
       <p><b>${esc(target.title)}</b> · ${priceTxt(target.price, R, target.intl)}</p>
       <div role="radiogroup" aria-label="بوابة الدفع" style="display:grid;gap:10px"><div class="bx-loading" data-gwload>جارٍ تحميل طرق الدفع…</div></div>
       <div data-manual hidden class="bx-banner" style="display:block;margin-top:10px"></div>
-      <div class="bx-coupon" style="margin:14px 0 4px" ${target.consultation ? 'hidden' : ''}><label class="bx-hint" for="cpn" style="display:block;margin-bottom:6px">عندك كود خصم؟</label><div style="display:flex;gap:8px"><input id="cpn" class="bx-input" dir="ltr" autocomplete="off" placeholder="WELCOME20" style="flex:1"><button type="button" class="bs-btn bs-btn-secondary" data-cpn>تطبيق</button></div><div class="bx-formmsg" data-cpnmsg aria-live="polite"></div></div>
+      <div class="bx-coupon" style="margin:14px 0 4px" ${target.consultation ? 'hidden' : ''}><label class="bx-hint" for="cpn" style="display:block;margin-bottom:6px">هل لديك كود خصم؟</label><div style="display:flex;gap:8px"><input id="cpn" class="bx-input" dir="ltr" autocomplete="off" placeholder="WELCOME20" style="flex:1"><button type="button" class="bs-btn bs-btn-secondary" data-cpn>تطبيق</button></div><div class="bx-formmsg" data-cpnmsg aria-live="polite"></div></div>
       <p class="bx-hint">تُضاف رسوم بوابة الدفع على المبلغ، وتظهر لك قيمتها النهائية في صفحة الدفع.${loc ? ` الأسعار ظاهرة بعملة ${esc(R.name || 'بلدك')} (${esc(R.currency)}).` : ''} ${target.note || ''} بالمتابعة فأنت توافق على <a class="bx-link" href="terms.html" target="_blank">الشروط</a> و<a class="bx-link" href="refund.html" target="_blank">سياسة الاسترداد</a>.</p>
       <div class="bx-formmsg" aria-live="polite"></div>
       <div class="bx-modal-actions"><button type="button" class="bs-btn bs-btn-primary" data-go>متابعة للدفع</button><button type="button" class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div>`,
@@ -267,12 +267,12 @@
         const isI = v === 'manual:instapay', to = isI ? pinfo.instapay : pinfo.vodafone_cash;
         mbox.hidden = false; $('[data-go]', m).textContent = 'أرسلت التحويل';
         mbox.innerHTML = `<b>حوّل ${EGP(finalPrice)} ج.م ${isI ? 'عبر إنستاباي إلى' : 'على محفظة فودافون كاش رقم'}:</b> <span class="bs-latin" dir="ltr" style="font-weight:700">${esc(to)}</span><br><small>بعد التحويل اكتب رقم العملية أو الرقم الذي حوّلت منه، وارفع لقطة شاشة للتحويل. يُفعَّل اشتراكك بعد مراجعة الفريق (عادةً خلال ساعات العمل).</small><input id="mref" class="bx-input" dir="ltr" maxlength="120" placeholder="${isI ? 'رقم العملية' : '01xxxxxxxxx'}" style="margin-top:8px;width:100%">
-          <label class="bx-proof" for="mproof"><input id="mproof" type="file" accept="image/*,application/pdf" required><span class="bx-proof-box" data-proofname><b>📎 ارفع سكرين التحويل</b><small>إجباري · صورة أو PDF حتى 6 ميجا</small></span></label>`;
+          <label class="bx-proof" for="mproof"><input id="mproof" type="file" accept="image/*,application/pdf" required><span class="bx-proof-box" data-proofname><b>📎 ارفع سكرين التحويل</b><small>إجباري · صورة أو PDF حتى 6 ميجابايت</small></span></label>`;
         const fi = $('#mproof', m);
         fi.onchange = () => {
           const f = fi.files[0], lab = $('[data-proofname]', m);
-          if (!f) { lab.innerHTML = '<b>📎 ارفع سكرين التحويل</b><small>إجباري · صورة أو PDF حتى 6 ميجا</small>'; lab.parentElement.classList.remove('ok'); return; }
-          lab.innerHTML = `<b>✓ ${esc(f.name.length > 34 ? f.name.slice(0, 31) + '…' : f.name)}</b><small>${(f.size / 1048576).toFixed(1)} ميجا · اضغط للتغيير</small>`; lab.parentElement.classList.add('ok');
+          if (!f) { lab.innerHTML = '<b>📎 ارفع سكرين التحويل</b><small>إجباري · صورة أو PDF حتى 6 ميجابايت</small>'; lab.parentElement.classList.remove('ok'); return; }
+          lab.innerHTML = `<b>✓ ${esc(f.name.length > 34 ? f.name.slice(0, 31) + '…' : f.name)}</b><small>${(f.size / 1048576).toFixed(1)} ميجابايت · اضغط للتغيير</small>`; lab.parentElement.classList.add('ok');
         };
       };
       Promise.all([window.SITE_SETTINGS, loc ? fxTable() : null]).then(([pi]) => {
@@ -319,7 +319,7 @@
           if (!ref.trim()) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = 'اكتب رقم العملية أو الرقم الذي حوّلت منه.'; return; }
           const needProof = gwv !== 'manual:paypal', file = needProof && ($('#mproof', m) || {}).files ? $('#mproof', m).files[0] : null;
           if (needProof && !file) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = 'ارفع صورة (سكرين) التحويل الأول.'; return; }
-          if (file && (file.size > 6 * 1048576 || !/^(image\/|application\/pdf)/.test(file.type || ''))) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = 'الملف لازم يكون صورة أو PDF وحجمه أقل من 6 ميجا.'; return; }
+          if (file && (file.size > 6 * 1048576 || !/^(image\/|application\/pdf)/.test(file.type || ''))) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = 'يجب أن يكون الملف صورة أو PDF وحجمه أقل من 6 ميجابايت.'; return; }
           try {
             const pp = gwv === 'manual:paypal' && ppAmt;
             let proof = null;

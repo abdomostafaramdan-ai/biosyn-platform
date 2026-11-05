@@ -516,7 +516,7 @@
         root.innerHTML = `<div class="bx-formcard" style="text-align:center;display:grid;gap:12px;justify-items:center"><span class="bx-cat-ic" style="width:56px;height:56px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span><h1 style="margin:0">${esc(f.success_message || 'شكرًا! وصلنا ردك وسيتواصل معك فريق Biosyn قريبًا.')}</h1><a class="bs-btn bs-btn-primary" href="index.html">الرجوع للرئيسية</a></div>`;
       } catch (err) {
         btn.disabled = false; msg.className = 'bx-formmsg err';
-        msg.textContent = /too many/.test(err.message) ? 'فيه ضغط على الفورم، جرّب بعد دقيقة.' : /missing: (.+)/.test(err.message) ? 'من فضلك املأ: ' + err.message.match(/missing: (.+)/)[1] : 'تعذّر الإرسال، حاول مرة أخرى.';
+        msg.textContent = /too many/.test(err.message) ? 'يوجد ضغط على النموذج، حاول بعد دقيقة.' : /missing: (.+)/.test(err.message) ? 'من فضلك املأ: ' + err.message.match(/missing: (.+)/)[1] : 'تعذّر الإرسال، حاول مرة أخرى.';
       }
     };
   };

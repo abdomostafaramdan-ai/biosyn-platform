@@ -147,8 +147,8 @@
       const m = $('.bx-formmsg', main), v = (id) => $('#' + id, main).value.trim();
       const same = v('sx-same').split(/\s+/).filter(Boolean);
       const bad = same.find((u) => !/^https:\/\/[^\s]+\.[^\s]+/.test(u));
-      if (bad) { m.className = 'bx-formmsg err'; m.textContent = 'هذا الرابط غير صحيح: ' + bad + ' (لازم يبدأ بـ https://)'; return; }
-      if (v('sx-year') && !/^\d{4}$/.test(v('sx-year'))) { m.className = 'bx-formmsg err'; m.textContent = 'سنة التأسيس لازم تكون 4 أرقام.'; return; }
+      if (bad) { m.className = 'bx-formmsg err'; m.textContent = 'هذا الرابط غير صحيح: ' + bad + ' (يجب أن يبدأ بـ https://)'; return; }
+      if (v('sx-year') && !/^\d{4}$/.test(v('sx-year'))) { m.className = 'bx-formmsg err'; m.textContent = 'يجب أن تتكون سنة التأسيس من 4 أرقام.'; return; }
       const pages = {};
       $$('.sx-page', main).forEach((b) => { const t = $('[data-k=title]', b).value.trim(), d = $('[data-k=description]', b).value.trim(); if (t || d) pages[b.dataset.page] = { title: t, description: d }; });
       const faq = $$('.sx-faq', main).map((r) => ({ q: $('[data-q]', r).value.trim(), a: $('[data-a]', r).value.trim() })).filter((x) => x.q && x.a);

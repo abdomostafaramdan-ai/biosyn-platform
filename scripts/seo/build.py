@@ -31,10 +31,10 @@ LEVEL_EN = {'beginner': 'Beginner', 'beginner_intermediate': 'Beginner', 'interm
 STATIC = [
     ('index.html', 'الرئيسية', '1.0'), ('courses.html', 'الدورات المسجلة', '0.9'), ('interactive.html', 'الدورات التفاعلية', '0.9'),
     ('pricing.html', 'الأسعار والاشتراكات', '0.9'), ('instructors.html', 'المحاضرون', '0.7'), ('consultations.html', 'الاستشارات والخدمات البحثية', '0.7'),
-    ('institutions.html', 'حلول المؤسسات', '0.7'), ('teach.html', 'انضم كمحاضر', '0.6'), ('blog.html', 'المدونة', '0.6'),
+    ('institutions.html', 'حلول المؤسسات', '0.7'), ('teach.html', 'انضم كمحاضر', '0.6'), ('blog.html', 'المدونة', '0.6'), ('news.html', 'الأخبار والفعاليات', '0.6'),
     ('about.html', 'من نحن', '0.7'), ('verify.html', 'التحقق من الشهادات', '0.4'), ('terms.html', 'الشروط والأحكام', '0.2'), ('privacy.html', 'سياسة الخصوصية', '0.2'), ('refund.html', 'سياسة الاسترداد', '0.2'),
 ]
-PRIVATE = ['login.html', 'account.html', 'admin.html', 'instructor.html', 'watch.html', 'certificate.html', 'form.html', 'course.html', 'article.html', '404.html']
+PRIVATE = ['login.html', 'account.html', 'admin.html', 'instructor.html', 'watch.html', 'certificate.html', 'form.html', 'course.html', 'article.html', '404.html', 'unsubscribe.html', 'contract.html']
 AI_BOTS = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'Bingbot', 'CCBot', 'meta-externalagent']
 
 ABOUT = {}  # admin → «صفحة من نحن» (site_content.about)

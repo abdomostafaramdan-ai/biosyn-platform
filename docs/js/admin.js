@@ -53,6 +53,8 @@
     async about(main) { await window.aboutAdmin(main); },
     async contracts(main) { await window.contractsAdmin(main, isAdmin()); },
     async campaign(main) { await window.campaignAdmin(main); },
+    async news(main) { await window.newsAdmin(main); },
+    async testimonials(main) { await window.testimonialsAdmin(main); },
 
     async home(main) {
       const now = new Date(), som = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
@@ -352,7 +354,7 @@
         if (!(v > 0) || (pct && v > 100)) return say(msg, 'قيمة الخصم غير صحيحة.', 'err');
         const row = { code, applies_to: $('#cs', f).value, [pct ? 'percent_off' : 'amount_off_egp']: v };
         if ($('#cm', f).value) row.max_redemptions = Number($('#cm', f).value);
-        if ($('#ci', f).value) { const ip = Number($('#cip', f).value); if (!(ip >= 0 && ip <= 100)) return say(msg, 'نسبة المحاضر لازم تكون بين 0 و100.', 'err'); row.instructor_id = $('#ci', f).value; row.instructor_pct = ip; }
+        if ($('#ci', f).value) { const ip = Number($('#cip', f).value); if (!(ip >= 0 && ip <= 100)) return say(msg, 'يجب أن تكون نسبة المحاضر بين 0 و100.', 'err'); row.instructor_id = $('#ci', f).value; row.instructor_pct = ip; }
         if ($('#ce', f).value) row.expires_at = new Date($('#ce', f).value + 'T23:59:59+02:00').toISOString();
         try { await sb.insert('coupons', row); ui.toast('تمت إضافة الكوبون.'); D.reload(); } catch (err) { say(msg, /duplicate|unique/i.test(err.message) ? 'هذا الكود موجود بالفعل.' : arErr(err), 'err'); }
       };
@@ -391,8 +393,8 @@
             btn.disabled = true;
             try {
               if (file) {
-                if (!/^image\/(png|jpeg|webp)$/.test(file.type)) throw new Error('الصورة لازم تكون PNG أو JPG أو WebP.');
-                if (file.size > 2 * 1024 * 1024) throw new Error('حجم الصورة أكبر من 2 ميجا.');
+                if (!/^image\/(png|jpeg|webp)$/.test(file.type)) throw new Error('يجب أن تكون الصورة PNG أو JPG أو WebP.');
+                if (file.size > 2 * 1024 * 1024) throw new Error('حجم الصورة أكبر من 2 ميجابايت.');
                 say(msg, 'جارٍ رفع الصورة…');
                 const path = `instructors/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${file.type.split('/')[1].replace('jpeg', 'jpg')}`;
                 await sb.storage.upload('site-media', path, file);
@@ -584,7 +586,7 @@
     }));
     $$('[data-rsave]', main).forEach((b) => (b.onclick = async () => {
       const c = b.dataset.rsave, factor = Number(v(c, 'factor').value), egp_rate = Number(v(c, 'egp_rate').value);
-      if (!(factor > 0) || !(egp_rate > 0)) return ui.toast('المعامل وسعر الصرف لازم يكونوا أكبر من صفر.', 'err');
+      if (!(factor > 0) || !(egp_rate > 0)) return ui.toast('يجب أن يكون المعامل وسعر الصرف أكبر من صفر.', 'err');
       try { await sb.update('price_regions', { country: 'eq.' + c }, { factor, egp_rate, active: v(c, 'active').checked, updated_at: new Date().toISOString() }); ui.toast('تم الحفظ. سيرى الزوار السعر الجديد خلال دقائق.'); } catch (e) { ui.toast(arErr(e), 'err'); }
     }));
   }
@@ -801,7 +803,7 @@
         <div class="row2"><div class="bx-field"><label for="cfa">الكلية</label><select id="cfa" class="bx-select"><option value="">—</option><option value="all" ${c.faculty === 'all' ? 'selected' : ''}>كل الكليات</option>${(window.FACULTIES || []).map((f) => `<option value="${f.id}" ${f.id === (c.faculty || (window.facultyOf ? window.facultyOf(c) : '')) ? 'selected' : ''}>${esc(f.name)}</option>`).join('')}</select></div><div class="bx-field"><label for="csp">التخصص</label><input id="csp" class="bx-input" list="csp-l" value="${esc(c.specialty || '')}" placeholder="اختر من القائمة أو اكتب تخصصًا"><datalist id="csp-l"></datalist></div></div>
         <div class="bx-field"><label for="csu">وصف مختصر</label><input id="csu" class="bx-input" value="${esc(c.summary || '')}"></div>
         <div class="bx-field"><label for="cd">الوصف الكامل</label><textarea id="cd" class="bx-textarea">${esc(c.description || '')}</textarea></div>
-        <div class="row2" id="ia" ${c.kind === 'interactive' ? '' : 'hidden'}><div class="bx-field"><label for="cp">سعر الدورة (ج.م)</label><input id="cp" class="bx-input" type="number" min="0" value="${c.price_egp ?? ''}"></div><div class="bx-field"><label for="cpi">السعر خارج مصر (بعملة البلد)</label><input id="cpi" class="bx-input" type="number" min="0" step="0.5" value="${c.intl_price ?? ''}" placeholder="فارغ = سعر الجنيه × المعامل"></div><div class="bx-field"><label for="cse">المقاعد</label><input id="cse" class="bx-input" type="number" min="1" value="${c.seats ?? ''}"></div><div class="bx-field"><label for="cdt">تاريخ البدء</label><input id="cdt" class="bx-input" type="date" value="${c.starts_at ? String(c.starts_at).slice(0, 10) : ''}"></div><div class="bx-field"><label for="cde">تاريخ الانتهاء (تصدر الشهادات تلقائيًا فيه)</label><input id="cde" class="bx-input" type="date" value="${c.ends_at ? String(c.ends_at).slice(0, 10) : ''}"></div><div class="bx-field"><label for="chr">عدد ساعات التدريب (يُطبع على الشهادة)</label><input id="chr" class="bx-input" type="number" min="0" step="0.5" value="${c.hours ?? ''}"></div></div>
+        <div class="row2" id="ia" ${c.kind === 'interactive' ? '' : 'hidden'}><div class="bx-field"><label for="cp">سعر الدورة (ج.م)</label><input id="cp" class="bx-input" type="number" min="0" value="${c.price_egp ?? ''}"></div><div class="bx-field"><label for="cpi">السعر خارج مصر (بعملة البلد)</label><input id="cpi" class="bx-input" type="number" min="0" step="0.5" value="${c.intl_price ?? ''}" placeholder="فارغ = سعر الجنيه × المعامل"></div><div class="bx-field"><label for="cse">المقاعد</label><input id="cse" class="bx-input" type="number" min="1" value="${c.seats ?? ''}"></div><div class="bx-field"><label for="cdt">تاريخ البدء</label><input id="cdt" class="bx-input" type="date" value="${c.starts_at ? String(c.starts_at).slice(0, 10) : ''}"></div><div class="bx-field"><label for="cde">تاريخ الانتهاء (تصدر فيه الشهادات تلقائيًا)</label><input id="cde" class="bx-input" type="date" value="${c.ends_at ? String(c.ends_at).slice(0, 10) : ''}"></div><div class="bx-field"><label for="chr">عدد ساعات التدريب (يُطبع على الشهادة)</label><input id="chr" class="bx-input" type="number" min="0" step="0.5" value="${c.hours ?? ''}"></div></div>
         <div class="bx-formmsg" id="cm" aria-live="polite"></div>
         <div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">${isNew ? 'إنشاء' : 'حفظ'}</button><button class="bs-btn bs-btn-ghost" type="button" data-x>إغلاق</button></div>
       </form>
@@ -874,7 +876,7 @@
         const kind = g('ck'), row = { title: g('ct'), slug: g('cs'), kind, status: g('cst'), level: g('cl'), cover_code: g('cc') || autoCode(g('ct')) || null, specialty: g('csp') || null, faculty: g('cfa') || null, summary: g('csu') || null, description: g('cd') || null,
           price_egp: kind === 'interactive' && g('cp') !== '' ? Number(g('cp')) : null, intl_price: kind === 'interactive' && g('cpi') !== '' ? Number(g('cpi')) : null, seats: kind === 'interactive' && g('cse') !== '' ? Number(g('cse')) : null, starts_at: kind === 'interactive' && g('cdt') ? new Date(g('cdt')).toISOString() : null,
           ends_at: kind === 'interactive' && g('cde') ? new Date(g('cde') + 'T20:00:00Z').toISOString() : null, hours: kind === 'interactive' && g('chr') !== '' ? Number(g('chr')) : null };
-        if (row.starts_at && row.ends_at && row.ends_at < row.starts_at) return say(msg, 'تاريخ الانتهاء لازم يكون بعد تاريخ البدء.', 'err');
+        if (row.starts_at && row.ends_at && row.ends_at < row.starts_at) return say(msg, 'يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء.', 'err');
         if (kind === 'interactive' && row.status === 'published' && row.price_egp === null) return say(msg, 'حدّد سعر الدورة التفاعلية قبل النشر.', 'err');
         if (kind === 'recorded' && row.status === 'published' && !lects.length) return say(msg, 'أضف محاضرة واحدة على الأقل قبل نشر الدورة.', 'err');
         try { Object.assign(row, await instFields()); isNew ? await sb.insert('courses', row) : await sb.update('courses', { id: 'eq.' + c.id }, row); ui.toast('تم الحفظ.'); cl(); D.reload(); }
@@ -946,7 +948,7 @@
 
   window.BiosynPages.admin = async () => {
     me = await D.guard(['admin', 'support']); if (!me) return;
-    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
+    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'news', label: 'الأخبار والفعاليات', icon: 'book' }, { id: 'testimonials', label: 'آراء الطلاب', icon: 'chat' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
     // live counters: new requests + open refund requests (refreshes every minute and when the tab regains focus)
     let lastRef = -1;
