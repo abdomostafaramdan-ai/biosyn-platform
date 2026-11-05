@@ -411,3 +411,23 @@ EXTRA.update({
   "ترقية الباقة ↑": "Upgrade plan ↑", "جدّد الآن": "Renew now",
   "📎 ارفع سكرين التحويل": "📎 Upload the transfer screenshot", "ارفع صورة (سكرين) التحويل الأول.": "Upload the transfer screenshot first.",
 })
+EXTRA.update({
+  "شهادة إتمام | Biosyn Egypt": "Certificate of Completion | Biosyn Egypt", "شهادة إتمام": "Certificate of Completion",
+  "تحميل PDF / طباعة": "Download PDF / Print", "أضفها على LinkedIn": "Add to LinkedIn", "نسخ رابط الشهادة": "Copy certificate link",
+  "جارٍ تحميل الشهادة…": "Loading certificate…", "تم نسخ رابط الشهادة.": "Certificate link copied.",
+  "رابط الشهادة غير مكتمل": "Incomplete certificate link", "تعذّر تحميل الشهادة": "Couldn't load the certificate",
+  "اكتب اسمك كما تحب أن يظهر على الشهادة": "Type your name as it should appear on the certificate",
+  "حفظ الاسم": "Save name", "تم تثبيت الاسم على الشهادة ✓": "Name saved on the certificate ✓",
+  "اكتب اسمك بالكامل (اسمين على الأقل).": "Type your full name (at least two names).",
+  "عرض وتحميل": "View & download", "شهادات في الطريق": "Upcoming certificates", "قريبًا": "Soon", "اكتب اسمك على الشهادة": "Add your name to the certificate",
+  "الاسم على الشهادة (بالإنجليزي)": "Name on certificate (English)", "عرض الشهادة": "View certificate",
+  "بيانات الحجز": "Booking details", "الاسم الكامل": "Full name", "الاسم على الشهادة (بالإنجليزي كما في جواز السفر)": "Name on certificate (English, as in your passport)",
+  "رقم الموبايل": "Mobile number", "واتساب (لو مختلف)": "WhatsApp (if different)", "حفظ والمتابعة للدفع": "Save and continue to payment",
+  "اكتب اسمك الكامل (اسمين على الأقل).": "Type your full name (at least two names).",
+  "اكتب الاسم اللي على الشهادة بحروف إنجليزي (اسمين على الأقل).": "Type the certificate name in English letters (at least two names).",
+  "اكتب رقم موبايل صحيح.": "Enter a valid mobile number.",
+  "قبل الحجز محتاجين بياناتك عشان نبعتلك مواعيد الجلسات، ونطبع اسمك صح على الشهادة اللي هتصدر تلقائيًا يوم انتهاء الكورس.": "Before booking we need your details to send you the session times and print your name correctly on the certificate, which is issued automatically on the course end date.",
+  "تاريخ الانتهاء (تصدر الشهادات تلقائيًا فيه)": "End date (certificates are issued automatically)", "عدد ساعات التدريب (يُطبع على الشهادة)": "Training hours (printed on the certificate)",
+  "تاريخ الانتهاء لازم يكون بعد تاريخ البدء.": "The end date must be after the start date.",
+  "الاسم اللي بيظهر على الشهادة بييجي من «الاسم على الشهادة» في الإعدادات، ويتثبت على كل شهادة وقت صدورها.": "The name printed on certificates comes from “Name on certificate” in Settings and is fixed on each certificate when it is issued.",
+})

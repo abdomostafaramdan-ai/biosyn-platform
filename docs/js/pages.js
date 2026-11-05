@@ -171,7 +171,7 @@
         <ul class="bx-pcard-facts bx-ifacts">${c.starts_at ? `<li>${I.cal}<span>يبدأ ${esc(window.fmtDay(c.starts_at))}</span></li>` : ''}${c.seats ? `<li>${I.seat}<span>${c.seats} مقعد</span></li>` : ''}${LEVEL[c.level] ? `<li>${I.lvl}<span>${LEVEL[c.level]}</span></li>` : ''}<li>${I.live}<span>مباشر أونلاين</span></li></ul>
         <button type="button" class="bs-btn bs-btn-primary bs-btn-lg bs-block" id="reg">سجّل الآن</button>
         <p class="bx-hint">دورة تفاعلية بجلسات مباشرة، منفصلة عن باقات الاشتراك.</p></div></aside></div>`;
-      $('#reg').onclick = () => window.checkout({ course_id: c.id, title: c.title, price: c.price_egp, intl: c.intl_price });
+      $('#reg').onclick = () => attendeeThen(() => window.checkout({ course_id: c.id, title: c.title, price: c.price_egp, intl: c.intl_price }));
       return;
     }
     document.title = c.title + ' | Biosyn Egypt';
@@ -372,6 +372,31 @@
   };
 
   // ---------- certificate verification ----------
+  // interactive courses: the attendee's details (printed name + phone) are required before booking
+  async function attendeeThen(go) {
+    if (!sb.user) return go();   // checkout sends guests to sign up first
+    await sb.auth.ready;
+    let me = null; try { me = await sb.one('profiles', { select: 'full_name,cert_name,phone,whatsapp', id: 'eq.' + sb.user.id }); } catch {}
+    if (me && (me.cert_name || '').trim() && (me.phone || me.whatsapp)) return go();
+    me = me || {};
+    ui.modal(`<h3>بيانات الحجز</h3><p class="bx-hint" style="margin-top:0">قبل الحجز محتاجين بياناتك عشان نبعتلك مواعيد الجلسات، ونطبع اسمك صح على الشهادة اللي هتصدر تلقائيًا يوم انتهاء الكورس.</p>
+      <form class="bx-form2" novalidate><div class="bx-field"><label for="an">الاسم الكامل</label><input id="an" class="bx-input" maxlength="80" autocomplete="name" value="${esc(me.full_name || '')}"></div>
+      <div class="bx-field"><label for="acn">الاسم على الشهادة (بالإنجليزي كما في جواز السفر)</label><input id="acn" class="bx-input" dir="ltr" maxlength="80" placeholder="Ahmed Mohamed Ali" value="${esc(me.cert_name || '')}"></div>
+      <div class="row2"><div class="bx-field"><label for="ap">رقم الموبايل</label><input id="ap" class="bx-input" dir="ltr" type="tel" autocomplete="tel" value="${esc(me.phone || '')}"></div><div class="bx-field"><label for="aw">واتساب (لو مختلف)</label><input id="aw" class="bx-input" dir="ltr" type="tel" value="${esc(me.whatsapp || '')}"></div></div>
+      <div class="bx-formmsg" aria-live="polite"></div><div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" type="submit">حفظ والمتابعة للدفع</button><button type="button" class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div></form>`,
+    (m, close) => {
+      $('[data-x]', m).onclick = close;
+      $('form', m).onsubmit = async (e) => {
+        e.preventDefault(); const v = (id) => $('#' + id, m).value.trim(), msg = $('.bx-formmsg', m), err = (t) => { msg.className = 'bx-formmsg err'; msg.textContent = t; };
+        if (v('an').split(/\s+/).length < 2) return err('اكتب اسمك الكامل (اسمين على الأقل).');
+        if (v('acn').split(/\s+/).length < 2 || /[؀-ۿ]/.test(v('acn'))) return err('اكتب الاسم اللي على الشهادة بحروف إنجليزي (اسمين على الأقل).');
+        if (!/^\+?[\d\s-]{8,18}$/.test(v('ap'))) return err('اكتب رقم موبايل صحيح.');
+        try { await sb.update('profiles', { id: 'eq.' + sb.user.id }, { full_name: v('an'), cert_name: v('acn'), phone: v('ap'), whatsapp: v('aw') || null }); close(); go(); }
+        catch (x) { err(arErr(x)); }
+      };
+    });
+  }
+
   P.verify = async () => {
     const f = $('#vf'), inp = $('#vc'), out = $('#vr');
     const run = async () => {
@@ -380,7 +405,7 @@
       try {
         const r = await sb.rpc('verify_certificate', { p_code: code });
         out.innerHTML = r && r.name
-          ? `<div class="bx-banner" style="display:block;border-color:var(--success)"><b style="color:var(--success)">✓ شهادة صحيحة</b><p style="margin:8px 0 0">صادرة لـ <b>${esc(r.name)}</b> عن إتمام دورة <b class="bs-latin">${esc(r.course)}</b> بتاريخ ${new Date(r.issued_at).toLocaleDateString(window.LOC || 'ar-EG-u-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' })}.</p><small class="bx-hint">رقم الشهادة: <span class="bs-latin">${esc(r.code)}</span></small></div>`
+          ? `<div class="bx-banner" style="display:block;border-color:var(--success)"><b style="color:var(--success)">✓ شهادة صحيحة</b><p style="margin:8px 0 0">صادرة لـ <b>${esc(r.name)}</b> عن إتمام دورة <b class="bs-latin">${esc(r.course)}</b> بتاريخ ${new Date(r.issued_at).toLocaleDateString(window.LOC || 'ar-EG-u-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' })}.</p><small class="bx-hint">رقم الشهادة: <span class="bs-latin">${esc(r.code)}</span></small><div style="margin-top:12px"><a class="bs-btn bs-btn-secondary bs-btn-sm" href="certificate.html?c=${encodeURIComponent(r.code)}">عرض الشهادة</a></div></div>`
           : '<div class="bx-banner" style="display:block;border-color:var(--danger)"><b style="color:var(--danger)">لم نجد شهادة بهذا الرقم</b><p style="margin:8px 0 0">تأكد من كتابة الرقم كما هو مطبوع على الشهادة.</p></div>';
       } catch (e) { out.innerHTML = `<div class="bx-formmsg err">${esc(arErr(e))}</div>`; }
     };

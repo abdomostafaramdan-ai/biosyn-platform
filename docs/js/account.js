@@ -25,21 +25,6 @@
     }).sort((a, b) => new Date(b.updated) - new Date(a.updated));
   }
 
-  function loadQR() {
-    if (window.QRCode) return Promise.resolve(true);
-    return new Promise((res) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'; s.onload = () => res(true); s.onerror = () => res(false); document.head.appendChild(s); });
-  }
-  function certModal(cert, name) {
-    const url = new URL('verify.html?c=' + encodeURIComponent(cert.code || ''), location.href).href;
-    ui.modal(`<div class="bx-cert"><small>شهادة إتمام</small><h4>Biosyn Egypt</h4><small>تشهد المنصة بأن</small><div class="nm">${esc(name)}</div><small>قد أتم بنجاح دورة</small><h4 class="bs-latin" style="direction:ltr">${esc(cert.courses ? cert.courses.title : '')}</h4><small>بتاريخ ${D.date(cert.issued_at)} · رقم الشهادة <b class="bs-latin">${esc(cert.code || cert.id.slice(0, 8).toUpperCase())}</b></small>
-      <div style="display:flex;gap:12px;align-items:center;justify-content:center;margin-top:14px"><div id="qr" style="background:#fff;padding:6px;border-radius:6px;line-height:0"></div><small style="max-width:220px">للتحقق من صحة الشهادة امسح الكود أو افتح:<br><span class="bs-latin" style="direction:ltr;word-break:break-all">${esc(url)}</span></small></div></div>
-      <div class="bx-modal-actions"><button type="button" class="bs-btn bs-btn-primary" data-print>طباعة / حفظ PDF</button><button type="button" class="bs-btn bs-btn-secondary" data-copy>نسخ رابط التحقق</button><button type="button" class="bs-btn bs-btn-ghost" data-x>إغلاق</button></div>`,
-    (m, close) => {
-      $('[data-print]', m).onclick = () => window.print(); $('[data-x]', m).onclick = close;
-      $('[data-copy]', m).onclick = async () => { try { await navigator.clipboard.writeText(url); ui.toast('تم نسخ الرابط.'); } catch { ui.toast(url); } };
-      loadQR().then((ok) => { const el = $('#qr', m); if (ok && el && window.QRCode) new QRCode(el, { text: url, width: 96, height: 96 }); else if (el) el.remove(); });
-    });
-  }
 
   const GWN = { paymob: 'Paymob', stripe: 'Stripe', fawaterk: 'Fawaterk', manual: 'تحويل يدوي' };
   function receiptModal(p) {
@@ -62,7 +47,7 @@
 
   const views = {
     async home(main) {
-      const [sub, courses, enr, certs] = await Promise.all([subscription(), myCourses(), sb.get('enrollments', { select: '*,courses(slug,title,cover_code,starts_at)' }), sb.get('certificates', { select: 'id', limit: 50 })]);
+      const [sub, courses, enr, certs] = await Promise.all([subscription(), myCourses(), sb.get('enrollments', { select: '*,courses(slug,title,cover_code,starts_at,ends_at)' }), sb.get('certificates', { select: 'id', limit: 50 })]);
       const last = courses.find((c) => c.pct < 100) || courses[0];
       const first = (me.full_name || '').split(' ')[0] || 'بك';
       main.innerHTML = `<div id="paybanner"></div>
@@ -81,7 +66,7 @@
           ${D.stat('الشهادات', certs.length)}
         </div>
         ${D.panel('دوراتي', courses.length ? courses.map((c) => `<div class="bx-crow"><div class="bx-mine-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</div><div><h4>${esc(c.title)}</h4><div class="bx-progress" role="progressbar" aria-valuenow="${c.pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${c.pct}%"></i></div><small>${c.done} من ${c.total} محاضرة</small></div><a href="watch.html?c=${esc(c.slug)}" class="bs-btn bs-btn-primary bs-btn-sm">${c.pct >= 100 ? 'مراجعة' : 'تابع'}</a></div>`).join('') : '<div class="bx-empty-big"><b>لم تبدأ أي دورة بعد</b><a class="bx-link" href="courses.html">تصفح الدورات المسجلة</a></div>')}
-        ${enr.length ? D.panel('كورساتي التفاعلية', enr.map((e) => `<div class="bx-crow"><div class="bx-mine-code" style="font-size:18px">${esc((e.courses.cover_code || e.courses.title.slice(0, 2)).toUpperCase())}</div><div><h4>${esc(e.courses.title)}</h4><small>${e.courses.starts_at ? 'يبدأ ' + D.date(e.courses.starts_at) : 'سنوافيك بموعد الجلسات'}</small></div><span class="bx-st bx-st-ok">مسجّل</span></div>`).join('')) : ''}`;
+        ${enr.length ? D.panel('كورساتي التفاعلية', enr.map((e) => `<div class="bx-crow"><div class="bx-mine-code" style="font-size:18px">${esc((e.courses.cover_code || e.courses.title.slice(0, 2)).toUpperCase())}</div><div><h4>${esc(e.courses.title)}</h4><small>${e.courses.starts_at ? 'يبدأ ' + D.date(e.courses.starts_at) : 'سنوافيك بموعد الجلسات'}${e.courses.ends_at ? ' · ينتهي ' + D.date(e.courses.ends_at) + ' وتصدر شهادتك تلقائيًا' : ''}</small></div><span class="bx-st bx-st-ok">مسجّل</span></div>`).join('')) : ''}`;
       const q = new URLSearchParams(location.search), pay = q.get('payment');
       if (pay === 'cancelled') $('#paybanner').innerHTML = '<div class="bx-banner bx-appmsg" role="status">لم تكتمل عملية الدفع. لم يُخصم منك أي مبلغ، ويمكنك المحاولة مرة أخرى.</div>';
       if (pay === 'success') watchPayment(q.get('id'));
@@ -117,15 +102,20 @@
     },
 
     async certs(main) {
-      const certs = await sb.get('certificates', { select: '*,courses(title)', order: 'issued_at.desc' });
-      main.innerHTML = D.panel('شهاداتي', certs.length
-        ? certs.map((c) => `<div class="bx-crow"><div class="bx-mine-code">${D.ic('cert')}</div><div><h4 class="bs-latin" style="direction:ltr;text-align:right">${esc(c.courses.title)}</h4><small>صدرت في ${D.date(c.issued_at)}</small></div><button class="bs-btn bs-btn-secondary bs-btn-sm" data-c="${c.id}">عرض الشهادة</button></div>`).join('')
-        : '<div class="bx-empty-big"><b>لا توجد شهادات بعد</b>تظهر شهادة الإتمام هنا بعد إنهاء الدورة.</div>');
-      $$('[data-c]', main).forEach((b) => (b.onclick = () => certModal(certs.find((c) => c.id === b.dataset.c), me.full_name || sb.user.email)));
+      const [certs, enr] = await Promise.all([
+        sb.get('certificates', { select: '*,courses(title,kind)', order: 'issued_at.desc' }),
+        sb.get('enrollments', { select: 'course_id,courses(title,kind,ends_at)' }).catch(() => []),
+      ]);
+      const have = new Set(certs.map((c) => c.course_id));
+      const soon = enr.filter((e) => e.courses && e.courses.kind === 'interactive' && !have.has(e.course_id));
+      main.innerHTML = D.panel('شهاداتي', (certs.length
+        ? certs.map((c) => `<div class="bx-crow"><div class="bx-mine-code">${D.ic('cert')}</div><div><h4 dir="auto" style="text-align:right">${esc(c.courses.title)}</h4><small>صدرت في ${D.date(c.issued_at)} · رقم <span class="bs-latin" dir="ltr">${esc(c.code)}</span>${c.holder_name ? '' : ' · <b style="color:var(--warning,#f5b84a)">اكتب اسمك على الشهادة</b>'}</small></div><a class="bs-btn bs-btn-secondary bs-btn-sm" href="certificate.html?c=${encodeURIComponent(c.code)}">عرض وتحميل</a></div>`).join('')
+        : '<div class="bx-empty-big"><b>لا توجد شهادات بعد</b>شهادة الكورس المسجل تظهر هنا أول ما تخلّص كل محاضراته، وشهادة الكورس التفاعلي تظهر تلقائيًا يوم انتهائه.</div>')
+        + (soon.length ? `<h4 style="margin:22px 0 8px">شهادات في الطريق</h4>` + soon.map((e) => `<div class="bx-crow"><div class="bx-mine-code">${D.ic('cert')}</div><div><h4 dir="auto" style="text-align:right">${esc(e.courses.title)}</h4><small>${e.courses.ends_at ? 'هتصدر تلقائيًا يوم ' + D.date(e.courses.ends_at) + '، وهيوصلك إشعار وإيميل.' : 'هتصدر تلقائيًا بعد انتهاء الكورس، وهيوصلك إشعار وإيميل.'}</small></div><span class="bx-st">قريبًا</span></div>`).join('') : '')
+        + `<p class="bx-hint" style="margin:16px 0 0">الاسم اللي بيظهر على الشهادة بييجي من «الاسم على الشهادة» في الإعدادات، ويتثبت على كل شهادة وقت صدورها.</p>`);
     },
-
     async settings(main) {
-      main.innerHTML = D.panel('بيانات الحساب', `<form class="bx-form2" id="pf" novalidate><div class="row2"><div class="bx-field"><label for="pn">الاسم الكامل</label><input id="pn" class="bx-input" value="${esc(me.full_name)}"></div><div class="bx-field"><label for="pe">البريد الإلكتروني</label><input id="pe" class="bx-input" dir="ltr" value="${esc(sb.user.email)}" disabled></div></div>
+      main.innerHTML = D.panel('بيانات الحساب', `<form class="bx-form2" id="pf" novalidate><div class="row2"><div class="bx-field"><label for="pn">الاسم الكامل</label><input id="pn" class="bx-input" value="${esc(me.full_name)}"></div><div class="bx-field"><label for="pcn">الاسم على الشهادة (بالإنجليزي)</label><input id="pcn" class="bx-input" dir="ltr" maxlength="80" placeholder="Ahmed Mohamed Ali" value="${esc(me.cert_name || '')}"></div><div class="bx-field"><label for="pe">البريد الإلكتروني</label><input id="pe" class="bx-input" dir="ltr" value="${esc(sb.user.email)}" disabled></div></div>
         <div class="row2"><div class="bx-field"><label for="pp">الهاتف</label><input id="pp" class="bx-input" dir="ltr" type="tel" value="${esc(me.phone || '')}"></div><div class="bx-field"><label for="pw">واتساب</label><input id="pw" class="bx-input" dir="ltr" type="tel" value="${esc(me.whatsapp || '')}"></div><div class="bx-field"><label for="pc">الدولة</label><input id="pc" class="bx-input" value="${esc(me.country || '')}"></div></div>
         <div class="bx-formmsg" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">حفظ</button></div></form>`);
       // change password (Google-only accounts have none: they use "forgot password" to create one)
@@ -155,7 +145,7 @@
       }));
       $('#pf', main).onsubmit = async (e) => {
         e.preventDefault(); const m = $('.bx-formmsg', main);
-        try { const r = await sb.update('profiles', { id: 'eq.' + sb.user.id }, { full_name: $('#pn').value.trim(), phone: $('#pp').value.trim() || null, whatsapp: $('#pw').value.trim() || null, country: $('#pc').value.trim() || null }); me = r[0] || me; m.className = 'bx-formmsg ok'; m.textContent = 'تم الحفظ.'; }
+        try { const r = await sb.update('profiles', { id: 'eq.' + sb.user.id }, { full_name: $('#pn').value.trim(), cert_name: $('#pcn').value.trim() || null, phone: $('#pp').value.trim() || null, whatsapp: $('#pw').value.trim() || null, country: $('#pc').value.trim() || null }); me = r[0] || me; m.className = 'bx-formmsg ok'; m.textContent = 'تم الحفظ.'; }
         catch (err) { m.className = 'bx-formmsg err'; m.textContent = arErr(err); }
       };
     },

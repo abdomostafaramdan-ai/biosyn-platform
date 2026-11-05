@@ -1,0 +1,52 @@
+/* Certificate of completion: one A4-landscape sheet (1123 x 794 css px), scaled to the screen, printed 1:1 */
+.cx-page{max-width:1180px;margin:0 auto;padding:40px 16px 72px}
+.cx-bar{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+.cx-bar h1{font:700 30px/42px var(--font-display);margin:0}
+.cx-bar .bx-hint{margin:4px 0 0}
+.cx-actions{display:flex;flex-wrap:wrap;gap:8px}
+.cx-fixname{display:block;margin:0 0 18px}
+.cx-fixname form{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.cx-fixname input{flex:1;min-width:220px}
+.cx-stage{position:relative;width:100%}
+.cx-scale{position:relative;overflow:hidden;border-radius:10px;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.cx-scale .cx-cert{position:absolute;top:0;left:0;transform-origin:0 0}
+
+.cx-cert{width:1123px;height:794px;position:relative;overflow:hidden;background:#fff;color:#2b0b52;font-family:'Roboto Slab',Georgia,serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.cx-art{position:absolute;inset:0;width:100%;height:100%}
+.cx-wm{position:absolute;left:50%;top:47%;width:360px;height:374px;transform:translate(-50%,-50%);background:url(../img/biosyn-mark.png) center/contain no-repeat;opacity:.13;pointer-events:none}
+.cx-body{position:absolute;inset:0;padding:74px 170px 0;text-align:center;display:flex;flex-direction:column;align-items:center}
+.cx-h1{font:900 78px/1 Montserrat,Arial,sans-serif;letter-spacing:3px;color:#2b0b52}
+.cx-h2{font:800 21px/1 Montserrat,Arial,sans-serif;letter-spacing:11px;margin:8px 0 0;padding-left:11px;color:#2b0b52}
+.cx-to{font:400 21px/1.3 Montserrat,Arial,sans-serif;margin:34px 0 0;color:#3b2a66}
+.cx-name{font:400 64px/1.25 Lobster,'Brush Script MT',cursive;color:#2b0b52;margin:14px 0 0;padding:0 26px 6px;min-width:560px;max-width:780px;border-bottom:2px solid #1f4a4a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cx-name.ar{font:700 58px/1.35 'Aref Ruqaa','Amiri',serif;direction:rtl}
+.cx-name.empty{color:#b9b3cc;font-size:40px}
+.cx-line{font:400 20px/1.55 'Roboto Slab',Georgia,serif;margin:14px 0 0;max-width:760px;color:#2b0b52}
+.cx-course{font:700 36px/1.2 'Roboto Slab',Georgia,serif;margin:12px 0 0;max-width:760px;color:#2b0b52}
+.cx-course.ar{font:700 34px/1.35 'Readex Pro','IBM Plex Sans Arabic',sans-serif;direction:rtl}
+.cx-course.long{font-size:28px}
+.cx-by{font:400 22px/1.3 'Roboto Slab',Georgia,serif;margin:10px 0 0}
+.cx-by b{font-weight:700}
+.cx-foot{position:absolute;left:200px;right:200px;bottom:100px;display:grid;grid-template-columns:1fr 150px 1fr;align-items:end;gap:36px}
+.cx-slot{display:flex;flex-direction:column;align-items:center;gap:6px}
+.cx-slot b{font:700 18px/1.2 Montserrat,Arial,sans-serif;color:#2b0b52;min-width:200px;padding-bottom:8px;border-bottom:2px solid #2b0b52}
+.cx-slot span{font:700 15px/1 Montserrat,Arial,sans-serif;color:#3b2a66;letter-spacing:.5px}
+.cx-slot .cx-code{letter-spacing:2px}
+.cx-stamp{position:relative;width:150px;height:150px;justify-self:center}
+.cx-stamp svg{width:100%;height:100%;display:block}
+.cx-mark{position:absolute;left:50%;top:50%;width:66px;height:68px;transform:translate(-50%,-50%);background:#3a2a8c;-webkit-mask:url(../img/biosyn-mark.png) center/contain no-repeat;mask:url(../img/biosyn-mark.png) center/contain no-repeat}
+.cx-verify{position:absolute;left:0;right:0;bottom:30px;display:flex;align-items:center;justify-content:center;gap:10px;font:500 13px/1.2 Montserrat,Arial,sans-serif;color:#5b4f7a}
+.cx-verify b{font-weight:700;color:#2b0b52}
+.cx-qr{display:inline-block;line-height:0;background:#fff}
+.cx-qr img,.cx-qr canvas{width:54px!important;height:54px!important}
+
+@page{size:A4 landscape;margin:0}
+@media print{
+  html,body{background:#fff!important;margin:0!important;padding:0!important}
+  body>*:not(.bs-root){display:none!important}
+  body>.bs-root{display:block!important;background:#fff!important;min-height:0!important}
+  .bs-root>*:not(main),.cx-bar,.cx-fixname,.bx-chat,.bx-toasts{display:none!important}
+  .cx-page{padding:0!important;margin:0!important;max-width:none!important}
+  .cx-scale{box-shadow:none!important;border-radius:0!important;width:297mm!important;height:210mm!important;overflow:hidden!important;page-break-inside:avoid;break-inside:avoid}
+  .cx-scale .cx-cert{position:relative!important;transform:scale(1.0)!important;transform-origin:0 0}
+}
