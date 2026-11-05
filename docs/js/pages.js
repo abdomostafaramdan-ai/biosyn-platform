@@ -31,6 +31,29 @@
     const phoneErr = (iso) => iso === 'EG' ? 'اكتب رقم موبايل مصري صحيح (11 رقم يبدأ بـ 01).' : 'اكتب رقم موبايل صحيح.';
     // signed in (email or just back from Google): make sure we have a phone, then continue
     if (sb.session) await sb.auth.ready;
+    // back from the reset-password email: ask for the new password before anything else
+    let recovering = false; try { recovering = sessionStorage.getItem('biosyn.recovery') === '1'; } catch {}
+    if (sb.user && recovering) {
+      ['#f-in', '#f-up', '#f-ph', '.bx-seg', '#oauth'].forEach((q) => { const el = $(q); if (el) el.hidden = true; });
+      $('#auth-h').textContent = 'اختار كلمة مرور جديدة'; $('#auth-eb').textContent = 'إعادة تعيين كلمة المرور'; $('#auth-sub').textContent = 'اكتب كلمة المرور الجديدة لحسابك ' + (sb.user.email || '') + '.';
+      const f = $('#f-pw'); f.hidden = false; $('#n-p').focus();
+      f.addEventListener('submit', async (ev) => {
+        ev.preventDefault(); const m = $('#m-pw'), a = $('#n-p').value, b2 = $('#n-p2').value;
+        if (a.length < 8) { m.className = 'bx-formmsg err'; m.textContent = 'كلمة المرور يجب ألا تقل عن 8 أحرف.'; return; }
+        if (a !== b2) { m.className = 'bx-formmsg err'; m.textContent = 'كلمتا المرور غير متطابقتين.'; return; }
+        const b = $('button[type=submit]', f); b.disabled = true; m.className = 'bx-formmsg'; m.textContent = 'جارٍ الحفظ…';
+        try {
+          await sb.auth.updatePassword(a);
+          try { sessionStorage.removeItem('biosyn.recovery'); } catch {}
+          m.className = 'bx-formmsg ok'; m.textContent = 'تم تغيير كلمة المرور بنجاح ✓';
+          setTimeout(() => location.replace(nextUrl()), 1200);
+        } catch (e) {
+          b.disabled = false; m.className = 'bx-formmsg err';
+          m.textContent = /same|different from the old/i.test(e.message) ? 'اختار كلمة مرور مختلفة عن القديمة.' : /weak|at least/i.test(e.message) ? 'كلمة المرور ضعيفة، استخدم 8 أحرف على الأقل مع أرقام.' : window.arErr(e);
+        }
+      });
+      return;
+    }
     if (sb.user) {
       let prof = null; try { prof = await sb.one('profiles', { select: 'phone', id: 'eq.' + sb.user.id }); } catch {}
       if (prof && prof.phone) { location.replace(nextUrl()); return; }

@@ -128,6 +128,18 @@
       main.innerHTML = D.panel('بيانات الحساب', `<form class="bx-form2" id="pf" novalidate><div class="row2"><div class="bx-field"><label for="pn">الاسم الكامل</label><input id="pn" class="bx-input" value="${esc(me.full_name)}"></div><div class="bx-field"><label for="pe">البريد الإلكتروني</label><input id="pe" class="bx-input" dir="ltr" value="${esc(sb.user.email)}" disabled></div></div>
         <div class="row2"><div class="bx-field"><label for="pp">الهاتف</label><input id="pp" class="bx-input" dir="ltr" type="tel" value="${esc(me.phone || '')}"></div><div class="bx-field"><label for="pw">واتساب</label><input id="pw" class="bx-input" dir="ltr" type="tel" value="${esc(me.whatsapp || '')}"></div><div class="bx-field"><label for="pc">الدولة</label><input id="pc" class="bx-input" value="${esc(me.country || '')}"></div></div>
         <div class="bx-formmsg" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">حفظ</button></div></form>`);
+      // change password (Google-only accounts have none: they use "forgot password" to create one)
+      main.insertAdjacentHTML('beforeend', D.panel('كلمة المرور', `<form class="bx-form2" id="cpw" novalidate><div class="row2"><div class="bx-field"><label for="np1">كلمة المرور الجديدة</label><input id="np1" class="bx-input" type="password" dir="ltr" autocomplete="new-password" minlength="8" placeholder="8 أحرف على الأقل"></div><div class="bx-field"><label for="np2">أعد كتابتها</label><input id="np2" class="bx-input" type="password" dir="ltr" autocomplete="new-password" minlength="8"></div></div>
+        <div class="bx-formmsg" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-secondary" type="submit">تغيير كلمة المرور</button></div></form>`));
+      $('#cpw', main).onsubmit = async (ev) => {
+        ev.preventDefault(); const f = ev.currentTarget, m = $('.bx-formmsg', f), a = $('#np1', f).value, b = $('#np2', f).value, btn = $('button', f);
+        if (a.length < 8) { m.className = 'bx-formmsg err'; m.textContent = 'كلمة المرور يجب ألا تقل عن 8 أحرف.'; return; }
+        if (a !== b) { m.className = 'bx-formmsg err'; m.textContent = 'كلمتا المرور غير متطابقتين.'; return; }
+        btn.disabled = true;
+        try { await sb.auth.updatePassword(a); f.reset(); m.className = 'bx-formmsg ok'; m.textContent = 'تم تغيير كلمة المرور ✓'; }
+        catch (e) { m.className = 'bx-formmsg err'; m.textContent = /reauth|recent/i.test(e.message) ? 'لأمان حسابك: سجّل خروج وادخل تاني، أو استخدم «نسيت كلمة المرور» من صفحة الدخول.' : /same|different from the old/i.test(e.message) ? 'اختار كلمة مرور مختلفة عن القديمة.' : arErr(e); }
+        btn.disabled = false;
+      };
       const [devs, refs] = await Promise.all([sb.get('user_devices', { select: '*', user_id: 'eq.' + sb.user.id, order: 'last_seen.desc' }).catch(() => []), sb.rpc('my_referrals').catch(() => null)]);
       const myDev = window.deviceId && deviceId();
       main.insertAdjacentHTML('beforeend', D.panel('الأجهزة', `<p class="bx-hint" style="margin-top:0">يمكنك مشاهدة المحاضرات من جهازين كحد أقصى. لإضافة جهاز جديد أزل جهازًا قديمًا (مرة كل 7 أيام).</p>` +

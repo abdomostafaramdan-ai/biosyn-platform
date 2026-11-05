@@ -1,3 +1,5 @@
+// Anti-clickjacking: the platform never runs inside another site's frame (GitHub Pages can't send frame-ancestors).
+(function () { try { if (window.top !== window.self) { document.documentElement.style.display = 'none'; window.top.location = window.self.location.href; } } catch (e) { document.documentElement.style.display = 'none'; } })();
 // Public values only (safe in the browser). Secrets live in Supabase Edge Function secrets.
 window.BIOSYN = {
   SUPABASE_URL: 'https://qdlvvwwlsofcngedoaya.supabase.co',

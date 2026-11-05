@@ -59,18 +59,25 @@
       async signIn(email, password) {
         setSession(await raw('/auth/v1/token?grant_type=password', { method: 'POST', body: { email, password }, auth: false }));
       },
-      async recover(email) { await raw('/auth/v1/recover', { method: 'POST', body: { email }, auth: false }); },
+      // the reset link lands on login.html, which then asks for the new password
+      async recover(email) { await raw('/auth/v1/recover?redirect_to=' + encodeURIComponent(new URL('login.html?mode=reset', location.href).href), { method: 'POST', body: { email }, auth: false }); },
+      updatePassword: (password) => raw('/auth/v1/user', { method: 'PUT', body: { password } }),
+      lastType: null,
       async signOut() { try { await raw('/auth/v1/logout', { method: 'POST' }); } catch {} setSession(null); },
       // handle the #access_token=... redirect after email confirmation / recovery
       consumeHash() {
         if (!location.hash.includes('access_token=')) return false;
         const p = new URLSearchParams(location.hash.slice(1));
+        this.lastType = p.get('type');
+        try { if (this.lastType === 'recovery') sessionStorage.setItem('biosyn.recovery', '1'); } catch {}
         setSession({ access_token: p.get('access_token'), refresh_token: p.get('refresh_token'), expires_in: +p.get('expires_in') });
         this.ready = raw('/auth/v1/user').then((u) => { session.user = u; store.set(session); emit(); }).catch(() => {});
         history.replaceState(null, '', location.pathname + location.search);
         return true;
       },
       ready: Promise.resolve(),
+      // a session restored without its user (e.g. page left right after an email link): load the user first
+      loadUser() { if (session && !session.user) this.ready = raw('/auth/v1/user').then((u) => { if (session) { session.user = u; store.set(session); emit(); } }).catch(() => {}); return this.ready; },
       // OAuth (Google): Supabase sends the user back to redirectTo with #access_token=...
       oauthUrl(provider, redirectTo) { return `${C.SUPABASE_URL}/auth/v1/authorize?provider=${encodeURIComponent(provider)}&redirect_to=${encodeURIComponent(redirectTo)}`; },
       async providers() { try { const s = await raw('/auth/v1/settings', { auth: false }); return (s && s.external) || {}; } catch { return {}; } },

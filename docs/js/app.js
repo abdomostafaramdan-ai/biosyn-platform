@@ -685,6 +685,9 @@
   window.BiosynPages = window.BiosynPages || {};
   async function boot() {
     sb.auth.consumeHash();
+    // a reset-password link that landed on another page: send it to the new-password form
+    try { if (sessionStorage.getItem('biosyn.recovery') === '1' && !/login\.html$/.test(location.pathname) && sb.session) { await sb.auth.ready; location.replace('login.html?mode=reset'); return; } } catch {}
+    sb.auth.loadUser();
     try { const c = new URLSearchParams(location.search).get('code'); if (c && /^[\w-]{3,40}$/.test(c)) localStorage.setItem('biosyn.code', c.toUpperCase()); } catch {}
     mountLayout();
     mountToggles();

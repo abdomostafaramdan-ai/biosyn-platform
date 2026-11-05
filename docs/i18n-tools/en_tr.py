@@ -399,3 +399,15 @@ EXTRA.update({
   "رسوم الاستشارة": "Consultation fee", "جلسة استشارة فردية · الدفع أونلاين وبعده بنتواصل معاك لتحديد الموعد": "One-to-one consultation session · pay online, then we contact you to book the time",
   "احجز وادفع رسوم الاستشارة": "Book and pay the consultation fee", "ادفع واحجز موعدك": "Pay and book your session",
 })
+EXTRA.update({
+  "كلمة المرور الجديدة": "New password", "أعد كتابة كلمة المرور": "Repeat the password", "حفظ كلمة المرور": "Save password",
+  "اختار كلمة مرور جديدة": "Choose a new password", "إعادة تعيين كلمة المرور": "Reset password",
+  "كلمة المرور": "Password", "أعد كتابتها": "Repeat it", "تغيير كلمة المرور": "Change password",
+  "كلمتا المرور غير متطابقتين.": "The passwords don't match.", "تم تغيير كلمة المرور بنجاح ✓": "Password changed ✓", "تم تغيير كلمة المرور ✓": "Password changed ✓",
+  "الإشعارات": "Notifications", "تحديد الكل كمقروء": "Mark all as read", "مفيش إشعارات لسه": "No notifications yet",
+  "باقتك الحالية": "Your current plan", "رقّي للباقة دي ↑": "Upgrade to this plan ↑", "جدّد الباقة": "Renew plan",
+  "باقتك الحالية أطول": "Your current plan is longer", "الأيام المتبقية من باقتك محسوبة": "Your remaining days are kept",
+  "التجديد بيفتح في آخر 7 أيام": "Renewal opens in the last 7 days", "متاحة للتجديد في آخر 7 أيام": "Available for renewal in the last 7 days",
+  "ترقية الباقة ↑": "Upgrade plan ↑", "جدّد الآن": "Renew now",
+  "📎 ارفع سكرين التحويل": "📎 Upload the transfer screenshot", "ارفع صورة (سكرين) التحويل الأول.": "Upload the transfer screenshot first.",
+})
