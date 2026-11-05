@@ -42,6 +42,7 @@
 - [حلول المؤسسات](https://biosyneg.com/institutions.html)
 - [انضم كمحاضر](https://biosyneg.com/teach.html)
 - [المدونة](https://biosyneg.com/blog.html)
+- [الأخبار والفعاليات](https://biosyneg.com/news.html)
 - [من نحن](https://biosyneg.com/about.html)
 - [التحقق من الشهادات](https://biosyneg.com/verify.html)
 - [الشروط والأحكام](https://biosyneg.com/terms.html)
