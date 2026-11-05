@@ -1,0 +1,61 @@
+{
+ "built_at": "2026-11-05T05:00:33+00:00",
+ "sitemap_urls": 20,
+ "indexable": [
+  {
+   "slug": "bioinformtics-diploma",
+   "title": "Bioinformtics Diploma",
+   "url": "https://biosyneg.com/course-bioinformtics-diploma.html"
+  },
+  {
+   "slug": "molecular-biology-course-614141",
+   "title": "Molecular Biology Course",
+   "url": "https://biosyneg.com/course-molecular-biology-course-614141.html"
+  },
+  {
+   "slug": "microbiology-course-362803",
+   "title": "Microbiology Course",
+   "url": "https://biosyneg.com/course-microbiology-course-362803.html"
+  }
+ ],
+ "noindex": [
+  {
+   "slug": "bioinformtics-diplomaa",
+   "title": "Bioinformtics Diplomaa",
+   "why": [
+    "الوصف منسوخ من كورس تاني",
+    "أقل من 5 محاضرات"
+   ]
+  },
+  {
+   "slug": "research-c45f4e",
+   "title": "research",
+   "why": [
+    "الوصف نص تجريبي",
+    "الوصف أقل من 200 حرف",
+    "أقل من 5 محاضرات"
+   ]
+  }
+ ],
+ "topics": [],
+ "teachers": [
+  {
+   "name": "إسراء مصطفي",
+   "url": "https://biosyneg.com/teacher-e71638dc.html"
+  },
+  {
+   "name": "د. محمد إمام",
+   "url": "https://biosyneg.com/teacher-ad83c2d3.html"
+  },
+  {
+   "name": "د. شريف عرفه",
+   "url": "https://biosyneg.com/teacher-f297c76b.html"
+  },
+  {
+   "name": "د. اسراء المليجي",
+   "url": "https://biosyneg.com/teacher-6308ea6d.html"
+  }
+ ],
+ "ai_training": true,
+ "changed": 0
+}
