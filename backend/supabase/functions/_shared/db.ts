@@ -1,4 +1,3 @@
-import { sendPending } from './mail.ts';
 import { sendMetaPurchase } from './track.ts';
 import { crmFlush } from './crm.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
@@ -50,9 +49,9 @@ export async function settle(sb: ReturnType<typeof admin>, paymentId: string, pa
   return { ok: true, reason: 'fulfilled' };
 }
 
-// best-effort side effects after a payment is fulfilled: confirmation emails + Meta CAPI. Never throws.
+// best-effort side effects after a payment is fulfilled: Meta CAPI + CRM. Never throws.
 export async function afterPaid(sb: ReturnType<typeof admin>, paymentId?: string) {
-  try { await sendPending(sb); } catch (e) { console.error('mail flush failed', e); }
+  // emails: inserting into email_outbox pushes the send-emails function (trigger kick_mailer)
   if (paymentId) { try { await sendMetaPurchase(sb, paymentId); } catch (e) { console.error('capi failed', e); } }
   try { await crmFlush(sb); } catch (e) { console.error('crm flush failed', e); }
 }
