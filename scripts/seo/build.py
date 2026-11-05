@@ -128,7 +128,8 @@ def indexable(c, all_courses):
     body = _norm(c.get('description') or c.get('summary'))
     if body and any(o is not c and o.get('created_at', '') < c.get('created_at', '') and _norm(o.get('description') or o.get('summary')) == body for o in all_courses):
         return False
-    junk = bool(re.fullmatch(r'[a-z\s]{0,20}', (c.get('summary') or '').lower())) and not c.get('description')
+    sm = (c.get('summary') or '').strip().lower()
+    junk = bool(sm) and bool(re.fullmatch(r'[a-z\s]{1,20}', sm)) and not c.get('description')   # placeholder text like "dvcbvb"
     if junk: return False
     if c['kind'] == 'interactive': return text >= 200
     return text >= 200 or len(c['lectures']) >= 5
