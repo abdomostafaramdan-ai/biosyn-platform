@@ -62,8 +62,8 @@
         ${D.stat('آخر تحديث للصفحات', status ? ago(status.built_at) : '—', pending ? '⏳ في تحديث مطلوب، خلال 15 دقيقة' : status ? n(status.sitemap_urls) + ' صفحة في الـ sitemap' : '')}
         ${D.stat('دورات ظاهرة في البحث', `${ok} / ${pub.length}`, pub.length - ok ? `${pub.length - ok} مخفية لضعف المحتوى` : 'كلها مؤهلة')}
         ${D.stat('صفحات كليات ومحاضرين', `${status ? status.topics.length : 0} · ${status ? status.teachers.length : 0}`, 'كليات · محاضرين')}
-        ${D.stat('زيارات من محركات البحث', n(searchVisits), 'آخر 30 يوم (جلسات)')}
-        ${D.stat('زيارات من الذكاء الاصطناعي', n(aiVisits), 'ChatGPT · Perplexity · Gemini … آخر 30 يوم')}
+        ${D.stat('زيارات من محركات البحث', n(searchVisits), 'آخر 30 يومًا (جلسات)')}
+        ${D.stat('زيارات من الذكاء الاصطناعي', n(aiVisits), 'ChatGPT · Perplexity · Gemini … آخر 30 يومًا')}
       </div>
       <div class="sx-actions">
         <button type="button" class="bs-btn bs-btn-primary" data-rebuild>⟳ إعادة بناء الصفحات الآن</button>
@@ -104,7 +104,7 @@
           <textarea class="bx-input" data-k="description" rows="2" maxlength="220" placeholder="الوصف الحالي…">${esc(o.description || '')}</textarea><small class="sx-cnt"></small></div>`; }).join('')}</div>`)}
 
       ${D.panel('إعدادات متقدمة', `
-        <label class="sx-switch"><input type="checkbox" id="sx-train" ${S.ai_training === false ? '' : 'checked'}> اسمح لروبوتات تدريب الذكاء الاصطناعي (GPTBot, ClaudeBot, Google-Extended…) تقرا الموقع</label>
+        <label class="sx-switch"><input type="checkbox" id="sx-train" ${S.ai_training === false ? '' : 'checked'}> اسمح لروبوتات تدريب الذكاء الاصطناعي (GPTBot, ClaudeBot, Google-Extended…) بقراءة الموقع</label>
         <small class="bx-hint" style="display:block;margin:4px 0 14px">إذا أغلقتها، سيظل ChatGPT وPerplexity قادرين على البحث في موقعك وترشيحه (روبوتات البحث مسموح بها دائمًا)، لكن محتواك لن يدخل في تدريب النماذج. للظهور الأقوى في الذكاء الاصطناعي اتركها مفتوحة.</small>
         <div class="row2"><div class="bx-field"><label for="sx-mc">أقل عدد من الحروف للوصف حتى تظهر الدورة في البحث</label><input id="sx-mc" class="bx-input" type="number" min="80" max="1000" value="${esc(S.min_chars || 200)}"></div>
           <div class="bx-field"><label for="sx-ml">أو أقل عدد محاضرات (للدورة المسجلة)</label><input id="sx-ml" class="bx-input" type="number" min="1" max="50" value="${esc(S.min_lectures || 5)}"></div></div>

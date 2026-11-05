@@ -1,0 +1,6 @@
+-- 0058 admin_insights(p_from, p_to): one JSON for Admin → «مركز التحليلات»
+-- KPIs vs the previous period of the same length, daily/monthly series (Cairo time), funnel, revenue breakdowns,
+-- per-course performance, traffic, emails/reactivation, support, forms, coupons, referrals, instructor earnings, activity feed.
+-- Staff accounts (admin/support) are excluded from payments, sign-ups and learning. is_staff() required.
+-- Applied via MCP (see the live definition: select pg_get_functiondef('public.admin_insights(timestamptz,timestamptz)'::regprocedure)).
+-- seo_fingerprint() now also hashes courses.cover_url and posts body/tag/published_at so the static build reacts to them.

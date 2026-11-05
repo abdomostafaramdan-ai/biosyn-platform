@@ -138,7 +138,7 @@
   // ---------- theme + language switches ----------
   window.mountToggles = function () {
     const en = document.documentElement.getAttribute('data-lang') === 'en';
-    const shellOnly = /(admin|instructor)\.html/.test(location.pathname);
+    const shellOnly = /instructor\.html/.test(location.pathname);
     $$('[data-toggles]').forEach((box) => {
       if (box.dataset.ready) return; box.dataset.ready = '1';
       box.innerHTML = '' +

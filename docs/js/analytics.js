@@ -53,7 +53,7 @@
           n(r.certificates),
           r.kind === 'recorded' ? `<b>${D.money(r.est_earnings_month)}</b><small class="bx-hint bx-an-sub">متوقع هذا الشهر · ${D.money(r.earned_closed)} شهور مقفولة</small>` : '<span class="bx-hint">اتفاق منفصل</span>',
         ]), opt.admin ? 'لا توجد دورات بهذه التصفية' : 'لا توجد دورات مرتبطة بحسابك بعد'),
-        `<span class="bx-hint bx-livestamp"><span class="bx-live"><i></i></span> بيتحدث تلقائي · آخر تحديث ${at.toLocaleTimeString('ar-EG-u-nu-latn', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>`)}
+        `<span class="bx-hint bx-livestamp"><span class="bx-live"><i></i></span> يتحدّث تلقائيًا · آخر تحديث ${at.toLocaleTimeString('ar-EG-u-nu-latn', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>`)}
         <p class="bx-hint">المشاهدة المعتمدة = طالب مشترك شاهد 50٪ من محاضرة، وتُحتسب مرة واحدة فقط لكل طالب في الدورة كل شهر مهما شاهد من محاضرات. «يشاهدون الآن» = طلاب يعمل الفيديو لديهم خلال آخر دقيقتين. يُحتسب الربح المتوقع على اشتراكات الشهر حتى الآن، ويُقفل الرقم النهائي في بداية الشهر القادم.</p>`;
       const bind = (id, k, ev) => { const el = $('#' + id, main); if (el) el.addEventListener(ev || 'change', () => { F[k] = el.type === 'checkbox' ? el.checked : el.value; const pos = el.selectionStart; draw(); if (ev === 'input') { const x = $('#' + id, main); x.focus(); x.setSelectionRange(pos, pos); } }); };
       bind('aq', 'q', 'input'); bind('ak', 'kind'); bind('as', 'status'); bind('ao', 'sort'); bind('au', 'unlinked');

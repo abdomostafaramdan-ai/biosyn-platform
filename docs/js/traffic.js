@@ -26,7 +26,7 @@
     else if (k === '12m') d.setMonth(d.getMonth() - 12);
     return d.toISOString();
   };
-  const RANGES = [['today', 'اليوم'], ['7d', 'آخر 7 أيام'], ['30d', 'آخر 30 يوم'], ['month', 'هذا الشهر'], ['year', 'هذه السنة'], ['12m', 'آخر 12 شهر']];
+  const RANGES = [['today', 'اليوم'], ['7d', 'آخر 7 أيام'], ['30d', 'آخر 30 يومًا'], ['month', 'هذا الشهر'], ['year', 'هذه السنة'], ['12m', 'آخر 12 شهرًا']];
 
   // bars chart (inline SVG): visitors bars + page views line
   function chart(series, daily) {
