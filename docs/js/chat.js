@@ -6,12 +6,12 @@
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const err = (e) => {
     const m = (e && e.message) || '';
-    return /slow down/.test(m) ? 'رسايل كتير ورا بعض، استنى دقيقة.' : /thread closed/.test(m) ? 'المحادثة دي اتقفلت. افتح تذكرة جديدة لو محتاج حاجة.'
-      : /subscription required/.test(m) ? 'لازم تكون مشترك في الكورس عشان تسأل المحاضر.' : /too many tickets/.test(m) ? 'فتحت تذاكر كتير النهارده، استنى رد الفريق.'
+    return /slow down/.test(m) ? 'رسائل كثيرة متتالية، انتظر دقيقة.' : /thread closed/.test(m) ? 'أُغلقت هذه المحادثة. افتح تذكرة جديدة إذا احتجت إلى شيء.'
+      : /subscription required/.test(m) ? 'يجب أن تكون مشتركًا في الدورة لتسأل المحاضر.' : /too many tickets/.test(m) ? 'فتحت تذاكر كتير النهارده، استنى رد الفريق.'
       : window.arErr ? window.arErr(e) : m;
   };
-  const CAT = { payment: 'الدفع والاشتراك', technical: 'مشكلة تقنية', content: 'محتوى الكورس', instructor: 'شكوى من محاضر', account: 'الحساب', other: 'أخرى' };
-  const ST = { open: ['مفتوحة', 'warn'], pending: ['مستنية ردّك', 'info'], resolved: ['اتحلّت', 'ok'], closed: ['مقفولة', 'mute'] };
+  const CAT = { payment: 'الدفع والاشتراك', technical: 'مشكلة تقنية', content: 'محتوى الدورة', instructor: 'شكوى من محاضر', account: 'الحساب', other: 'أخرى' };
+  const ST = { open: ['مفتوحة', 'warn'], pending: ['بانتظار ردّك', 'info'], resolved: ['اتحلّت', 'ok'], closed: ['مقفولة', 'mute'] };
   const ROLE = { student: 'الطالب', instructor: 'المحاضر', staff: 'فريق Biosyn' };
   const when = (d) => new Date(d).toLocaleString(window.LOC || 'ar-EG-u-nu-latn', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
   const badge = (s) => `<span class="bx-st bx-st-${(ST[s] || ['', 'mute'])[1]}">${(ST[s] || [s])[0]}</span>`;
@@ -31,10 +31,10 @@
       const paint = () => {
         const mine = myRole();
         $('[data-title]', m).textContent = t ? (t.kind === 'ticket' ? t.subject : 'سؤال في: ' + t.subject) : '';
-        $('[data-sub]', m).textContent = t ? (t.kind === 'ticket' ? `تذكرة · ${CAT[t.category] || ''}` : mine === 'student' ? 'المحاضر بيرد عليك هنا' : `الطالب: ${t.student_name || '—'}`) : '';
+        $('[data-sub]', m).textContent = t ? (t.kind === 'ticket' ? `تذكرة · ${CAT[t.category] || ''}` : mine === 'student' ? 'يرد عليك المحاضر هنا' : `الطالب: ${t.student_name || '—'}`) : '';
         $('[data-st]', m).innerHTML = t ? badge(t.status) : '';
         log.innerHTML = msgs.length ? msgs.map((x) => `<div class="bx-msg ${x.sender_id === sb.user.id ? 'me' : ''}"><small>${x.sender_id === sb.user.id ? 'أنت' : ROLE[x.role] || ''} · ${when(x.created_at)}</small><p>${esc(x.body)}</p></div>`).join('')
-          : '<p class="bx-hint" style="text-align:center;margin:24px 0">لسه مفيش رسايل. اكتب سؤالك تحت.</p>';
+          : '<p class="bx-hint" style="text-align:center;margin:24px 0">لا توجد رسائل بعد. اكتب سؤالك بالأسفل.</p>';
         log.scrollTop = log.scrollHeight;
         const acts = $('[data-acts]', m);
         acts.innerHTML = (t && t.kind === 'ticket' && t.status !== 'closed' ? (mine === 'staff' ? '<button type="button" class="bs-btn bs-btn-secondary bs-btn-sm" data-s="resolved">اتحلّت</button><button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" data-s="closed">قفل التذكرة</button>' : '<button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" data-s="closed">المشكلة اتحلت، اقفل التذكرة</button>') : '')
@@ -69,11 +69,11 @@
   }
 
   function newTicket(onDone) {
-    ui.modal(`<h3>تذكرة دعم أو شكوى</h3><p class="bx-hint" style="margin-top:0">اكتب المشكلة بالتفصيل وفريق Biosyn هيرد عليك هنا وعلى إيميلك.</p>
+    ui.modal(`<h3>تذكرة دعم أو شكوى</h3><p class="bx-hint" style="margin-top:0">اكتب المشكلة بالتفصيل وسيرد عليك فريق Biosyn هنا وعلى بريدك الإلكتروني.</p>
       <form class="bx-form" style="gap:14px" novalidate>
         <div class="bx-field"><label for="tk-c">النوع</label><select id="tk-c" class="bx-select">${Object.entries(CAT).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></div>
-        <div class="bx-field"><label for="tk-s">العنوان *</label><input id="tk-s" class="bx-input" maxlength="160" placeholder="مثال: اتخصم مني ومش متفعل الاشتراك"></div>
-        <div class="bx-field"><label for="tk-b">التفاصيل *</label><textarea id="tk-b" class="bx-textarea" rows="5" maxlength="4000" placeholder="إيه اللي حصل؟ امتى؟ ولو فيه رقم عملية أو إيصال اكتبه."></textarea></div>
+        <div class="bx-field"><label for="tk-s">العنوان *</label><input id="tk-s" class="bx-input" maxlength="160" placeholder="مثال: خُصم المبلغ ولم يُفعَّل الاشتراك"></div>
+        <div class="bx-field"><label for="tk-b">التفاصيل *</label><textarea id="tk-b" class="bx-textarea" rows="5" maxlength="4000" placeholder="ماذا حدث؟ ومتى؟ وإذا كان لديك رقم عملية أو إيصال فاكتبه."></textarea></div>
         <div class="bx-formmsg" aria-live="polite"></div>
         <div class="bx-modal-actions"><button type="submit" class="bs-btn bs-btn-primary">إرسال التذكرة</button><button type="button" class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div></form>`, (m, close) => {
       $('[data-x]', m).onclick = close;
@@ -81,7 +81,7 @@
         e.preventDefault(); const s = $('#tk-s', m).value.trim(), b = $('#tk-b', m).value.trim(), msg = $('.bx-formmsg', m);
         if (!s || b.length < 10) { msg.className = 'bx-formmsg err'; msg.textContent = 'اكتب عنوان وتفاصيل المشكلة (10 حروف على الأقل).'; return; }
         const btn = $('button[type=submit]', m); btn.disabled = true;
-        try { const id = await sb.rpc('open_ticket', { p_subject: s, p_category: $('#tk-c', m).value, p_body: b }); close(); ui.toast('وصلت تذكرتك، وهنرد عليك في أقرب وقت.'); onDone && onDone(id); }
+        try { const id = await sb.rpc('open_ticket', { p_subject: s, p_category: $('#tk-c', m).value, p_body: b }); close(); ui.toast('وصلت تذكرتك، وسنرد عليك في أقرب وقت.'); onDone && onDone(id); }
         catch (x) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = err(x); }
       };
     });
@@ -101,9 +101,9 @@
       const me = mode === 'student' ? 'student' : 'other';
       $('[data-list]', box).innerHTML = list.length ? list.map((t) => `<button type="button" class="bx-thread ${unread(t, me) ? 'unread' : ''}" data-t="${t.id}">
           <span class="bx-thread-ic" aria-hidden="true">${t.kind === 'ticket' ? '🎫' : '💬'}</span>
-          <span class="bx-thread-main"><b>${esc(t.kind === 'ticket' ? t.subject : t.subject)}</b><small class="bx-hint">${t.kind === 'ticket' ? 'تذكرة · ' + (CAT[t.category] || '') : 'سؤال في كورس'}${mode !== 'student' && t.student_name ? ' · ' + esc(t.student_name) : ''}${mode === 'staff' && t.kind === 'course' && !t.instructor_id ? ' · <span class="bx-st bx-st-warn">مفيش محاضر مربوط</span>' : ''}</small></span>
+          <span class="bx-thread-main"><b>${esc(t.kind === 'ticket' ? t.subject : t.subject)}</b><small class="bx-hint">${t.kind === 'ticket' ? 'تذكرة · ' + (CAT[t.category] || '') : 'سؤال في دورة'}${mode !== 'student' && t.student_name ? ' · ' + esc(t.student_name) : ''}${mode === 'staff' && t.kind === 'course' && !t.instructor_id ? ' · <span class="bx-st bx-st-warn">لا يوجد محاضر مرتبط</span>' : ''}</small></span>
           <span class="bx-thread-side">${badge(t.status)}<small class="bx-hint">${when(t.last_message_at)}</small>${unread(t, me) ? '<i class="bx-dot" aria-label="غير مقروءة"></i>' : ''}</span></button>`).join('')
-        : `<div class="bx-empty-big"><b>${opt.empty || 'مفيش رسايل'}</b></div>`;
+        : `<div class="bx-empty-big"><b>${opt.empty || 'لا توجد رسائل'}</b></div>`;
       $$('[data-t]', box).forEach((b) => (b.onclick = () => openThread(b.dataset.t, { onChange: () => load().then(draw) })));
     };
     box.innerHTML = `<div class="bx-btnrow" style="margin-bottom:12px;align-items:end">

@@ -246,8 +246,8 @@ IDX = {
 EXTRA = {
 # errors & system messages
 "بوابة الدفع هذه غير مفعّلة بعد، جرّب بوابة أخرى.": "This payment method isn't enabled yet — please try another.",
-"أنت مسجّل في هذا الكورس بالفعل.": "You're already enrolled in this course.", "اكتمل عدد المقاعد في هذا الكورس.": "This course is full.",
-"هذه الباقة غير متاحة حاليًا.": "This plan isn't available right now.", "هذا الكورس غير متاح حاليًا.": "This course isn't available right now.",
+"أنت مسجّل في هذه الدورة بالفعل.": "You're already enrolled in this course.", "اكتمل عدد المقاعد في هذه الدورة.": "This course is full.",
+"هذه الباقة غير متاحة حاليًا.": "This plan isn't available right now.", "هذه الدورة غير متاح حاليًا.": "This course isn't available right now.",
 "حدث خطأ غير متوقع، حاول مرة أخرى.": "Something went wrong — please try again.", "جهاز": "Device",
 "؟ مساعدة": "? Help", "مساعد Biosyn": "Biosyn assistant",
 "أهلاً! اسألني عن الباقات، الدفع، الشهادات أو الدورات. لأي مشكلة في حسابك راسلنا على contact@biosynegypt.com": "Hi! Ask me about plans, payment, certificates or courses. For account issues, email contact@biosynegypt.com",
@@ -257,7 +257,7 @@ EXTRA = {
 "استلمنا طلبك. سنراجع التحويل ونفعّل اشتراكك، وسيصلك بريد بالتأكيد.": "Request received. We'll review the transfer, activate your subscription and email you a confirmation.",
 "انتهت جلستك، سجّل الدخول من جديد.": "Your session expired — please sign in again.", "مدة شهر واحد": "1 month", "صلاحية 12 شهرًا": "Valid for 12 months",
 "الاشتراك لا يتجدد تلقائيًا ولا يمكن استرداده.": "Subscriptions don't renew automatically and are non-refundable.", "جارٍ تحميل الدورات…": "Loading courses…",
-"دورة": "Course", "تفاعلية": "Interactive", "اكتشف الكورس": "Explore course", "الدورات قريبًا": "Courses coming soon", "سنضيفها هنا فور نشرها.": "We'll add them here as soon as they're published.",
+"دورة": "Course", "تفاعلية": "Interactive", "اكتشف الدورة": "Explore course", "الدورات قريبًا": "Courses coming soon", "سنضيفها هنا فور نشرها.": "We'll add them here as soon as they're published.",
 "البريد الإلكتروني أو كلمة المرور غير صحيحة.": "Incorrect email or password.", "هذا البريد مسجّل بالفعل، سجّل الدخول.": "This email is already registered — please sign in.",
 "أكّد بريدك الإلكتروني أولًا من الرسالة التي وصلتك.": "Please confirm your email first using the message we sent you.", "محاولات كثيرة، انتظر قليلًا ثم أعد المحاولة.": "Too many attempts — wait a moment and try again.",
 "جارٍ تسجيل الدخول…": "Signing in…", "اكتب اسمك الكامل.": "Enter your full name.", "اكتب بريدًا إلكترونيًا صحيحًا.": "Enter a valid email address.",
@@ -274,9 +274,9 @@ EXTRA = {
 "ثم حاول مجددًا.": "then try again.", "هذا الفيديو لم يُرفع بعد.": "This video hasn't been uploaded yet.", "جارٍ تجهيز الفيديو…": "Preparing the video…", "جارٍ التحقق…": "Verifying…",
 "لا توجد مقالات بعد": "No articles yet", "تابعنا قريبًا.": "Check back soon.", "المقال غير موجود": "Article not found", "كل المقالات": "All articles", "مقال": "Article",
 "تم نسخ الرابط.": "Link copied.", "تحويل يدوي": "Manual transfer", "مُسترد": "Refunded", "مدفوع": "Paid", "فشل": "Failed", "مسترد": "Refunded",
-"كورساتي التفاعلية": "My interactive courses", "مسجّل": "Enrolled", "لم تكتمل عملية الدفع. لم يُخصم منك أي مبلغ، ويمكنك المحاولة مرة أخرى.": "The payment wasn't completed. You haven't been charged, and you can try again.",
+"دوراتي التفاعلية": "My interactive courses", "مسجّل": "Enrolled", "لم تكتمل عملية الدفع. لم يُخصم منك أي مبلغ، ويمكنك المحاولة مرة أخرى.": "The payment wasn't completed. You haven't been charged, and you can try again.",
 "ملاحظة (اختياري)": "Note (optional)", "إرسال الطلب": "Send request", "طلب استرداد": "Refund request", "اطلب الاسترداد": "Request refund",
-"يمكن استرداد رسوم الكورس التفاعلي خلال أسبوع من الدفع. سيراجع فريقنا الطلب.": "Interactive course fees can be refunded within a week of payment. Our team will review the request.",
+"يمكن استرداد رسوم الدورة التفاعلية خلال أسبوع من الدفع. سيراجع فريقنا الطلب.": "Interactive course fees can be refunded within a week of payment. Our team will review the request.",
 "وصل طلب الاسترداد وسنراجعه قريبًا.": "Refund request received — we'll review it soon.", "سبق أن أرسلت طلب استرداد لهذه الدفعة.": "You've already requested a refund for this payment.",
 "لا توجد شهادات بعد": "No certificates yet", "تظهر شهادة الإتمام هنا بعد إنهاء الدورة.": "Your completion certificate appears here once you finish a course.",
 "هذا الجهاز": "This device", "تم نسخ رابط الدعوة.": "Invite link copied.", "إزالة هذا الجهاز؟ يمكنك إزالة جهاز مرة واحدة كل 7 أيام.": "Remove this device? You can remove a device once every 7 days.",
@@ -331,7 +331,7 @@ EXTRA.update({
 
 # faculties & specialties
 EXTRA.update({
-"اختر كليتك": "Choose your faculty", "8 كليات علمية وطبية، اختر كليتك وابدأ في كورساتها المسجلة": "8 science and medical faculties — pick yours and start its recorded courses",
+"اختر كليتك": "Choose your faculty", "8 كليات علمية وطبية، اختر كليتك وابدأ في دوراتها المسجلة": "8 science and medical faculties — pick yours and start its recorded courses",
 "كلية العلوم": "Faculty of Science", "كلية بايوتكنولوجي": "Faculty of Biotechnology", "كلية الصيدلة": "Faculty of Pharmacy", "كلية الزراعة": "Faculty of Agriculture",
 "كلية الطب": "Faculty of Medicine", "كلية الطب البيطري": "Faculty of Veterinary Medicine", "كلية طب الأسنان": "Faculty of Dentistry",
 "كلية تكنولوجيا العلوم الصحية التطبيقية": "Faculty of Applied Health Sciences Technology",
@@ -353,18 +353,18 @@ EXTRA.update({
 "الأحياء الجزيئية": "Molecular Biology", "الوراثة": "Genetics", "الهندسة الوراثية": "Genetic Engineering", "المعلوماتية الحيوية": "Bioinformatics",
 })
 EXTRA.update({
-"مجتمع علمي بيكبر كل يوم من طلاب وباحثين ومحاضرين في مصر والوطن العربي.": "A scientific community growing every day — students, researchers and instructors across Egypt and the Arab world.",
+"مجتمع علمي ينمو كل يوم من طلاب وباحثين ومحاضرين في مصر والوطن العربي.": "A scientific community growing every day — students, researchers and instructors across Egypt and the Arab world.",
 "* أرقام تقريبية، وتتحدّث تلقائيًا بعد ربطها بالنظام.": "* Approximate figures; they'll update automatically once linked to the system.",
-"دولة": "Countries", "دقيقة مشاهدة": "Minutes watched", "كورس": "Courses", "محاضر": "Instructors", "طالب": "Students",
+"دولة": "Countries", "دقيقة مشاهدة": "Minutes watched", "دورة": "Courses", "محاضر": "Instructors", "طالب": "Students",
 })
 EXTRA.update({"الأرقام تتحدّث تلقائيًا من المنصة.": "These numbers update automatically from the platform."})
-EXTRA.update({"حلول للمؤسسات": "Institutions", "استشارات": "Consultations", "الكورسات المسجلة": "Recorded courses", "الكورسات التفاعلية": "Interactive courses"})
-EXTRA.update({"خصم 52% على الباقة السنوية": "52% off the annual plan", "تصفّح الأسعار": "See pricing", "استثمر في نفسك الآن": "Invest in yourself now", "تصفّح الكورسات المسجلة": "Browse recorded courses"})
+EXTRA.update({"حلول للمؤسسات": "Institutions", "استشارات": "Consultations", "الدورات المسجلة": "Recorded courses", "الدورات التفاعلية": "Interactive courses"})
+EXTRA.update({"خصم 52% على الباقة السنوية": "52% off the annual plan", "تصفّح الأسعار": "See pricing", "استثمر في نفسك الآن": "Invest in yourself now", "تصفّح الدورات المسجلة": "Browse recorded courses"})
 EXTRA.update({"العلمي والطبي": "science & medicine", "ابدأ، تعلم، مارس": "Start, Learn, Practice"})
 EXTRA.update({
 "المحاضرين": "Instructors", "كل المحاضرين": "All instructors", "المحاضرين | Biosyn Egypt": "Instructors | Biosyn Egypt",
 "محاضرو Biosyn Egypt: باحثون وأكاديميون في العلوم الحيوية والطبية من مصر والعالم": "Biosyn Egypt instructors: researchers and academics in life and medical sciences from Egypt and around the world",
-"باحثون وأكاديميون من مصر والعالم يقدّمون كورسات Biosyn.": "Researchers and academics from Egypt and around the world who teach Biosyn courses.",
+"باحثون وأكاديميون من مصر والعالم يقدّمون دورات Biosyn.": "Researchers and academics from Egypt and around the world who teach Biosyn courses.",
 "تعذّر تحميل المحاضرين": "Couldn't load instructors", "لا يوجد محاضرون بعد": "No instructors yet", "سنضيفهم هنا قريبًا.": "We'll add them here soon.",
 "انضم كمحاضر": "Teach with us", "إنضم كمحاضر": "Teach with us",
 })
@@ -372,42 +372,42 @@ EXTRA.update({"الدفع إلكتروني عبر بوابات دفع آمنة (
 EXTRA.update({"البرامج المتاحة للتسجيل": "Programmes open for registration", "برنامج": "programme", "برامج": "programmes", "مباشر أونلاين": "Live online", "فريق Biosyn": "Biosyn team", "التفاصيل والتسجيل": "Details & registration",
 "التسجيلات تتاح بعد الجلسة، ويمكن استرداد الرسوم خلال 7 أيام من تاريخ الدفع.": "Recordings are available after each session, and fees are refundable within 7 days of payment.", "انضم كمحاضر": "Teach with us"})
 EXTRA.update({"مبتدئ ومتوسط": "Beginner–Intermediate", "متوسط ومتقدم": "Intermediate–Advanced", "كل المستويات": "All levels", "لكل الكليات": "All faculties", "كل التخصصات": "All specialties", "عن المحاضر": "About the instructor"})
-EXTRA.update({"تواصل وجروب واتساب": "WhatsApp group", "يتم التواصل معك وإضافتك لجروب واتساب، وعليه يكون التفاعل والمشاركة والمحتوى.": "We'll contact you and add you to a WhatsApp group for discussion, sharing and course materials.",
+EXTRA.update({"تواصل ومجموعة واتساب": "WhatsApp group", "يتم التواصل معك وإضافتك لجروب واتساب، وعليه يكون التفاعل والمشاركة والمحتوى.": "We'll contact you and add you to a WhatsApp group for discussion, sharing and course materials.",
 "الحضور تفاعلي ومباشر من خلال تطبيق Zoom.": "Sessions are live and interactive on Zoom.", "عندك دورة تفاعلية وخبرة تدريس سابقة؟": "Have an interactive course and teaching experience?"})
-EXTRA.update({"فورم | Biosyn Egypt": "Form | Biosyn Egypt", "الفورم غير موجود": "Form not found", "تأكد من الرابط.": "Check the link.", "تعذّر تحميل الفورم": "Couldn't load the form", "الفورم غير متاح": "This form isn't available", "ممكن يكون اتقفل أو الرابط غلط.": "It may be closed, or the link is wrong.", "اختر…": "Choose…", "إرسال": "Send", "شكرًا! وصلنا ردك وفريق Biosyn هيتواصل معاك قريبًا.": "Thank you! We received your response and the Biosyn team will contact you soon.", "الرجوع للرئيسية": "Back to home", "فيه ضغط على الفورم، جرّب بعد دقيقة.": "The form is busy, please try again in a minute.", "املأ الفورم وفريق Biosyn Egypt هيتواصل معاك": "Fill in the form and the Biosyn Egypt team will contact you"})
+EXTRA.update({"نموذج | Biosyn Egypt": "Form | Biosyn Egypt", "الفورم غير موجود": "Form not found", "تأكد من الرابط.": "Check the link.", "تعذّر تحميل الفورم": "Couldn't load the form", "الفورم غير متاح": "This form isn't available", "قد يكون مغلقًا أو الرابط غير صحيح.": "It may be closed, or the link is wrong.", "اختر…": "Choose…", "إرسال": "Send", "شكرًا! وصلنا ردك وسيتواصل معك فريق Biosyn قريبًا.": "Thank you! We received your response and the Biosyn team will contact you soon.", "الرجوع للرئيسية": "Back to home", "فيه ضغط على الفورم، جرّب بعد دقيقة.": "The form is busy, please try again in a minute.", "املأ النموذج وسيتواصل معك فريق Biosyn Egypt": "Fill in the form and the Biosyn Egypt team will contact you"})
 EXTRA.update({"المحاضرين": "Instructors", "عن المحاضرين": "About the instructors", "محاضر": "Instructor"})
-EXTRA.update({"إيميل الجهة *": "Organisation email *", "إيميل رسمي باسم الجهة، مش Gmail أو Yahoo أو Hotmail.": "An official email on your organisation’s domain — not Gmail, Yahoo or Hotmail.", "من فضلك استخدم إيميل الجهة (مثل name@university.edu.eg)، مش إيميل شخصي زي Gmail أو Yahoo.": "Please use your organisation email (e.g. name@university.edu.eg), not a personal address like Gmail or Yahoo.", "من فضلك استخدم إيميل الجهة، مش إيميل شخصي.": "Please use your organisation email, not a personal one."})
-EXTRA.update({"وصل طلبك، وفريق Biosyn هيتواصل معاك قريبًا.": "Your request was received — the Biosyn team will contact you soon."})
+EXTRA.update({"البريد الإلكتروني للجهة *": "Organisation email *", "بريد إلكتروني رسمي باسم الجهة، وليس Gmail أو Yahoo أو Hotmail.": "An official email on your organisation’s domain — not Gmail, Yahoo or Hotmail.", "من فضلك استخدم البريد الإلكتروني للجهة (مثل name@university.edu.eg)، وليس بريدًا شخصيًا مثل Gmail أو Yahoo.": "Please use your organisation email (e.g. name@university.edu.eg), not a personal address like Gmail or Yahoo.", "من فضلك استخدم البريد الإلكتروني للجهة، وليس بريدًا شخصيًا.": "Please use your organisation email, not a personal one."})
+EXTRA.update({"وصل طلبك، وسيتواصل معك فريق Biosyn قريبًا.": "Your request was received — the Biosyn team will contact you soon."})
 EXTRA.update({
-"سجّل دخولك عشان تبدأ": "Sign in to start", "إعداد الكورس ورفع الفيديوهات بيتحفظ على حسابك، فتقدر تكمّل في أي وقت من أي جهاز.": "Your course setup and uploads are saved to your account, so you can continue any time from any device.",
-"إنشاء حساب": "Create account", "تسجيل الدخول": "Sign in", "البيانات الأساسية": "Basic details", "عرّف نفسك والكورس والفئة اللي معمول لها.": "Introduce yourself, the course and who it's for.",
-"اسم المحاضر *": "Instructor name *", "البريد الإلكتروني *": "Email *", "رقم الموبايل (واتساب)": "Mobile (WhatsApp)", "الفئة المستهدفة": "Target audience", "عنوان الكورس *": "Course title *",
-"التخصص العلمي *": "Specialty *", "المستوى *": "Level *", "نبذة عن الكورس": "About the course", "الكورس بيغطي إيه، وهيستفيد منه مين؟": "What does the course cover, and who will benefit?",
-"حفظ ومتابعة": "Save & continue", "رجوع": "Back", "المنهج والدروس": "Curriculum & lessons", "اكتب دروس الكورس بالترتيب. كل درس = فيديو واحد هترفعه في الخطوة الجاية.": "List the lessons in order. Each lesson = one video you'll upload in the next step.",
-"+ إضافة درس": "+ Add lesson", "الفيديوهات": "Videos", "اختر فيديو": "Choose video", "استبدال الفيديو": "Replace video", "أو حط لينك بدل الرفع": "Or paste a link instead", "لينك الفيديو": "Video link", "حفظ": "Save",
-"متابعة للمراجعة": "Continue to review", "المراجعة والإرسال": "Review & submit", "إرسال للمراجعة": "Submit for review", "لسه": "Pending", "✓ لينك": "✓ Link", "جارٍ الرفع…": "Uploading…",
-"وصل طلبك ✓": "Request received ✓", "ابدأ كورس جديد": "Start a new course", "طلاب": "Students", "باحثون": "Researchers", "مهنيون": "Professionals", "الكل": "Everyone", "متقدم": "Advanced", "متوسط": "Intermediate", "مبتدئ": "Beginner",
-"ارفع فيديو كل درس من جهازك (MP4 أفضل). الرفع بيكمل حتى لو النت فصل ورجع، بس خلّي الصفحة مفتوحة لحد ما يخلص.": "Upload each lesson's video from your device (MP4 preferred). Uploads resume if your connection drops — just keep the page open until they finish.",
-"فريق Biosyn هيراجع الكورس والفيديوهات ويتواصل معاك على إيميلك. تقديم الطلب لا يعني القبول.": "The Biosyn team will review the course and videos and contact you by email. Submitting doesn't guarantee acceptance.",
+"سجّل دخولك لتبدأ": "Sign in to start", "يُحفظ إعداد الدورة ورفع الفيديوهات في حسابك، فيمكنك المتابعة في أي وقت ومن أي جهاز.": "Your course setup and uploads are saved to your account, so you can continue any time from any device.",
+"إنشاء حساب": "Create account", "تسجيل الدخول": "Sign in", "البيانات الأساسية": "Basic details", "عرّف بنفسك وبالدورة والفئة المستهدفة منها.": "Introduce yourself, the course and who it's for.",
+"اسم المحاضر *": "Instructor name *", "البريد الإلكتروني *": "Email *", "رقم الهاتف المحمول (واتساب)": "Mobile (WhatsApp)", "الفئة المستهدفة": "Target audience", "عنوان الدورة *": "Course title *",
+"التخصص العلمي *": "Specialty *", "المستوى *": "Level *", "نبذة عن الدورة": "About the course", "الدورة بيغطي إيه، وهيستفيد منه مين؟": "What does the course cover, and who will benefit?",
+"حفظ ومتابعة": "Save & continue", "رجوع": "Back", "المنهج والدروس": "Curriculum & lessons", "اكتب دروس الدورة بالترتيب. كل درس = فيديو واحد سترفعه في الخطوة التالية.": "List the lessons in order. Each lesson = one video you'll upload in the next step.",
+"+ إضافة درس": "+ Add lesson", "الفيديوهات": "Videos", "اختر فيديو": "Choose video", "استبدال الفيديو": "Replace video", "أو ضع رابطًا بدلًا من الرفع": "Or paste a link instead", "رابط الفيديو": "Video link", "حفظ": "Save",
+"متابعة للمراجعة": "Continue to review", "المراجعة والإرسال": "Review & submit", "إرسال للمراجعة": "Submit for review", "لم يُرفع بعد": "Pending", "✓ رابط": "✓ Link", "جارٍ الرفع…": "Uploading…",
+"وصل طلبك ✓": "Request received ✓", "ابدأ دورة جديدة": "Start a new course", "طلاب": "Students", "باحثون": "Researchers", "مهنيون": "Professionals", "الكل": "Everyone", "متقدم": "Advanced", "متوسط": "Intermediate", "مبتدئ": "Beginner",
+"ارفع فيديو كل درس من جهازك (يُفضّل MP4). يستمر الرفع حتى لو انقطع الإنترنت ثم عاد، لكن أبقِ الصفحة مفتوحة حتى ينتهي.": "Upload each lesson's video from your device (MP4 preferred). Uploads resume if your connection drops — just keep the page open until they finish.",
+"سيراجع فريق Biosyn الدورة والفيديوهات ويتواصل معك عبر بريدك الإلكتروني. تقديم الطلب لا يعني القبول.": "The Biosyn team will review the course and videos and contact you by email. Submitting doesn't guarantee acceptance.",
 "راجع البيانات قبل ما تبعت. بعد الإرسال مش هتقدر تعدّل لحد ما الفريق يراجع.": "Review before submitting. You can't edit after submitting until the team reviews it.",
 })
-EXTRA.update({"لينك Google Drive أو Dropbox، والملف لازم يكون متشارك «Anyone with the link». الفيديو هيتنقل للمنصة تلقائي.": "A Google Drive or Dropbox link — the file must be shared as “Anyone with the link”. The video will be moved to the platform automatically."})
-EXTRA.update({"طلاب فقط": "Students only", "باحثون فقط": "Researchers only", "طلاب وباحثون": "Students & researchers", "ستاف جامعة فقط": "University staff only", "مهنيون فقط": "Professionals only", "طلاب وباحثون وستاف جامعة ومهنيون": "Students, researchers, university staff & professionals", "اختر الفئة": "Choose audience"})
+EXTRA.update({"رابط Google Drive أو Dropbox، والملف لازم يكون متشارك «Anyone with the link». الفيديو هيتنقل للمنصة تلقائي.": "A Google Drive or Dropbox link — the file must be shared as “Anyone with the link”. The video will be moved to the platform automatically."})
+EXTRA.update({"طلاب فقط": "Students only", "باحثون فقط": "Researchers only", "طلاب وباحثون": "Students & researchers", "أعضاء هيئة التدريس فقط": "University staff only", "مهنيون فقط": "Professionals only", "طلاب وباحثون وأعضاء هيئة تدريس ومهنيون": "Students, researchers, university staff & professionals", "اختر الفئة": "Choose audience"})
 EXTRA.update({
   "داخل مصر: الدفع إلكتروني عبر بوابات دفع آمنة (بطاقة بنكية - محافظ إلكترونية مثل فودافون كاش - فوري - أمان) أو تحويل إنستاباي، وتظهر لك وسائل الدفع المتاحة عند إتمام الطلب.": "Inside Egypt: pay online through secure gateways (bank card, e-wallets like Vodafone Cash, Fawry, Aman) or an InstaPay transfer; the available methods appear at checkout.",
-  "من خارج مصر (حتى لو مصري مقيم برّه): الأسعار بتظهر بعملة بلدك، وتدفع ببطاقة بنكية (فيزا / ماستركارد) عن طريق فواتيرك، ومعاها طرق الدفع التانية اللي بتظهرلك هناك، أو من حسابك على PayPal.": "Outside Egypt (including Egyptians living abroad): prices show in your local currency and you pay by bank card (Visa / Mastercard) through Fawaterk, plus the other methods shown there, or with your PayPal account.",
-  "رسوم الاستشارة": "Consultation fee", "جلسة استشارة فردية · الدفع أونلاين وبعده بنتواصل معاك لتحديد الموعد": "One-to-one consultation session · pay online, then we contact you to book the time",
+  "من خارج مصر (حتى لو كنت مصريًا مقيمًا في الخارج): تظهر الأسعار بعملة بلدك، وتدفع ببطاقة بنكية (فيزا / ماستركارد) عن طريق فواتيرك، إلى جانب طرق الدفع الأخرى التي تظهر لك هناك، أو من حسابك على PayPal.": "Outside Egypt (including Egyptians living abroad): prices show in your local currency and you pay by bank card (Visa / Mastercard) through Fawaterk, plus the other methods shown there, or with your PayPal account.",
+  "رسوم الاستشارة": "Consultation fee", "جلسة استشارة فردية · الدفع إلكترونيًا، ثم نتواصل معك لتحديد الموعد": "One-to-one consultation session · pay online, then we contact you to book the time",
   "احجز وادفع رسوم الاستشارة": "Book and pay the consultation fee", "ادفع واحجز موعدك": "Pay and book your session",
 })
 EXTRA.update({
   "كلمة المرور الجديدة": "New password", "أعد كتابة كلمة المرور": "Repeat the password", "حفظ كلمة المرور": "Save password",
-  "اختار كلمة مرور جديدة": "Choose a new password", "إعادة تعيين كلمة المرور": "Reset password",
+  "اختر كلمة مرور جديدة": "Choose a new password", "إعادة تعيين كلمة المرور": "Reset password",
   "كلمة المرور": "Password", "أعد كتابتها": "Repeat it", "تغيير كلمة المرور": "Change password",
   "كلمتا المرور غير متطابقتين.": "The passwords don't match.", "تم تغيير كلمة المرور بنجاح ✓": "Password changed ✓", "تم تغيير كلمة المرور ✓": "Password changed ✓",
-  "الإشعارات": "Notifications", "تحديد الكل كمقروء": "Mark all as read", "مفيش إشعارات لسه": "No notifications yet",
-  "باقتك الحالية": "Your current plan", "رقّي للباقة دي ↑": "Upgrade to this plan ↑", "جدّد الباقة": "Renew plan",
+  "الإشعارات": "Notifications", "تحديد الكل كمقروء": "Mark all as read", "لا توجد إشعارات بعد": "No notifications yet",
+  "باقتك الحالية": "Your current plan", "رقِّ إلى هذه الباقة ↑": "Upgrade to this plan ↑", "جدّد الباقة": "Renew plan",
   "باقتك الحالية أطول": "Your current plan is longer", "الأيام المتبقية من باقتك محسوبة": "Your remaining days are kept",
-  "التجديد بيفتح في آخر 7 أيام": "Renewal opens in the last 7 days", "متاحة للتجديد في آخر 7 أيام": "Available for renewal in the last 7 days",
+  "يُتاح التجديد في آخر 7 أيام": "Renewal opens in the last 7 days", "متاحة للتجديد في آخر 7 أيام": "Available for renewal in the last 7 days",
   "ترقية الباقة ↑": "Upgrade plan ↑", "جدّد الآن": "Renew now",
   "📎 ارفع سكرين التحويل": "📎 Upload the transfer screenshot", "ارفع صورة (سكرين) التحويل الأول.": "Upload the transfer screenshot first.",
 })
@@ -422,16 +422,16 @@ EXTRA.update({
   "عرض وتحميل": "View & download", "شهادات في الطريق": "Upcoming certificates", "قريبًا": "Soon", "اكتب اسمك على الشهادة": "Add your name to the certificate",
   "الاسم على الشهادة (بالإنجليزي)": "Name on certificate (English)", "عرض الشهادة": "View certificate",
   "بيانات الحجز": "Booking details", "الاسم الكامل": "Full name", "الاسم على الشهادة (بالإنجليزي كما في جواز السفر)": "Name on certificate (English, as in your passport)",
-  "رقم الموبايل": "Mobile number", "واتساب (لو مختلف)": "WhatsApp (if different)", "حفظ والمتابعة للدفع": "Save and continue to payment",
+  "رقم الهاتف المحمول": "Mobile number", "واتساب (إن كان مختلفًا)": "WhatsApp (if different)", "حفظ والمتابعة للدفع": "Save and continue to payment",
   "اكتب اسمك الكامل (اسمين على الأقل).": "Type your full name (at least two names).",
-  "اكتب الاسم اللي على الشهادة بحروف إنجليزي (اسمين على الأقل).": "Type the certificate name in English letters (at least two names).",
-  "اكتب رقم موبايل صحيح.": "Enter a valid mobile number.",
-  "قبل الحجز محتاجين بياناتك عشان نبعتلك مواعيد الجلسات، ونطبع اسمك صح على الشهادة اللي هتصدر تلقائيًا يوم انتهاء الكورس.": "Before booking we need your details to send you the session times and print your name correctly on the certificate, which is issued automatically on the course end date.",
+  "اكتب الاسم كما سيظهر على الشهادة بحروف إنجليزية (اسمان على الأقل).": "Type the certificate name in English letters (at least two names).",
+  "اكتب رقم هاتف محمول صحيحًا.": "Enter a valid mobile number.",
+  "قبل الحجز نحتاج إلى بياناتك لنرسل إليك مواعيد الجلسات، ونطبع اسمك بشكل صحيح على الشهادة التي ستصدر تلقائيًا يوم انتهاء الدورة.": "Before booking we need your details to send you the session times and print your name correctly on the certificate, which is issued automatically on the course end date.",
   "تاريخ الانتهاء (تصدر الشهادات تلقائيًا فيه)": "End date (certificates are issued automatically)", "عدد ساعات التدريب (يُطبع على الشهادة)": "Training hours (printed on the certificate)",
   "تاريخ الانتهاء لازم يكون بعد تاريخ البدء.": "The end date must be after the start date.",
-  "الاسم اللي بيظهر على الشهادة بييجي من «الاسم على الشهادة» في الإعدادات، ويتثبت على كل شهادة وقت صدورها.": "The name printed on certificates comes from “Name on certificate” in Settings and is fixed on each certificate when it is issued.",
+  "الاسم الذي يظهر على الشهادة مأخوذ من «الاسم على الشهادة» في الإعدادات، ويُثبَّت على كل شهادة وقت صدورها.": "The name printed on certificates comes from “Name on certificate” in Settings and is fixed on each certificate when it is issued.",
 })
-EXTRA.update({"شهادة إتمام عند الانتهاء من الكورس": "Certificate of completion when you finish a course"})
+EXTRA.update({"شهادة إتمام عند الانتهاء من الدورة": "Certificate of completion when you finish a course"})
 EXTRA.update({
   "ادعُ أصحابك واكسب شهور مجانية 🎁": "Invite friends and earn free months 🎁",
   "شارك رابطك. صاحبك بيتحسب لما يشترك في أي باقة مدفوعة لأول مرة.": "Share your link. A friend counts once they subscribe to any paid plan for the first time.",
@@ -439,10 +439,10 @@ EXTRA.update({
 })
 EXTRA.update({"جميع الحقوق محفوظة": "All rights reserved"})
 EXTRA.update({
-  "من نحن | Biosyn Egypt": "About us | Biosyn Egypt", "من نحن": "About us", "تصفّح الكورسات": "Browse courses", "تواصل معنا": "Contact us",
-  "طالب وباحث وعضو هيئة تدريس": "students, researchers & university staff", "دول وصلنالها": "countries reached", "سنين من 2020": "years since 2020",
-  "كورس ودبلومة على المنصة": "courses & diplomas on the platform", "الأرقام دي بتتحدث تلقائي مع كل طالب جديد وكل دولة جديدة": "These numbers update automatically with every new student and country",
-  "حكايتنا": "Our story", "نبذة عن Biosyn Egypt": "About Biosyn Egypt", "رؤيتنا": "Our vision", "هدفنا": "Our mission", "بنقدّم إيه": "What we do", "خدماتنا": "Our services",
-  "المؤسس": "Founder", "محتاج تسأل عن حاجة؟": "Have a question?", "فريقنا بيرد على الإيميل والواتساب في أوقات العمل.": "Our team answers email and WhatsApp during working hours.",
-  "الإيميل": "Email", "واتساب": "WhatsApp", "صفحة من نحن": "About page",
+  "من نحن | Biosyn Egypt": "About us | Biosyn Egypt", "من نحن": "About us", "تصفّح الدورات": "Browse courses", "تواصل معنا": "Contact us",
+  "طالب وباحث وعضو هيئة تدريس": "students, researchers & university staff", "دولة وصلنا إليها": "countries reached", "سنين من 2020": "years since 2020",
+  "دورة ودبلومة على المنصة": "courses & diplomas on the platform", "تتحدّث هذه الأرقام تلقائيًا مع كل طالب جديد وكل دولة جديدة": "These numbers update automatically with every new student and country",
+  "حكايتنا": "Our story", "نبذة عن Biosyn Egypt": "About Biosyn Egypt", "رؤيتنا": "Our vision", "هدفنا": "Our mission", "ماذا نقدّم": "What we do", "خدماتنا": "Our services",
+  "المؤسس": "Founder", "هل لديك سؤال؟": "Have a question?", "يرد فريقنا على البريد الإلكتروني وواتساب في أوقات العمل.": "Our team answers email and WhatsApp during working hours.",
+  "البريد الإلكتروني": "Email", "واتساب": "WhatsApp", "صفحة من نحن": "About page",
 })

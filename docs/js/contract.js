@@ -9,7 +9,7 @@
   // body text → paragraphs; "1) …" lines become clause headings
   function bodyHTML(text) {
     return String(text || '').trim().split(/\n/).map((l) => l.trim()).filter(Boolean).map((l, i) =>
-      i === 0 ? `<h1>${esc(iso(l))}</h1>` : /^\d+\)\s/.test(l) ? `<h3>${esc(iso(l))}</h3>` : /^(الطرف|الكورس|تاريخ)/.test(l) ? `<p class="kc-party">${esc(iso(l))}</p>` : `<p>${esc(iso(l))}</p>`).join('');
+      i === 0 ? `<h1>${esc(iso(l))}</h1>` : /^\d+\)\s/.test(l) ? `<h3>${esc(iso(l))}</h3>` : /^(الطرف|الكورس|الدورة|تاريخ)/.test(l) ? `<p class="kc-party">${esc(iso(l))}</p>` : `<p>${esc(iso(l))}</p>`).join('');
   }
 
   // c: { id?, title, body, version, signer_name?, signature_png?, signed_at?, ip?, body_sha256|sha256, course_title? }
@@ -67,7 +67,7 @@
     String(c.body || '').trim().split(/\n/).map((l) => l.trim()).filter(Boolean).forEach((l, i) => {
       if (i === 0) para(l, { size: 17, weight: 700, color: '#010232', gap: 4 });
       else if (/^\d+\)\s/.test(l)) { y += 8 * K; para(l, { size: 14, weight: 700, color: '#010232', gap: 2, indent: 12, bar: true }); }
-      else if (/^(الطرف|الكورس|تاريخ)/.test(l)) para(l, { size: 13, weight: 600, color: '#010232', gap: 2 });
+      else if (/^(الطرف|الكورس|الدورة|تاريخ)/.test(l)) para(l, { size: 13, weight: 600, color: '#010232', gap: 2 });
       else para(l, { size: 12.5, gap: 4 });
     });
     // signatures

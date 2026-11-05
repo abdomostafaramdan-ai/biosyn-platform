@@ -45,18 +45,18 @@
       const thisMonth = months[months.length - 1].n;
       main.innerHTML = `<div class="bx-stats">
           ${D.stat('الرصيد المتراكم', D.money(d.available), d.canWithdraw ? 'متاح للسحب الآن' : d.nextOK && d.available > 0 ? 'السحب متاح في ' + D.date(d.nextOK) : 'يُضاف شهريًا')}
-          ${D.stat('مشاهدات هذا الشهر', thisMonth, `<span class="bx-live"><i></i>${d.stats.reduce((s, r) => s + Number(r.watching_now || 0), 0)}</span> بيتفرجوا دلوقتي · <a class="bx-link" href="#live">التفاصيل لايف</a>`)}
-          ${D.stat('كورساتي', d.courses.length, d.courses.filter((c) => c.status === 'published').length + ' منشور')}
+          ${D.stat('مشاهدات هذا الشهر', thisMonth, `<span class="bx-live"><i></i>${d.stats.reduce((s, r) => s + Number(r.watching_now || 0), 0)}</span> يشاهدون الآن · <a class="bx-link" href="#live">التفاصيل لايف</a>`)}
+          ${D.stat('دوراتي', d.courses.length, d.courses.filter((c) => c.status === 'published').length + ' منشور')}
           ${D.stat('أرباح آخر شهر مُقفل', d.earnings[0] ? D.money(d.earnings[0].amount_egp) : '—', d.earnings[0] ? D.month(d.earnings[0].month) : 'تُحتسب أول كل شهر')}
         </div>
         <div class="bx-dgrid2">
           <section class="bx-balance" aria-labelledby="bal"><span class="bx-eyebrow" style="color:#c6f84a">رصيد متراكم</span><h3 id="bal">المستحقات</h3><b class="bx-balance-n">${EGP(d.available)} <small>ج.م</small></b>
             <p style="margin:0;font:400 13px/20px var(--font-sans)">تُضاف الأرباح إلى رصيدك شهريًا، ويمكنك طلب السحب كل 3 أشهر.${d.nextOK && !d.canWithdraw && d.available > 0 ? ' موعد السحب القادم: ' + D.date(d.nextOK) + '.' : ''}</p>
             <button class="bs-btn bs-btn-primary bs-btn-lg" id="wd" ${d.canWithdraw ? '' : 'disabled'}>اطلب سحب المستحقات</button></section>
-          <section class="bx-panel"><div class="bx-panel-head"><div><span class="bx-eyebrow">آخر 6 أشهر</span><h3>مشاهدات كورساتي</h3></div></div>
+          <section class="bx-panel"><div class="bx-panel-head"><div><span class="bx-eyebrow">آخر 6 أشهر</span><h3>مشاهدات دوراتي</h3></div></div>
             <div class="bx-bars" role="img" aria-label="رسم أعمدة لمشاهدات آخر ستة أشهر">${months.map((m) => `<div class="bx-barcol"><div class="bx-barpair"><i style="height:${Math.max(3, Math.round((m.n / max) * 100))}%"></i></div><span>${m.label} · ${m.n}</span></div>`).join('')}</div></section>
         </div>
-        <p class="bx-hint">أرباح الكورسات المسجلة تُحتسب بنسبة 30٪ للمحاضر من قيمة المشاهدات. الكورسات التفاعلية لها اتفاقات مستقلة.</p>`;
+        <p class="bx-hint">أرباح الدورات المسجلة تُحتسب بنسبة 30٪ للمحاضر من قيمة المشاهدات. الدورات التفاعلية لها اتفاقات مستقلة.</p>`;
       const w = $('#wd', main); if (w) w.onclick = () => requestPayout(d);
     },
 
@@ -64,28 +64,28 @@
     async contracts(main) { await window.myContracts(main); },
 
     async messages(main) {
-      main.innerHTML = D.panel('أسئلة الطلاب', `<p class="bx-hint" style="margin-top:0">الطلاب المشتركين بيسألوك هنا من صفحة الكورس. بيوصلك إيميل مع كل سؤال جديد، والطالب بيوصله إيميل لما ترد.</p><div data-ib></div>`);
-      await Chat.inbox($('[data-ib]', main), { mode: 'instructor', kind: 'course', empty: 'مفيش أسئلة لسه.' });
+      main.innerHTML = D.panel('أسئلة الطلاب', `<p class="bx-hint" style="margin-top:0">يسألك الطلاب المشتركون هنا من صفحة الدورة. يصلك بريد إلكتروني مع كل سؤال جديد، ويصل الطالب بريد عند ردّك.</p><div data-ib></div>`);
+      await Chat.inbox($('[data-ib]', main), { mode: 'instructor', kind: 'course', empty: 'لا توجد أسئلة بعد.' });
     },
 
     async promo(main) {
       const rows = await sb.rpc('my_promo_stats').then((r) => (Array.isArray(r) ? r : [])).catch(() => []);
       const share = (base) => `${location.origin}${location.pathname.replace(/[^/]*$/, '')}pricing.html?code=${encodeURIComponent(base)}`;
       main.innerHTML = `<div class="bx-stats">
-          ${D.stat('اشتراكات بكودك الشهر ده', rows.reduce((s, r) => s + Number(r.uses_month || 0), 0), rows.reduce((s, r) => s + Number(r.uses_total || 0), 0) + ' إجمالي')}
-          ${D.stat('أرباحك من الكود الشهر ده', D.money(rows.reduce((s, r) => s + Number(r.earned_month || 0), 0)), 'بتتضاف لرصيدك أول الشهر الجاي')}
-        </div>` + D.panel('كود الخصم بتاعك', rows.length ? D.table(['الكود', 'خصم للطالب', 'نسبتك', 'الاستخدام', 'رابط المشاركة', 'الحالة'], rows.map((r) => [
+          ${D.stat('اشتراكات بكودك هذا الشهر', rows.reduce((s, r) => s + Number(r.uses_month || 0), 0), rows.reduce((s, r) => s + Number(r.uses_total || 0), 0) + ' إجمالي')}
+          ${D.stat('أرباحك من الكود هذا الشهر', D.money(rows.reduce((s, r) => s + Number(r.earned_month || 0), 0)), 'تُضاف إلى رصيدك في بداية الشهر القادم')}
+        </div>` + D.panel('كود الخصم الخاص بك', rows.length ? D.table(['الكود', 'خصم للطالب', 'نسبتك', 'الاستخدام', 'رابط المشاركة', 'الحالة'], rows.map((r) => [
           `<b class="bs-latin" style="font-size:18px">${esc(r.code)}</b>`, r.percent_off ? r.percent_off + '٪' : '—', Number(r.instructor_pct) + '٪ من قيمة الاشتراك',
-          `${r.uses_month} الشهر ده · ${r.uses_total} إجمالي`, `<button class="bx-linkbtn" data-copy="${esc(share(r.code))}">انسخ الرابط</button>`, r.active ? '<span class="bx-st bx-st-ok">شغال</span>' : '<span class="bx-st bx-st-mute">متوقف</span>']))
-          : '<div class="bx-empty-big"><b>لسه ملكش كود</b>اطلب من فريق Biosyn يعملّك كود خصم باسمك.</div>')
-        + '<p class="bx-hint">أي طالب يشترك في باقة بكودك بتاخد عنه نسبتك (50٪ افتراضيًا) من قيمة الاشتراك بدل نسبة الـ 30٪ العادية من المشاهدات، والمبلغ بيتضاف لرصيدك مع الإقفال الشهري. انشر الكود أو الرابط لجمهورك.</p>';
-      $$('[data-copy]', main).forEach((b) => (b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.copy); ui.toast('اتنسخ الرابط.'); } catch { prompt('انسخ الرابط:', b.dataset.copy); } }));
+          `${r.uses_month} هذا الشهر · ${r.uses_total} إجمالي`, `<button class="bx-linkbtn" data-copy="${esc(share(r.code))}">انسخ الرابط</button>`, r.active ? '<span class="bx-st bx-st-ok">يعمل</span>' : '<span class="bx-st bx-st-mute">متوقف</span>']))
+          : '<div class="bx-empty-big"><b>لا يوجد لديك كود بعد</b>اطلب من فريق Biosyn يعملّك كود خصم باسمك.</div>')
+        + '<p class="bx-hint">أي طالب يشترك في باقة بكودك تحصل عنه على نسبتك (50٪ افتراضيًا) من قيمة الاشتراك بدلًا من نسبة الـ 30٪ المعتادة من المشاهدات، ويُضاف المبلغ إلى رصيدك مع الإقفال الشهري. انشر الكود أو الرابط لجمهورك.</p>';
+      $$('[data-copy]', main).forEach((b) => (b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.copy); ui.toast('تم نسخ الرابط.'); } catch { prompt('انسخ الرابط:', b.dataset.copy); } }));
     },
 
     async courses(main) {
       const d = await load();
-      main.innerHTML = D.panel('كورساتي', D.table(['الكورس', 'النوع', 'المحاضرات', 'الحالة'], d.courses.map((c) => [`<b class="bs-latin">${esc(c.title)}</b>`, c.kind === 'interactive' ? 'تفاعلي' : 'مسجل', (c.lectures || []).length, D.badge('course', c.status)]), 'لم تُسنَد إليك كورسات بعد'))
-        + '<p class="bx-hint">لإضافة كورس جديد أو تعديل محتوى كورس، تواصل مع فريق Biosyn أو <a class="bx-link" href="teach.html">قدّم طلب كورس جديد</a>.</p>';
+      main.innerHTML = D.panel('دوراتي', D.table(['الدورة', 'النوع', 'المحاضرات', 'الحالة'], d.courses.map((c) => [`<b class="bs-latin">${esc(c.title)}</b>`, c.kind === 'interactive' ? 'تفاعلي' : 'مسجل', (c.lectures || []).length, D.badge('course', c.status)]), 'لم تُسنَد إليك دورات بعد'))
+        + '<p class="bx-hint">لإضافة دورة جديدة أو تعديل محتوى دورة، تواصل مع فريق Biosyn أو <a class="bx-link" href="teach.html">قدّم طلب دورة جديدة</a>.</p>';
     },
 
     async earnings(main) {
@@ -99,7 +99,7 @@
     me = await D.guard(['instructor', 'admin']); if (!me) return;
     await D.shell({
       title: 'لوحة المحاضر', who: me.full_name || sb.user.email, sub: D.roleAr[me.role],
-      items: [{ id: 'home', label: 'نظرة عامة', icon: 'home' }, { id: 'live', label: 'المشاهدات لايف', icon: 'chart' }, { id: 'messages', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'promo', label: 'كود الخصم بتاعي', icon: 'tag' }, { id: 'courses', label: 'كورساتي', icon: 'book' }, { id: 'earnings', label: 'الأرباح والسحب', icon: 'coin' }, { id: 'contracts', label: 'اتفاقياتي', icon: 'list' }],
+      items: [{ id: 'home', label: 'نظرة عامة', icon: 'home' }, { id: 'live', label: 'المشاهدات لايف', icon: 'chart' }, { id: 'messages', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'promo', label: 'كود الخصم الخاص بي', icon: 'tag' }, { id: 'courses', label: 'دوراتي', icon: 'book' }, { id: 'earnings', label: 'الأرباح والسحب', icon: 'coin' }, { id: 'contracts', label: 'اتفاقياتي', icon: 'list' }],
       views, topLink: '<a href="account.html" class="bs-btn bs-btn-secondary bs-btn-sm">حسابي</a>',
     });
     const pulse = () => Chat.unreadCounts().then((u) => D.setBadge('messages', (u && u.instructor) || 0));

@@ -47,6 +47,7 @@
     f('date').textContent = full(r.issued_at);
     f('code').textContent = r.code;
     f('vurl').textContent = 'biosyneg.com/verify';
+    if (r.founding) { const by = node.querySelector('.cx-by'); if (by) by.insertAdjacentHTML('beforeend', ' <span class="cx-founder" data-no-i18n>★ Founding Member</span>'); }
     const box = document.createElement('div'); box.className = 'cx-scale'; box.appendChild(node);
     stage.innerHTML = ''; stage.appendChild(box); fit(stage);
     // shrink a long name until it fits on one line

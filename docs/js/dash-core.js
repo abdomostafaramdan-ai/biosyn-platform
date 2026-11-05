@@ -34,7 +34,7 @@
     course: { draft: ['مسودة', 'mute'], review: ['قيد المراجعة', 'warn'], published: ['منشور', 'ok'], archived: ['مؤرشف', 'mute'] },
   };
   D.badge = (kind, v) => { const [t, c] = (ST[kind] && ST[kind][v]) || [v, 'mute']; return `<span class="bx-st bx-st-${c}">${esc(t)}</span>`; };
-  D.reqType = { instructor_recorded: 'محاضر · كورس مسجل', instructor_interactive: 'محاضر · كورس تفاعلي', instructor_recording_help: 'محاضر · لسه هيسجّل كورس', institution: 'مؤسسة', consultation: 'استشارة', refund: 'طلب استرداد' };
+  D.reqType = { instructor_recorded: 'محاضر · دورة مسجلة', instructor_interactive: 'محاضر · دورة تفاعلية', instructor_recording_help: 'محاضر · لم يسجّل دورته بعد', institution: 'مؤسسة', consultation: 'استشارة', refund: 'طلب استرداد' };
   D.roleAr = { student: 'طالب', instructor: 'محاضر', support: 'دعم', admin: 'مدير' };
   D.gw = { stripe: 'Stripe', paymob: 'Paymob', fawaterk: 'Fawaterk', manual: 'تحويل يدوي' };
   D.money = (n) => EGP(n) + ' ج.م';
@@ -70,7 +70,7 @@
   const NK = { success: '✓', warning: '⏰', gift: '🎁', info: '•' };
   const ago = (d) => {
     const m = Math.round((Date.now() - new Date(d)) / 60000);
-    if (m < 1) return 'دلوقتي'; if (m < 60) return `من ${m} دقيقة`;
+    if (m < 1) return 'الآن'; if (m < 60) return `من ${m} دقيقة`;
     const h = Math.round(m / 60); if (h < 24) return `من ${h} ساعة`;
     const dd = Math.round(h / 24); return dd === 1 ? 'امبارح' : dd < 30 ? `من ${dd} يوم` : D.date(d);
   };
@@ -84,7 +84,7 @@
       btn.setAttribute('aria-label', unread ? `الإشعارات (${unread} جديد)` : 'الإشعارات');
       panel.innerHTML = `<div class="bx-bell-head"><b>الإشعارات</b>${unread ? '<button type="button" class="bx-linkbtn" data-allread>تحديد الكل كمقروء</button>' : ''}</div>` +
         (list.length ? `<ul class="bx-bell-list">${list.map((n) => `<li><a href="${esc(n.link || '#')}" data-nid="${n.id}" class="bx-notif bx-notif-${esc(n.kind)}${n.read_at ? '' : ' unread'}"><span class="bx-notif-ic" aria-hidden="true">${NK[n.kind] || '•'}</span><span><b>${esc(n.title)}</b>${n.body ? `<small>${esc(n.body)}</small>` : ''}<time>${ago(n.created_at)}</time></span></a></li>`).join('')}</ul>`
-          : '<div class="bx-bell-empty">مفيش إشعارات لسه</div>');
+          : '<div class="bx-bell-empty">لا توجد إشعارات بعد</div>');
       const all = $('[data-allread]', panel);
       if (all) all.onclick = async () => { list.forEach((n) => (n.read_at = n.read_at || new Date().toISOString())); draw(); sb.rpc('mark_notifications_read', {}).catch(() => {}); };
       $$('[data-nid]', panel).forEach((a) => (a.onclick = () => { const n = list.find((x) => x.id === a.dataset.nid); if (n && !n.read_at) { n.read_at = new Date().toISOString(); sb.rpc('mark_notifications_read', { p_id: n.id }).catch(() => {}); } close(); }));

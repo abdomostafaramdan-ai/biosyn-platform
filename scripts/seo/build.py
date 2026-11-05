@@ -29,8 +29,8 @@ LEVEL_EN = {'beginner': 'Beginner', 'beginner_intermediate': 'Beginner', 'interm
 
 # public pages: (file, breadcrumb name, priority)
 STATIC = [
-    ('index.html', 'الرئيسية', '1.0'), ('courses.html', 'الكورسات المسجلة', '0.9'), ('interactive.html', 'الكورسات التفاعلية', '0.9'),
-    ('pricing.html', 'الأسعار والاشتراكات', '0.9'), ('instructors.html', 'المحاضرين', '0.7'), ('consultations.html', 'الاستشارات والخدمات البحثية', '0.7'),
+    ('index.html', 'الرئيسية', '1.0'), ('courses.html', 'الدورات المسجلة', '0.9'), ('interactive.html', 'الدورات التفاعلية', '0.9'),
+    ('pricing.html', 'الأسعار والاشتراكات', '0.9'), ('instructors.html', 'المحاضرون', '0.7'), ('consultations.html', 'الاستشارات والخدمات البحثية', '0.7'),
     ('institutions.html', 'حلول المؤسسات', '0.7'), ('teach.html', 'انضم كمحاضر', '0.6'), ('blog.html', 'المدونة', '0.6'),
     ('about.html', 'من نحن', '0.7'), ('verify.html', 'التحقق من الشهادات', '0.4'), ('terms.html', 'الشروط والأحكام', '0.2'), ('privacy.html', 'سياسة الخصوصية', '0.2'), ('refund.html', 'سياسة الاسترداد', '0.2'),
 ]
@@ -158,10 +158,10 @@ def why_not(c, all_courses):
     mc, ml = int(S.get('min_chars') or 200), int(S.get('min_lectures') or 5)
     body = _norm(c.get('description') or c.get('summary'))
     if body and any(o is not c and o.get('created_at', '') < c.get('created_at', '') and _norm(o.get('description') or o.get('summary')) == body for o in all_courses):
-        r.append('الوصف منسوخ من كورس تاني')
+        r.append('الوصف منسوخ من دورة أخرى')
     sm = (c.get('summary') or '').strip().lower()
     if sm and re.fullmatch(r'[a-z\s]{1,20}', sm) and not c.get('description'): r.append('الوصف نص تجريبي')
-    if text < mc: r.append(f'الوصف أقل من {mc} حرف')
+    if text < mc: r.append(f'الوصف أقل من {mc} حرفًا')
     if c['kind'] == 'recorded' and len(c['lectures']) < ml: r.append(f'أقل من {ml} محاضرات')
     return r or ['محتوى قليل']
 
@@ -171,7 +171,7 @@ def ld(obj): return '<script type="application/ld+json">' + json.dumps(obj, ensu
 
 ORG = {'@type': 'EducationalOrganization', '@id': SITE + '/#org', 'name': BRAND, 'alternateName': ['Biosyn Eg', 'بايوسين إيجيبت'], 'url': SITE + '/',
        'logo': {'@type': 'ImageObject', 'url': LOGO}, 'image': OG_IMAGE, 'email': CONTACT,
-       'description': 'منصة مصرية للتعليم العلمي والطبي: كورسات مسجلة وتفاعلية بالعربية في العلوم الحيوية والطب والمعلوماتية الحيوية، مع شهادات إتمام قابلة للتحقق.',
+       'description': 'منصة مصرية للتعليم العلمي والطبي: دورات مسجلة وتفاعلية باللغة العربية في العلوم الحيوية والطب والمعلوماتية الحيوية، مع شهادات إتمام قابلة للتحقق.',
        'areaServed': [{'@type': 'Country', 'name': 'Egypt'}, 'MENA'], 'knowsLanguage': ['ar', 'en'],
        'contactPoint': {'@type': 'ContactPoint', 'contactType': 'customer support', 'email': CONTACT, 'availableLanguage': ['Arabic', 'English']}}
 ORG_REF = {'@id': SITE + '/#org'}
@@ -243,21 +243,21 @@ def course_faq(c, plans, insts, fac):
     total, n, price = course_facts(c, plans)
     qa = []
     if c['kind'] == 'recorded':
-        qa.append((f'كم سعر كورس {c["title"]}؟', f'الكورس متاح ضمن اشتراك Biosyn Egypt اللي بيفتح لك كل الكورسات المسجلة. الباقات: ' + '، '.join(f"{p['name']} بـ {int(float(p['price_egp']))} ج.م" for p in plans) + '. الاشتراك لا يتجدد تلقائيًا.'))
-        if n: qa.append((f'مدة كورس {c["title"]} قد إيه؟', f'الكورس فيه {n} محاضرة مسجلة' + (f' بإجمالي حوالي {hours_ar(total)}' if total else '') + '، وتقدر تشوفها في أي وقت وبالسرعة اللي تناسبك.'))
-        qa.append(('هل الكورس بشهادة؟', 'أيوه. بعد ما تخلّص كل محاضرات الكورس بتصدر لك شهادة إتمام من Biosyn Egypt تلقائيًا، عليها اسمك ورقم وكود QR للتحقق من صحتها، وتقدر تحمّلها PDF أو تضيفها على LinkedIn.'))
+        qa.append((f'كم سعر دورة {c["title"]}؟', f'الدورة متاحة ضمن اشتراك Biosyn Egypt الذي يتيح لك جميع الدورات المسجلة. الباقات: ' + '، '.join(f"{p['name']} بـ {int(float(p['price_egp']))} ج.م" for p in plans) + '. الاشتراك لا يتجدد تلقائيًا.'))
+        if n: qa.append((f'ما مدة دورة {c["title"]}؟', f'تتضمن الدورة {n} محاضرة مسجلة' + (f' بإجمالي حوالي {hours_ar(total)}' if total else '') + '، ويمكنك مشاهدتها في أي وقت وبالسرعة التي تناسبك.'))
+        qa.append(('هل تمنح الدورة شهادة؟', 'نعم. بعد إتمام جميع محاضرات الدورة تصدر لك شهادة إتمام من Biosyn Egypt تلقائيًا، عليها اسمك ورقم ورمز QR للتحقق من صحتها، ويمكنك تحميلها بصيغة PDF أو إضافتها إلى LinkedIn.'))
     else:
         qa.append((f'كم سعر {c["title"]}؟', f'رسوم البرنامج {price}، وهي منفصلة عن باقات الاشتراك. ويمكن استرداد الرسوم خلال 7 أيام من تاريخ الدفع.'))
         when = []
         if c.get('starts_at'): when.append('يبدأ يوم ' + c['starts_at'][:10])
         if c.get('ends_at'): when.append('وينتهي يوم ' + c['ends_at'][:10])
-        if when: qa.append((f'إمتى يبدأ {c["title"]}؟', ' '.join(when) + '، والجلسات مباشرة أونلاين' + (f' وعدد المقاعد {c["seats"]} مقعد.' if c.get('seats') else '.')))
-        qa.append(('هل البرنامج بشهادة؟', 'أيوه. شهادة الإتمام بتصدر تلقائيًا في لوحة حسابك يوم انتهاء البرنامج، ويوصلك إشعار وإيميل بيها، وعليها رقم وكود QR للتحقق.'))
-    qa.append(('الكورس بأي لغة؟', 'الشرح بالعربي، والمصطلحات العلمية بتفضل بالإنجليزي زي ما هي في المجال.'))
+        if when: qa.append((f'متى يبدأ {c["title"]}؟', ' '.join(when) + '، والجلسات مباشرة عبر الإنترنت' + (f' وعدد المقاعد {c["seats"]} مقعد.' if c.get('seats') else '.')))
+        qa.append(('هل يمنح البرنامج شهادة؟', 'نعم. تصدر شهادة الإتمام تلقائيًا في لوحة حسابك يوم انتهاء البرنامج، ويصلك إشعار وبريد إلكتروني بها، وعليها رقم ورمز QR للتحقق.'))
+    qa.append(('ما لغة الدورة؟', 'الشرح باللغة العربية، مع الإبقاء على المصطلحات العلمية بالإنجليزية كما هي مستخدمة في المجال.'))
     who = f'طلاب وخريجي {fac["name"]}' if fac else 'طلاب وخريجي الكليات العلمية والطبية والباحثين'
-    qa.append(('الكورس ده مناسب لمين؟', f'مناسب لـ{who}، ومستواه {LEVEL.get(c.get("level"), "مبتدئ")}.'))
+    qa.append(('لمن تناسب هذه الدورة؟', f'تناسب {who}، ومستواها {LEVEL.get(c.get("level"), "مبتدئ")}.'))
     if insts:
-        qa.append(('مين بيشرح الكورس؟', '، '.join(f"{i['name']}" + (f" ({plain(i['title'], 120)})" if i.get('title') else '') for i in insts) + '.'))
+        qa.append(('من يقدّم الدورة؟', '، '.join(f"{i['name']}" + (f" ({plain(i['title'], 120)})" if i.get('title') else '') for i in insts) + '.'))
     return qa
 
 
@@ -267,9 +267,9 @@ def course_page(tpl, c, d, related):
     url = f"{SITE}/course-{c['slug']}.html"
     total, n, price = course_facts(c, plans)
     rec = c['kind'] == 'recorded'
-    kind_ar = 'كورس مسجل' if rec else 'كورس تفاعلي مباشر'
-    title = f"{c['title']} | {kind_ar} بالعربي | {BRAND}"
-    desc = plain(c.get('summary') or c.get('description') or (f"{kind_ar} في {c['title']} على {BRAND}: {n} محاضرة" + (f" ({hours_ar(total)})" if total else '') + ' بالعربي مع شهادة إتمام.'))
+    kind_ar = 'دورة مسجلة' if rec else 'دورة تفاعلية مباشرة'
+    title = f"{c['title']} | {kind_ar} بالعربية | {BRAND}"
+    desc = plain(c.get('summary') or c.get('description') or (f"{kind_ar} في {c['title']} على {BRAND}: {n} محاضرة" + (f" ({hours_ar(total)})" if total else '') + ' باللغة العربية مع شهادة إتمام.'))
     faq = course_faq(c, plans, insts, fac)
     ok = indexable(c, d['courses'])
     # JSON-LD
@@ -295,7 +295,7 @@ def course_page(tpl, c, d, related):
         course['offers'] = [{'@type': 'Offer', 'category': 'Subscription', 'name': p['name'], 'price': float(p['price_egp']), 'priceCurrency': 'EGP', 'availability': 'https://schema.org/InStock', 'url': SITE + '/pricing.html'} for p in plans]
     elif not rec and c.get('price_egp') is not None:
         course['offers'] = [{'@type': 'Offer', 'category': 'Paid', 'price': float(c['price_egp']), 'priceCurrency': 'EGP', 'availability': 'https://schema.org/InStock', 'url': url}]
-    cat = ('الكورسات المسجلة', SITE + '/courses.html') if rec else ('الكورسات التفاعلية', SITE + '/interactive.html')
+    cat = ('الدورات المسجلة', SITE + '/courses.html') if rec else ('الدورات التفاعلية', SITE + '/interactive.html')
     graph = [ORG, course, crumbs([('الرئيسية', SITE + '/'), cat, (c['title'], url)]), faq_ld(faq)]
     doc = put_head(tpl, head_block(url, title, desc, graph, None if ok else 'noindex,follow', 'website'), title, desc)
     doc = doc.replace('<body data-page="course">', f'<body data-page="course" data-slug="{e(c["slug"])}">', 1)
@@ -320,12 +320,12 @@ def course_page(tpl, c, d, related):
             f'<a class="bs-btn bs-btn-primary bs-btn-lg bs-block" href="{"pricing.html" if rec else "course-" + e(c["slug"]) + ".html"}">{"اشترك لمشاهدة الدورة" if rec else "سجّل الآن"}</a>'
             '<ul class="bs-checks bs-checks-sm"><li><span>شهادة إتمام قابلة للتحقق</span></li><li><span>بالعربية مع المصطلحات بالإنجليزي</span></li></ul></div></aside></div>')
     doc = re.sub(r'<div id="course-root">.*?</div>\s*</div>', lambda m: f'<div id="course-root">{body}</div>', doc, count=1, flags=re.S) if '<div id="course-root"><div class="bx-loading"' in doc else doc
-    extra = '<section class="bs-section bx-seo-extra" id="seo-extra" aria-label="أسئلة شائعة"><div class="bs-section-head"><div><h2>أسئلة شائعة عن الكورس</h2></div></div><div class="bx-faq">' + \
+    extra = '<section class="bs-section bx-seo-extra" id="seo-extra" aria-label="أسئلة شائعة"><div class="bs-section-head"><div><h2>أسئلة شائعة عن الدورة</h2></div></div><div class="bx-faq">' + \
         ''.join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in faq) + '</div>'
     if related:
-        extra += '<h3 style="margin:28px 0 12px">كورسات قريبة ممكن تهمك</h3><ul class="bx-seo-links">' + ''.join(f'<li><a href="course-{e(r["slug"])}.html" dir="auto">{e(r["title"])}</a></li>' for r in related) + '</ul>'
+        extra += '<h3 style="margin:28px 0 12px">دورات ذات صلة قد تهمك</h3><ul class="bx-seo-links">' + ''.join(f'<li><a href="course-{e(r["slug"])}.html" dir="auto">{e(r["title"])}</a></li>' for r in related) + '</ul>'
     if fac and fac['id'] in TOPICS_OK:
-        extra += f'<p style="margin-top:16px"><a class="bx-link" href="topic-{fac["id"]}.html">كل كورسات {e(fac["name"])} ←</a></p>'
+        extra += f'<p style="margin-top:16px"><a class="bx-link" href="topic-{fac["id"]}.html">جميع دورات {e(fac["name"])} ←</a></p>'
     if insts:
         links = [f'<a class="bx-link" href="teacher-{i["id"][:8]}.html">{e(i["name"])}</a>' for i in insts if i['id'] in TEACHERS_OK]
         if links: extra += '<p>عن المحاضر: ' + ' · '.join(links) + '</p>'
@@ -354,46 +354,46 @@ def card(c, d):
 def topic_page(tpl, fac, cs, d):
     url = f'{SITE}/topic-{fac["id"]}.html'
     short = fac['name'].replace('كلية ', '')
-    title = f'كورسات أونلاين لطلاب {fac["name"]} بالعربي | {BRAND}'
+    title = f'دورات وكورسات أونلاين لطلاب {fac["name"]} بالعربية | {BRAND}'
     total = sum(secs(c) for c in cs); nrec = sum(1 for c in cs if c['kind'] == 'recorded'); nint = len(cs) - nrec
     specs = sorted({c['specialty'] for c in cs if c.get('specialty') and c['specialty'] != 'كل التخصصات'})
-    desc = plain(f'{len(cs)} كورس أونلاين بالعربي لطلاب وخريجي {fac["name"]}' + (f' في {"، ".join(specs[:4])}' if specs else '') + f' على {BRAND}، مع شهادات إتمام قابلة للتحقق.')
+    desc = plain(f'{len(cs)} دورة أونلاين باللغة العربية لطلاب وخريجي {fac["name"]}' + (f' في {"، ".join(specs[:4])}' if specs else '') + f' على {BRAND}، مع شهادات إتمام قابلة للتحقق.')
     p = d['plans'][0] if d['plans'] else None
-    faq = [(f'إيه أفضل كورسات أونلاين لطلاب {fac["name"]}؟', f'على {BRAND} فيه {len(cs)} كورس مناسب لطلاب {short}: ' + '، '.join(c['title'] for c in cs[:8]) + '.'),
-           ('هل الكورسات بالعربي؟', 'أيوه، الشرح بالعربي والمصطلحات العلمية بالإنجليزي.'),
-           ('هل فيه شهادة؟', 'أيوه، كل كورس بيدي شهادة إتمام من Biosyn Egypt عليها رقم وكود QR للتحقق.')]
-    if p and nrec: faq.append(('بكام الاشتراك؟', f'الكورسات المسجلة كلها مفتوحة باشتراك واحد يبدأ من {int(float(p["price_egp"]))} ج.م شهريًا، والكورسات التفاعلية ليها رسوم منفصلة.'))
+    faq = [(f'ما أفضل الكورسات الأونلاين لطلاب {fac["name"]}؟', f'تضم {BRAND} {len(cs)} دورة مناسبة لطلاب {short}: ' + '، '.join(c['title'] for c in cs[:8]) + '.'),
+           ('هل الدورات باللغة العربية؟', 'نعم، الشرح باللغة العربية والمصطلحات العلمية بالإنجليزية.'),
+           ('هل توجد شهادة؟', 'نعم، تمنح كل دورة شهادة إتمام من Biosyn Egypt عليها رقم ورمز QR للتحقق.')]
+    if p and nrec: faq.append(('كم سعر الاشتراك؟', f'جميع الدورات المسجلة متاحة باشتراك واحد يبدأ من {int(float(p["price_egp"]))} ج.م شهريًا، وللدورات التفاعلية رسوم منفصلة.'))
     graph = [ORG, {'@type': 'CollectionPage', '@id': url, 'name': title, 'description': desc, 'url': url, 'inLanguage': 'ar', 'isPartOf': {'@id': SITE + '/#website'},
                    'mainEntity': {'@type': 'ItemList', 'numberOfItems': len(cs), 'itemListElement': [{'@type': 'ListItem', 'position': i + 1, 'url': f'{SITE}/course-{c["slug"]}.html', 'name': c['title']} for i, c in enumerate(cs)]}},
-             crumbs([('الرئيسية', SITE + '/'), ('الكورسات المسجلة', SITE + '/courses.html'), (fac['name'], url)]), faq_ld(faq)]
-    main = (f'<main class="bx-wrap bx-topic" id="main" style="max-width:1180px"><nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><a href="courses.html">الكورسات</a><span>/</span><span>{e(fac["name"])}</span></nav>'
-            f'<h1>كورسات أونلاين لطلاب {e(fac["name"])}</h1>'
-            f'<p class="bs-lead">على {BRAND} فيه <b>{len(cs)}</b> كورس بالعربي مناسب لطلاب وخريجي {e(fac["name"])}'
-            + (f': {nrec} كورس مسجل' if nrec else '') + (f' و{nint} برنامج تفاعلي مباشر' if nint else '') + (f'، بإجمالي محتوى حوالي {e(hours_ar(total))}' if total else '') + '. كل كورس بشهادة إتمام قابلة للتحقق.</p>'
+             crumbs([('الرئيسية', SITE + '/'), ('الدورات المسجلة', SITE + '/courses.html'), (fac['name'], url)]), faq_ld(faq)]
+    main = (f'<main class="bx-wrap bx-topic" id="main" style="max-width:1180px"><nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><a href="courses.html">الدورات</a><span>/</span><span>{e(fac["name"])}</span></nav>'
+            f'<h1>دورات أونلاين لطلاب {e(fac["name"])}</h1>'
+            f'<p class="bs-lead">تضم {BRAND} <b>{len(cs)}</b> دورة باللغة العربية مناسبة لطلاب وخريجي {e(fac["name"])}'
+            + (f': {nrec} دورة مسجلة' if nrec else '') + (f' و{nint} برنامج تفاعلي مباشر' if nint else '') + (f'، بإجمالي محتوى حوالي {e(hours_ar(total))}' if total else '') + '. تمنح كل دورة شهادة إتمام قابلة للتحقق.</p>'
             + (f'<p>التخصصات: {e("، ".join(specs))}.</p>' if specs else '') +
             f'<div class="bs-grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr));margin-top:24px">{"".join(card(c, d) for c in cs)}</div>'
             f'<section style="margin-top:40px"><h2>أسئلة شائعة</h2><div class="bx-faq">{"".join(f"<details><summary>{e(q)}</summary><p>{e(a)}</p></details>" for q, a in faq)}</div></section>'
-            f'<p style="margin-top:24px"><a class="bs-btn bs-btn-primary" href="pricing.html">شوف الباقات</a> <a class="bs-btn bs-btn-secondary" href="courses.html?f={e(fac["id"])}">تصفّح وفلتر الكورسات</a></p></main>')
+            f'<p style="margin-top:24px"><a class="bs-btn bs-btn-primary" href="pricing.html">اطّلع على الباقات</a> <a class="bs-btn bs-btn-secondary" href="courses.html?f={e(fac["id"])}">تصفّح الدورات وصنّفها</a></p></main>')
     return url, shell(tpl, url, title, desc, graph, main)
 
 
 def teacher_page(tpl, t, cs, d):
     url = f'{SITE}/teacher-{t["id"][:8]}.html'
     title = f'{t["name"]} | محاضر على {BRAND}'
-    desc = plain(f'{t["name"]}: {t.get("title") or ""} — كورساته على {BRAND}: ' + '، '.join(c['title'] for c in cs))
+    desc = plain(f'{t["name"]}: {t.get("title") or ""} — دوراته على {BRAND}: ' + '، '.join(c['title'] for c in cs))
     person = {'@type': 'Person', '@id': url + '#person', 'name': t['name'], 'url': url, 'description': plain(t.get('title'), 300), 'worksFor': ORG_REF}
     if t.get('photo_url'): person['image'] = t['photo_url']
     graph = [ORG, {'@type': 'ProfilePage', '@id': url, 'url': url, 'name': title, 'mainEntity': person, 'inLanguage': 'ar'},
-             crumbs([('الرئيسية', SITE + '/'), ('المحاضرين', SITE + '/instructors.html'), (t['name'], url)])]
-    main = (f'<main class="bx-wrap bx-topic" id="main" style="max-width:1180px"><nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><a href="instructors.html">المحاضرين</a><span>/</span><span>{e(t["name"])}</span></nav>'
+             crumbs([('الرئيسية', SITE + '/'), ('المحاضرون', SITE + '/instructors.html'), (t['name'], url)])]
+    main = (f'<main class="bx-wrap bx-topic" id="main" style="max-width:1180px"><nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><a href="instructors.html">المحاضرون</a><span>/</span><span>{e(t["name"])}</span></nav>'
             f'<h1>{e(t["name"])}</h1>' + ''.join(f'<p class="bs-lead">{e(p)}</p>' for p in paras(t.get('title'))) +
-            f'<h2 style="margin-top:32px">كورسات {e(t["name"])} على {BRAND}</h2><div class="bs-grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr));margin-top:24px">{"".join(card(c, d) for c in cs)}</div></main>')
+            f'<h2 style="margin-top:32px">دورات {e(t["name"])} على {BRAND}</h2><div class="bs-grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr));margin-top:24px">{"".join(card(c, d) for c in cs)}</div></main>')
     return url, shell(tpl, url, title, desc, graph, main)
 
 
 def llms(d, courses, topics, teachers):
     plans = d['plans']
-    L = [f'# {BRAND}', '', '> منصة مصرية للتعليم العلمي والطبي بالعربي (biosyneg.com): كورسات مسجلة باشتراك واحد، وبرامج تفاعلية مباشرة، واستشارات وخدمات بحثية، وشهادات إتمام قابلة للتحقق. Egyptian EdTech platform for life-science, medical and bioinformatics education in Arabic.', '',
+    L = [f'# {BRAND}', '', '> منصة مصرية للتعليم العلمي والطبي باللغة العربية (biosyneg.com): دورات مسجلة باشتراك واحد، وبرامج تفاعلية مباشرة، واستشارات وخدمات بحثية، وشهادات إتمام قابلة للتحقق. Egyptian EdTech platform for life-science, medical and bioinformatics education in Arabic.', '',
          '## Key facts', f'- Website: {SITE}', f'- Contact: {CONTACT}', '- Language: Arabic explanations, scientific terms kept in English',
          '- Audience: students, graduates and researchers of science, biotechnology, pharmacy, medicine, dentistry, veterinary, agriculture and applied health sciences faculties in Egypt and the Arab region',
          '- Recorded courses: all included in one subscription; the subscription does not renew automatically',
@@ -443,7 +443,7 @@ TRAINING_BOTS = {'GPTBot', 'CCBot', 'Google-Extended', 'Applebot-Extended', 'met
 
 
 def robots():
-    lines = ['# Biosyn Egypt — search and AI crawlers are welcome on public pages', 'User-agent: *'] + [f'Disallow: /{p}' for p in ['account.html', 'admin.html', 'instructor.html', 'watch.html', 'login.html', 'form.html', 'certificate.html']] + ['Allow: /', '']
+    lines = ['# Biosyn Egypt — search and AI crawlers are welcome on public pages', 'User-agent: *'] + [f'Disallow: /{p}' for p in ['account.html', 'admin.html', 'instructor.html', 'watch.html', 'login.html', 'form.html', 'certificate.html', 'unsubscribe.html', 'contract.html']] + ['Allow: /', '']
     block = S.get('ai_training') is False   # admin choice: keep AI *search* bots, refuse model-training crawlers
     for b in AI_BOTS:
         lines += [f'User-agent: {b}'] + (['Disallow: /'] if block and b in TRAINING_BOTS else ['Allow: /', 'Disallow: /account.html', 'Disallow: /admin.html', 'Disallow: /watch.html']) + ['']
@@ -564,9 +564,9 @@ def main():
         else:
             graph.append(crumbs([('الرئيسية', SITE + '/'), (name, url)]))
         if f == 'courses.html' and ok_courses:
-            graph.append({'@type': 'ItemList', 'name': 'الكورسات المسجلة', 'itemListElement': [{'@type': 'ListItem', 'position': i + 1, 'url': f'{SITE}/course-{c["slug"]}.html', 'name': c['title']} for i, c in enumerate([c for c in ok_courses if c['kind'] == 'recorded'])]})
+            graph.append({'@type': 'ItemList', 'name': 'الدورات المسجلة', 'itemListElement': [{'@type': 'ListItem', 'position': i + 1, 'url': f'{SITE}/course-{c["slug"]}.html', 'name': c['title']} for i, c in enumerate([c for c in ok_courses if c['kind'] == 'recorded'])]})
         if f == 'interactive.html' and ok_courses:
-            graph.append({'@type': 'ItemList', 'name': 'الكورسات التفاعلية', 'itemListElement': [{'@type': 'ListItem', 'position': i + 1, 'url': f'{SITE}/course-{c["slug"]}.html', 'name': c['title']} for i, c in enumerate([c for c in ok_courses if c['kind'] == 'interactive'])]})
+            graph.append({'@type': 'ItemList', 'name': 'الدورات التفاعلية', 'itemListElement': [{'@type': 'ListItem', 'position': i + 1, 'url': f'{SITE}/course-{c["slug"]}.html', 'name': c['title']} for i, c in enumerate([c for c in ok_courses if c['kind'] == 'interactive'])]})
         if f == 'index.html': doc = inject_faq(doc)
         if f == 'about.html':
             doc = render_about(doc)

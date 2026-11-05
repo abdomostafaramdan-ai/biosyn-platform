@@ -14,7 +14,7 @@
   try {
     await sb.auth.ready;
     const c = await sb.one('contracts', { select: '*', id: 'eq.' + id });
-    if (!c) { box.innerHTML = '<p class="kc-msg">مش لاقيين الاتفاقية دي، أو مش متاحة لحسابك.</p>'; return; }
+    if (!c) { box.innerHTML = '<p class="kc-msg">لم نعثر على هذه الاتفاقية، أو أنها غير متاحة لحسابك.</p>'; return; }
     const t = await sb.one('contract_templates', { select: 'title', id: 'eq.' + c.template_id }).catch(() => null);
     c.title = (t && t.title) || 'اتفاقية محاضر';
     document.title = c.title + ' · ' + c.signer_name;

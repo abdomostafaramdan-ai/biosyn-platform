@@ -47,12 +47,13 @@
 
   const views = {
     async home(main) {
-      const [sub, courses, enr, certs] = await Promise.all([subscription(), myCourses(), sb.get('enrollments', { select: '*,courses(slug,title,cover_code,starts_at,ends_at)' }), sb.get('certificates', { select: 'id', limit: 50 })]);
+      const [sub, courses, enr, certs, legacy] = await Promise.all([subscription(), myCourses(), sb.get('enrollments', { select: '*,courses(slug,title,cover_code,starts_at,ends_at)' }), sb.get('certificates', { select: 'id', limit: 50 }), sb.get('legacy_users', { select: 'founding', user_id: 'eq.' + sb.user.id, founding: 'is.true' }).catch(() => [])]);
       const last = courses.find((c) => c.pct < 100) || courses[0];
       const first = (me.full_name || '').split(' ')[0] || 'بك';
+      const fnd = legacy && legacy.length ? ' <span class="bx-founder" title="كنت معنا منذ البداية">★ عضو مؤسس</span>' : '';
       main.innerHTML = `<div id="paybanner"></div>
-        ${last ? `<section class="bx-resume" aria-labelledby="hi"><span class="bs-wm bs-wm-brand" aria-hidden="true"></span><div class="bx-resume-cover" aria-hidden="true"><span>${esc(last.cover_code || last.title.slice(0, 2).toUpperCase())}</span></div><div class="bx-resume-body"><span class="bx-eyebrow">أهلاً ${esc(first)} · تابع من حيث توقفت</span><h2 id="hi" class="bs-latin" style="direction:ltr;text-align:right">${esc(last.title)}</h2><p style="margin:0">أنهيت ${last.done} من ${last.total} محاضرة</p><div class="bx-progress" role="progressbar" aria-valuenow="${last.pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${last.pct}%"></i></div></div><a href="watch.html?c=${esc(last.slug)}" class="bs-btn bs-btn-primary bs-btn-lg">تابع التعلم ←</a></section>`
-          : `<section class="bx-resume"><span class="bs-wm bs-wm-brand" aria-hidden="true"></span><div class="bx-resume-body"><span class="bx-eyebrow">أهلاً ${esc(first)}</span><h2 id="hi">ابدأ رحلتك التعليمية</h2><p style="margin:0">${sub.current ? 'اشتراكك ساري. اختر دورة وابدأ المشاهدة.' : 'اشترك في إحدى الباقات للوصول إلى كل الكورسات المسجلة.'}</p></div><a href="${sub.current ? 'courses.html' : 'pricing.html'}" class="bs-btn bs-btn-primary bs-btn-lg">${sub.current ? 'تصفح الدورات' : 'اختر باقة'}</a></section>`}
+        ${last ? `<section class="bx-resume" aria-labelledby="hi"><span class="bs-wm bs-wm-brand" aria-hidden="true"></span><div class="bx-resume-cover" aria-hidden="true"><span>${esc(last.cover_code || last.title.slice(0, 2).toUpperCase())}</span></div><div class="bx-resume-body"><span class="bx-eyebrow">أهلاً ${esc(first)} · تابع من حيث توقفت</span>${fnd}<h2 id="hi" class="bs-latin" style="direction:ltr;text-align:right">${esc(last.title)}</h2><p style="margin:0">أنهيت ${last.done} من ${last.total} محاضرة</p><div class="bx-progress" role="progressbar" aria-valuenow="${last.pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${last.pct}%"></i></div></div><a href="watch.html?c=${esc(last.slug)}" class="bs-btn bs-btn-primary bs-btn-lg">تابع التعلم ←</a></section>`
+          : `<section class="bx-resume"><span class="bs-wm bs-wm-brand" aria-hidden="true"></span><div class="bx-resume-body"><span class="bx-eyebrow">أهلاً ${esc(first)}</span>${fnd}<h2 id="hi">ابدأ رحلتك التعليمية</h2><p style="margin:0">${sub.current ? 'اشتراكك ساري. اختر دورة وابدأ المشاهدة.' : 'اشترك في إحدى الباقات للوصول إلى كل الدورات المسجلة.'}</p></div><a href="${sub.current ? 'courses.html' : 'pricing.html'}" class="bs-btn bs-btn-primary bs-btn-lg">${sub.current ? 'تصفح الدورات' : 'اختر باقة'}</a></section>`}
         <div class="bx-stats">
           ${(() => {
             if (!sub.current) return D.stat('الاشتراك', 'غير مشترك', '<a class="bx-link" href="pricing.html">عرض الباقات</a>');
@@ -66,7 +67,7 @@
           ${D.stat('الشهادات', certs.length)}
         </div>
         ${D.panel('دوراتي', courses.length ? courses.map((c) => `<div class="bx-crow"><div class="bx-mine-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</div><div><h4>${esc(c.title)}</h4><div class="bx-progress" role="progressbar" aria-valuenow="${c.pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${c.pct}%"></i></div><small>${c.done} من ${c.total} محاضرة</small></div><a href="watch.html?c=${esc(c.slug)}" class="bs-btn bs-btn-primary bs-btn-sm">${c.pct >= 100 ? 'مراجعة' : 'تابع'}</a></div>`).join('') : '<div class="bx-empty-big"><b>لم تبدأ أي دورة بعد</b><a class="bx-link" href="courses.html">تصفح الدورات المسجلة</a></div>')}
-        ${enr.length ? D.panel('كورساتي التفاعلية', enr.map((e) => `<div class="bx-crow"><div class="bx-mine-code" style="font-size:18px">${esc((e.courses.cover_code || e.courses.title.slice(0, 2)).toUpperCase())}</div><div><h4>${esc(e.courses.title)}</h4><small>${e.courses.starts_at ? 'يبدأ ' + D.date(e.courses.starts_at) : 'سنوافيك بموعد الجلسات'}${e.courses.ends_at ? ' · ينتهي ' + D.date(e.courses.ends_at) + ' وتصدر شهادتك تلقائيًا' : ''}</small></div><span class="bx-st bx-st-ok">مسجّل</span></div>`).join('')) : ''}`;
+        ${enr.length ? D.panel('دوراتي التفاعلية', enr.map((e) => `<div class="bx-crow"><div class="bx-mine-code" style="font-size:18px">${esc((e.courses.cover_code || e.courses.title.slice(0, 2)).toUpperCase())}</div><div><h4>${esc(e.courses.title)}</h4><small>${e.courses.starts_at ? 'يبدأ ' + D.date(e.courses.starts_at) : 'سنوافيك بموعد الجلسات'}${e.courses.ends_at ? ' · ينتهي ' + D.date(e.courses.ends_at) + ' وتصدر شهادتك تلقائيًا' : ''}</small></div><span class="bx-st bx-st-ok">مسجّل</span></div>`).join('')) : ''}`;
       const q = new URLSearchParams(location.search), pay = q.get('payment');
       if (pay === 'cancelled') $('#paybanner').innerHTML = '<div class="bx-banner bx-appmsg" role="status">لم تكتمل عملية الدفع. لم يُخصم منك أي مبلغ، ويمكنك المحاولة مرة أخرى.</div>';
       if (pay === 'success') watchPayment(q.get('id'));
@@ -75,7 +76,7 @@
     async payments(main) {
       const [rows, myRefs] = await Promise.all([sb.get('payments', { select: '*,plans(name),courses(title)', order: 'created_at.desc', limit: 100 }), sb.get('requests', { select: 'status,payload', type: 'eq.refund', user_id: 'eq.' + sb.user.id }).catch(() => [])]);
       const refOf = Object.fromEntries(myRefs.map((r) => [r.payload && r.payload.payment_id, r]));
-      const REF_ST = { new: ['طلب الاسترداد وصل', 'warn'], in_review: ['طلب الاسترداد قيد المراجعة', 'info'], accepted: ['تم الاسترداد', 'ok'], rejected: ['طلب الاسترداد اترفض', 'mute'] };
+      const REF_ST = { new: ['طلب الاسترداد وصل', 'warn'], in_review: ['طلب الاسترداد قيد المراجعة', 'info'], accepted: ['تم الاسترداد', 'ok'], rejected: ['رُفض طلب الاسترداد', 'mute'] };
       const sub = await subscription();
       main.innerHTML = D.panel('الاشتراك', sub.current
         ? `<p style="margin:0">باقتك الحالية: <b>${esc(sub.current.plans.name)}</b> · تنتهي في <b>${D.date(sub.current.ends_at)}</b>${sub.upcoming[0] ? ` · الباقة التالية تبدأ ${D.date(sub.upcoming[0].starts_at)}` : ''}.</p><p class="bx-hint">الاشتراك لا يتجدد تلقائيًا، يمكنك التمديد بالاشتراك في باقة جديدة وستبدأ بعد انتهاء الحالية. <a class="bx-link" href="pricing.html">عرض الباقات</a></p>`
@@ -87,17 +88,17 @@
           return [D.date(p.created_at), esc(p.plans ? p.plans.name : p.courses ? p.courses.title : p.purpose === 'consultation' ? 'استشارة' : '—'), paidTxt(p, 'total') + (Number(p.fee_egp) ? `<br><small class="bx-hint">منها ${paidTxt(p, 'fee')} رسوم البوابة</small>` : ''), D.badge('pay', p.status) + (p.gateway === 'manual' && p.status === 'pending' ? '<br><small class="bx-hint">تحويل يدوي قيد المراجعة</small>' : '') + rqTag, [p.receipt_no ? `<button class="bx-linkbtn" data-rc="${p.id}">الإيصال</button>` : '', refundable ? `<button class="bx-linkbtn" data-refund="${p.id}">اطلب الاسترداد</button>` : ''].filter(Boolean).join(' · ')];
         }), 'لا توجد مدفوعات بعد'));
       $$('[data-rc]', main).forEach((b) => (b.onclick = () => receiptModal(rows.find((p) => p.id === b.dataset.rc))));
-      $$('[data-refund]', main).forEach((b) => (b.onclick = () => ui.modal(`<h3>طلب استرداد</h3><p>يمكن استرداد رسوم الكورس التفاعلي خلال أسبوع من الدفع، وبعد الاسترداد بيتلغي تسجيلك في الكورس.</p><p class="bx-warnnote"><b>تنبيه:</b> تقدر تطلب الاسترداد مرة واحدة بس لكل عملية دفع، فاتأكد من قرارك قبل الإرسال.</p>
-          <div class="bx-field"><label for="rr">السبب *</label><select id="rr" class="bx-select"><option value="">اختر السبب</option><option>المحتوى مش مناسب لمستوايا</option><option>المواعيد مش مناسبة ليا</option><option>اشتركت بالغلط</option><option>مشكلة تقنية في الحضور</option><option>سبب آخر</option></select></div>
+      $$('[data-refund]', main).forEach((b) => (b.onclick = () => ui.modal(`<h3>طلب استرداد</h3><p>يمكن استرداد رسوم الدورة التفاعلية خلال أسبوع من الدفع، ويُلغى تسجيلك في الدورة بعد الاسترداد.</p><p class="bx-warnnote"><b>تنبيه:</b> يمكنك طلب الاسترداد مرة واحدة فقط لكل عملية دفع، فتأكد من قرارك قبل الإرسال.</p>
+          <div class="bx-field"><label for="rr">السبب *</label><select id="rr" class="bx-select"><option value="">اختر السبب</option><option>المحتوى غير مناسب لمستواي</option><option>المواعيد غير مناسبة لي</option><option>اشتركت بالغلط</option><option>مشكلة تقنية في الحضور</option><option>سبب آخر</option></select></div>
           <div class="bx-field"><label for="rn">تفاصيل (اختياري)</label><textarea id="rn" class="bx-textarea" maxlength="1000"></textarea></div><div class="bx-formmsg" aria-live="polite"></div><div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" data-ok>إرسال الطلب</button><button class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div>`, (m, close) => {
         $('[data-x]', m).onclick = close;
-        $('[data-ok]', m).onclick = async (ev) => { const t = $('.bx-formmsg', m), reason = $('#rr', m).value; if (!reason) { t.className = 'bx-formmsg err'; t.textContent = 'اختر سبب الاسترداد.'; return; } ev.target.disabled = true; try { await sb.rpc('request_refund', { p_payment: b.dataset.refund, p_note: $('#rn', m).value.trim() || null, p_reason: reason }); close(); ui.toast('وصل طلب الاسترداد وهنراجعه قريب، وهيوصلك إيميل بالقرار.'); D.reload(); } catch (e) { ev.target.disabled = false; t.className = 'bx-formmsg err'; t.textContent = /already requested/.test(e.message) ? 'طلبت الاسترداد قبل كده للعملية دي، والطلب بيتعمل مرة واحدة بس.' : /window/.test(e.message) ? 'انتهت مهلة الاسترداد (أسبوع من الدفع).' : arErr(e); } };
+        $('[data-ok]', m).onclick = async (ev) => { const t = $('.bx-formmsg', m), reason = $('#rr', m).value; if (!reason) { t.className = 'bx-formmsg err'; t.textContent = 'اختر سبب الاسترداد.'; return; } ev.target.disabled = true; try { await sb.rpc('request_refund', { p_payment: b.dataset.refund, p_note: $('#rn', m).value.trim() || null, p_reason: reason }); close(); ui.toast('وصل طلب الاسترداد وسنراجعه قريبًا، وسيصلك بريد إلكتروني بالقرار.'); D.reload(); } catch (e) { ev.target.disabled = false; t.className = 'bx-formmsg err'; t.textContent = /already requested/.test(e.message) ? 'سبق أن طلبت الاسترداد لهذه العملية، ويُقدَّم الطلب مرة واحدة فقط.' : /window/.test(e.message) ? 'انتهت مهلة الاسترداد (أسبوع من الدفع).' : arErr(e); } };
       })));
     },
 
     async messages(main) {
-      main.innerHTML = D.panel('الرسائل والدعم', `<p class="bx-hint" style="margin-top:0">هنا أسئلتك للمحاضرين (من زرار «اسأل المحاضر» في صفحة الكورس) وتذاكر الدعم والشكاوى مع فريق Biosyn.</p><div data-ib></div>`);
-      await Chat.inbox($('[data-ib]', main), { mode: 'student', newTicket: true, empty: 'مفيش رسايل لسه. لو عندك مشكلة افتح تذكرة جديدة.' });
+      main.innerHTML = D.panel('الرسائل والدعم', `<p class="bx-hint" style="margin-top:0">هنا أسئلتك للمحاضرين (من زر «اسأل المحاضر» في صفحة الدورة) وتذاكر الدعم والشكاوى مع فريق Biosyn.</p><div data-ib></div>`);
+      await Chat.inbox($('[data-ib]', main), { mode: 'student', newTicket: true, empty: 'لا توجد رسائل بعد. إذا واجهتك مشكلة فافتح تذكرة جديدة.' });
       D.setBadge('messages', 0);
     },
 
@@ -110,24 +111,24 @@
       const soon = enr.filter((e) => e.courses && e.courses.kind === 'interactive' && !have.has(e.course_id));
       main.innerHTML = D.panel('شهاداتي', (certs.length
         ? certs.map((c) => `<div class="bx-crow"><div class="bx-mine-code">${D.ic('cert')}</div><div><h4 dir="auto" style="text-align:right">${esc(c.courses.title)}</h4><small>صدرت في ${D.date(c.issued_at)} · رقم <span class="bs-latin" dir="ltr">${esc(c.code)}</span>${c.holder_name ? '' : ' · <b style="color:var(--warning,#f5b84a)">اكتب اسمك على الشهادة</b>'}</small></div><a class="bs-btn bs-btn-secondary bs-btn-sm" href="certificate.html?c=${encodeURIComponent(c.code)}">عرض وتحميل</a></div>`).join('')
-        : '<div class="bx-empty-big"><b>لا توجد شهادات بعد</b>شهادة الكورس المسجل تظهر هنا أول ما تخلّص كل محاضراته، وشهادة الكورس التفاعلي تظهر تلقائيًا يوم انتهائه.</div>')
-        + (soon.length ? `<h4 style="margin:22px 0 8px">شهادات في الطريق</h4>` + soon.map((e) => `<div class="bx-crow"><div class="bx-mine-code">${D.ic('cert')}</div><div><h4 dir="auto" style="text-align:right">${esc(e.courses.title)}</h4><small>${e.courses.ends_at ? 'هتصدر تلقائيًا يوم ' + D.date(e.courses.ends_at) + '، وهيوصلك إشعار وإيميل.' : 'هتصدر تلقائيًا بعد انتهاء الكورس، وهيوصلك إشعار وإيميل.'}</small></div><span class="bx-st">قريبًا</span></div>`).join('') : '')
-        + `<p class="bx-hint" style="margin:16px 0 0">الاسم اللي بيظهر على الشهادة بييجي من «الاسم على الشهادة» في الإعدادات، ويتثبت على كل شهادة وقت صدورها.</p>`);
+        : '<div class="bx-empty-big"><b>لا توجد شهادات بعد</b>تظهر شهادة الدورة المسجلة هنا فور إتمام جميع محاضراتها، وتظهر شهادة الدورة التفاعلية تلقائيًا يوم انتهائها.</div>')
+        + (soon.length ? `<h4 style="margin:22px 0 8px">شهادات في الطريق</h4>` + soon.map((e) => `<div class="bx-crow"><div class="bx-mine-code">${D.ic('cert')}</div><div><h4 dir="auto" style="text-align:right">${esc(e.courses.title)}</h4><small>${e.courses.ends_at ? 'ستصدر تلقائيًا يوم ' + D.date(e.courses.ends_at) + '، وسيصلك إشعار وبريد إلكتروني.' : 'ستصدر تلقائيًا بعد انتهاء الدورة، وسيصلك إشعار وبريد إلكتروني.'}</small></div><span class="bx-st">قريبًا</span></div>`).join('') : '')
+        + `<p class="bx-hint" style="margin:16px 0 0">الاسم الذي يظهر على الشهادة مأخوذ من «الاسم على الشهادة» في الإعدادات، ويُثبَّت على كل شهادة وقت صدورها.</p>`);
     },
     async invite(main) {
       const refs = await sb.rpc('my_referrals').catch(() => null);
-        if (!refs || !refs.code) { main.innerHTML = D.panel('شهر مجاني', '<div class="bx-empty-big"><b>رابط الدعوة مش جاهز</b>حاول تاني بعد شوية.</div>'); return; }
+        if (!refs || !refs.code) { main.innerHTML = D.panel('شهر مجاني', '<div class="bx-empty-big"><b>رابط الدعوة غير جاهز</b>حاول مرة أخرى بعد قليل.</div>'); return; }
         const link = new URL('index.html?ref=' + refs.code, location.href).href;
         const since = Math.min(3, Number(refs.since_last || 0)), total = Number(refs.subscribed || 0);
         const wait = refs.next_month_at && new Date(refs.next_month_at) > new Date();
-        const left = 3 - since, leftTxt = left === 1 ? 'صاحب واحد كمان' : left === 2 ? 'اتنين كمان' : '3 أصحاب';
+        const left = 3 - since, leftTxt = left === 1 ? 'صديق واحد إضافي' : left === 2 ? 'صديقان إضافيان' : '3 أصحاب';
         const bar = (v, max) => `<div class="rf-bar"><i style="width:${Math.min(100, (v / max) * 100)}%"></i></div>`;
         main.innerHTML = D.panel('ادعُ أصحابك واكسب شهور مجانية 🎁', `<p style="margin-top:0">شارك رابطك. صاحبك بيتحسب لما يشترك في أي باقة مدفوعة لأول مرة.</p>
-          <ul class="rf-rules"><li><b>3 أصحاب يشتركوا</b> = <b>شهر مجاني</b>، وتقدر تكسبه تاني كل 6 شهور بـ 3 أصحاب جداد.</li><li><b>10 أصحاب يشتركوا</b> = <b>6 شهور مجانًا</b> (مرة واحدة).</li></ul>
+          <ul class="rf-rules"><li><b>3 أصحاب يشتركوا</b> = <b>شهر مجاني</b>، ويمكنك الحصول عليه مجددًا كل 6 أشهر بدعوة 3 أصدقاء جدد.</li><li><b>10 أصحاب يشتركوا</b> = <b>6 شهور مجانًا</b> (مرة واحدة).</li></ul>
           <div style="display:flex;gap:8px;flex-wrap:wrap"><input class="bx-input" dir="ltr" readonly value="${esc(link)}" id="reflink" style="flex:1;min-width:220px"><button class="bs-btn bs-btn-secondary" id="refcopy" type="button">نسخ الرابط</button></div>
-          <div class="rf-prog"><div><span>الشهر المجاني الجاي</span><b>${since} من 3</b>${bar(since, 3)}<small>${since >= 3 && wait ? 'هيتضاف تلقائي يوم ' + D.date(refs.next_month_at) : wait && since < 3 ? `فاضل ${leftTxt} · ومتاح بعد ${D.date(refs.next_month_at)}` : since < 3 ? `فاضل ${leftTxt}` : 'هيتضاف تلقائي'}</small></div>
-          <div><span>6 شهور مجانًا</span><b>${refs.semiannual_done ? '✓' : Math.min(total, 10) + ' من 10'}</b>${bar(refs.semiannual_done ? 10 : total, 10)}<small>${refs.semiannual_done ? 'كسبتها 🎉' : `فاضل ${10 - Math.min(total, 10)} صاحب`}</small></div></div>
-          <p class="bx-hint">سجّلوا من رابطك: <b>${refs.signed_up}</b> · اشتركوا: <b>${total}</b> · كسبت لحد دلوقتي: <b>${refs.months_earned || 0}</b> شهر مجاني</p>`);
+          <div class="rf-prog"><div><span>الشهر المجاني الجاي</span><b>${since} من 3</b>${bar(since, 3)}<small>${since >= 3 && wait ? 'هيتضاف تلقائي يوم ' + D.date(refs.next_month_at) : wait && since < 3 ? `المتبقي ${leftTxt} · ومتاح بعد ${D.date(refs.next_month_at)}` : since < 3 ? `المتبقي ${leftTxt}` : 'هيتضاف تلقائي'}</small></div>
+          <div><span>6 شهور مجانًا</span><b>${refs.semiannual_done ? '✓' : Math.min(total, 10) + ' من 10'}</b>${bar(refs.semiannual_done ? 10 : total, 10)}<small>${refs.semiannual_done ? 'كسبتها 🎉' : `المتبقي ${10 - Math.min(total, 10)} صاحب`}</small></div></div>
+          <p class="bx-hint">سجّلوا من رابطك: <b>${refs.signed_up}</b> · اشتركوا: <b>${total}</b> · ما حصلت عليه حتى الآن: <b>${refs.months_earned || 0}</b> شهر مجاني</p>`);
         $('#refcopy', main).onclick = async () => { try { await navigator.clipboard.writeText(link); ui.toast('تم نسخ رابط الدعوة.'); } catch { $('#reflink', main).select(); } };
           },
     async settings(main) {
@@ -143,7 +144,7 @@
         if (a !== b) { m.className = 'bx-formmsg err'; m.textContent = 'كلمتا المرور غير متطابقتين.'; return; }
         btn.disabled = true;
         try { await sb.auth.updatePassword(a); f.reset(); m.className = 'bx-formmsg ok'; m.textContent = 'تم تغيير كلمة المرور ✓'; }
-        catch (e) { m.className = 'bx-formmsg err'; m.textContent = /reauth|recent/i.test(e.message) ? 'لأمان حسابك: سجّل خروج وادخل تاني، أو استخدم «نسيت كلمة المرور» من صفحة الدخول.' : /same|different from the old/i.test(e.message) ? 'اختار كلمة مرور مختلفة عن القديمة.' : arErr(e); }
+        catch (e) { m.className = 'bx-formmsg err'; m.textContent = /reauth|recent/i.test(e.message) ? 'لأمان حسابك: سجّل خروج وادخل تاني، أو استخدم «نسيت كلمة المرور» من صفحة الدخول.' : /same|different from the old/i.test(e.message) ? 'اختر كلمة مرور مختلفة عن السابقة.' : arErr(e); }
         btn.disabled = false;
       };
       const devs = await sb.get('user_devices', { select: '*', user_id: 'eq.' + sb.user.id, order: 'last_seen.desc' }).catch(() => []);

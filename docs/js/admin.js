@@ -14,7 +14,7 @@
     const pid = r.payload && r.payload.proposal_id;
     const f = r.payload && typeof r.payload === 'object' ? Object.entries(r.payload).filter(([k, v]) => v !== '' && v !== null && k !== 'proposal_id') : [];
     const ls = (pid && lessonsByProp && lessonsByProp[pid]) || [];
-    const lessonsHtml = pid ? `<div class="bx-reqlessons"><b>الدروس والفيديوهات</b><ol>${ls.map((l) => `<li>${esc(l.title)} ${l.video_url ? `<a class="bx-linkbtn" href="${esc(l.video_url)}" target="_blank" rel="noopener">فتح لينك الفيديو</a>` : ''}${l.bunny_video_id ? ` <span class="bx-st bx-st-ok">مرفوع على Bunny</span>` : ''}${!l.video_url && !l.bunny_video_id ? ' <small class="bx-hint">بدون فيديو</small>' : ''}</li>`).join('') || '<li class="bx-hint">لا توجد دروس</li>'}</ol><button class="bs-btn bs-btn-secondary bs-btn-sm" data-act="proposal" data-pid="${esc(pid)}">فتح الكورس المقدّم ومشاهدة الفيديوهات</button></div>` : '';
+    const lessonsHtml = pid ? `<div class="bx-reqlessons"><b>الدروس والفيديوهات</b><ol>${ls.map((l) => `<li>${esc(l.title)} ${l.video_url ? `<a class="bx-linkbtn" href="${esc(l.video_url)}" target="_blank" rel="noopener">فتح رابط الفيديو</a>` : ''}${l.bunny_video_id ? ` <span class="bx-st bx-st-ok">مرفوع على Bunny</span>` : ''}${!l.video_url && !l.bunny_video_id ? ' <small class="bx-hint">بدون فيديو</small>' : ''}</li>`).join('') || '<li class="bx-hint">لا توجد دروس</li>'}</ol><button class="bs-btn bs-btn-secondary bs-btn-sm" data-act="proposal" data-pid="${esc(pid)}">فتح الدورة المقدّمة ومشاهدة الفيديوهات</button></div>` : '';
     const isRefund = r.type === 'refund';
     return `<article class="bx-reqcard" data-r="${r.id}"><div class="bx-spread" style="gap:8px;flex-wrap:wrap"><div><b>${esc(r.name)}</b> <span class="bx-hint">· ${esc(D.reqType[r.type] || r.type)} · ${D.dateTime(r.created_at)}</span></div>${D.badge('req', r.status)}</div>
       <dl><div><dt>التواصل</dt><dd class="bx-kbd">${esc(r.email || '')}${r.phone ? ' · ' + esc(r.phone) : ''}</dd></div>${f.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(typeof v === 'object' ? JSON.stringify(v) : v)}</dd></div>`).join('')}</dl>${lessonsHtml}
@@ -40,18 +40,19 @@
 
   const views = {
     async tickets(main) {
-      main.innerHTML = D.panel('التذاكر والشكاوى', `<p class="bx-hint" style="margin-top:0">التذاكر اللي الطلاب بيفتحوها من «حسابي ← الرسائل والدعم». ردّك بيوصلهم هنا وعلى الإيميل.</p><div data-ib></div>`);
-      await Chat.inbox($('[data-ib]', main), { mode: 'staff', kind: 'ticket', status: 'open', empty: 'مفيش تذاكر بالفلتر ده' });
+      main.innerHTML = D.panel('التذاكر والشكاوى', `<p class="bx-hint" style="margin-top:0">التذاكر التي يفتحها الطلاب من «حسابي ← الرسائل والدعم». يصلهم ردّك هنا وعلى البريد الإلكتروني.</p><div data-ib></div>`);
+      await Chat.inbox($('[data-ib]', main), { mode: 'staff', kind: 'ticket', status: 'open', empty: 'لا توجد تذاكر بهذه التصفية' });
     },
     async questions(main) {
-      main.innerHTML = D.panel('أسئلة الطلاب للمحاضرين', `<p class="bx-hint" style="margin-top:0">كل أسئلة الطلاب في الكورسات. الكورسات اللي مش مربوطة بحساب محاضر بتيجي للفريق هنا عشان ترد عليها.</p><div data-ib></div>`);
-      await Chat.inbox($('[data-ib]', main), { mode: 'staff', kind: 'course', empty: 'مفيش أسئلة لسه' });
+      main.innerHTML = D.panel('أسئلة الطلاب للمحاضرين', `<p class="bx-hint" style="margin-top:0">جميع أسئلة الطلاب في الدورات. أسئلة الدورات غير المرتبطة بحساب محاضر تصل إلى الفريق هنا للرد عليها.</p><div data-ib></div>`);
+      await Chat.inbox($('[data-ib]', main), { mode: 'staff', kind: 'course', empty: 'لا توجد أسئلة بعد' });
     },
     async analytics(main) { await window.courseAnalytics(main, { admin: true, edit: isAdmin() }); },
     async traffic(main) { await window.trafficDashboard(main); },
     async seo(main) { await window.seoDashboard(main); },
     async about(main) { await window.aboutAdmin(main); },
     async contracts(main) { await window.contractsAdmin(main, isAdmin()); },
+    async campaign(main) { await window.campaignAdmin(main); },
 
     async home(main) {
       const now = new Date(), som = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
@@ -90,14 +91,14 @@
         $('#rl').innerHTML = list.length ? list.map((r) => reqCard(r, byId, lessonsByProp)).join('') : '<div class="bx-empty-big"><b>لا توجد طلبات</b></div>';
       };
       main.innerHTML = `<div class="bx-btnrow" style="margin-bottom:16px"><div class="bx-field"><label for="ft" class="bx-hint">النوع</label><select id="ft" class="bx-select"><option value="">كل الأنواع</option>${Object.entries(D.reqType).filter(([k]) => k !== 'refund').map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></div>
-        <div class="bx-field"><label for="fs" class="bx-hint">الحالة</label><select id="fs" class="bx-select"><option value="open">مفتوحة</option><option value="all">الكل</option><option value="accepted">مقبولة</option><option value="rejected">مرفوضة</option></select></div></div>${nRef ? `<p class="bx-hint" style="margin:0 0 12px">طلبات الاسترداد بقت في <a class="bx-link" href="#payments">المدفوعات ← طلبات الاسترداد</a> (${nRef} مفتوح).</p>` : ''}<div id="rl" style="display:grid;gap:12px"></div>`;
+        <div class="bx-field"><label for="fs" class="bx-hint">الحالة</label><select id="fs" class="bx-select"><option value="open">مفتوحة</option><option value="all">الكل</option><option value="accepted">مقبولة</option><option value="rejected">مرفوضة</option></select></div></div>${nRef ? `<p class="bx-hint" style="margin:0 0 12px">أصبحت طلبات الاسترداد في <a class="bx-link" href="#payments">المدفوعات ← طلبات الاسترداد</a> (${nRef} مفتوح).</p>` : ''}<div id="rl" style="display:grid;gap:12px"></div>`;
       if (nRef) views._payTab = 'ref';
       $('#ft').onchange = (e) => { type = e.target.value; draw(); };
       $('#fs').onchange = (e) => { status = e.target.value; draw(); };
       $('#rl').addEventListener('click', async (e) => {
         const b = e.target.closest('[data-act]'); if (!b) return;
         const card = b.closest('[data-r]'), id = card.dataset.r, r = reqs.find((x) => x.id === id), act = b.dataset.act;
-        if (act === 'proposal') { const pp = await sb.get('course_proposals', { select: '*', id: 'eq.' + b.dataset.pid }).catch(() => []); if (pp[0]) proposalModal(pp[0]); else ui.toast('الكورس مش موجود.', 'err'); return; }
+        if (act === 'proposal') { const pp = await sb.get('course_proposals', { select: '*', id: 'eq.' + b.dataset.pid }).catch(() => []); if (pp[0]) proposalModal(pp[0]); else ui.toast('الدورة غير موجودة.', 'err'); return; }
         b.disabled = true;
         try {
           if (act === 'promote') { await sb.update('profiles', { id: 'eq.' + r.user_id }, { role: 'instructor' }); byId[r.user_id].role = 'instructor'; ui.toast('تمت ترقية الحساب إلى محاضر.'); }
@@ -116,14 +117,14 @@
       const [courses, insts, fl] = await Promise.all([sb.get('courses', { select: '*,lectures(id)', order: 'created_at.desc' }), sb.rpc('admin_users').then((u) => u.filter((x) => x.role === 'instructor')).catch(() => []), sb.get('featured_instructors', { select: 'id,name' }).catch(() => [])]);
       const nameOf = Object.fromEntries(insts.map((i) => [i.id, i.full_name || i.email])), fName = Object.fromEntries(fl.map((i) => [i.id, i.name]));
       main.innerHTML = D.panel('الدورات', D.table(['الدورة', 'النوع', 'المحاضر', 'المحاضرات', 'الحالة', ''], courses.map((c) => [`<b class="bs-latin">${esc(c.title)}</b>`, c.kind === 'interactive' ? 'تفاعلي' : 'مسجل', esc((c.featured_instructor_ids || []).map((id) => fName[id]).filter(Boolean).join('، ') || fName[c.featured_instructor_id] || nameOf[c.instructor_id] || '—'), (c.lectures || []).length, D.badge('course', c.status), isAdmin() ? `<button class="bx-linkbtn" data-edit="${c.id}">تعديل</button>` : '']), 'لا توجد دورات'),
-        isAdmin() ? '<span class="bx-btnrow"><button class="bs-btn bs-btn-ghost bs-btn-sm" id="newbl">+ كورس من مكتبة Bunny</button><button class="bs-btn bs-btn-primary bs-btn-sm" id="newc">+ دورة جديدة</button></span>' : '');
+        isAdmin() ? '<span class="bx-btnrow"><button class="bs-btn bs-btn-ghost bs-btn-sm" id="newbl">+ دورة من مكتبة Bunny</button><button class="bs-btn bs-btn-primary bs-btn-sm" id="newc">+ دورة جديدة</button></span>' : '');
       const open = (c) => courseForm(c, insts);
       const nc = $('#newc', main); if (nc) nc.onclick = () => open(null);
       const nb = $('#newbl', main); if (nb) nb.onclick = () => pickLibrary(async (lib) => {
         const slug = (lib.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'course') + '-' + lib.id;
         const [c] = await sb.insert('courses', { title: lib.name, slug, kind: 'recorded', status: 'draft', level: 'beginner', cover_code: lib.name.split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || null });
         const n = await addLibraryLectures(c.id, lib, []);
-        ui.toast(`اتعمل كورس «${lib.name}» بـ ${n} محاضرة كمسودة. كمّل بياناته وانشره.`); D.reload(); setTimeout(() => open(c), 400);
+        ui.toast(`تم إنشاء دورة «${lib.name}» بـ ${n} محاضرة كمسودة. أكمل بياناتها ثم انشرها.`); D.reload(); setTimeout(() => open(c), 400);
       });
       $$('[data-edit]', main).forEach((b) => (b.onclick = () => open(courses.find((c) => c.id === b.dataset.edit))));
     },
@@ -183,19 +184,19 @@
           ${D.stat('إجمالي المحصّل', D.money(paidSum(paid)), paid.length + ' عملية ناجحة')}
           ${D.stat('المسترد', D.money(paidSum(refunded)), refunded.length + ' عملية')}
           ${D.stat('صافي الدخل', D.money(paidSum(paid) - paidSum(refunded)), 'قبل رسوم البوابة')}
-          ${D.stat('طلبات استرداد مفتوحة', open.length, open.length ? 'محتاجة قرارك' : 'مفيش حاجة مستنية')}
+          ${D.stat('طلبات استرداد مفتوحة', open.length, open.length ? 'بانتظار قرارك' : 'لا يوجد شيء معلّق')}
         </div>`;
       }
       const sel = (id, label, opts, v) => `<div class="bx-field"><label for="${id}" class="bx-hint">${label}</label><select id="${id}" class="bx-select">${opts.map(([k, t]) => `<option value="${k}" ${k === v ? 'selected' : ''}>${t}</option>`).join('')}</select></div>`;
       function filters() {
-        const common = `<div class="bx-field bx-pf-q"><label for="pq" class="bx-hint">بحث</label><input id="pq" class="bx-input" type="search" value="${esc(F.q)}" placeholder="${F.tab === 'pay' ? 'اسم، كورس، رقم إيصال أو مرجع' : 'اسم الطالب، الإيميل أو الكورس'}"></div>
+        const common = `<div class="bx-field bx-pf-q"><label for="pq" class="bx-hint">بحث</label><input id="pq" class="bx-input" type="search" value="${esc(F.q)}" placeholder="${F.tab === 'pay' ? 'اسم، دورة، رقم إيصال أو مرجع' : 'اسم الطالب أو البريد الإلكتروني أو الدورة'}"></div>
           <div class="bx-field"><label for="pf" class="bx-hint">من</label><input id="pf" class="bx-input" type="date" value="${F.from}"></div>
           <div class="bx-field"><label for="pt" class="bx-hint">إلى</label><input id="pt" class="bx-input" type="date" value="${F.to}"></div>`;
         return F.tab === 'pay'
           ? `${common}${sel('ps', 'الحالة', [['', 'كل الحالات'], ['paid', 'مدفوع'], ['pending', 'بانتظار الدفع'], ['failed', 'فشل'], ['refunded', 'مسترد']], F.status)}
-             ${sel('pk', 'النوع', [['', 'الكل'], ['subscription', 'اشتراك باقة'], ['interactive_course', 'كورس تفاعلي'], ['consultation', 'استشارة']], F.kind)}
+             ${sel('pk', 'النوع', [['', 'الكل'], ['subscription', 'اشتراك باقة'], ['interactive_course', 'دورة تفاعلية'], ['consultation', 'استشارة']], F.kind)}
              ${sel('pg', 'البوابة', [['', 'كل البوابات'], ...Object.entries(D.gw)], F.gw)}`
-          : `${common}${sel('rs', 'الحالة', [['open', 'مفتوحة (محتاجة قرار)'], ['all', 'الكل'], ['accepted', 'تم الاسترداد'], ['rejected', 'مرفوضة']], F.rs)}`;
+          : `${common}${sel('rs', 'الحالة', [['open', 'مفتوحة (بانتظار قرار)'], ['all', 'الكل'], ['accepted', 'تم الاسترداد'], ['rejected', 'مرفوضة']], F.rs)}`;
       }
       function payTable(list) {
         return D.table(['التاريخ', 'العميل', 'البند', 'السعر', 'الرسوم', 'البوابة', 'الحالة', ''], list.map((p) => {
@@ -205,16 +206,16 @@
             : rq && openRef(rq) ? `<button class="bx-linkbtn" data-goref="${rq.id}">طلب استرداد مفتوح ←</button>`
             : canRefund(p) && isAdmin() ? `<button class="bx-linkbtn" data-rf="${p.id}">استرداد</button>` : '';
           return [D.date(p.created_at), esc((p.profiles && p.profiles.full_name) || '—'), esc(itemOf(p)) + (p.receipt_no ? `<br><small class="bx-hint">إيصال ${p.receipt_no}</small>` : ''), (p.currency && p.currency !== 'EGP' ? `${paidTxt(p)}<br><small class="bx-hint">≈ ${D.money(p.amount_egp)}</small>` : D.money(p.amount_egp)) + (Number(p.discount_egp) ? `<br><small class="bx-hint">خصم ${D.money(p.discount_egp)}</small>` : ''), p.currency && p.currency !== 'EGP' ? paidTxt(p, 'fee') : D.money(p.fee_egp), (D.gw[p.gateway] || p.gateway) + (p.gateway === 'manual' ? `<br><small class="bx-hint">${({ instapay: 'إنستاباي', vodafone_cash: 'فودافون كاش', paypal: 'PayPal' })[p.manual_method] || ''} · <span class="bs-latin">${esc(p.manual_ref || '')}</span></small>${p.proof_path ? `<br><button class="bx-linkbtn" data-proof="${esc(p.proof_path)}">🧾 عرض سكرين التحويل</button>` : p.manual_method && p.manual_method !== 'paypal' ? '<br><small class="bx-hint">بدون سكرين (طلب قديم)</small>' : ''}` : ''), D.badge('pay', p.status), act];
-        }), 'مفيش مدفوعات بالفلتر ده');
+        }), 'لا توجد مدفوعات بهذه التصفية');
       }
       function refCard(r) {
         const p = payById[r.payload && r.payload.payment_id], dl = daysLeft(p), pl = r.payload || {};
         const st = r.status === 'accepted' ? ['تم الاسترداد', 'ok'] : r.status === 'rejected' ? ['مرفوض', 'mute'] : r.status === 'in_review' ? ['قيد المراجعة', 'info'] : ['جديد', 'warn'];
-        const window = !openRef(r) ? '' : !p ? '<span class="bx-st bx-st-mute">الدفعة مش موجودة</span>' : p.status === 'refunded' ? '<span class="bx-st bx-st-ok">اتردّت فعلًا</span>' : dl > 0 ? `<span class="bx-st ${dl <= 2 ? 'bx-st-danger' : 'bx-st-info'}">باقي ${dl} ${dl === 1 ? 'يوم' : dl === 2 ? 'يومين' : 'أيام'} في المهلة</span>` : '<span class="bx-st bx-st-danger">المهلة خلصت</span>';
+        const window = !openRef(r) ? '' : !p ? '<span class="bx-st bx-st-mute">الدفعة غير موجودة</span>' : p.status === 'refunded' ? '<span class="bx-st bx-st-ok">اتردّت فعلًا</span>' : dl > 0 ? `<span class="bx-st ${dl <= 2 ? 'bx-st-danger' : 'bx-st-info'}">باقي ${dl} ${dl === 1 ? 'يوم' : dl === 2 ? 'يومين' : 'أيام'} في المهلة</span>` : '<span class="bx-st bx-st-danger">المهلة خلصت</span>';
         return `<article class="bx-reqcard bx-refcard" data-ref="${r.id}">
           <div class="bx-spread" style="gap:8px;flex-wrap:wrap"><div><b>${esc(r.name)}</b> <span class="bx-hint">· ${D.dateTime(r.created_at)}</span></div><span class="bx-btnrow" style="gap:6px">${window}<span class="bx-st bx-st-${st[1]}">${st[0]}</span></span></div>
           <dl>
-            <div><dt>الكورس</dt><dd>${esc(pl.item || itemOf(p))}</dd></div>
+            <div><dt>الدورة</dt><dd>${esc(pl.item || itemOf(p))}</dd></div>
             <div><dt>المبلغ</dt><dd>${D.money(p ? p.amount_egp : pl.amount_egp || 0)}${p && Number(p.fee_egp) ? ` <small class="bx-hint">+ ${D.money(p.fee_egp)} رسوم بوابة</small>` : ''}</dd></div>
             <div><dt>الدفع</dt><dd>${p ? `${esc(D.gw[p.gateway] || p.gateway)} · ${D.date(p.paid_at || p.created_at)}${p.receipt_no ? ` · إيصال ${p.receipt_no}` : ''}` : '—'}</dd></div>
             <div><dt>التواصل</dt><dd class="bx-kbd">${esc(r.email || '')}</dd></div>
@@ -241,8 +242,8 @@
           <div class="bx-payfilters">${filters()}<div class="bx-field bx-pf-act"><span class="bx-hint">&nbsp;</span><span class="bx-btnrow"><button class="bs-btn bs-btn-ghost bs-btn-sm" id="pclr">مسح الفلاتر</button><button class="bs-btn bs-btn-secondary bs-btn-sm" id="pcsv">تحميل Excel</button></span></div></div>
           ${F.tab === 'pay'
             ? D.panel(`المدفوعات`, payTable(pl), `<span class="bx-hint">${pl.length} عملية · ${D.money(paidSum(pl.filter((p) => p.status === 'paid')))} مدفوع</span>`)
-            : `<p class="bx-hint" style="margin:0 0 12px">الاسترداد متاح للكورسات التفاعلية بس، خلال 7 أيام من الدفع. التنفيذ بيرجّع الفلوس من البوابة ويلغي تسجيل الطالب، والطالب بيوصله إيميل بالقرار.</p>
-               <div id="rl" style="display:grid;gap:12px">${rl.length ? rl.map(refCard).join('') : `<div class="bx-empty-big"><b>${F.rs === 'open' ? 'مفيش طلبات استرداد مستنية' : 'مفيش طلبات بالفلتر ده'}</b></div>`}</div>`}`;
+            : `<p class="bx-hint" style="margin:0 0 12px">الاسترداد متاح للدورات التفاعلية فقط، خلال 7 أيام من الدفع. يعيد التنفيذ المبلغ عبر البوابة ويلغي تسجيل الطالب، ويصل الطالب بريد إلكتروني بالقرار.</p>
+               <div id="rl" style="display:grid;gap:12px">${rl.length ? rl.map(refCard).join('') : `<div class="bx-empty-big"><b>${F.rs === 'open' ? 'لا توجد طلبات استرداد معلّقة' : 'لا توجد طلبات بهذه التصفية'}</b></div>`}</div>`}`;
         wire();
       }
       function wire() {
@@ -251,8 +252,8 @@
         bind('pq', 'q', 'input'); bind('pf', 'from'); bind('pt', 'to'); bind('ps', 'status'); bind('pk', 'kind'); bind('pg', 'gw'); bind('rs', 'rs');
         $('#pclr', main).onclick = () => { Object.assign(F, { q: '', status: '', kind: '', gw: '', from: '', to: '', rs: 'open' }); draw(); };
         $('#pcsv', main).onclick = () => F.tab === 'pay'
-          ? csv('payments', ['التاريخ', 'العميل', 'البند', 'النوع', 'السعر', 'الخصم', 'رسوم البوابة', 'البوابة', 'الحالة', 'رقم الإيصال', 'المرجع'], payList().map((p) => [p.created_at.slice(0, 10), (p.profiles && p.profiles.full_name) || '', itemOf(p), ({ subscription: 'اشتراك', interactive_course: 'كورس تفاعلي', consultation: 'استشارة' })[p.purpose] || p.purpose, p.amount_egp, p.discount_egp || 0, p.fee_egp || 0, D.gw[p.gateway] || p.gateway, ({ paid: 'مدفوع', pending: 'بانتظار الدفع', failed: 'فشل', refunded: 'مسترد' })[p.status] || p.status, p.receipt_no || '', p.manual_ref || p.gateway_ref || '']))
-          : csv('refunds', ['تاريخ الطلب', 'الطالب', 'الإيميل', 'الكورس', 'المبلغ', 'السبب', 'ملاحظة الطالب', 'الحالة', 'ردّك'], refList().map((r) => { const p = payById[r.payload && r.payload.payment_id], pl = r.payload || {}; return [r.created_at.slice(0, 10), r.name, r.email, pl.item || itemOf(p), p ? p.amount_egp : pl.amount_egp || '', pl.reason || '', pl.note || '', { new: 'جديد', in_review: 'قيد المراجعة', accepted: 'تم الاسترداد', rejected: 'مرفوض' }[r.status] || r.status, pl.decision_note || '']; }));
+          ? csv('payments', ['التاريخ', 'العميل', 'البند', 'النوع', 'السعر', 'الخصم', 'رسوم البوابة', 'البوابة', 'الحالة', 'رقم الإيصال', 'المرجع'], payList().map((p) => [p.created_at.slice(0, 10), (p.profiles && p.profiles.full_name) || '', itemOf(p), ({ subscription: 'اشتراك', interactive_course: 'دورة تفاعلية', consultation: 'استشارة' })[p.purpose] || p.purpose, p.amount_egp, p.discount_egp || 0, p.fee_egp || 0, D.gw[p.gateway] || p.gateway, ({ paid: 'مدفوع', pending: 'بانتظار الدفع', failed: 'فشل', refunded: 'مسترد' })[p.status] || p.status, p.receipt_no || '', p.manual_ref || p.gateway_ref || '']))
+          : csv('refunds', ['تاريخ الطلب', 'الطالب', 'البريد الإلكتروني', 'الدورة', 'المبلغ', 'السبب', 'ملاحظة الطالب', 'الحالة', 'ردّك'], refList().map((r) => { const p = payById[r.payload && r.payload.payment_id], pl = r.payload || {}; return [r.created_at.slice(0, 10), r.name, r.email, pl.item || itemOf(p), p ? p.amount_egp : pl.amount_egp || '', pl.reason || '', pl.note || '', { new: 'جديد', in_review: 'قيد المراجعة', accepted: 'تم الاسترداد', rejected: 'مرفوض' }[r.status] || r.status, pl.decision_note || '']; }));
         $$('[data-goref]', main).forEach((b) => (b.onclick = () => { F.tab = 'ref'; F.rs = 'open'; draw(); const c = $(`[data-ref="${b.dataset.goref}"]`, main); if (c) { c.scrollIntoView({ block: 'center' }); c.classList.add('bx-flash'); } }));
         $$('[data-proof]', main).forEach((b) => (b.onclick = async () => {
           const w = window.open('', '_blank');   // opened on click so the popup isn't blocked
@@ -265,7 +266,7 @@
           try { await sb.rpc('admin_review_manual', { p_payment: id, p_approve: ok }); ui.toast(ok ? 'تم التأكيد والتفعيل.' : 'تم الرفض.'); D.reload(); } catch (e) { ui.toast(arErr(e), 'err'); }
         }));
         $$('[data-rf]', main).forEach((b) => (b.onclick = async () => {
-          if (!confirm('تنفيذ الاسترداد وإلغاء تسجيل الطالب في الكورس؟')) return;
+          if (!confirm('تنفيذ الاسترداد وإلغاء تسجيل الطالب في الدورة؟')) return;
           b.disabled = true;
           try { if (!(await runRefund(b.dataset.rf))) { b.disabled = false; return; } ui.toast('تم الاسترداد.'); D.reload(); }
           catch (e) { b.disabled = false; ui.toast((e.data && e.data.error) || arErr(e), 'err'); }
@@ -276,11 +277,11 @@
           b.disabled = true;
           try {
             if (act === 'refund') {
-              if (!confirm(`تنفيذ استرداد ${D.money(payById[pid].amount_egp)} لـ ${r.name} وإلغاء تسجيله في الكورس؟`)) { b.disabled = false; return; }
+              if (!confirm(`تنفيذ استرداد ${D.money(payById[pid].amount_egp)} لـ ${r.name} وإلغاء تسجيله في الدورة؟`)) { b.disabled = false; return; }
               if (!(await runRefund(pid))) { b.disabled = false; return; }
-              await setReqStatus(r.id, 'accepted'); ui.toast('تم الاسترداد وإلغاء التسجيل، والطالب هيوصله إيميل.'); D.reload(); return;
+              await setReqStatus(r.id, 'accepted'); ui.toast('تم الاسترداد وإلغاء التسجيل، وسيصل الطالب بريد إلكتروني.'); D.reload(); return;
             }
-            if (act === 'close') { await setReqStatus(r.id, 'accepted'); r.status = 'accepted'; ui.toast('اتقفل الطلب.'); }
+            if (act === 'close') { await setReqStatus(r.id, 'accepted'); r.status = 'accepted'; ui.toast('تم إغلاق الطلب.'); }
             else { await setReqStatus(r.id, act); r.status = act; }
             D.setBadge('payments', refs.filter(openRef).length); draw();
           } catch (e) { b.disabled = false; ui.toast((e.data && e.data.error) || arErr(e), 'err'); }
@@ -289,7 +290,7 @@
       async function runRefund(pid) {
         const res = await doRefund(pid);
         if (res.manual) {
-          if (!confirm('البوابة دي مش بتدعم الاسترداد الآلي. رجّعت المبلغ للطالب من لوحة البوابة أو تحويل؟')) return false;
+          if (!confirm('هذه البوابة لا تدعم الاسترداد الآلي. هل أعدت المبلغ للطالب من لوحة البوابة أو بتحويل؟')) return false;
           await sb.fn('refund-payment', { payment_id: pid, manual_confirmed: true });
         }
         const rq = refByPay[pid]; if (rq && openRef(rq)) await setReqStatus(rq.id, 'accepted').catch(() => {});
@@ -297,7 +298,7 @@
       }
       function rejectModal(r) {
         ui.modal(`<h3>رفض طلب الاسترداد</h3><p class="bx-hint">${esc(r.name)} · ${esc((r.payload && r.payload.item) || '')}</p>
-          <div class="bx-field"><label for="rjn">سبب الرفض (هيوصل للطالب في الإيميل)</label><textarea id="rjn" class="bx-textarea" rows="3" placeholder="مثال: مهلة الـ 7 أيام انتهت، أو حضرت أكتر من نص الكورس."></textarea></div>
+          <div class="bx-field"><label for="rjn">سبب الرفض (سيصل إلى الطالب في البريد الإلكتروني)</label><textarea id="rjn" class="bx-textarea" rows="3" placeholder="مثال: انتهت مهلة الأيام السبعة، أو حضر أكثر من نصف الدورة."></textarea></div>
           <div class="bx-formmsg" aria-live="polite"></div><div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" data-ok>رفض الطلب</button><button class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div>`, (m, close) => {
           $('[data-x]', m).onclick = close;
           $('[data-ok]', m).onclick = async (e) => {
@@ -305,7 +306,7 @@
             try {
               const payload = Object.assign({}, r.payload, note ? { decision_note: note } : {});
               await sb.update('requests', { id: 'eq.' + r.id }, { payload, status: 'rejected' });
-              Object.assign(r, { payload, status: 'rejected' }); close(); ui.toast('اترفض الطلب ووصل للطالب إيميل.');
+              Object.assign(r, { payload, status: 'rejected' }); close(); ui.toast('تم رفض الطلب وأُرسل للطالب بريد إلكتروني.');
               D.setBadge('payments', refs.filter(openRef).length); draw();
             } catch (x) { e.target.disabled = false; say($('.bx-formmsg', m), arErr(x), 'err'); }
           };
@@ -342,7 +343,7 @@
       const scope = { any: 'الكل', subscription: 'الاشتراكات', interactive_course: 'الدورات التفاعلية' };
       const off = (c) => (c.percent_off ? c.percent_off + '٪' : D.money(c.amount_off_egp));
       main.innerHTML = D.panel('كوبونات الخصم', `<p class="bx-hint" style="margin-top:0">الخصم يُحسب على سعر الباقة، وتُحسب أرباح المحاضرين على المبلغ بعد الخصم. كل عميل يستخدم الكود مرة واحدة.</p>` +
-        (isAdmin() ? `<form class="bx-form2" id="cf" novalidate><div class="row2"><div class="bx-field"><label for="cc">الكود</label><input id="cc" class="bx-input" dir="ltr" placeholder="WELCOME20"></div><div class="bx-field"><label for="ct">النوع</label><select id="ct" class="bx-select"><option value="p">نسبة ٪</option><option value="a">مبلغ ثابت (ج.م)</option></select></div><div class="bx-field"><label for="cv">القيمة</label><input id="cv" class="bx-input" type="number" min="1" dir="ltr"></div></div><div class="row2"><div class="bx-field"><label for="cs">ينطبق على</label><select id="cs" class="bx-select"><option value="any">الكل</option><option value="subscription">الاشتراكات</option><option value="interactive_course">الدورات التفاعلية</option></select></div><div class="bx-field"><label for="cm">أقصى عدد استخدامات (اختياري)</label><input id="cm" class="bx-input" type="number" min="1" dir="ltr"></div><div class="bx-field"><label for="ce">ينتهي في (اختياري)</label><input id="ce" class="bx-input" type="date" dir="ltr"></div></div><div class="row2"><div class="bx-field"><label for="ci">كود محاضر؟ (اختياري)</label><select id="ci" class="bx-select"><option value="">لا، كود عادي للمنصة</option>${insts.map((i) => `<option value="${i.id}">${esc(i.full_name || i.email)}</option>`).join('')}</select></div><div class="bx-field"><label for="cip">نسبة المحاضر من الاشتراك</label><input id="cip" class="bx-input" type="number" min="0" max="100" value="50" dir="ltr"></div></div><p class="bx-hint" style="margin:0">كود المحاضر: أي اشتراك في باقة بالكود ده بياخد المحاضر عنه النسبة دي من قيمة الاشتراك (بدل الـ 30٪ من المشاهدات)، والاشتراك ده مش بيدخل في توزيع المشاهدات. ممكن تخلّي الخصم للطالب صغير (مثلًا 10٪) عشان يشجعه.</p><div class="bx-formmsg" id="cmsg" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">إضافة كوبون</button></div></form><hr style="border:none;border-top:1px solid var(--line);margin:20px 0">` : '') +
+        (isAdmin() ? `<form class="bx-form2" id="cf" novalidate><div class="row2"><div class="bx-field"><label for="cc">الكود</label><input id="cc" class="bx-input" dir="ltr" placeholder="WELCOME20"></div><div class="bx-field"><label for="ct">النوع</label><select id="ct" class="bx-select"><option value="p">نسبة ٪</option><option value="a">مبلغ ثابت (ج.م)</option></select></div><div class="bx-field"><label for="cv">القيمة</label><input id="cv" class="bx-input" type="number" min="1" dir="ltr"></div></div><div class="row2"><div class="bx-field"><label for="cs">ينطبق على</label><select id="cs" class="bx-select"><option value="any">الكل</option><option value="subscription">الاشتراكات</option><option value="interactive_course">الدورات التفاعلية</option></select></div><div class="bx-field"><label for="cm">أقصى عدد استخدامات (اختياري)</label><input id="cm" class="bx-input" type="number" min="1" dir="ltr"></div><div class="bx-field"><label for="ce">ينتهي في (اختياري)</label><input id="ce" class="bx-input" type="date" dir="ltr"></div></div><div class="row2"><div class="bx-field"><label for="ci">كود محاضر؟ (اختياري)</label><select id="ci" class="bx-select"><option value="">لا، كود عام للمنصة</option>${insts.map((i) => `<option value="${i.id}">${esc(i.full_name || i.email)}</option>`).join('')}</select></div><div class="bx-field"><label for="cip">نسبة المحاضر من الاشتراك</label><input id="cip" class="bx-input" type="number" min="0" max="100" value="50" dir="ltr"></div></div><p class="bx-hint" style="margin:0">كود المحاضر: أي اشتراك في باقة بهذا الكود يحصل المحاضر عنه على هذه النسبة من قيمة الاشتراك (بدلًا من الـ 30٪ من المشاهدات)، ولا يدخل هذا الاشتراك في توزيع المشاهدات. يمكنك جعل الخصم للطالب صغيرًا (مثلًا 10٪) لتشجيعه.</p><div class="bx-formmsg" id="cmsg" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">إضافة كوبون</button></div></form><hr style="border:none;border-top:1px solid var(--line);margin:20px 0">` : '') +
         D.table(['الكود', 'الخصم', 'ينطبق على', 'المحاضر', 'الاستخدام', 'ينتهي', 'مفعّل'], rows.map((c) => [`<b class="bs-latin">${esc(c.code)}</b>`, off(c), scope[c.applies_to], c.instructor_id ? `${esc(iname[c.instructor_id] || 'محاضر')}<br><small class="bx-hint">${Number(c.instructor_pct)}٪ من الاشتراك</small>` : '—', `${used[c.id] || 0}${c.max_redemptions ? ' / ' + c.max_redemptions : ''}`, c.expires_at ? D.date(c.expires_at) : '—', `<input type="checkbox" data-ca="${c.id}" ${c.active ? 'checked' : ''} ${isAdmin() ? '' : 'disabled'}>`]), 'لا توجد كوبونات بعد'));
       const f = $('#cf', main);
       if (f) f.onsubmit = async (e) => {
@@ -362,7 +363,7 @@
       const rows = await sb.get('featured_instructors', { select: '*', order: 'sort.asc,created_at.asc' }).catch(() => []);
       const FAC = window.FACULTIES || [], fname = (id) => (FAC.find((f) => f.id === id) || {}).name || '—';
       const av = (i) => i.photo_url ? `<img src="${esc(i.photo_url)}" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover">` : `<span style="width:36px;height:36px;border-radius:50%;display:inline-grid;place-items:center;background:var(--surface-raised);font-weight:700">${esc(window.instInitials ? window.instInitials(i.name) : '')}</span>`;
-      main.innerHTML = D.panel('المحاضرين في الموقع', `<p class="bx-hint" style="margin-top:0">دول اللي بيظهروا في الشريط المتحرك في الصفحة الرئيسية وفي صفحة المحاضرين، بالترتيب من الأصغر للأكبر.</p>
+      main.innerHTML = D.panel('المحاضرين في الموقع', `<p class="bx-hint" style="margin-top:0">هؤلاء هم من يظهرون في الشريط المتحرك في الصفحة الرئيسية وفي صفحة المحاضرين، بالترتيب من الأصغر إلى الأكبر.</p>
         <div class="bx-btnrow" style="margin-bottom:12px">${isAdmin() ? '<button class="bs-btn bs-btn-primary" id="fi-new">إضافة محاضر</button>' : ''}<a class="bs-btn bs-btn-ghost" href="instructors.html" target="_blank" rel="noopener">عرض الصفحة</a></div>` +
         D.table(['', 'الاسم', 'الوصف', 'الكلية', 'الترتيب', 'ظاهر', ''], rows.map((i) => [av(i), `<b>${esc(i.name)}</b>`, `<small>${esc(i.title || '')}</small>`, esc(fname(i.faculty)), String(i.sort),
           `<input type="checkbox" data-fv="${i.id}" ${i.visible ? 'checked' : ''} ${isAdmin() ? '' : 'disabled'} aria-label="ظاهر">`, isAdmin() ? `<button class="bx-linkbtn" data-fe="${i.id}">تعديل</button>` : ''])));
@@ -373,7 +374,7 @@
           <div class="bx-field"><label for="ft">الوصف (الدرجة والجهة)</label><textarea id="ft" class="bx-textarea" rows="2" maxlength="240">${esc(x.title || '')}</textarea></div>
           <div class="row2"><div class="bx-field"><label for="ff">الكلية</label><select id="ff" class="bx-select"><option value="">—</option>${FAC.map((f) => `<option value="${f.id}" ${f.id === x.faculty ? 'selected' : ''}>${esc(f.name)}</option>`).join('')}</select></div>
           <div class="bx-field"><label for="fs">الترتيب</label><input id="fs" class="bx-input" type="number" dir="ltr" value="${x.sort}"></div></div>
-          <div class="bx-field"><label for="fpf">الصورة (اختياري)</label><input id="fpf" type="file" accept="image/png,image/jpeg,image/webp" class="bx-input"><small class="bx-hint">صورة مربعة أحسن، أقل من 2 ميجا. لو مفيش صورة هيظهر أول حرفين من الاسم.</small>
+          <div class="bx-field"><label for="fpf">الصورة (اختياري)</label><input id="fpf" type="file" accept="image/png,image/jpeg,image/webp" class="bx-input"><small class="bx-hint">يُفضّل أن تكون الصورة مربعة وأقل من 2 ميجابايت. إذا لم توجد صورة فسيظهر أول حرفين من الاسم.</small>
             <input type="hidden" id="fpu" value="${esc(x.photo_url || '')}">${x.photo_url ? `<label class="bx-hint" style="display:flex;gap:6px;align-items:center;margin-top:6px"><input type="checkbox" id="fpr"> حذف الصورة الحالية</label>` : ''}</div>
           <label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="fvv" ${x.visible ? 'checked' : ''}> ظاهر في الموقع</label>
           <div class="bx-formmsg" aria-live="polite"></div>
@@ -410,11 +411,11 @@
 
     async proposals(main) {
       const [ps, ls] = await Promise.all([sb.get('course_proposals', { select: '*', status: 'neq.draft', order: 'submitted_at.desc' }).catch(() => []), sb.get('proposal_lessons', { select: 'id,proposal_id,uploaded,video_url' }).catch(() => [])]);
-      const ST = { submitted: ['جديد', 'warn'], in_review: ['قيد المراجعة', 'info'], accepted: ['اتقبل', 'ok'], rejected: ['مرفوض', 'danger'] };
+      const ST = { submitted: ['جديد', 'warn'], in_review: ['قيد المراجعة', 'info'], accepted: ['مقبول', 'ok'], rejected: ['مرفوض', 'danger'] };
       const cnt = (id) => { const l = ls.filter((x) => x.proposal_id === id); return `${l.length} درس · ${l.filter((x) => x.uploaded || x.video_url).length} بفيديو`; };
       D.setBadge('proposals', ps.filter((p) => p.status === 'submitted').length);
-      main.innerHTML = D.panel('كورسات مسجلة مقدّمة من محاضرين', `<p class="bx-hint" style="margin-top:0">الكورسات اللي المحاضرين جهّزوها من صفحة «انضم كمحاضر» ورفعوا فيديوهاتها على Bunny. افتح الطلب، شوف الفيديوهات، ولو مناسب اضغط «قبول وتحويل لكورس» وهيتعمل كورس مسودة بالمحاضرات والفيديوهات جاهزة، وحساب المحاضر يتحوّل لمحاضر.</p>` +
-        D.table(['الكورس', 'المحاضر', 'المحتوى', 'التاريخ', 'الحالة', ''], ps.map((p) => [`<b>${esc(p.title || '—')}</b><br><small class="bx-hint">${esc(p.specialty || '')}</small>`, `${esc(p.name || '')}<br><small class="bx-hint" dir="ltr">${esc(p.email || '')}</small>`, cnt(p.id), D.date(p.submitted_at || p.created_at), `<span class="bx-st bx-st-${(ST[p.status] || ['', 'mute'])[1]}">${(ST[p.status] || [p.status])[0]}</span>`, `<button class="bx-linkbtn" data-pp="${p.id}">فتح</button>`]), 'لسه مفيش كورسات مقدّمة.'));
+      main.innerHTML = D.panel('دورات مسجلة مقدّمة من محاضرين', `<p class="bx-hint" style="margin-top:0">الدورات التي جهّزها المحاضرون من صفحة «انضم كمحاضر» ورفعوا فيديوهاتها على Bunny. افتح الطلب واطّلع على الفيديوهات، وإذا كان مناسبًا اضغط «قبول وتحويل إلى دورة» فتُنشأ دورة مسودة بالمحاضرات والفيديوهات جاهزة، ويتحوّل الحساب إلى حساب محاضر.</p>` +
+        D.table(['الدورة', 'المحاضر', 'المحتوى', 'التاريخ', 'الحالة', ''], ps.map((p) => [`<b>${esc(p.title || '—')}</b><br><small class="bx-hint">${esc(p.specialty || '')}</small>`, `${esc(p.name || '')}<br><small class="bx-hint" dir="ltr">${esc(p.email || '')}</small>`, cnt(p.id), D.date(p.submitted_at || p.created_at), `<span class="bx-st bx-st-${(ST[p.status] || ['', 'mute'])[1]}">${(ST[p.status] || [p.status])[0]}</span>`, `<button class="bx-linkbtn" data-pp="${p.id}">فتح</button>`]), 'لا توجد دورات مقدّمة بعد.'));
       $$('[data-pp]', main).forEach((b) => (b.onclick = () => proposalModal(ps.find((p) => p.id === b.dataset.pp))));
     },
 
@@ -425,9 +426,9 @@
       const link = (f) => base + 'form.html?f=' + encodeURIComponent(f.slug);
       const rc = {}; reqs.forEach((r) => { const c = (rc[r.type] = rc[r.type] || { all: 0, new: 0 }); c.all++; if (r.status === 'new') c.new++; });
       const siteForms = SITE_FORMS.map((sf) => { const c = sf.types.reduce((a, t) => ({ all: a.all + ((rc[t] || {}).all || 0), new: a.new + ((rc[t] || {}).new || 0) }), { all: 0, new: 0 });
-        return [`<b>${sf.title}</b><br><small class="bx-hint">فورم ثابت في الموقع</small>`, `<a class="bx-linkbtn" href="${sf.page}" target="_blank" rel="noopener">فتح الصفحة</a>`, `${c.all}${c.new ? ` <span class="bx-st bx-st-warn">${c.new} جديد</span>` : ''}`, '<span class="bx-st bx-st-ok">شغال</span>', `<button class="bx-linkbtn" data-sf="${sf.key}">الردود</button>`]; });
-      main.innerHTML = D.panel('فورمز الموقع', D.table(['الفورم', 'الصفحة', 'الردود', 'الحالة', ''], siteForms)) + D.panel('الفورمز والردود', `<p class="bx-hint" style="margin-top:0">اعمل أي فورم (تسجيل اهتمام، استبيان، طلب خدمة…) وخد رابطه شيره على السوشيال أو واتساب. كل رد بيوصل هنا وعلى إيميل التنبيهات، ولو فيه إيميل أو موبايل بيتبعت للـ CRM كـ Lead.</p>
-        ${isAdmin() ? '<div class="bx-btnrow" style="margin-bottom:12px"><button class="bs-btn bs-btn-primary" id="fm-new">+ فورم جديد</button></div>' : ''}` +
+        return [`<b>${sf.title}</b><br><small class="bx-hint">نموذج ثابت في الموقع</small>`, `<a class="bx-linkbtn" href="${sf.page}" target="_blank" rel="noopener">فتح الصفحة</a>`, `${c.all}${c.new ? ` <span class="bx-st bx-st-warn">${c.new} جديد</span>` : ''}`, '<span class="bx-st bx-st-ok">يعمل</span>', `<button class="bx-linkbtn" data-sf="${sf.key}">الردود</button>`]; });
+      main.innerHTML = D.panel('نماذج الموقع', D.table(['الفورم', 'الصفحة', 'الردود', 'الحالة', ''], siteForms)) + D.panel('الفورمز والردود', `<p class="bx-hint" style="margin-top:0">أنشئ أي نموذج (تسجيل اهتمام، استبيان، طلب خدمة…) وخذ رابطه وانشره على وسائل التواصل أو واتساب. يصل كل رد إلى هنا وإلى بريد التنبيهات، وإذا تضمّن بريدًا إلكترونيًا أو رقم هاتف يُرسل إلى الـ CRM بوصفه Lead.</p>
+        ${isAdmin() ? '<div class="bx-btnrow" style="margin-bottom:12px"><button class="bs-btn bs-btn-primary" id="fm-new">+ نموذج جديد</button></div>' : ''}` +
         D.table(['الفورم', 'الرابط', 'الردود', 'الحالة', ''], forms.map((f) => {
           const c = cnt[f.id] || { all: 0, new: 0 };
           return [`<b>${esc(f.title)}</b><br><small class="bx-hint">${(f.fields || []).length} حقل</small>`,
@@ -435,9 +436,9 @@
             `${c.all}${c.new ? ` <span class="bx-st bx-st-warn">${c.new} جديد</span>` : ''}`,
             `<label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-fa="${f.id}" ${f.active ? 'checked' : ''} ${isAdmin() ? '' : 'disabled'}> ${f.active ? 'مفتوح' : 'مقفول'}</label>`,
             `<button class="bx-linkbtn" data-fr="${f.id}">الردود</button>${isAdmin() ? ` · <button class="bx-linkbtn" data-fe="${f.id}">تعديل</button>` : ''}`];
-        }), 'لسه مفيش فورمز. اضغط «فورم جديد».'));
-      $$('[data-copy]', main).forEach((b) => (b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.copy); ui.toast('اتنسخ الرابط.'); } catch { prompt('انسخ الرابط:', b.dataset.copy); } }));
-      $$('[data-fa]', main).forEach((i) => (i.onchange = async () => { try { await sb.update('forms', { id: 'eq.' + i.dataset.fa }, { active: i.checked }); ui.toast(i.checked ? 'الفورم مفتوح.' : 'الفورم اتقفل.'); D.reload(); } catch (err) { i.checked = !i.checked; ui.toast(arErr(err), 'err'); } }));
+        }), 'لا توجد نماذج بعد. اضغط «نموذج جديد».'));
+      $$('[data-copy]', main).forEach((b) => (b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.copy); ui.toast('تم نسخ الرابط.'); } catch { prompt('انسخ الرابط:', b.dataset.copy); } }));
+      $$('[data-fa]', main).forEach((i) => (i.onchange = async () => { try { await sb.update('forms', { id: 'eq.' + i.dataset.fa }, { active: i.checked }); ui.toast(i.checked ? 'الفورم مفتوح.' : 'تم إغلاق النموذج.'); D.reload(); } catch (err) { i.checked = !i.checked; ui.toast(arErr(err), 'err'); } }));
       const nb = $('#fm-new', main); if (nb) nb.onclick = () => formBuilder(null);
       $$('[data-fe]', main).forEach((b) => (b.onclick = () => formBuilder(forms.find((f) => f.id === b.dataset.fe))));
       $$('[data-fr]', main).forEach((b) => (b.onclick = () => formResponses(forms.find((f) => f.id === b.dataset.fr))));
@@ -492,12 +493,12 @@
         ${card('paymob', 'Paymob — بطاقات ومحافظ (فودافون كاش وغيرها)', 'من لوحة Paymob: Settings ← Account Info (Secret / Public key)، وDevelopers ← HMAC، وأرقام الـIntegration لكل طريقة دفع (بطاقة، محفظة) مفصولة بفاصلة.', ['PAYMOB_SECRET_KEY', 'PAYMOB_PUBLIC_KEY', 'PAYMOB_HMAC_SECRET', 'PAYMOB_INTEGRATION_IDS'],
           `<div class="row2">${field('PAYMOB_SECRET_KEY', 'Secret key', 'egy_sk_live_…')}${field('PAYMOB_PUBLIC_KEY', 'Public key', 'egy_pk_live_…')}</div><div class="row2">${field('PAYMOB_HMAC_SECRET', 'HMAC secret', '')}${field('PAYMOB_INTEGRATION_IDS', 'Integration IDs', '123456, 234567', 'text')}</div>${fee('PAYMOB')}${hook('webhook-paymob')}`)}
         ${card('fawaterk', 'Fawaterk — فوري وبطاقات ومحافظ', 'من لوحة فواتيرك: Integrations ← API key. جرّب أولًا على حساب staging.', ['FAWATERK_API_KEY'],
-          `<div class="row2">${field('FAWATERK_API_KEY', 'API key', '')}${field('FAWATERK_VENDOR_KEY', 'Vendor key (اختياري، للتوقيع)', '')}</div><div class="row2">${field('FAWATERK_BASE_URL', 'رابط الخادم (اختياري)', 'https://staging.fawaterk.com', 'text')}</div>${fee('FAWATERK')}${hook('webhook-fawaterk')}<p class="bx-hint">كل دفعة بتتأكد مباشرة من فواتيرك نفسه قبل التفعيل، فالتفعيل شغال حتى لو الـ webhook اتأخر.</p>`)}
+          `<div class="row2">${field('FAWATERK_API_KEY', 'API key', '')}${field('FAWATERK_VENDOR_KEY', 'Vendor key (اختياري، للتوقيع)', '')}</div><div class="row2">${field('FAWATERK_BASE_URL', 'رابط الخادم (اختياري)', 'https://staging.fawaterk.com', 'text')}</div>${fee('FAWATERK')}${hook('webhook-fawaterk')}<p class="bx-hint">يُتحقق من كل دفعة مباشرةً لدى فواتيرك قبل التفعيل، فيعمل التفعيل حتى لو تأخر الـ webhook.</p>`)}
         ${card('stripe', 'Stripe — بطاقات دولية', 'من لوحة Stripe: Developers ← API keys (Secret key)، وWebhooks ← أضف الرابط بالأسفل مع حدث checkout.session.completed ثم انسخ Signing secret.', ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET'],
           `<div class="row2">${field('STRIPE_SECRET_KEY', 'Secret key', 'sk_live_…')}${field('STRIPE_WEBHOOK_SECRET', 'Webhook signing secret', 'whsec_…')}</div>${fee('STRIPE')}${hook('webhook-stripe')}`)}
-        ${card('bunny', 'Bunny Stream — استضافة الفيديو', 'الأسهل: من Bunny افتح Account settings ← API وانسخ «API Key» بتاع الحساب (Account API Key). ده لوحده بيخلّي المنصة تشوف كل مكتباتك وتستورد الكورسات منها وترفع فيديوهات جديدة. وفي Library ID اكتب رقم المكتبة اللي الفيديوهات الجديدة (من المحاضرين ومنك) تترفع فيها.', ['BUNNY_ACCOUNT_KEY', 'BUNNY_LIBRARY_ID'],
-          `<div class="row2">${field('BUNNY_ACCOUNT_KEY', 'Account API Key', '')}${field('BUNNY_LIBRARY_ID', 'Library ID (للرفع الجديد)', '614141', 'text')}</div><details><summary class="bx-hint">إعدادات اختيارية</summary><div class="row2">${field('BUNNY_API_KEY', 'API Key بتاع المكتبة (لو مش هتحط Account key)', '')}${field('BUNNY_TOKEN_KEY', 'Token authentication key (لو مفعّل في المكتبة)', '')}</div></details>`)}
-        ${card('resend', 'Resend — إيميلات المنصة', 'من resend.com: API Keys، وفعّل دومين الإرسال من Domains. عنوان المرسل مثل: Biosyn Egypt &lt;noreply@biosyneg.com&gt;', ['RESEND_API_KEY', 'MAIL_FROM'],
+        ${card('bunny', 'Bunny Stream — استضافة الفيديو', 'الأسهل: من Bunny افتح Account settings ← API وانسخ «API Key» الخاص بالحساب (Account API Key). يكفي هذا وحده لتتمكن المنصة من رؤية كل مكتباتك واستيراد الدورات منها ورفع فيديوهات جديدة. وفي Library ID اكتب رقم المكتبة التي تُرفع إليها الفيديوهات الجديدة (من المحاضرين ومنك).', ['BUNNY_ACCOUNT_KEY', 'BUNNY_LIBRARY_ID'],
+          `<div class="row2">${field('BUNNY_ACCOUNT_KEY', 'Account API Key', '')}${field('BUNNY_LIBRARY_ID', 'Library ID (للرفع الجديد)', '614141', 'text')}</div><details><summary class="bx-hint">إعدادات اختيارية</summary><div class="row2">${field('BUNNY_API_KEY', 'API Key الخاص بالمكتبة (إذا لم تستخدم Account key)', '')}${field('BUNNY_TOKEN_KEY', 'Token authentication key (لو مفعّل في المكتبة)', '')}</div></details>`)}
+        ${card('resend', 'Resend — بريد إلكترونيات المنصة', 'من resend.com: API Keys، وفعّل دومين الإرسال من Domains. عنوان المرسل مثل: Biosyn Egypt &lt;noreply@biosyneg.com&gt;', ['RESEND_API_KEY', 'MAIL_FROM'],
           `<div class="row2">${field('RESEND_API_KEY', 'API key', 're_…')}${field('MAIL_FROM', 'عنوان المرسل', 'Biosyn Egypt <noreply@biosyneg.com>', 'text')}</div>`)}
         ${card('meta', 'Meta Pixel وGoogle Analytics — تتبع الإعلانات', 'رقم الـPixel من Events Manager، وتوكن Conversions API من إعدادات الـPixel (اختياري)، ومعرّف GA4 يبدأ بـ G-.', ['META_PIXEL_ID'],
           `<div class="row2">${field('META_PIXEL_ID', 'Pixel ID', '1234567890', 'text')}${field('META_CAPI_TOKEN', 'Conversions API token (اختياري)', '')}</div>${field('GA4_ID', 'Google Analytics 4 ID (اختياري)', 'G-XXXXXXX', 'text')}`)}
@@ -529,8 +530,8 @@
 
     async settings(main) {
       const rows = await sb.get('app_settings', { select: '*' }).catch(() => []); const v = Object.fromEntries(rows.map((r) => [r.key, r.value || '']));
-      main.innerHTML = D.panel('الإعدادات', `<p class="bx-hint" style="margin-top:0">تنبيهات الفريق بالبريد تصلك عند كل دفعة وكل طلب جديد. رابط الموقع يُستخدم في أزرار الإيميلات.</p><form class="bx-form2" id="sf" novalidate><div class="row2"><div class="bx-field"><label for="sn">بريد تنبيهات الفريق</label><input id="sn" class="bx-input" type="email" dir="ltr" value="${esc(v.notify_email || '')}"></div><div class="bx-field"><label for="su">رابط الموقع</label><input id="su" class="bx-input" type="url" dir="ltr" placeholder="https://biosyneg.com" value="${esc(v.site_url || '')}"></div></div><div class="row2"><div class="bx-field"><label for="si">حساب إنستاباي (للتحويل اليدوي)</label><input id="si" class="bx-input" dir="ltr" placeholder="name@instapay" value="${esc(v.instapay_handle || '')}"></div><div class="bx-field"><label for="sv">رقم فودافون كاش</label><input id="sv" class="bx-input" dir="ltr" placeholder="01xxxxxxxxx" value="${esc(v.vodafone_cash_number || '')}"></div></div><p class="bx-hint" style="margin:0">اترك الحقل فارغًا لإخفاء طريقة الدفع اليدوية من صفحة الدفع.</p><div class="bx-formmsg" id="smsg" aria-live="polite"></div>${isAdmin() ? '<div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">حفظ</button></div>' : ''}</form>` +
-        '<hr style="border:none;border-top:1px solid var(--line);margin:20px 0"><h4 style="margin:0 0 8px">آخر الإيميلات</h4><div id="ol"></div>');
+      main.innerHTML = D.panel('الإعدادات', `<p class="bx-hint" style="margin-top:0">تنبيهات الفريق بالبريد تصلك عند كل دفعة وكل طلب جديد. رابط الموقع يُستخدم في أزرار البريد الإلكترونيات.</p><form class="bx-form2" id="sf" novalidate><div class="row2"><div class="bx-field"><label for="sn">بريد تنبيهات الفريق</label><input id="sn" class="bx-input" type="email" dir="ltr" value="${esc(v.notify_email || '')}"></div><div class="bx-field"><label for="su">رابط الموقع</label><input id="su" class="bx-input" type="url" dir="ltr" placeholder="https://biosyneg.com" value="${esc(v.site_url || '')}"></div></div><div class="row2"><div class="bx-field"><label for="si">حساب إنستاباي (للتحويل اليدوي)</label><input id="si" class="bx-input" dir="ltr" placeholder="name@instapay" value="${esc(v.instapay_handle || '')}"></div><div class="bx-field"><label for="sv">رقم فودافون كاش</label><input id="sv" class="bx-input" dir="ltr" placeholder="01xxxxxxxxx" value="${esc(v.vodafone_cash_number || '')}"></div></div><p class="bx-hint" style="margin:0">اترك الحقل فارغًا لإخفاء طريقة الدفع اليدوية من صفحة الدفع.</p><div class="bx-formmsg" id="smsg" aria-live="polite"></div>${isAdmin() ? '<div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">حفظ</button></div>' : ''}</form>` +
+        '<hr style="border:none;border-top:1px solid var(--line);margin:20px 0"><h4 style="margin:0 0 8px">آخر البريد الإلكترونيات</h4><div id="ol"></div>');
       const out = await sb.get('email_outbox', { select: 'to_email,subject,status,created_at,last_error', order: 'created_at.desc', limit: 15 }).catch(() => []);
       $('#ol', main).innerHTML = D.table(['التاريخ', 'إلى', 'الموضوع', 'الحالة'], out.map((o) => [D.dateTime(o.created_at), `<span class="bs-latin">${esc(o.to_email)}</span>`, esc(o.subject), { sent: 'أُرسل', pending: 'في الانتظار', sending: 'جارٍ', failed: 'فشل' }[o.status] || o.status]), 'لا توجد رسائل بعد. (لن تُرسل الرسائل قبل ضبط مفاتيح خدمة البريد.)');
       const f = $('#sf', main);
@@ -548,7 +549,7 @@
 
     async plans(main) {
       const plans = await sb.get('plans', { select: '*', order: 'duration_months' });
-      main.innerHTML = D.panel('الباقات والأسعار', `<p class="bx-hint" style="margin-top:0">الأسعار تُقرأ من هنا في الموقع وصفحة الدفع. التغيير يسري على المدفوعات الجديدة فقط.</p>` + D.table(['الباقة', 'المدة', 'السعر (ج.م)', 'برّه مصر (بعملة البلد)', 'السعر السابق', 'مفعّلة', ''], plans.map((p) => [esc(p.name), p.duration_months + ' شهر', `<input class="bx-input" type="number" min="0" style="max-width:110px" value="${p.price_egp}" data-f="price_egp" data-p="${p.id}" ${isAdmin() ? '' : 'disabled'}>`, `<input class="bx-input" type="number" min="0" step="0.5" style="max-width:110px" value="${p.intl_price ?? ''}" placeholder="—" data-f="intl_price" data-p="${p.id}" ${isAdmin() ? '' : 'disabled'} aria-label="السعر خارج مصر">`, `<input class="bx-input" type="number" min="0" style="max-width:110px" value="${p.old_price_egp ?? ''}" data-f="old_price_egp" data-p="${p.id}" ${isAdmin() ? '' : 'disabled'}>`, `<input type="checkbox" data-f="active" data-p="${p.id}" ${p.active ? 'checked' : ''} ${isAdmin() ? '' : 'disabled'}>`, isAdmin() ? `<button class="bs-btn bs-btn-secondary bs-btn-sm" data-save="${p.id}">حفظ</button>` : '']), 'لا توجد باقات'));
+      main.innerHTML = D.panel('الباقات والأسعار', `<p class="bx-hint" style="margin-top:0">الأسعار تُقرأ من هنا في الموقع وصفحة الدفع. التغيير يسري على المدفوعات الجديدة فقط.</p>` + D.table(['الباقة', 'المدة', 'السعر (ج.م)', 'خارج مصر (بعملة البلد)', 'السعر السابق', 'مفعّلة', ''], plans.map((p) => [esc(p.name), p.duration_months + ' شهر', `<input class="bx-input" type="number" min="0" style="max-width:110px" value="${p.price_egp}" data-f="price_egp" data-p="${p.id}" ${isAdmin() ? '' : 'disabled'}>`, `<input class="bx-input" type="number" min="0" step="0.5" style="max-width:110px" value="${p.intl_price ?? ''}" placeholder="—" data-f="intl_price" data-p="${p.id}" ${isAdmin() ? '' : 'disabled'} aria-label="السعر خارج مصر">`, `<input class="bx-input" type="number" min="0" style="max-width:110px" value="${p.old_price_egp ?? ''}" data-f="old_price_egp" data-p="${p.id}" ${isAdmin() ? '' : 'disabled'}>`, `<input type="checkbox" data-f="active" data-p="${p.id}" ${p.active ? 'checked' : ''} ${isAdmin() ? '' : 'disabled'}>`, isAdmin() ? `<button class="bs-btn bs-btn-secondary bs-btn-sm" data-save="${p.id}">حفظ</button>` : '']), 'لا توجد باقات'));
       $$('[data-save]', main).forEach((b) => (b.onclick = async () => {
         const id = b.dataset.save, g = (f) => $(`[data-f="${f}"][data-p="${id}"]`, main);
         const price = Number(g('price_egp').value); if (!(price >= 0)) return ui.toast('سعر غير صحيح', 'err');
@@ -565,15 +566,15 @@
     const monthly = (plans.find((p) => p.duration_months === 1) || plans[0] || { price_egp: 200 });
     const loc = (r) => (monthly.intl_price != null ? Number(monthly.intl_price) : Math.max(1, Math.round(Number(monthly.price_egp) * Number(r.factor))));
     const box = document.createElement('div');
-    box.innerHTML = D.panel('الأسعار خارج مصر', `<p class="bx-hint" style="margin-top:0">الزائر من برّه مصر بيشوف السعر ويدفع بعملة بلده. <b>الباقات</b> بتاخد السعر الثابت اللي في خانة «برّه مصر» فوق، بنفس الرقم في كل العملات (مثلًا الشهري ${EGP(monthly.intl_price ?? 0)} ريال في السعودية و${EGP(monthly.intl_price ?? 0)} يورو في ألمانيا). <b>المعامل</b> بيتطبّق بس على أي حاجة ملهاش سعر ثابت برّه مصر (زي كورس تفاعلي من غير سعر دولي): السعر = سعر الجنيه × المعامل. «سعر الصرف» بيحوّل اللي اتدفع لجنيه عشان أرباح المحاضرين والتقارير. الدول اللي مش في الجدول بتاخد صف «باقي الدول». الدفع بره مصر بيكون بالبطاقة عن طريق Stripe أو Fawaterk.</p>
+    box.innerHTML = D.panel('الأسعار خارج مصر', `<p class="bx-hint" style="margin-top:0">يرى الزائر من خارج مصر السعر ويدفع بعملة بلده. <b>الباقات</b> تأخذ السعر الثابت الموجود في خانة «خارج مصر» أعلاه، بالرقم نفسه في كل العملات (مثلًا الشهري ${EGP(monthly.intl_price ?? 0)} ريال في السعودية و${EGP(monthly.intl_price ?? 0)} يورو في ألمانيا). <b>المعامل</b> يُطبَّق فقط على ما ليس له سعر ثابت خارج مصر (مثل دورة تفاعلية دون سعر دولي): السعر = سعر الجنيه × المعامل. و«سعر الصرف» يحوّل المبلغ المدفوع إلى الجنيه لحساب أرباح المحاضرين والتقارير. الدول غير الموجودة في الجدول تأخذ صف «باقي الدول». ويكون الدفع خارج مصر بالبطاقة عن طريق Stripe أو Fawaterk.</p>
       ${D.table(['الدولة', 'العملة', 'الرمز', 'المعامل', 'سعر الصرف (ج.م لكل وحدة)', 'الشهري بعملتهم', 'يساوي بالجنيه', 'مفعّل', ''], rows.map((r) => [
         `<b>${esc(r.name)}</b> <small class="bx-hint bs-latin">${r.country === '*' ? 'الباقي' : r.country}</small>`, `<span class="bs-latin">${esc(r.currency)}</span>`, esc(r.symbol),
         `<input class="bx-input" type="number" step="0.01" min="0.01" data-rf="factor" data-rc="${r.country}" value="${Number(r.factor)}" style="width:90px" aria-label="المعامل">`,
         `<input class="bx-input" type="number" step="0.01" min="0.01" data-rf="egp_rate" data-rc="${r.country}" value="${Number(r.egp_rate)}" style="width:110px" aria-label="سعر الصرف">`,
         `<b data-prev="${r.country}">${EGP(loc(r))} ${esc(r.symbol)}</b>`, `<span data-eq="${r.country}">${D.money(loc(r) * Number(r.egp_rate))}</span>`,
         `<input type="checkbox" data-rf="active" data-rc="${r.country}" ${r.active ? 'checked' : ''} aria-label="مفعّل">`,
-        `<button class="bx-linkbtn" data-rsave="${r.country}">حفظ</button>`]), 'مفيش دول متضافة')}
-      <p class="bx-hint">لو قفلت دولة، زوارها بيشوفوا سعر «باقي الدول». لو قفلت «باقي الدول» كمان بيشوفوا الجنيه المصري.</p>`);
+        `<button class="bx-linkbtn" data-rsave="${r.country}">حفظ</button>`]), 'لا توجد دول مضافة')}
+      <p class="bx-hint">إذا أغلقت دولة، يرى زوارها سعر «باقي الدول». وإذا أغلقت «باقي الدول» أيضًا يرون السعر بالجنيه المصري.</p>`);
     main.appendChild(box.firstElementChild);
     const v = (c, f) => $(`[data-rf="${f}"][data-rc="${CSS.escape(c)}"]`, main);
     $$('[data-rf="factor"],[data-rf="egp_rate"]', main).forEach((inp) => (inp.oninput = () => {
@@ -584,7 +585,7 @@
     $$('[data-rsave]', main).forEach((b) => (b.onclick = async () => {
       const c = b.dataset.rsave, factor = Number(v(c, 'factor').value), egp_rate = Number(v(c, 'egp_rate').value);
       if (!(factor > 0) || !(egp_rate > 0)) return ui.toast('المعامل وسعر الصرف لازم يكونوا أكبر من صفر.', 'err');
-      try { await sb.update('price_regions', { country: 'eq.' + c }, { factor, egp_rate, active: v(c, 'active').checked, updated_at: new Date().toISOString() }); ui.toast('اتحفظ. الزوار هيشوفوا السعر الجديد خلال دقايق.'); } catch (e) { ui.toast(arErr(e), 'err'); }
+      try { await sb.update('price_regions', { country: 'eq.' + c }, { factor, egp_rate, active: v(c, 'active').checked, updated_at: new Date().toISOString() }); ui.toast('تم الحفظ. سيرى الزوار السعر الجديد خلال دقائق.'); } catch (e) { ui.toast(arErr(e), 'err'); }
     }));
   }
 
@@ -598,9 +599,9 @@
   ];
   async function siteFormResponses(sf) {
     let rows = await sb.get('requests', { select: '*', type: 'in.(' + sf.types.join(',') + ')', order: 'created_at.desc' }).catch(() => []);
-    const kind = { instructor_recorded: 'كورس مسجل', instructor_interactive: 'كورس تفاعلي' };
-    const base = ['الاسم', 'الإيميل', 'الموبايل'];
-    const val = (r, c) => c === 'الاسم' ? r.name : c === 'الإيميل' ? r.email : c === 'الموبايل' ? r.phone : c === 'النوع' ? kind[r.type] || '' : (r.payload || {})[c];
+    const kind = { instructor_recorded: 'دورة مسجلة', instructor_interactive: 'دورة تفاعلية' };
+    const base = ['الاسم', 'البريد الإلكتروني', 'الهاتف المحمول'];
+    const val = (r, c) => c === 'الاسم' ? r.name : c === 'البريد الإلكتروني' ? r.email : c === 'الهاتف المحمول' ? r.phone : c === 'النوع' ? kind[r.type] || '' : (r.payload || {})[c];
     const extra = [...new Set(rows.flatMap((r) => Object.keys(r.payload || {})))].filter((k) => !/الاسم|البريد|الهاتف|الموبايل|اسم مسؤول|_id$/.test(k));
     const cols = [...(sf.types.length > 1 ? ['النوع'] : []), ...base, ...extra];
     const ST = { new: 'جديد', in_review: 'قيد المراجعة', accepted: 'مقبول', rejected: 'مرفوض' };
@@ -612,7 +613,7 @@
     ui.modal(`<h3>ردود: ${esc(sf.title)}</h3><p class="bx-hint" style="margin:0">${rows.length} رد</p>
       <div class="bx-btnrow" style="margin:8px 0 12px"><button class="bs-btn bs-btn-primary bs-btn-sm" id="frcsv" ${rows.length ? '' : 'disabled'}>تحميل Excel (CSV)</button><button class="bs-btn bs-btn-ghost bs-btn-sm" data-x>إغلاق</button></div>
       <div class="bx-scroll" style="max-height:60vh">${rows.length ? `<table class="bx-table"><thead><tr><th>التاريخ</th>${cols.map((c) => `<th>${esc(c)}</th>`).join('')}<th>الحالة</th></tr></thead><tbody>${rows.map((r) => `<tr><td style="white-space:nowrap">${D.date(r.created_at)}</td>${cols.map((c) => `<td>${esc(val(r, c) ?? '')}</td>`).join('')}
-        <td><select class="bx-select" data-rq="${r.id}" style="min-width:110px;height:34px;padding:0 8px">${Object.entries(ST).map(([k, v]) => `<option value="${k}" ${k === r.status ? 'selected' : ''}>${v}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table>` : '<p class="bx-hint">لسه مفيش ردود.</p>'}</div>`,
+        <td><select class="bx-select" data-rq="${r.id}" style="min-width:110px;height:34px;padding:0 8px">${Object.entries(ST).map(([k, v]) => `<option value="${k}" ${k === r.status ? 'selected' : ''}>${v}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table>` : '<p class="bx-hint">لا توجد ردود بعد.</p>'}</div>`,
     (m, close) => {
       $('[data-x]', m).onclick = () => { close(); D.reload(); };
       const cb = $('#frcsv', m); if (cb) cb.onclick = csv;
@@ -624,62 +625,62 @@
   async function proposalModal(p) {
     const ls = await sb.get('proposal_lessons', { select: '*', proposal_id: 'eq.' + p.id, order: 'position.asc,created_at.asc' }).catch(() => []);
     const done = p.status === 'accepted';
-    ui.modal(`<h3>${esc(p.title || 'كورس')}</h3>
+    ui.modal(`<h3>${esc(p.title || 'دورة')}</h3>
       <dl class="bx-kv"><dt>المحاضر</dt><dd>${esc(p.name || '')} · <span dir="ltr">${esc(p.email || '')}</span>${p.phone ? ` · <span dir="ltr">${esc(p.phone)}</span>` : ''}</dd><dt>التخصص</dt><dd>${esc(p.specialty || '—')}</dd><dt>المستوى</dt><dd>${esc(p.level || '—')}</dd><dt>الفئة</dt><dd>${esc(p.audience || '—')}</dd></dl>
       ${p.summary ? `<p class="bx-hint" style="white-space:pre-line">${esc(p.summary)}</p>` : ''}
       ${p.description ? `<details class="bx-hint"><summary>الوصف الكامل</summary><p style="white-space:pre-line;margin-top:6px">${esc(p.description)}</p></details>` : ''}
       <h4 style="margin:8px 0">الدروس (${ls.length})</h4>
-      <ol class="bx-wzreview">${ls.map((l) => `<li><b>${esc(l.title)}</b> ${l.bunny_video_id ? `${l.uploaded ? '' : '<small class="bx-hint">(الرفع ما اكتملش)</small> '}<button class="bx-linkbtn" data-pv="${l.id}">مشاهدة</button>` : ''}${l.video_url ? ` <a class="bx-linkbtn" href="${esc(l.video_url)}" target="_blank" rel="noopener">فتح اللينك</a>` : ''}${!l.bunny_video_id && !l.video_url ? ' <small class="bx-hint">بدون فيديو</small>' : ''}</li>`).join('')}</ol>
-      ${!done && ls.some((l) => l.video_url && !l.bunny_video_id) ? '<div class="bx-btnrow" style="margin:8px 0"><button class="bs-btn bs-btn-secondary bs-btn-sm" data-imp>نقل الفيديوهات من اللينكات لـ Bunny</button><small class="bx-hint" id="impst"></small></div>' : ''}
+      <ol class="bx-wzreview">${ls.map((l) => `<li><b>${esc(l.title)}</b> ${l.bunny_video_id ? `${l.uploaded ? '' : '<small class="bx-hint">(الرفع ما اكتملش)</small> '}<button class="bx-linkbtn" data-pv="${l.id}">مشاهدة</button>` : ''}${l.video_url ? ` <a class="bx-linkbtn" href="${esc(l.video_url)}" target="_blank" rel="noopener">فتح الرابط</a>` : ''}${!l.bunny_video_id && !l.video_url ? ' <small class="bx-hint">بدون فيديو</small>' : ''}</li>`).join('')}</ol>
+      ${!done && ls.some((l) => l.video_url && !l.bunny_video_id) ? '<div class="bx-btnrow" style="margin:8px 0"><button class="bs-btn bs-btn-secondary bs-btn-sm" data-imp>نقل الفيديوهات من الرابطات لـ Bunny</button><small class="bx-hint" id="impst"></small></div>' : ''}
       <div id="pvbox"></div>
       <div class="bx-formmsg" aria-live="polite"></div>
-      <div class="bx-modal-actions">${done ? `<a class="bs-btn bs-btn-primary" href="admin.html#courses">الكورس اتعمل — روح للدورات</a>` : isAdmin() ? `<button class="bs-btn bs-btn-primary" data-acc>قبول وتحويل لكورس</button><button class="bs-btn bs-btn-ghost" data-rev>قيد المراجعة</button><button class="bs-btn bs-btn-ghost" data-rej style="color:var(--danger-text)">رفض</button>` : ''}<button class="bs-btn bs-btn-ghost" data-x>إغلاق</button></div>`,
+      <div class="bx-modal-actions">${done ? `<a class="bs-btn bs-btn-primary" href="admin.html#courses">تم إنشاء الدورة — انتقل إلى الدورات</a>` : isAdmin() ? `<button class="bs-btn bs-btn-primary" data-acc>قبول وتحويل إلى دورة</button><button class="bs-btn bs-btn-ghost" data-rev>قيد المراجعة</button><button class="bs-btn bs-btn-ghost" data-rej style="color:var(--danger-text)">رفض</button>` : ''}<button class="bs-btn bs-btn-ghost" data-x>إغلاق</button></div>`,
     (m, close) => {
       const msg = $('.bx-formmsg', m);
       $('[data-x]', m).onclick = () => { close(); D.reload(); };
       $$('[data-pv]', m).forEach((b) => (b.onclick = async () => {
         b.disabled = true;
         try { const r = await sb.fn('bunny-upload', { action: 'preview', lesson_id: b.dataset.pv }); $('#pvbox', m).innerHTML = `<div style="position:relative;padding-top:56.25%;margin-top:10px;border-radius:12px;overflow:hidden;background:#000"><iframe src="${esc(r.url)}" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div>`; }
-        catch (e) { say(msg, e.status === 503 ? 'اربط Bunny من «التكاملات» عشان تشوف الفيديوهات.' : arErr(e), 'err'); }
+        catch (e) { say(msg, e.status === 503 ? 'اربط Bunny من «التكاملات» لعرض الفيديوهات.' : arErr(e), 'err'); }
         b.disabled = false;
       }));
       const importAll = async () => {
-        const st = $('#impst', m); if (st) st.textContent = 'بننقل الفيديوهات… ممكن ياخد دقيقة.';
+        const st = $('#impst', m); if (st) st.textContent = 'جارٍ نقل الفيديوهات… قد يستغرق ذلك دقيقة.';
         const r = await sb.fn('bunny-upload', { action: 'import_all', proposal_id: p.id });
         const res = Object.values(r.results || {}); const okN = res.filter((x) => x.video_id).length, q = res.filter((x) => x.queued).length, bad = res.filter((x) => x.error && x.error !== 'no link');
         const yt = bad.filter((x) => x.error === 'youtube').length;
-        const txt = `اتنقل ${okN}${q ? ` · ${q} في الطريق` : ''}${bad.length ? ` · ${bad.length} فشل${yt ? ' (لينكات YouTube مينفعش)' : ' (اتأكد إن الملفات متشاركة Anyone with the link)'}` : ''}`;
+        const txt = `تم نقل ${okN}${q ? ` · ${q} في الطريق` : ''}${bad.length ? ` · ${bad.length} فشل${yt ? ' (لا يمكن استخدام روابط YouTube)' : ' (تأكد من مشاركة الملفات بخيار Anyone with the link)'}` : ''}`;
         if (st) st.textContent = txt; return { okN, bad: bad.length };
       };
       const ib = $('[data-imp]', m); if (ib) ib.onclick = async () => { ib.disabled = true; try { await importAll(); } catch (e) { say(msg, e.status === 503 ? 'اربط Bunny من «التكاملات» الأول.' : arErr(e), 'err'); } ib.disabled = false; };
       const setSt = async (status) => { await sb.update('course_proposals', { id: 'eq.' + p.id }, { status, updated_at: new Date().toISOString() }); p.status = status; };
       const rev = $('[data-rev]', m); if (rev) rev.onclick = async () => { try { await setSt('in_review'); ui.toast('اتحوّل لقيد المراجعة.'); } catch (e) { say(msg, arErr(e), 'err'); } };
-      const rej = $('[data-rej]', m); if (rej) rej.onclick = async () => { if (!confirm('رفض الكورس؟')) return; try { await setSt('rejected'); ui.toast('اترفض.'); close(); D.reload(); } catch (e) { say(msg, arErr(e), 'err'); } };
+      const rej = $('[data-rej]', m); if (rej) rej.onclick = async () => { if (!confirm('رفض الدورة؟')) return; try { await setSt('rejected'); ui.toast('تم الرفض.'); close(); D.reload(); } catch (e) { say(msg, arErr(e), 'err'); } };
       const acc = $('[data-acc]', m); if (acc) acc.onclick = async () => {
-        if (!confirm('هيتعمل كورس مسودة بالمحاضرات والفيديوهات، وحساب المحاضر هيتحوّل لمحاضر. نكمل؟')) return;
-        acc.disabled = true; say(msg, 'جارٍ إنشاء الكورس…');
-        try { if (ls.some((l) => l.video_url && !l.bunny_video_id)) { say(msg, 'بننقل الفيديوهات من اللينكات لـ Bunny الأول…'); try { await importAll(); } catch (e) { /* create the course anyway */ } }
-          await sb.rpc('accept_course_proposal', { p_id: p.id }); ui.toast('اتعمل الكورس كمسودة في «الدورات». راجعه وانشره.'); close(); location.hash = '#courses'; }
+        if (!confirm('ستُنشأ دورة مسودة بالمحاضرات والفيديوهات، وسيتحوّل الحساب إلى حساب محاضر. هل نتابع؟')) return;
+        acc.disabled = true; say(msg, 'جارٍ إنشاء الدورة…');
+        try { if (ls.some((l) => l.video_url && !l.bunny_video_id)) { say(msg, 'جارٍ نقل الفيديوهات من الروابط إلى Bunny أولًا…'); try { await importAll(); } catch (e) { /* create the course anyway */ } }
+          await sb.rpc('accept_course_proposal', { p_id: p.id }); ui.toast('تم إنشاء الدورة مسودةً في «الدورات». راجعها ثم انشرها.'); close(); location.hash = '#courses'; }
         catch (e) { acc.disabled = false; say(msg, arErr(e), 'err'); }
       };
     });
   }
   // ---------- form builder + responses ----------
-  const FTYPES = { text: 'نص قصير', textarea: 'نص طويل', email: 'إيميل', phone: 'موبايل', number: 'رقم', date: 'تاريخ', select: 'قائمة اختيار', radio: 'اختيار واحد', checkbox: 'اختيارات متعددة' };
+  const FTYPES = { text: 'نص قصير', textarea: 'نص طويل', email: 'بريد إلكتروني', phone: 'هاتف محمول', number: 'رقم', date: 'تاريخ', select: 'قائمة اختيار', radio: 'اختيار واحد', checkbox: 'اختيارات متعددة' };
   const hasOpts = (t) => t === 'select' || t === 'radio' || t === 'checkbox';
   const rid = () => Math.random().toString(36).slice(2, 9);
   function formBuilder(f) {
     const isNew = !f;
     f = f ? JSON.parse(JSON.stringify(f)) : { title: '', slug: '', description: '', submit_label: '', success_message: '', active: true, notify: true,
-      fields: [{ id: rid(), label: 'الاسم', type: 'text', required: true }, { id: rid(), label: 'رقم الموبايل (واتساب)', type: 'phone', required: true }, { id: rid(), label: 'الإيميل', type: 'email', required: false }] };
-    ui.modal(`<h3>${isNew ? 'فورم جديد' : 'تعديل الفورم'}</h3><form class="bx-form2" id="fbf" novalidate>
+      fields: [{ id: rid(), label: 'الاسم', type: 'text', required: true }, { id: rid(), label: 'رقم الهاتف المحمول (واتساب)', type: 'phone', required: true }, { id: rid(), label: 'البريد الإلكتروني', type: 'email', required: false }] };
+    ui.modal(`<h3>${isNew ? 'نموذج جديد' : 'تعديل الفورم'}</h3><form class="bx-form2" id="fbf" novalidate>
       <div class="row2"><div class="bx-field"><label for="fbt">عنوان الفورم</label><input id="fbt" class="bx-input" maxlength="120" value="${esc(f.title)}" placeholder="مثلًا: سجّل اهتمامك بدبلومة المعلوماتية الحيوية"></div>
       <div class="bx-field"><label for="fbs">الرابط (بالإنجليزي)</label><input id="fbs" class="bx-input" dir="ltr" maxlength="60" value="${esc(f.slug)}" placeholder="bioinformatics-interest"></div></div>
       <div class="bx-field"><label for="fbd">وصف يظهر فوق الفورم (اختياري)</label><textarea id="fbd" class="bx-textarea" rows="2">${esc(f.description || '')}</textarea></div>
       <div class="bx-field"><label>الحقول</label><div id="fbfields" class="bx-fbfields"></div><button type="button" class="bs-btn bs-btn-ghost" id="fbadd" style="justify-self:start">+ إضافة حقل</button></div>
       <div class="row2"><div class="bx-field"><label for="fbb">كلمة زرار الإرسال</label><input id="fbb" class="bx-input" value="${esc(f.submit_label || '')}" placeholder="إرسال"></div>
-      <div class="bx-field"><label for="fbm">رسالة بعد الإرسال</label><input id="fbm" class="bx-input" value="${esc(f.success_message || '')}" placeholder="شكرًا! وصلنا ردك وهنتواصل معاك قريبًا."></div></div>
-      <div class="bx-row" style="gap:18px"><label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="fba" ${f.active ? 'checked' : ''}> الفورم مفتوح لاستقبال ردود</label><label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="fbn" ${f.notify ? 'checked' : ''}> ابعتلي إيميل مع كل رد</label></div>
+      <div class="bx-field"><label for="fbm">رسالة بعد الإرسال</label><input id="fbm" class="bx-input" value="${esc(f.success_message || '')}" placeholder="شكرًا! وصلنا ردك وسنتواصل معك قريبًا."></div></div>
+      <div class="bx-row" style="gap:18px"><label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="fba" ${f.active ? 'checked' : ''}> الفورم مفتوح لاستقبال ردود</label><label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="fbn" ${f.notify ? 'checked' : ''}> أرسل لي بريدًا إلكترونيًا مع كل رد</label></div>
       <div class="bx-formmsg" aria-live="polite"></div>
       <div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" type="submit">حفظ</button>${isNew ? '' : '<button type="button" class="bs-btn bs-btn-ghost" data-del style="color:var(--danger-text)">حذف الفورم</button>'}<button type="button" class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div></form>`,
     (m, close) => {
@@ -692,8 +693,8 @@
       const draw = () => {
         box.innerHTML = f.fields.map((x, i) => `<div class="bx-fbrow"><div class="bx-fbmain"><input class="bx-input" data-l value="${esc(x.label)}" placeholder="اسم الحقل (السؤال)" aria-label="اسم الحقل"><select class="bx-select" data-t aria-label="نوع الحقل">${Object.entries(FTYPES).map(([k, v]) => `<option value="${k}" ${k === x.type ? 'selected' : ''}>${v}</option>`).join('')}</select>
           <label class="bx-hint" style="display:flex;gap:4px;align-items:center;white-space:nowrap"><input type="checkbox" data-r ${x.required ? 'checked' : ''}> إجباري</label>
-          <span class="bx-btnrow" style="gap:2px"><button type="button" class="bx-linkbtn" data-up="${i}" ${i ? '' : 'disabled'} aria-label="لفوق">↑</button><button type="button" class="bx-linkbtn" data-dn="${i}" ${i < f.fields.length - 1 ? '' : 'disabled'} aria-label="لتحت">↓</button><button type="button" class="bx-linkbtn" data-rm="${i}" style="color:var(--danger-text)" aria-label="حذف">✕</button></span></div>
-          ${hasOpts(x.type) ? `<textarea class="bx-textarea" data-o rows="3" placeholder="كل اختيار في سطر">${esc((x.options || []).join('\n'))}</textarea>` : ''}</div>`).join('') || '<p class="bx-hint">مفيش حقول. ضيف حقل.</p>';
+          <span class="bx-btnrow" style="gap:2px"><button type="button" class="bx-linkbtn" data-up="${i}" ${i ? '' : 'disabled'} aria-label="للأعلى">↑</button><button type="button" class="bx-linkbtn" data-dn="${i}" ${i < f.fields.length - 1 ? '' : 'disabled'} aria-label="للأسفل">↓</button><button type="button" class="bx-linkbtn" data-rm="${i}" style="color:var(--danger-text)" aria-label="حذف">✕</button></span></div>
+          ${hasOpts(x.type) ? `<textarea class="bx-textarea" data-o rows="3" placeholder="كل اختيار في سطر">${esc((x.options || []).join('\n'))}</textarea>` : ''}</div>`).join('') || '<p class="bx-hint">لا توجد حقول. أضف حقلًا.</p>';
         $$('[data-t]', box).forEach((sel) => (sel.onchange = () => { read(); draw(); }));
         $$('[data-up]', box).forEach((b) => (b.onclick = () => { read(); const i = +b.dataset.up; [f.fields[i - 1], f.fields[i]] = [f.fields[i], f.fields[i - 1]]; draw(); }));
         $$('[data-dn]', box).forEach((b) => (b.onclick = () => { read(); const i = +b.dataset.dn; [f.fields[i + 1], f.fields[i]] = [f.fields[i], f.fields[i + 1]]; draw(); }));
@@ -706,20 +707,20 @@
         e.preventDefault(); read(); const msg = $('.bx-formmsg', m);
         const row = { title: t.value.trim(), slug: sl.value.trim().toLowerCase(), description: $('#fbd', m).value.trim() || null, submit_label: $('#fbb', m).value.trim() || null, success_message: $('#fbm', m).value.trim() || null, active: $('#fba', m).checked, notify: $('#fbn', m).checked, updated_at: new Date().toISOString() };
         if (row.title.length < 2) return say(msg, 'اكتب عنوان الفورم.', 'err');
-        if (!/^[a-z0-9][a-z0-9-]{1,60}$/.test(row.slug)) return say(msg, 'الرابط لازم يكون حروف إنجليزي صغيرة وأرقام وشرطة (-) بس.', 'err');
+        if (!/^[a-z0-9][a-z0-9-]{1,60}$/.test(row.slug)) return say(msg, 'يجب أن يتكون الرابط من حروف إنجليزية صغيرة وأرقام وشرطة (-) فقط.', 'err');
         const fields = f.fields.filter((x) => x.label);
-        if (!fields.length) return say(msg, 'ضيف حقل واحد على الأقل.', 'err');
+        if (!fields.length) return say(msg, 'أضف حقلًا واحدًا على الأقل.', 'err');
         const bad = fields.find((x) => hasOpts(x.type) && !(x.options || []).length); if (bad) return say(msg, `اكتب اختيارات الحقل "${bad.label}".`, 'err');
         row.fields = fields.map((x) => ({ id: x.id, label: x.label, type: x.type, required: !!x.required, ...(hasOpts(x.type) ? { options: x.options } : {}) }));
         try { if (isNew) await sb.insert('forms', row); else await sb.update('forms', { id: 'eq.' + f.id }, row); ui.toast('تم حفظ الفورم.'); close(); D.reload(); }
-        catch (err) { say(msg, /duplicate|unique/i.test(err.message) ? 'الرابط ده مستخدم لفورم تاني.' : arErr(err), 'err'); }
+        catch (err) { say(msg, /duplicate|unique/i.test(err.message) ? 'هذا الرابط مستخدم لنموذج آخر.' : arErr(err), 'err'); }
       };
     });
   }
   async function formResponses(f) {
     let rows = await sb.get('form_submissions', { select: '*', form_id: 'eq.' + f.id, order: 'created_at.desc' }).catch(() => []);
     const cols = [...new Set([...(f.fields || []).map((x) => x.label), ...rows.flatMap((r) => Object.keys(r.data || {}))])];
-    const ST = { new: ['جديد', 'warn'], read: ['اتشاف', 'info'], done: ['تم', 'ok'] };
+    const ST = { new: ['جديد', 'warn'], read: ['تمت المشاهدة', 'info'], done: ['تم', 'ok'] };
     const csv = () => {
       const q = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
       const lines = [['التاريخ', ...cols, 'الحالة'].map(q).join(','), ...rows.map((r) => [new Date(r.created_at).toLocaleString('en-GB'), ...cols.map((c) => r.data[c]), (ST[r.status] || [r.status])[0]].map(q).join(','))];
@@ -728,7 +729,7 @@
     ui.modal(`<h3>ردود: ${esc(f.title)}</h3><p class="bx-hint" style="margin:0">${rows.length} رد</p>
       <div class="bx-btnrow" style="margin:8px 0 12px"><button class="bs-btn bs-btn-primary bs-btn-sm" id="frcsv" ${rows.length ? '' : 'disabled'}>تحميل Excel (CSV)</button><button class="bs-btn bs-btn-ghost bs-btn-sm" data-x>إغلاق</button></div>
       <div class="bx-scroll" style="max-height:60vh">${rows.length ? `<table class="bx-table"><thead><tr><th>التاريخ</th>${cols.map((c) => `<th>${esc(c)}</th>`).join('')}<th>الحالة</th>${isAdmin() ? '<th></th>' : ''}</tr></thead><tbody>${rows.map((r) => `<tr><td style="white-space:nowrap">${D.date(r.created_at)}</td>${cols.map((c) => `<td>${esc(r.data[c] ?? '')}</td>`).join('')}
-        <td><select class="bx-select" data-rs="${r.id}" style="min-width:90px;height:34px;padding:0 8px">${Object.entries(ST).map(([k, v]) => `<option value="${k}" ${k === r.status ? 'selected' : ''}>${v[0]}</option>`).join('')}</select></td>${isAdmin() ? `<td><button class="bx-linkbtn" data-rd="${r.id}" style="color:var(--danger-text)">حذف</button></td>` : ''}</tr>`).join('')}</tbody></table>` : '<p class="bx-hint">لسه مفيش ردود. شير رابط الفورم.</p>'}</div>`,
+        <td><select class="bx-select" data-rs="${r.id}" style="min-width:90px;height:34px;padding:0 8px">${Object.entries(ST).map(([k, v]) => `<option value="${k}" ${k === r.status ? 'selected' : ''}>${v[0]}</option>`).join('')}</select></td>${isAdmin() ? `<td><button class="bx-linkbtn" data-rd="${r.id}" style="color:var(--danger-text)">حذف</button></td>` : ''}</tr>`).join('')}</tbody></table>` : '<p class="bx-hint">لا توجد ردود بعد. انشر رابط النموذج.</p>'}</div>`,
     (m, close) => {
       $('[data-x]', m).onclick = () => { close(); D.reload(); };
       const cb = $('#frcsv', m); if (cb) cb.onclick = csv;
@@ -746,8 +747,8 @@
   async function pickLibrary(onPick) {
     let libs;
     try { const r = await sb.fn('bunny-upload', { action: 'libraries' }); libs = r.libraries || []; }
-    catch (e) { ui.toast(e.status === 503 ? 'حط «Account API Key» بتاع Bunny في صفحة التكاملات الأول.' : arErr(e), 'err'); return; }
-    ui.modal(`<h3>اختار مكتبة من Bunny</h3><p class="bx-hint" style="margin-top:0">كل فيديو في المكتبة هيبقى محاضرة.</p>
+    catch (e) { ui.toast(e.status === 503 ? 'أضف «Account API Key» الخاص بـ Bunny في صفحة التكاملات أولًا.' : arErr(e), 'err'); return; }
+    ui.modal(`<h3>اختر مكتبة من Bunny</h3><p class="bx-hint" style="margin-top:0">كل فيديو في المكتبة هيبقى محاضرة.</p>
       <div class="row2"><div class="bx-field"><label for="blsel">المكتبة</label><select id="blsel" class="bx-select">${libs.map((l) => `<option value="${esc(l.id)}" data-name="${esc(l.name)}">${esc(l.name)} (${l.videos} فيديو)</option>`).join('')}</select></div>
       <div class="bx-field"><label for="blord">ترتيب المحاضرات</label><select id="blord" class="bx-select"><option value="title">حسب اسم الفيديو (1، 2، 3…)</option><option value="date">حسب تاريخ الرفع</option></select></div></div>
       <div class="bx-formmsg" aria-live="polite"></div><div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" data-go>استيراد</button><button class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div>`,
@@ -755,7 +756,7 @@
       $('[data-x]', m).onclick = close;
       $('[data-go]', m).onclick = async (e) => {
         const sel = $('#blsel', m), lib = sel.value, name = sel.selectedOptions[0] ? sel.selectedOptions[0].dataset.name : '';
-        e.target.disabled = true; say($('.bx-formmsg', m), 'بنجيب الفيديوهات…');
+        e.target.disabled = true; say($('.bx-formmsg', m), 'جارٍ جلب الفيديوهات…');
         try { const r = await sb.fn('bunny-upload', { action: 'library_videos', library_id: lib }); let vids = r.videos || [];
           vids = $('#blord', m).value === 'date' ? vids.sort((a, b) => a.date.localeCompare(b.date)) : vids.sort(natural);
           await onPick({ id: lib, name, videos: vids }); close();
@@ -795,12 +796,12 @@
         <div class="row2"><div class="bx-field"><label for="ct">العنوان</label><input id="ct" class="bx-input" value="${esc(c.title || '')}"></div><div class="bx-field"><label for="cs">الرابط (slug)</label><input id="cs" class="bx-input" dir="ltr" value="${esc(c.slug || '')}"></div></div>
         <div class="row2"><div class="bx-field"><label for="ck">النوع</label><select id="ck" class="bx-select" ${isNew ? '' : 'disabled'}>${opt({ recorded: 'مسجل', interactive: 'تفاعلي' }, c.kind)}</select></div><div class="bx-field"><label for="cst">الحالة</label><select id="cst" class="bx-select">${opt({ draft: 'مسودة', review: 'قيد المراجعة', published: 'منشور', archived: 'مؤرشف' }, c.status)}</select></div><div class="bx-field"><label for="cl">المستوى</label><select id="cl" class="bx-select">${opt(LV, c.level)}</select></div></div>
         <div class="bx-field"><label>المحاضرين</label><div id="cinsts" class="bx-fbfields"></div><button type="button" class="bs-btn bs-btn-ghost" id="ciadd" style="justify-self:start">+ إضافة محاضر آخر</button>
-          <small class="bx-hint">أول محاضر له حساب على المنصة هو اللي بتتحسب له أرباح المشاهدات.</small></div>
-        <div class="bx-field"><label for="cc">اختصار الغلاف (اختياري)</label><input id="cc" class="bx-input" dir="ltr" maxlength="3" value="${esc(c.cover_code || '')}" placeholder="مثلًا BD"><small class="bx-hint">حرفين بيظهروا كبار على غلاف الكورس لو مفيش صورة، زي MB لـ Molecular Biology. لو سبته فاضي بيتعمل تلقائي من أول حرفين في العنوان.</small></div>
+          <small class="bx-hint">أول محاضر له حساب على المنصة هو من تُحتسب له أرباح المشاهدات.</small></div>
+        <div class="bx-field"><label for="cc">اختصار الغلاف (اختياري)</label><input id="cc" class="bx-input" dir="ltr" maxlength="3" value="${esc(c.cover_code || '')}" placeholder="مثلًا BD"><small class="bx-hint">حرفان يظهران بخط كبير على غلاف الدورة إذا لم توجد صورة، مثل MB لـ Molecular Biology. إذا تركته فارغًا يُنشأ تلقائيًا من أول حرفين في العنوان.</small></div>
         <div class="row2"><div class="bx-field"><label for="cfa">الكلية</label><select id="cfa" class="bx-select"><option value="">—</option><option value="all" ${c.faculty === 'all' ? 'selected' : ''}>كل الكليات</option>${(window.FACULTIES || []).map((f) => `<option value="${f.id}" ${f.id === (c.faculty || (window.facultyOf ? window.facultyOf(c) : '')) ? 'selected' : ''}>${esc(f.name)}</option>`).join('')}</select></div><div class="bx-field"><label for="csp">التخصص</label><input id="csp" class="bx-input" list="csp-l" value="${esc(c.specialty || '')}" placeholder="اختر من القائمة أو اكتب تخصصًا"><datalist id="csp-l"></datalist></div></div>
         <div class="bx-field"><label for="csu">وصف مختصر</label><input id="csu" class="bx-input" value="${esc(c.summary || '')}"></div>
         <div class="bx-field"><label for="cd">الوصف الكامل</label><textarea id="cd" class="bx-textarea">${esc(c.description || '')}</textarea></div>
-        <div class="row2" id="ia" ${c.kind === 'interactive' ? '' : 'hidden'}><div class="bx-field"><label for="cp">سعر الكورس (ج.م)</label><input id="cp" class="bx-input" type="number" min="0" value="${c.price_egp ?? ''}"></div><div class="bx-field"><label for="cpi">السعر برّه مصر (بعملة البلد)</label><input id="cpi" class="bx-input" type="number" min="0" step="0.5" value="${c.intl_price ?? ''}" placeholder="فاضي = سعر الجنيه × المعامل"></div><div class="bx-field"><label for="cse">المقاعد</label><input id="cse" class="bx-input" type="number" min="1" value="${c.seats ?? ''}"></div><div class="bx-field"><label for="cdt">تاريخ البدء</label><input id="cdt" class="bx-input" type="date" value="${c.starts_at ? String(c.starts_at).slice(0, 10) : ''}"></div><div class="bx-field"><label for="cde">تاريخ الانتهاء (تصدر الشهادات تلقائيًا فيه)</label><input id="cde" class="bx-input" type="date" value="${c.ends_at ? String(c.ends_at).slice(0, 10) : ''}"></div><div class="bx-field"><label for="chr">عدد ساعات التدريب (يُطبع على الشهادة)</label><input id="chr" class="bx-input" type="number" min="0" step="0.5" value="${c.hours ?? ''}"></div></div>
+        <div class="row2" id="ia" ${c.kind === 'interactive' ? '' : 'hidden'}><div class="bx-field"><label for="cp">سعر الدورة (ج.م)</label><input id="cp" class="bx-input" type="number" min="0" value="${c.price_egp ?? ''}"></div><div class="bx-field"><label for="cpi">السعر خارج مصر (بعملة البلد)</label><input id="cpi" class="bx-input" type="number" min="0" step="0.5" value="${c.intl_price ?? ''}" placeholder="فارغ = سعر الجنيه × المعامل"></div><div class="bx-field"><label for="cse">المقاعد</label><input id="cse" class="bx-input" type="number" min="1" value="${c.seats ?? ''}"></div><div class="bx-field"><label for="cdt">تاريخ البدء</label><input id="cdt" class="bx-input" type="date" value="${c.starts_at ? String(c.starts_at).slice(0, 10) : ''}"></div><div class="bx-field"><label for="cde">تاريخ الانتهاء (تصدر الشهادات تلقائيًا فيه)</label><input id="cde" class="bx-input" type="date" value="${c.ends_at ? String(c.ends_at).slice(0, 10) : ''}"></div><div class="bx-field"><label for="chr">عدد ساعات التدريب (يُطبع على الشهادة)</label><input id="chr" class="bx-input" type="number" min="0" step="0.5" value="${c.hours ?? ''}"></div></div>
         <div class="bx-formmsg" id="cm" aria-live="polite"></div>
         <div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">${isNew ? 'إنشاء' : 'حفظ'}</button><button class="bs-btn bs-btn-ghost" type="button" data-x>إغلاق</button></div>
       </form>
@@ -834,7 +835,7 @@
         row.innerHTML = `<div class="bx-fbmain" style="grid-template-columns:minmax(0,1fr) auto"><select class="bx-select" data-ci aria-label="المحاضر">${optsHtml(cur || '')}</select><button type="button" class="bx-linkbtn" data-cirm style="color:var(--danger-text)" aria-label="حذف">✕</button></div>
           <div class="bx-instbox" hidden><div class="row2"><div class="bx-field"><label>اسم المحاضر</label><input class="bx-input" data-cin maxlength="80" placeholder="د. الاسم"></div>
           <div class="bx-field"><label>نبذة عن المحاضر</label><textarea class="bx-textarea" data-cib rows="2" maxlength="240" placeholder="الدرجة العلمية والجهة، مثلًا: أستاذ مساعد، كلية العلوم، جامعة القاهرة"></textarea></div></div>
-          <label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-civ checked> إظهاره كمان في صفحة المحاضرين والشريط المتحرك</label></div>`;
+          <label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-civ checked> إظهاره أيضًا في صفحة المحاضرين والشريط المتحرك</label></div>`;
         rowsBox.appendChild(row);
         $('[data-ci]', row).onchange = () => fill(row);
         $('[data-cirm]', row).onclick = () => { row.remove(); if (!rowsBox.children.length) addRow(''); };
@@ -874,7 +875,7 @@
           price_egp: kind === 'interactive' && g('cp') !== '' ? Number(g('cp')) : null, intl_price: kind === 'interactive' && g('cpi') !== '' ? Number(g('cpi')) : null, seats: kind === 'interactive' && g('cse') !== '' ? Number(g('cse')) : null, starts_at: kind === 'interactive' && g('cdt') ? new Date(g('cdt')).toISOString() : null,
           ends_at: kind === 'interactive' && g('cde') ? new Date(g('cde') + 'T20:00:00Z').toISOString() : null, hours: kind === 'interactive' && g('chr') !== '' ? Number(g('chr')) : null };
         if (row.starts_at && row.ends_at && row.ends_at < row.starts_at) return say(msg, 'تاريخ الانتهاء لازم يكون بعد تاريخ البدء.', 'err');
-        if (kind === 'interactive' && row.status === 'published' && row.price_egp === null) return say(msg, 'حدّد سعر الكورس التفاعلي قبل النشر.', 'err');
+        if (kind === 'interactive' && row.status === 'published' && row.price_egp === null) return say(msg, 'حدّد سعر الدورة التفاعلية قبل النشر.', 'err');
         if (kind === 'recorded' && row.status === 'published' && !lects.length) return say(msg, 'أضف محاضرة واحدة على الأقل قبل نشر الدورة.', 'err');
         try { Object.assign(row, await instFields()); isNew ? await sb.insert('courses', row) : await sb.update('courses', { id: 'eq.' + c.id }, row); ui.toast('تم الحفظ.'); cl(); D.reload(); }
         catch (err) { say(msg, /duplicate/.test(err.message) ? 'هذا الرابط مستخدم لدورة أخرى.' : /[\u0600-\u06FF]/.test(err.message || '') ? err.message : arErr(err), 'err'); }
@@ -916,17 +917,17 @@
             await reload();
           } catch (err) { ui.toast(arErr(err), 'err'); }
         });
-        $('#lbimp', m).onclick = () => pickLibrary(async (lib) => { const n = await addLibraryLectures(c.id, lib, lects); ui.toast(n ? `اتضاف ${n} محاضرة من «${lib.name}».` : 'كل فيديوهات المكتبة دي موجودة بالفعل.'); await reload(); });
+        $('#lbimp', m).onclick = () => pickLibrary(async (lib) => { const n = await addLibraryLectures(c.id, lib, lects); ui.toast(n ? `تمت إضافة ${n} محاضرة من «${lib.name}».` : 'كل فيديوهات هذه المكتبة موجودة بالفعل.'); await reload(); });
         $('#lfile', m).onchange = async (ev) => {
           const f = ev.target.files[0]; if (!f) return; const st = $('#lup', m), sub = $('#lf button[type=submit]', m);
-          sub.disabled = true; st.textContent = 'بنجهّز الرفع…';
+          sub.disabled = true; st.textContent = 'جارٍ تجهيز الرفع…';
           try {
             const d = await window.videoDuration(f); if (d && !$('#ld', m).value) $('#ld', m).value = `${Math.floor(d / 60)}:${String(d % 60).padStart(2, '0')}`;
             if (!$('#lt', m).value.trim()) $('#lt', m).value = f.name.replace(/\.[^.]+$/, '');
             const a = await sb.fn('bunny-upload', { action: 'create_admin', title: `${c.title} — ${$('#lt', m).value.trim()}` });
             const guid = await window.bunnyUpload(f, a, (x, y) => (st.textContent = `جارٍ الرفع ${Math.floor((x / y) * 100)}%`));
             $('#lv', m).value = guid; st.textContent = 'اتّرفع ✓ اضغط «إضافة محاضرة»';
-          } catch (err) { st.textContent = /not configured/.test(err.message || '') ? 'اربط Bunny من «التكاملات» الأول (Library ID وAPI Key).' : 'الرفع وقف: ' + (err.message || ''); }
+          } catch (err) { st.textContent = /not configured/.test(err.message || '') ? 'اربط Bunny من «التكاملات» الأول (Library ID وAPI Key).' : 'توقف الرفع: ' + (err.message || ''); }
           sub.disabled = false; ev.target.value = '';
         };
         $('#lf', m).onsubmit = async (e) => {
@@ -945,7 +946,7 @@
 
   window.BiosynPages.admin = async () => {
     me = await D.guard(['admin', 'support']); if (!me) return;
-    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'كورسات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'analytics', label: 'تحليلات الكورسات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'الفورمز والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرين في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
+    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
     // live counters: new requests + open refund requests (refreshes every minute and when the tab regains focus)
     let lastRef = -1;

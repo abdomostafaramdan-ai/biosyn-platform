@@ -425,3 +425,6 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .rf-bar{grid-column:1/-1;height:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
 .rf-bar i{display:block;height:100%;background:var(--brand-lime,#c6f84a);border-radius:99px}
 .bx-tracks > .bx-track-wide { grid-column: 1 / -1; }
+
+/* «عضو مؤسس» badge for members of the old platform who re-activated */
+.bx-founder{display:inline-flex;align-items:center;gap:4px;margin-inline-start:8px;padding:3px 10px;border-radius:999px;background:linear-gradient(135deg,#ffd76a,#f5a524);color:#2b1700;font-size:12px;font-weight:800;vertical-align:middle;box-shadow:0 2px 10px rgba(245,165,36,.35)}

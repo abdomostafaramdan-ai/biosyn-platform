@@ -1,0 +1,28 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><meta name="referrer" content="no-referrer"><title>إلغاء الاشتراك في الرسائل | Biosyn Egypt</title><link rel="icon" href="img/biosyn-mark.png">
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#010232;color:#fff;font:16px/1.8 Tahoma,'Segoe UI',Arial,sans-serif;padding:16px;box-sizing:border-box}main{max-width:520px;text-align:center}img{width:64px;height:64px}h1{font-size:24px;margin:16px 0 8px}p{color:#c9cbe6;margin:0 0 16px}a{color:#c6f84a}button{font:700 15px/1 inherit;padding:13px 22px;border:0;border-radius:12px;background:#c6f84a;color:#010232;cursor:pointer}button[disabled]{opacity:.6}</style>
+</head><body><main>
+<img src="img/biosyn-mark.png" alt="Biosyn">
+<h1 id="h">إلغاء الاشتراك في الرسائل</h1>
+<p id="p">اضغط الزر أدناه لإيقاف رسائل Biosyn التسويقية إلى بريدك الإلكتروني.</p>
+<button type="button" id="b">إلغاء الاشتراك</button>
+<p style="margin-top:22px"><a href="index.html" id="home">العودة إلى الصفحة الرئيسية</a></p>
+</main>
+<script src="js/config.js"></script><script src="js/sb.js"></script>
+<script>
+(function () {
+  let en = false; try { en = localStorage.getItem('biosyn.lang') === 'en'; } catch (e) {}
+  const T = en ? { h: 'Unsubscribe from emails', p: 'Press the button below to stop Biosyn marketing emails to your inbox.', b: 'Unsubscribe', home: 'Back to the home page', ok: 'You have been unsubscribed', okp: "You won't receive any more marketing emails from us. You can still sign up on the platform any time.", bad: 'This link is invalid or has expired.', err: 'Something went wrong. Please try again in a moment.' }
+                 : { ok: 'تم إلغاء اشتراكك', okp: 'لن تصلك منا رسائل تسويقية بعد الآن، ويمكنك التسجيل في المنصة في أي وقت.', bad: 'هذا الرابط غير صالح أو انتهت صلاحيته.', err: 'حدث خطأ، حاول مرة أخرى بعد قليل.' };
+  const $ = (id) => document.getElementById(id);
+  if (en) { document.documentElement.lang = 'en'; document.documentElement.dir = 'ltr'; document.title = T.h + ' | Biosyn Egypt'; $('h').textContent = T.h; $('p').textContent = T.p; $('b').textContent = T.b; $('home').textContent = T.home; }
+  const t = new URLSearchParams(location.search).get('t') || '';
+  if (!/^[0-9a-f-]{36}$/i.test(t)) { $('p').textContent = T.bad; $('b').hidden = true; return; }
+  $('b').onclick = async () => {
+    $('b').disabled = true;
+    try {
+      const ok = await sb.rpc('reactivation_unsubscribe', { p_token: t });
+      if (ok) { $('h').textContent = T.ok; $('p').textContent = T.okp; $('b').hidden = true; } else { $('p').textContent = T.bad; $('b').hidden = true; }
+    } catch (e) { $('b').disabled = false; $('p').textContent = T.err; }
+  };
+})();
+</script></body></html>

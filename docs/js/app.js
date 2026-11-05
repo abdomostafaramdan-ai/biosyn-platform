@@ -13,10 +13,10 @@
   const ALL_SPECS = 'كل التخصصات'; window.ALL_SPECS = ALL_SPECS;
   const ERR = {
     'gateway not available': 'بوابة الدفع هذه غير مفعّلة بعد، جرّب بوابة أخرى.',
-    'already enrolled': 'أنت مسجّل في هذا الكورس بالفعل.',
-    'course is full': 'اكتمل عدد المقاعد في هذا الكورس.',
+    'already enrolled': 'أنت مسجّل في هذه الدورة بالفعل.',
+    'course is full': 'اكتمل عدد المقاعد في هذه الدورة.',
     'plan not available': 'هذه الباقة غير متاحة حاليًا.',
-    'course not available': 'هذا الكورس غير متاح حاليًا.',
+    'course not available': 'هذه الدورة غير متاح حاليًا.',
   };
   const arErr = (e) => ERR[e && e.message] || (e && e.message) || 'حدث خطأ غير متوقع، حاول مرة أخرى.';
   window.$ = $; window.$$ = $$; window.esc = esc; window.EGP = EGP; window.LEVEL = LEVEL; window.arErr = arErr;
@@ -261,12 +261,12 @@
           ppAmt = { cur, amt };
           const link = `https://paypal.me/${encodeURIComponent(pinfo.paypal)}/${amt}${cur}`;
           mbox.hidden = false; $('[data-go]', m).textContent = 'دفعت على PayPal';
-          mbox.innerHTML = `<b>ادفع ${EGP(amt)} ${cur} على PayPal</b>${cur !== R.currency ? `<small> (تعادل ${EGP(L)} ${esc(R.symbol)})</small>` : ''}<br><a class="bs-btn bs-btn-secondary bs-btn-sm" style="margin:8px 0" href="${esc(link)}" target="_blank" rel="noopener">افتح PayPal وادفع ←</a><br><small>بعد الدفع اكتب رقم العملية (Transaction ID) أو إيميل PayPal اللي دفعت منه. التفعيل بيحصل لوحده أول ما الفريق يأكّد وصول المبلغ (عادة خلال ساعات).</small><input id="mref" class="bx-input" dir="ltr" maxlength="120" placeholder="Transaction ID / PayPal email" style="margin-top:8px;width:100%">`;
+          mbox.innerHTML = `<b>ادفع ${EGP(amt)} ${cur} على PayPal</b>${cur !== R.currency ? `<small> (تعادل ${EGP(L)} ${esc(R.symbol)})</small>` : ''}<br><a class="bs-btn bs-btn-secondary bs-btn-sm" style="margin:8px 0" href="${esc(link)}" target="_blank" rel="noopener">افتح PayPal وادفع ←</a><br><small>بعد الدفع اكتب رقم العملية (Transaction ID) أو بريد PayPal الذي دفعت منه. يتم التفعيل تلقائيًا فور تأكيد الفريق وصول المبلغ (عادةً خلال ساعات).</small><input id="mref" class="bx-input" dir="ltr" maxlength="120" placeholder="Transaction ID / PayPal email" style="margin-top:8px;width:100%">`;
           return;
         }
         const isI = v === 'manual:instapay', to = isI ? pinfo.instapay : pinfo.vodafone_cash;
         mbox.hidden = false; $('[data-go]', m).textContent = 'أرسلت التحويل';
-        mbox.innerHTML = `<b>حوّل ${EGP(finalPrice)} ج.م ${isI ? 'عبر إنستاباي إلى' : 'على محفظة فودافون كاش رقم'}:</b> <span class="bs-latin" dir="ltr" style="font-weight:700">${esc(to)}</span><br><small>بعد التحويل اكتب رقم العملية أو الرقم الذي حوّلت منه، وارفع صورة (سكرين) التحويل. يتفعّل اشتراكك بعد مراجعة الفريق (عادة خلال ساعات العمل).</small><input id="mref" class="bx-input" dir="ltr" maxlength="120" placeholder="${isI ? 'رقم العملية' : '01xxxxxxxxx'}" style="margin-top:8px;width:100%">
+        mbox.innerHTML = `<b>حوّل ${EGP(finalPrice)} ج.م ${isI ? 'عبر إنستاباي إلى' : 'على محفظة فودافون كاش رقم'}:</b> <span class="bs-latin" dir="ltr" style="font-weight:700">${esc(to)}</span><br><small>بعد التحويل اكتب رقم العملية أو الرقم الذي حوّلت منه، وارفع لقطة شاشة للتحويل. يُفعَّل اشتراكك بعد مراجعة الفريق (عادةً خلال ساعات العمل).</small><input id="mref" class="bx-input" dir="ltr" maxlength="120" placeholder="${isI ? 'رقم العملية' : '01xxxxxxxxx'}" style="margin-top:8px;width:100%">
           <label class="bx-proof" for="mproof"><input id="mproof" type="file" accept="image/*,application/pdf" required><span class="bx-proof-box" data-proofname><b>📎 ارفع سكرين التحويل</b><small>إجباري · صورة أو PDF حتى 6 ميجا</small></span></label>`;
         const fi = $('#mproof', m);
         fi.onchange = () => {
@@ -279,7 +279,7 @@
         pinfo = pi || {};
         let online = (Array.isArray(pinfo.gateways) && pinfo.gateways.length ? pinfo.gateways : (BIOSYN.GATEWAYS_FALLBACK || [])).filter((g) => GW[g]);
         if (loc) online = online.filter((g) => (R.gateways || ['stripe']).includes(g));   // foreign currency: card gateways only
-        const opts = online.map((g) => [g, GW[g], g === 'fawaterk' ? (loc ? 'بطاقة بنكية (فيزا / ماستركارد) ومحافظ وطرق دفع تانية' : 'بطاقة، محافظ إلكترونية، فوري، أمان') : loc ? `دفع بالبطاقة بـ${R.currency}` : 'دفع إلكتروني آمن · بطاقة أو محفظة']);
+        const opts = online.map((g) => [g, GW[g], g === 'fawaterk' ? (loc ? 'بطاقة بنكية (فيزا / ماستركارد) ومحافظ وطرق دفع أخرى' : 'بطاقة، محافظ إلكترونية، فوري، أمان') : loc ? `دفع بالبطاقة بـ${R.currency}` : 'دفع إلكتروني آمن · بطاقة أو محفظة']);
         if (loc && pinfo.paypal) opts.push(['manual:paypal', 'PayPal', 'ادفع من حسابك على PayPal']);
         if (!loc && pinfo.instapay) opts.push(['manual:instapay', 'إنستاباي', 'تحويل يدوي · بدون رسوم']);
         if (!loc && pinfo.vodafone_cash) opts.push(['manual:vodafone_cash', 'فودافون كاش', 'تحويل يدوي · بدون رسوم']);
@@ -288,7 +288,7 @@
         const fwLogos = (loc ? [['visa-mastercard', 'Visa / Mastercard']] : [['visa-mastercard', 'Visa / Mastercard'], ['wallets', 'المحافظ الإلكترونية'], ['fawry', 'فوري'], ['aman', 'أمان']])
           .map(([f, a]) => `<img src="${LOGO(f)}" alt="${a}" title="${a}" loading="lazy" onerror="this.remove()">`).join('');
         rg.innerHTML = opts.length ? opts.map(([k, n, s], i) => `<label class="bx-opt"><input type="radio" name="gw" value="${k}" ${i === 0 ? 'checked' : ''}><b>${n}</b><small>${s}</small>${k === 'fawaterk' ? `<span class="bx-paylogos" aria-hidden="true">${fwLogos}</span>` : ''}</label>`).join('')
-          : `<div class="bx-formmsg err">${loc ? `الدفع من بلدك مش متاح لسه. تواصل معنا على contact@biosynegypt.com ونفعّلك يدويًا.` : 'الدفع غير متاح حاليًا. تواصل معنا على contact@biosynegypt.com'}</div>`;
+          : `<div class="bx-formmsg err">${loc ? `الدفع من بلدك غير متاح بعد. تواصل معنا على contact@biosynegypt.com وسنفعّل اشتراكك يدويًا.` : 'الدفع غير متاح حاليًا. تواصل معنا على contact@biosynegypt.com'}</div>`;
         $('[data-go]', m).disabled = !opts.length;
         $$('input[name=gw]', m).forEach((r) => (r.onchange = drawManual));
         drawManual();
@@ -331,7 +331,7 @@
             const r = await sb.rpc('create_manual_payment_v3', { p_method: gwv.slice(7), p_ref: ref.trim(), p_proof: proof, p_plan_code: target.plan_code || null, p_course: target.course_id || null, p_coupon: coupon || null, p_request: target.consultation || null, p_currency: pp ? ppAmt.cur : 'EGP', p_amount_local: pp ? ppAmt.amt : null });
             track('begin_checkout', { value: finalPrice, item: target.title, id: target.plan_code || target.course_id });
             msg.className = 'bx-formmsg ok';
-            msg.textContent = r.status === 'paid' ? 'تم التفعيل!' : target.consultation ? 'استلمنا طلبك. هنراجع التحويل ونتواصل معاك لتحديد موعد الاستشارة.' : 'استلمنا طلبك. سنراجع التحويل ونفعّل اشتراكك، وسيصلك بريد بالتأكيد.';
+            msg.textContent = r.status === 'paid' ? 'تم التفعيل!' : target.consultation ? 'استلمنا طلبك. سنراجع التحويل ونتواصل معك لتحديد موعد الاستشارة.' : 'استلمنا طلبك. سنراجع التحويل ونفعّل اشتراكك، وسيصلك بريد بالتأكيد.';
             setTimeout(() => (location.href = 'account.html#payments'), 2500);
           } catch (e) { btn.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = arErr(e); }
           return;
@@ -386,7 +386,7 @@
     const left = st.days_left === 1 ? 'يوم واحد' : st.days_left === 2 ? 'يومين' : st.days_left <= 10 ? `${st.days_left} أيام` : `${st.days_left} يوم`;
     const wrap = cards[0] && cards[0].closest('.bs-plans');
     if (wrap && !document.querySelector('.bx-planstate')) {
-      wrap.insertAdjacentHTML('beforebegin', `<div class="bx-planstate" role="status"><span>إنت مشترك في <b>${esc(st.plan_name)}</b> لحد ${esc(end)} · فاضل ${left}</span>${st.renew_open ? '<span class="bx-hint">تقدر تجدّد دلوقتي، والمدة الجديدة هتبدأ بعد ما الحالية تخلص.</span>' : '<span class="bx-hint">تقدر ترقّي لباقة أطول في أي وقت، والأيام المتبقية مش هتضيع.</span>'}</div>`);
+      wrap.insertAdjacentHTML('beforebegin', `<div class="bx-planstate" role="status"><span>أنت مشترك في <b>${esc(st.plan_name)}</b> حتى ${esc(end)} · المتبقي ${left}</span>${st.renew_open ? '<span class="bx-hint">يمكنك التجديد الآن، وستبدأ المدة الجديدة بعد انتهاء المدة الحالية.</span>' : '<span class="bx-hint">يمكنك الترقية إلى باقة أطول في أي وقت، ولن تضيع الأيام المتبقية.</span>'}</div>`);
     }
     cards.forEach((card) => {
       const cta = $('.bs-plan-cta', card); if (!cta || !card.dataset.plan) return;
@@ -397,16 +397,16 @@
         const b = $('.bs-badge', card) || $('.bs-plan-top', card).appendChild(Object.assign(document.createElement('span'), { className: 'bs-badge' }));
         b.textContent = 'باقتك الحالية'; b.className = 'bs-badge bs-badge-new';
       }
-      if (st.renew_open) { cta.textContent = same ? 'جدّد الباقة' : months > st.duration ? 'جدّد بباقة أطول ↑' : 'جدّد بالباقة دي'; card.dataset.upnote = `المدة الجديدة بتبدأ بعد ما اشتراكك الحالي يخلص (${end}). `; return; }
+      if (st.renew_open) { cta.textContent = same ? 'جدّد الباقة' : months > st.duration ? 'جدّد بباقة أطول ↑' : 'جدّد بهذه الباقة'; card.dataset.upnote = `تبدأ المدة الجديدة بعد انتهاء اشتراكك الحالي (${end}). `; return; }
       if (months > st.duration) {
-        cta.textContent = 'رقّي للباقة دي ↑'; cta.classList.replace('bs-btn-secondary', 'bs-btn-primary');
-        card.dataset.upnote = `الترقية بتتضاف بعد اشتراكك الحالي (${end})، فمش هتخسر ولا يوم. `;
+        cta.textContent = 'رقِّ إلى هذه الباقة ↑'; cta.classList.replace('bs-btn-secondary', 'bs-btn-primary');
+        card.dataset.upnote = `تُضاف الترقية بعد اشتراكك الحالي (${end})، فلن تخسر أي يوم. `;
         note('الأيام المتبقية من باقتك محسوبة');
         return;
       }
       cta.setAttribute('aria-disabled', 'true'); cta.disabled = true;
-      cta.textContent = same ? `مشترك لحد ${end}` : 'باقتك الحالية أطول';
-      note(same ? 'التجديد بيفتح في آخر 7 أيام' : 'متاحة للتجديد في آخر 7 أيام');
+      cta.textContent = same ? `مشترك حتى ${end}` : 'باقتك الحالية أطول';
+      note(same ? 'يُتاح التجديد في آخر 7 أيام' : 'متاحة للتجديد في آخر 7 أيام');
     });
   }
 
@@ -574,14 +574,14 @@
       const blank = $$('select', form).find((el) => !el.value && /\*/.test((el.id && $(`label[for="${el.id}"]`, form) || {}).textContent || ''));
       if (blank) { msg.textContent = 'اختر ' + $(`label[for="${blank.id}"]`, form).textContent.replace('*', '').trim() + '.'; blank.focus(); return; }
       if (consent && !consent.checked) { msg.textContent = 'يرجى الموافقة على الشروط للمتابعة.'; return; }
-      if (type === 'institution' && PERSONAL_MAIL.test(email)) { msg.textContent = 'من فضلك استخدم إيميل الجهة (مثل name@university.edu.eg)، مش إيميل شخصي زي Gmail أو Yahoo.'; return; }
+      if (type === 'institution' && PERSONAL_MAIL.test(email)) { msg.textContent = 'من فضلك استخدم البريد الإلكتروني للجهة (مثل name@university.edu.eg)، وليس بريدًا شخصيًا مثل Gmail أو Yahoo.'; return; }
       btn.disabled = true; msg.className = 'bx-formmsg'; msg.textContent = 'جارٍ الإرسال…';
       try {
         window.track && track('lead', { type });
         await sb.insertQuiet('requests', { type, name, email, phone: phone || null, payload: f, user_id: sb.user ? sb.user.id : null }, !!sb.user);
-        msg.className = 'bx-formmsg ok'; msg.textContent = /^instructor/.test(type) ? 'وصل طلبك. سنراجعه ونتواصل معك على بريدك الإلكتروني. تقديم الطلب لا يعني القبول.' : 'وصل طلبك، وفريق Biosyn هيتواصل معاك قريبًا.';
+        msg.className = 'bx-formmsg ok'; msg.textContent = /^instructor/.test(type) ? 'وصل طلبك. سنراجعه ونتواصل معك على بريدك الإلكتروني. تقديم الطلب لا يعني القبول.' : 'وصل طلبك، وسيتواصل معك فريق Biosyn قريبًا.';
         form.reset();
-      } catch (e) { msg.className = 'bx-formmsg err'; msg.textContent = /institution email/.test(e.message || '') ? 'من فضلك استخدم إيميل الجهة، مش إيميل شخصي.' : arErr(e); }
+      } catch (e) { msg.className = 'bx-formmsg err'; msg.textContent = /institution email/.test(e.message || '') ? 'من فضلك استخدم البريد الإلكتروني للجهة، وليس بريدًا شخصيًا.' : arErr(e); }
       btn.disabled = false;
     });
   }
@@ -617,7 +617,7 @@
     const fields = () => { const f = {}; $$('input,select,textarea', form).forEach((el) => { const lab = el.id && $(`label[for="${el.id}"]`, form); if (lab) f[lab.textContent.replace('*', '').trim()] = el.tagName === 'SELECT' ? (el.selectedIndex > 0 ? el.options[el.selectedIndex].text : '') : el.value.trim(); }); return f; };
     const KEY = 'biosyn.cons';
     // back from login/signup: restore what they typed
-    try { const saved = JSON.parse(sessionStorage.getItem(KEY) || 'null'); if (saved && sb.user) { Object.entries(saved).forEach(([id, v]) => { const el = $('#' + id, form); if (el) el.value = v; }); msg.className = 'bx-formmsg ok'; msg.textContent = 'رجعنا بياناتك. اضغط «احجز وادفع» عشان تكمّل.'; } } catch {}
+    try { const saved = JSON.parse(sessionStorage.getItem(KEY) || 'null'); if (saved && sb.user) { Object.entries(saved).forEach(([id, v]) => { const el = $('#' + id, form); if (el) el.value = v; }); msg.className = 'bx-formmsg ok'; msg.textContent = 'استعدنا بياناتك. اضغط «احجز وادفع» للمتابعة.'; } } catch {}
     if (sb.user && !$('#c-e', form).value) $('#c-e', form).value = sb.user.email || '';
     btn.addEventListener('click', async () => {
       const g = (id) => $('#' + id, form).value.trim();
@@ -634,8 +634,8 @@
         const id = await sb.rpc('create_consultation', { p_name: g('c-n'), p_email: g('c-e'), p_phone: g('c-p') || null, p_payload: fields() });
         try { sessionStorage.removeItem(KEY); } catch {}
         window.track && track('lead', { type: 'consultation' });
-        msg.className = 'bx-formmsg ok'; msg.textContent = 'اتسجل طلبك. كمّل الدفع عشان نأكد الحجز ونحدد الموعد.';
-        checkout({ consultation: id, title: 'استشارة: ' + $('#c-s', form).options[$('#c-s', form).selectedIndex].text, price, intl, note: 'بعد الدفع فريق Biosyn هيتواصل معاك لتحديد موعد الاستشارة.' });
+        msg.className = 'bx-formmsg ok'; msg.textContent = 'تم تسجيل طلبك. أكمل الدفع لنؤكد الحجز ونحدد الموعد.';
+        checkout({ consultation: id, title: 'استشارة: ' + $('#c-s', form).options[$('#c-s', form).selectedIndex].text, price, intl, note: 'بعد الدفع سيتواصل معك فريق Biosyn لتحديد موعد الاستشارة.' });
       } catch (e) { msg.className = 'bx-formmsg err'; msg.textContent = arErr(e); }
       btn.disabled = false;
     });

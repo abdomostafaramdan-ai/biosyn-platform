@@ -50,3 +50,5 @@
   .cx-scale{box-shadow:none!important;border-radius:0!important;width:297mm!important;height:210mm!important;overflow:hidden!important;page-break-inside:avoid;break-inside:avoid}
   .cx-scale .cx-cert{position:relative!important;transform:scale(1.0)!important;transform-origin:0 0}
 }
+
+.cx-founder{display:inline-block;margin-inline-start:10px;padding:2px 12px;border:1.5px solid #c9962b;border-radius:999px;color:#8a5a00;font:700 15px/1.5 'Poppins',Arial,sans-serif;letter-spacing:.04em;background:#fff8e6}

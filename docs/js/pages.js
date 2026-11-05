@@ -28,14 +28,14 @@
     const R = await Promise.race([window.REGION, new Promise((r) => setTimeout(() => r({}), 2500))]).catch(() => ({}));
     const iso0 = (window.COUNTRIES || []).some((x) => x[0] === R.country) ? R.country : 'EG';
     $('#r-cc').innerHTML = ccOptions(iso0); $('#c-cc').innerHTML = ccOptions(iso0);
-    const phoneErr = (iso) => iso === 'EG' ? 'اكتب رقم موبايل مصري صحيح (11 رقم يبدأ بـ 01).' : 'اكتب رقم موبايل صحيح.';
+    const phoneErr = (iso) => iso === 'EG' ? 'اكتب رقم هاتف محمول مصريًا صحيحًا (11 رقمًا يبدأ بـ 01).' : 'اكتب رقم هاتف محمول صحيحًا.';
     // signed in (email or just back from Google): make sure we have a phone, then continue
     if (sb.session) await sb.auth.ready;
     // back from the reset-password email: ask for the new password before anything else
     let recovering = false; try { recovering = sessionStorage.getItem('biosyn.recovery') === '1'; } catch {}
     if (sb.user && recovering) {
       ['#f-in', '#f-up', '#f-ph', '.bx-seg', '#oauth'].forEach((q) => { const el = $(q); if (el) el.hidden = true; });
-      $('#auth-h').textContent = 'اختار كلمة مرور جديدة'; $('#auth-eb').textContent = 'إعادة تعيين كلمة المرور'; $('#auth-sub').textContent = 'اكتب كلمة المرور الجديدة لحسابك ' + (sb.user.email || '') + '.';
+      $('#auth-h').textContent = 'اختر كلمة مرور جديدة'; $('#auth-eb').textContent = 'إعادة تعيين كلمة المرور'; $('#auth-sub').textContent = 'اكتب كلمة المرور الجديدة لحسابك ' + (sb.user.email || '') + '.';
       const f = $('#f-pw'); f.hidden = false; $('#n-p').focus();
       f.addEventListener('submit', async (ev) => {
         ev.preventDefault(); const m = $('#m-pw'), a = $('#n-p').value, b2 = $('#n-p2').value;
@@ -49,7 +49,7 @@
           setTimeout(() => location.replace(nextUrl()), 1200);
         } catch (e) {
           b.disabled = false; m.className = 'bx-formmsg err';
-          m.textContent = /same|different from the old/i.test(e.message) ? 'اختار كلمة مرور مختلفة عن القديمة.' : /weak|at least/i.test(e.message) ? 'كلمة المرور ضعيفة، استخدم 8 أحرف على الأقل مع أرقام.' : window.arErr(e);
+          m.textContent = /same|different from the old/i.test(e.message) ? 'اختر كلمة مرور مختلفة عن السابقة.' : /weak|at least/i.test(e.message) ? 'كلمة المرور ضعيفة، استخدم 8 أحرف على الأقل مع أرقام.' : window.arErr(e);
         }
       });
       return;
@@ -61,7 +61,7 @@
       let prof = null; try { prof = await sb.one('profiles', { select: 'phone', id: 'eq.' + sb.user.id }); } catch {}
       if (prof && prof.phone) { location.replace(nextUrl()); return; }
       ['#f-in', '#f-up', '.bx-seg', '#oauth'].forEach((q) => { const el = $(q); if (el) el.hidden = true; });
-      $('#auth-h').textContent = 'كمّل بياناتك'; $('#auth-eb').textContent = 'أهلاً بيك في Biosyn'; $('#auth-sub').textContent = '';
+      $('#auth-h').textContent = 'أكمل بياناتك'; $('#auth-eb').textContent = 'أهلًا بك في Biosyn'; $('#auth-sub').textContent = '';
       const f = $('#f-ph'); f.hidden = false;
       f.addEventListener('submit', async (ev) => {
         ev.preventDefault(); const m = $('#m-ph'), iso = $('#c-cc').value, ph = normPhone(iso, $('#c-ph').value);
@@ -92,6 +92,7 @@
     };
     $('#tab-in').onclick = () => show(false); $('#tab-up').onclick = () => show(true);
     if (new URLSearchParams(location.search).get('mode') === 'signup') show(true);
+    { const pe = (new URLSearchParams(location.search).get('email') || '').trim(); if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(pe)) { $('#r-e').value = pe; $('#l-e').value = pe; } }
     const say = (id, t, k) => { const m = $(id); m.textContent = t; m.className = 'bx-formmsg' + (k ? ' ' + k : ''); };
     const authErr = (e) => /invalid login/i.test(e.message) ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة.' : /already registered/i.test(e.message) ? 'هذا البريد مسجّل بالفعل، سجّل الدخول.' : /email not confirmed/i.test(e.message) ? 'أكّد بريدك الإلكتروني أولًا من الرسالة التي وصلتك.' : /rate limit/i.test(e.message) ? 'محاولات كثيرة، انتظر قليلًا ثم أعد المحاولة.' : window.arErr(e);
 
@@ -206,8 +207,8 @@
       <aside class="bs-enroll"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span></div>
         <div class="bs-enroll-body"><div class="bs-enroll-access"><span>${subscribed ? 'اشتراكك ساري' : 'متاحة مع الاشتراك'}</span>${!subscribed && from ? `<b>تبدأ من ${priceTxt(from.price_egp, window.REGION_NOW, from.intl_price)} / ${from.duration_months === 1 ? 'شهريًا' : from.duration_months + ' أشهر'}</b>` : ''}</div>
         ${cta}
-        <ul class="bs-checks bs-checks-sm"><li>${ICON_CHECK}<span>${lects.length} محاضرة مسجلة${total ? ' (حوالي ' + esc(hoursText(total)) + ')' : ''}</span></li><li>${ICON_CHECK}<span>شهادة إتمام عند إنهاء الكورس</span></li><li>${ICON_CHECK}<span>مستوى ${LEVEL[c.level] || 'مبتدئ'} · بالعربية</span></li></ul></div></aside></div>
-    ${subscribed ? '' : `<section class="bs-section" id="plans"><div class="bs-section-head"><div><h2>متاحة مع باقات العضوية</h2><p>باشتراك واحد، ادرس كل الكورسات المسجلة على المنصة</p></div></div><div class="bs-plans">${plans.map(() => '<template-slot></template-slot>').join('')}</div></section>`}`;
+        <ul class="bs-checks bs-checks-sm"><li>${ICON_CHECK}<span>${lects.length} محاضرة مسجلة${total ? ' (حوالي ' + esc(hoursText(total)) + ')' : ''}</span></li><li>${ICON_CHECK}<span>شهادة إتمام عند إنهاء الدورة</span></li><li>${ICON_CHECK}<span>مستوى ${LEVEL[c.level] || 'مبتدئ'} · بالعربية</span></li></ul></div></aside></div>
+    ${subscribed ? '' : `<section class="bs-section" id="plans"><div class="bs-section-head"><div><h2>متاحة مع باقات العضوية</h2><p>باشتراك واحد، ادرس كل الدورات المسجلة على المنصة</p></div></div><div class="bs-plans">${plans.map(() => '<template-slot></template-slot>').join('')}</div></section>`}`;
     // plan cards: reuse the design markup, filled by app.js's hydratePlans() (called again here)
     const tpl = $('#plan-card');
     $$('template-slot', root).forEach((s) => s.replaceWith(tpl.content.cloneNode(true)));
@@ -245,7 +246,7 @@
     if (!cur || !unlocked(cur)) cur = pool.find((l) => unlocked(l) && !(prog[l.id] && prog[l.id].completed)) || lastOpen();
     const done = () => lects.filter((l) => prog[l.id] && prog[l.id].completed).length;
     const lessonIcon = (l) => { const d = prog[l.id] && prog[l.id].completed; return `<span class="bx-lesson-ic ${d ? 'done' : l === cur ? 'now' : ''}">${d ? ICON_CHECK : (!sub && !l.is_preview) || !unlocked(l) ? ICON_LOCK : ICON_PLAY}</span>`; };
-    const nextLabel = (i) => i >= lects.length - 1 ? (seen(cur) >= 95 ? 'أكملت الكورس ✓' : 'آخر محاضرة') : seen(cur) >= PASS ? 'المحاضرة التالية ←' : `التالية تتفتح عند ${PASS}٪`;
+    const nextLabel = (i) => i >= lects.length - 1 ? (seen(cur) >= 95 ? 'أكملت الدورة ✓' : 'آخر محاضرة') : seen(cur) >= PASS ? 'المحاضرة التالية ←' : `التالية تتفتح عند ${PASS}٪`;
     const pct = () => Math.round((done() / lects.length) * 100);
 
     function draw() {
@@ -264,7 +265,7 @@
         <div class="bx-module">${lects.map((l) => `<a class="bx-lesson${unlocked(l) ? '' : ' bx-locked'}" href="watch.html?c=${esc(c.slug)}&l=${l.id}" data-l="${l.id}" aria-current="${l === cur}" ${unlocked(l) ? '' : 'aria-disabled="true"'}>${lessonIcon(l)}<div><b>${esc(l.title)}</b>${l.is_preview && !sub ? '<small class="bx-hint" style="display:block">معاينة مجانية</small>' : ''}</div><span class="bx-lesson-dur">${l.duration_seconds ? dur(l.duration_seconds) : ''}</span></a>`).join('')}</div></aside></div>`;
       $$('.bx-lesson', root).forEach((a) => a.addEventListener('click', (e) => {
         e.preventDefault(); const l = lects.find((x) => x.id === a.dataset.l);
-        if (!unlocked(l)) return toast(`المحاضرة دي هتتفتح لما تتفرج على ${PASS}٪ من المحاضرة اللي قبلها.`);
+        if (!unlocked(l)) return toast(`ستُفتح هذه المحاضرة عندما تشاهد ${PASS}٪ من المحاضرة السابقة.`);
         cur = l; history.replaceState(null, '', `watch.html?c=${encodeURIComponent(c.slug)}&l=${cur.id}`); draw();
       }));
       const go = (j) => { cur = lects[j]; history.replaceState(null, '', `watch.html?c=${encodeURIComponent(c.slug)}&l=${cur.id}`); draw(); window.scrollTo(0, 0); };
@@ -274,7 +275,7 @@
       $$('[data-ask]', root).forEach((b) => (b.onclick = () => window.Chat && Chat.askCourse(b.dataset.ask)));
     }
 
-    function lpText() { const v = Math.round(seen(cur)); return v >= 95 ? 'خلّصت المحاضرة دي ✓ تقدر ترجع لأي جزء فيها' : v >= PASS ? `اتفرجت على ${v}٪ · المحاضرة التالية اتفتحت` : `اتفرجت على ${v}٪ · كمّل لحد ${PASS}٪ عشان تفتح المحاضرة التالية`; }
+    function lpText() { const v = Math.round(seen(cur)); return v >= 95 ? 'أنهيت هذه المحاضرة ✓ ويمكنك الرجوع إلى أي جزء منها' : v >= PASS ? `شاهدت ${v}٪ · فُتحت المحاضرة التالية` : `شاهدت ${v}٪ · تابع حتى ${PASS}٪ لتفتح المحاضرة التالية`; }
     // refresh the bits that depend on progress without reloading the video
     function paintProgress() {
       const i = lects.indexOf(cur);
@@ -297,9 +298,9 @@
         const r = (prog[cur.id] = prog[cur.id] || { lecture_id: cur.id, max_pct: 0, completed: false });
         const before = seen(cur); r.max_pct = Math.max(r.max_pct, lastPct); if (lastPct >= 95) r.completed = true;
         paintProgress();
-        if (before < PASS && lastPct >= PASS && lects.indexOf(cur) < lects.length - 1) toast('تمام! المحاضرة التالية اتفتحت.');
+        if (before < PASS && lastPct >= PASS && lects.indexOf(cur) < lects.length - 1) toast('أحسنت! فُتحت المحاضرة التالية.');
         if (done() === lects.length && !certShown) { certShown = true; toast('مبروك! أنهيت الدورة وحصلت على شهادة الإتمام. تجدها في حسابك.'); }
-      } catch (e) { if (force) toast(/locked/.test(e.message || '') ? `لازم تتفرج على ${PASS}٪ من المحاضرة اللي قبلها الأول.` : arErr(e), 'err'); }
+      } catch (e) { if (force) toast(/locked/.test(e.message || '') ? `يجب أن تشاهد ${PASS}٪ من المحاضرة السابقة أولًا.` : arErr(e), 'err'); }
       busy = false;
     }
 
@@ -356,7 +357,7 @@
             if (furthest < 0) furthest = (seen(cur) / 100) * D;
             if (seen(cur) < 95 && t > furthest + 3) {           // jumped ahead: send them back to where they were
               post({ method: 'setCurrentTime', value: Math.max(0, furthest - 1) });
-              if (!warned) { warned = true; toast('مينفعش تقدّم الفيديو قبل ما تتفرج عليه. تقدر ترجع لورا عادي.'); }
+              if (!warned) { warned = true; toast('لا يمكنك تقديم الفيديو قبل مشاهدته، ويمكنك الرجوع إلى الخلف بشكل طبيعي.'); }
               return;
             }
             if (t > furthest) furthest = t;
@@ -369,7 +370,7 @@
           ? '<div style="text-align:center;padding:16px"><b style="display:block;color:var(--ink);font:600 18px/28px var(--font-display)">هذه الدورة متاحة للمشتركين</b>اشترك في إحدى الباقات لمشاهدة المحاضرات.<br><a class="bs-btn bs-btn-primary" style="margin-top:12px" href="pricing.html">عرض الباقات</a></div>'
           : m === 'device limit' ? '<div style="text-align:center;padding:16px"><b style="display:block;color:var(--ink);font:600 18px/28px var(--font-display)">وصلت للحد الأقصى من الأجهزة</b>حسابك مستخدم على جهازين بالفعل. أزل جهازًا قديمًا من <a class="bx-link" href="account.html#settings">حسابي ← الإعدادات</a> ثم حاول مجددًا.</div>'
           : m === 'video not available yet' ? 'هذا الفيديو لم يُرفع بعد.'
-          : m === 'lecture locked' ? `المحاضرة دي هتتفتح لما تتفرج على ${PASS}٪ من المحاضرة اللي قبلها.` : esc(arErr(e));
+          : m === 'lecture locked' ? `ستُفتح هذه المحاضرة عندما تشاهد ${PASS}٪ من المحاضرة السابقة.` : esc(arErr(e));
       }
     }
     draw();
@@ -383,18 +384,18 @@
     let me = null; try { me = await sb.one('profiles', { select: 'full_name,cert_name,phone,whatsapp', id: 'eq.' + sb.user.id }); } catch {}
     if (me && (me.cert_name || '').trim() && (me.phone || me.whatsapp)) return go();
     me = me || {};
-    ui.modal(`<h3>بيانات الحجز</h3><p class="bx-hint" style="margin-top:0">قبل الحجز محتاجين بياناتك عشان نبعتلك مواعيد الجلسات، ونطبع اسمك صح على الشهادة اللي هتصدر تلقائيًا يوم انتهاء الكورس.</p>
+    ui.modal(`<h3>بيانات الحجز</h3><p class="bx-hint" style="margin-top:0">قبل الحجز نحتاج إلى بياناتك لنرسل إليك مواعيد الجلسات، ونطبع اسمك بشكل صحيح على الشهادة التي ستصدر تلقائيًا يوم انتهاء الدورة.</p>
       <form class="bx-form2" novalidate><div class="bx-field"><label for="an">الاسم الكامل</label><input id="an" class="bx-input" maxlength="80" autocomplete="name" value="${esc(me.full_name || '')}"></div>
       <div class="bx-field"><label for="acn">الاسم على الشهادة (بالإنجليزي كما في جواز السفر)</label><input id="acn" class="bx-input" dir="ltr" maxlength="80" placeholder="Ahmed Mohamed Ali" value="${esc(me.cert_name || '')}"></div>
-      <div class="row2"><div class="bx-field"><label for="ap">رقم الموبايل</label><input id="ap" class="bx-input" dir="ltr" type="tel" autocomplete="tel" value="${esc(me.phone || '')}"></div><div class="bx-field"><label for="aw">واتساب (لو مختلف)</label><input id="aw" class="bx-input" dir="ltr" type="tel" value="${esc(me.whatsapp || '')}"></div></div>
+      <div class="row2"><div class="bx-field"><label for="ap">رقم الهاتف المحمول</label><input id="ap" class="bx-input" dir="ltr" type="tel" autocomplete="tel" value="${esc(me.phone || '')}"></div><div class="bx-field"><label for="aw">واتساب (إن كان مختلفًا)</label><input id="aw" class="bx-input" dir="ltr" type="tel" value="${esc(me.whatsapp || '')}"></div></div>
       <div class="bx-formmsg" aria-live="polite"></div><div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" type="submit">حفظ والمتابعة للدفع</button><button type="button" class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div></form>`,
     (m, close) => {
       $('[data-x]', m).onclick = close;
       $('form', m).onsubmit = async (e) => {
         e.preventDefault(); const v = (id) => $('#' + id, m).value.trim(), msg = $('.bx-formmsg', m), err = (t) => { msg.className = 'bx-formmsg err'; msg.textContent = t; };
         if (v('an').split(/\s+/).length < 2) return err('اكتب اسمك الكامل (اسمين على الأقل).');
-        if (v('acn').split(/\s+/).length < 2 || /[؀-ۿ]/.test(v('acn'))) return err('اكتب الاسم اللي على الشهادة بحروف إنجليزي (اسمين على الأقل).');
-        if (!/^\+?[\d\s-]{8,18}$/.test(v('ap'))) return err('اكتب رقم موبايل صحيح.');
+        if (v('acn').split(/\s+/).length < 2 || /[؀-ۿ]/.test(v('acn'))) return err('اكتب الاسم كما سيظهر على الشهادة بحروف إنجليزية (اسمان على الأقل).');
+        if (!/^\+?[\d\s-]{8,18}$/.test(v('ap'))) return err('اكتب رقم هاتف محمول صحيحًا.');
         try { await sb.update('profiles', { id: 'eq.' + sb.user.id }, { full_name: v('an'), cert_name: v('acn'), phone: v('ap'), whatsapp: v('aw') || null }); close(); go(); }
         catch (x) { err(arErr(x)); }
       };
@@ -478,7 +479,7 @@
     const fail = (h, t) => (root.innerHTML = `<div class="bx-empty-big"><b>${h}</b>${t}</div>`);
     if (!slug) return fail('الفورم غير موجود', 'تأكد من الرابط.');
     let f; try { f = await sb.one('forms', { select: 'slug,title,description,fields,submit_label,success_message', slug: 'eq.' + slug }); } catch (e) { return fail('تعذّر تحميل الفورم', esc(arErr(e))); }
-    if (!f) return fail('الفورم غير متاح', 'ممكن يكون اتقفل أو الرابط غلط.');
+    if (!f) return fail('الفورم غير متاح', 'قد يكون مغلقًا أو الرابط غير صحيح.');
     document.title = f.title + ' | Biosyn Egypt'; window.setMeta && setMeta(f.title + ' | Biosyn Egypt', (f.description || '').slice(0, 160));
     const fld = (x) => {
       const id = 'ff-' + x.id, req = x.required ? ' required' : '', star = x.required ? ' *' : '', opts = (x.options || []).filter(Boolean);
@@ -512,7 +513,7 @@
       try {
         await sb.rpc('submit_form', { p_slug: f.slug, p_data: data });
         window.track && track('lead', { type: 'form:' + f.slug });
-        root.innerHTML = `<div class="bx-formcard" style="text-align:center;display:grid;gap:12px;justify-items:center"><span class="bx-cat-ic" style="width:56px;height:56px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span><h1 style="margin:0">${esc(f.success_message || 'شكرًا! وصلنا ردك وفريق Biosyn هيتواصل معاك قريبًا.')}</h1><a class="bs-btn bs-btn-primary" href="index.html">الرجوع للرئيسية</a></div>`;
+        root.innerHTML = `<div class="bx-formcard" style="text-align:center;display:grid;gap:12px;justify-items:center"><span class="bx-cat-ic" style="width:56px;height:56px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span><h1 style="margin:0">${esc(f.success_message || 'شكرًا! وصلنا ردك وسيتواصل معك فريق Biosyn قريبًا.')}</h1><a class="bs-btn bs-btn-primary" href="index.html">الرجوع للرئيسية</a></div>`;
       } catch (err) {
         btn.disabled = false; msg.className = 'bx-formmsg err';
         msg.textContent = /too many/.test(err.message) ? 'فيه ضغط على الفورم، جرّب بعد دقيقة.' : /missing: (.+)/.test(err.message) ? 'من فضلك املأ: ' + err.message.match(/missing: (.+)/)[1] : 'تعذّر الإرسال، حاول مرة أخرى.';
