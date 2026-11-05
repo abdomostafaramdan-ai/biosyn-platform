@@ -23,6 +23,75 @@
 
 ## Course details
 
+### Some Concepts in Clinical Research
+URL: https://biosyneg.com/course-some-concepts-in-clinical-research.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+تقدّم هذه الدورة المفاهيم الأساسية للبحث السريري من زاوية تاريخية وأخلاقية، لتفهم لماذا وُضعت قواعد البحث على البشر بهذا الشكل.
+
+تبدأ الدورة بتاريخ البحث السريري، ثم تعرض التجارب غير الأخلاقية التي غيّرت القواعد، وقانون نورمبرغ، وإعلان هلسنكي وتجارب الأدوية، وتشرح المبادئ الأخلاقية الأساسية، والموافقة المستنيرة (Informed Consent) ودور لجان الأخلاقيات (IRB)، ثم تُختتم بمراجعة واختبار قصير.
+
+الدورة مناسبة لطلاب الطب والصيدلة والعلوم الصحية، وللباحثين الذين يستعدون لتقديم بروتوكول بحثي إلى لجنة أخلاقيات.
+
+Lectures:
+1. History of Clinical Research
+2. Nazi Experiments (Part 1)
+3. Nazi Experiments (Part 2)
+4. Other Unethical Experiments
+5. The Nuremberg Code
+6. Declaration of Helsinki & Drug Trials
+7. Ethical Principles
+8. Informed Consent & IRB
+9. Recap & Quiz
+
+### Computational Neuroscience
+URL: https://biosyneg.com/course-computational-neuroscience.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+تقدّم هذه الدورة مدخلًا شاملًا إلى علوم الدماغ وعلوم الأعصاب الحسابية، وتجمع بين الأسس البيولوجية وطرق القياس والنمذجة الحاسوبية.
+
+تبدأ بمقدمة في علم الدماغ، ثم القياسات النفسية الفيزيائية لدى الإنسان (Psychophysics) والمخرجات السلوكية، والنشاط الكهربي للخلايا العصبية (Spiking Activity)، وإشارات الدماغ مثل تخطيط كهربية الدماغ والمغناطيسية الدماغية (EEG وMEG)، ثم تنتقل إلى التطبيق العملي ببناء نموذج العصبون المتكامل المتسرب (LIF Neuron) بلغة بايثون خطوة بخطوة.
+
+الدورة مناسبة لطلاب العلوم والطب والهندسة الطبية والمعلوماتية الحيوية المهتمين بعلوم الأعصاب، ومن يريد بداية عملية في نمذجة الدماغ.
+
+Lectures:
+1. Course Introduction
+2. Introduction to Brain Science (Part 1)
+3. Introduction to Brain Science (Part 2)
+4. Human Psychophysics (Part 1)
+5. Human Psychophysics (Part 2)
+6. Human Psychophysics (Part 3)
+7. Behavioural Readouts
+8. Spiking Activity (Part 1)
+9. Spiking Activity (Part 2)
+10. Brain Signals: EEG & MEG (Part 1)
+11. Brain Signals: EEG & MEG (Part 2)
+12. LIF Neuron in Python (Part 1)
+13. LIF Neuron in Python (Part 2)
+14. LIF Neuron in Python (Part 3)
+15. LIF Neuron in Python (Part 4)
+16. LIF Neuron in Python (Part 5)
+17. LIF Neuron in Python (Part 6)
+
+### Introduction To Immunology
+URL: https://biosyneg.com/course-introduction-to-immunology.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+تقدّم هذه الدورة مدخلًا شاملًا إلى علم المناعة، فتشرح كيف يتعرّف الجسم على الميكروبات ويدافع عن نفسه، بلغة واضحة ومنظمة تناسب من يدرس المناعة لأول مرة.
+
+تبدأ بنظرة عامة على الجهاز المناعي ومكوناته، ثم المناعة الفطرية، والمستضدات ومعقد التوافق النسيجي (MHC)، ثم المناعة الخلوية (CMI) والاستجابة المناعية الخلطية والأجسام المضادة، وتُختتم بنظام المتمّمة (Complement).
+
+الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم والتكنولوجيا الحيوية، ولكل من يحتاج إلى أساس قوي في المناعة قبل دراسة الأمراض المناعية أو اللقاحات.
+
+Lectures:
+1. Overview of the Immune System
+2. Basics of Immunology
+3. Innate Immunity
+4. Antigens and MHC
+5. Cell-Mediated Immunity (CMI)
+6. Humoral Immune Response
+7. The Complement System
+
 ### Bioinformtics Diploma
 URL: https://biosyneg.com/course-bioinformtics-diploma.html
 Type: Live interactive · Level: Beginner · Price: 15٬000 ج.م
@@ -58,21 +127,129 @@ Lectures:
 13. Video 13 - NGS
 14. Video 14 - ONT
 
-### Microbiology Course
+### Intro To Basic Microbiology
 URL: https://biosyneg.com/course-microbiology-course-362803.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 
+تقدّم هذه الدورة أساسًا متينًا في علم الأحياء الدقيقة الطبية، مع التركيز على تصنيف الكائنات الدقيقة وتركيبها وأهميتها السريرية. تتعرّف خلالها على تنوع البكتيريا، ومنها المكورات موجبة الجرام والعصويات سالبة الجرام واللاهوائيات والملتويات والمتفطرات والمفطورات، ثم تختم بمقدمة في علم الطفيليات.
+
+تربط المحاضرات بين النظرية والتطبيق: كيف يُشخَّص كل ميكروب في المختبر، وما الأمراض التي يسببها، وما أسس الوقاية والعلاج. لذلك تناسب طلاب الطب والصيدلة والعلوم والمختبرات الطبية، وكل من يستعد لامتحانات الميكروبيولوجيا أو للعمل في معامل التحاليل.
+
+بنهاية الدورة ستتمكن من تصنيف البكتيريا الممرضة الرئيسية، والتمييز بين خصائصها المختبرية، وفهم العلاقة بين تركيب الميكروب وطريقة إحداثه للمرض.
+
 Lectures:
-1. lecture 1 general microbiology
-2. lecture 2 Gram-Positive Cocci
-3. lecture 3 Gram Negative Bacilli.
-4. Lecture 4 (Gram positive bacilli &Gram negative cocci)
-5. lecture 5 (Anaerobes infection)
-6. lecture 6 (Spirochetes)
-7. lecture 7 Obligate IC bacteria
-8. lecture 8 (Acid fast bacilli)
-9. lecture 9 (Mycoplasmas)
-10. lecture 10 (introduction to parasitology)
+1. General Microbiology
+2. Gram-Positive Cocci
+3. Gram-Negative Bacilli
+4. Gram-Positive Bacilli & Gram-Negative Cocci
+5. Anaerobic Infections
+6. Spirochetes
+7. Obligate Intracellular Bacteria
+8. Acid-Fast Bacilli
+9. Mycoplasmas
+10. Introduction to Parasitology
+
+### How to Read and Understand a Research Paper
+URL: https://biosyneg.com/course-how-to-read-a-research-paper.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+الأبحاث العلمية هي أساس العمل الأكاديمي، لكن قراءتها وفهمها قد يكونان صعبين في البداية. تقدّم هذه الدورة طريقة عملية خطوة بخطوة لقراءة أي بحث علمي وفهمه في وقت قصير.
+
+تتعرف على قواعد القراءة الذكية، وما الذي تبحث عنه في الصفحة الأولى والملخص، وكيف تقرأ النص الكامل بأقسامه، ثم تطبّق ذلك على أمثلة من سلاسل الحالات والتجارب العشوائية المضبوطة والتحليل التلوي (Meta-analysis)، وتُختتم الدورة بمراجعة واختبار قصير.
+
+الدورة مناسبة لطلاب الكليات العلمية والطبية في كل المراحل، ولطلاب الدراسات العليا الذين يحتاجون إلى قراءة عدد كبير من الأبحاث لكتابة رسائلهم.
+
+Lectures:
+1. Rules of Reading a Paper
+2. The Front Page
+3. Reading the Full Text
+4. Case Series
+5. Randomized Controlled Trials
+6. Meta-analysis
+7. Recap & Quiz
+
+### Study Design in Clinical Research
+URL: https://biosyneg.com/course-study-design-in-clinical-research.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+اختيار تصميم الدراسة هو أول قرار يحدد قيمة أي بحث سريري. تشرح هذه الدورة أنواع تصاميم الدراسات في البحث الطبي بطريقة منظمة، بدءًا من تقارير الحالات وسلاسلها، مرورًا بالدراسات المقطعية (Cross-sectional) ودراسات الحالات والشواهد (Case-control) ودراسات الأتراب (Cohort)، وصولًا إلى الدراسات التجريبية.
+
+تتناول الدورة التجارب العشوائية المضبوطة (RCT) ومراحل التجارب السريرية، مع مثال واقعي على فشل تجربة سريرية والدروس المستفادة منه، ثم التصاميم الثانوية مثل المراجعات المنهجية، وتُختتم بمراجعة واختبار قصير.
+
+الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم الصحية، ولكل من يبدأ أول بحث سريري أو يريد قراءة الأبحاث الطبية بعين ناقدة.
+
+Lectures:
+1. Course Introduction
+2. Case Report & Case Series
+3. Cross-sectional Studies
+4. Case-Control Studies
+5. Cohort Studies
+6. Experimental Studies
+7. Randomized Controlled Trials (RCT)
+8. Phases of Clinical Trials
+9. Example of a Trial Failure
+10. Secondary Study Designs (Part 1)
+11. Secondary Study Designs (Part 2)
+12. Recap & Quiz
+
+### Python in Bioinformatics
+URL: https://biosyneg.com/course-python-in-bioinformatics.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+بايثون من أهم لغات البرمجة في المعلوماتية الحيوية وتحليل البيانات. تقدّم هذه الدورة أساسيات البرمجة بلغة بايثون في سياق بيولوجي واضح، دون أن تفترض أي خبرة برمجية سابقة.
+
+تتعلم المتغيرات وأنواع البيانات والشروط والتكرار والدوال، ثم التعامل مع الملفات وتسلسلات الحمض النووي والبروتين، واستخدام المكتبات الأساسية لتحليل البيانات وأتمتة المهام المتكررة في البحث العلمي.
+
+الدورة مناسبة لطلاب العلوم والتكنولوجيا الحيوية والصيدلة، وللباحثين الذين يريدون الدخول إلى مجال المعلوماتية الحيوية بأداة عملية مطلوبة في سوق العمل.
+
+Lectures:
+1. Session 1
+2. Session 2
+3. Session 3
+4. Session 4
+5. Session 5
+6. Session 6
+
+### R Language in Bioinformatics
+URL: https://biosyneg.com/course-r-language-in-bioinformatics.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+لغة R هي الأداة الأكثر استخدامًا في التحليل الإحصائي للبيانات البيولوجية والطبية. تبدأ هذه الدورة من الصفر، فتشرح أساسيات البرمجة بلغة R وبيئة RStudio، ثم تنتقل إلى التعامل مع البيانات واستيرادها وتنظيفها وإعادة تشكيلها (Data Manipulation).
+
+تتعلم بعد ذلك كيفية إجراء التحليلات الإحصائية الأساسية وإنتاج الرسوم البيانية الاحترافية، مع أمثلة من بيانات بيولوجية حقيقية، وتُختتم الدورة بمشروع تطبيقي يجمع كل ما تعلمته.
+
+الدورة مناسبة لطلاب العلوم والتكنولوجيا الحيوية والصيدلة والطب، وللباحثين الذين يحتاجون إلى تحليل بيانات رسائلهم وأبحاثهم بأنفسهم دون خبرة برمجية سابقة.
+
+Lectures:
+1. Session 1
+2. Session 2
+3. Session 3
+4. Session 4
+5. Session 5
+6. Final Project
+
+### Basics of IVF Laboratories
+URL: https://biosyneg.com/course-basics-of-ivf-laboratories.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+تأخذك هذه الدورة في رحلة متكاملة داخل معمل أطفال الأنابيب (IVF)، بدءًا من دورة الخلية وتكوين الحيوانات المنوية والبويضات، وصولًا إلى نمو الجنين حتى مرحلة الكيسة الأريمية (Blastocyst).
+
+تشرح المحاضرات خطوات العمل الفعلية في المعمل: تحليل السائل المنوي الروتيني والاختبارات المساعدة، وتجهيز الحيوانات المنوية وتجميدها، والعوامل المؤثرة في جودتها، ثم تجهيز البويضات وإزالة الخلايا المحيطة بها وتقييمها، وتجميد البويضات والأجنة، ثم الفحص الجيني قبل الانغراس (PGT) والانغراس، وتفسير النتائج.
+
+الدورة مناسبة لخريجي العلوم والطب والتكنولوجيا الحيوية الراغبين في العمل بمعامل الإخصاب المساعد، ولأخصائيي المختبرات الذين يريدون فهمًا منظمًا لهذا المجال باللغة العربية.
+
+Lectures:
+1. Cell Cycle and Spermatogenesis
+2. Routine Semen Analysis
+3. Ancillary Semen Tests
+4. Sperm Processing and Cryopreservation
+5. Factors Affecting Sperm Quality
+6. Menstrual Cycle and Oogenesis
+7. Oocyte Preparation, Denudation and Assessment
+8. From Fertilization to Blastocyst
+9. Oocyte and Embryo Cryopreservation
+10. PGT and Implantation
+11. Interpretations
 
 ## FAQ
 

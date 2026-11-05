@@ -1,7 +1,22 @@
 {
- "built_at": "2026-11-05T22:14:54+00:00",
- "sitemap_urls": 22,
+ "built_at": "2026-11-05T23:08:42+00:00",
+ "sitemap_urls": 33,
  "indexable": [
+  {
+   "slug": "some-concepts-in-clinical-research",
+   "title": "Some Concepts in Clinical Research",
+   "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
+  },
+  {
+   "slug": "computational-neuroscience",
+   "title": "Computational Neuroscience",
+   "url": "https://biosyneg.com/course-computational-neuroscience.html"
+  },
+  {
+   "slug": "introduction-to-immunology",
+   "title": "Introduction To Immunology",
+   "url": "https://biosyneg.com/course-introduction-to-immunology.html"
+  },
   {
    "slug": "bioinformtics-diploma",
    "title": "Bioinformtics Diploma",
@@ -14,30 +29,53 @@
   },
   {
    "slug": "microbiology-course-362803",
-   "title": "Microbiology Course",
+   "title": "Intro To Basic Microbiology",
    "url": "https://biosyneg.com/course-microbiology-course-362803.html"
-  }
- ],
- "noindex": [
-  {
-   "slug": "bioinformtics-diplomaa",
-   "title": "Bioinformtics Diplomaa",
-   "why": [
-    "الوصف منسوخ من دورة أخرى",
-    "أقل من 5 محاضرات"
-   ]
   },
   {
-   "slug": "research-c45f4e",
-   "title": "research",
-   "why": [
-    "الوصف نص تجريبي",
-    "الوصف أقل من 200 حرفًا",
-    "أقل من 5 محاضرات"
-   ]
+   "slug": "how-to-read-a-research-paper",
+   "title": "How to Read and Understand a Research Paper",
+   "url": "https://biosyneg.com/course-how-to-read-a-research-paper.html"
+  },
+  {
+   "slug": "study-design-in-clinical-research",
+   "title": "Study Design in Clinical Research",
+   "url": "https://biosyneg.com/course-study-design-in-clinical-research.html"
+  },
+  {
+   "slug": "python-in-bioinformatics",
+   "title": "Python in Bioinformatics",
+   "url": "https://biosyneg.com/course-python-in-bioinformatics.html"
+  },
+  {
+   "slug": "r-language-in-bioinformatics",
+   "title": "R Language in Bioinformatics",
+   "url": "https://biosyneg.com/course-r-language-in-bioinformatics.html"
+  },
+  {
+   "slug": "basics-of-ivf-laboratories",
+   "title": "Basics of IVF Laboratories",
+   "url": "https://biosyneg.com/course-basics-of-ivf-laboratories.html"
   }
  ],
- "topics": [],
+ "noindex": [],
+ "topics": [
+  {
+   "id": "science",
+   "name": "كلية العلوم",
+   "courses": 4
+  },
+  {
+   "id": "biotech",
+   "name": "كلية بايوتكنولوجي",
+   "courses": 5
+  },
+  {
+   "id": "medicine",
+   "name": "كلية الطب",
+   "courses": 8
+  }
+ ],
  "teachers": [
   {
    "name": "إسراء مصطفي",

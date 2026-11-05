@@ -22,9 +22,22 @@
 - Details: https://biosyneg.com/pricing.html
 
 ## Courses
+- [Some Concepts in Clinical Research](https://biosyneg.com/course-some-concepts-in-clinical-research.html): recorded course, 9 lectures, ~1.2 hours, البحث السريري — دورة مسجلة في المفاهيم الأساسية وأخلاقيات البحث السريري: تاريخه، وقانون نورمبرغ وإعلان هلسنكي، والمبادئ الأخلاقية، والموافقة المستنيرة ولجان الأخلاقيات.
+- [Computational Neuroscience](https://biosyneg.com/course-computational-neuroscience.html): recorded course, 17 lectures, ~1.9 hours, الفيزياء الحيوية — مقدمة في علوم الأعصاب الحسابية: علم الدماغ والقياسات النفسية الفيزيائية، والنشاط الكهربي للخلايا العصبية، وإشارات EEG وMEG، ونمذجة العصبون LIF ببايثون.
+- [Introduction To Immunology](https://biosyneg.com/course-introduction-to-immunology.html): recorded course, 7 lectures, ~3.4 hours, المناعة — دورة مسجلة باللغة العربية في أساسيات علم المناعة: الجهاز المناعي، والمناعة الفطرية، والمستضدات وMHC، والمناعة الخلوية والخلطية، والمتمّمة.
 - [Bioinformtics Diploma](https://biosyneg.com/course-bioinformtics-diploma.html): live interactive course — ادخل عالم تحليل البيانات الجينية وابدأ مسارك في Bioinformatics إذا كنت طالبًا أو باحثًا في العلوم أو الطب وتبحث عن مهارة مطلوبة عالميًا وتفتح لك فرصًا في البحث والعمل الحر، فهذا…
 - [Molecular Biology Course](https://biosyneg.com/course-molecular-biology-course-614141.html): recorded course, 14 lectures, ~4.0 hours — يهدف كورس البيولوجيا الجزيئية (Molecular Biology) إلى تقديم أساس علمي قوي لفهم العمليات الجزيئية داخل الخلية، بدايةً من تركيب DNA وRNA، مرورًا بتضاعف DNA والتعبير الجيني، وصولًا…
-- [Microbiology Course](https://biosyneg.com/course-microbiology-course-362803.html): recorded course, 10 lectures, ~3.8 hours
+- [Intro To Basic Microbiology](https://biosyneg.com/course-microbiology-course-362803.html): recorded course, 10 lectures, ~3.8 hours, الأحياء الدقيقة الطبية — دورة مسجلة باللغة العربية في أساسيات الميكروبيولوجيا الطبية: تصنيف البكتيريا وتركيبها وأهميتها السريرية، من المكورات موجبة الجرام إلى الطفيليات.
+- [How to Read and Understand a Research Paper](https://biosyneg.com/course-how-to-read-a-research-paper.html): recorded course, 7 lectures, ~0.9 hours, مهارات البحث العلمي — دورة قصيرة تعلّمك قراءة البحث العلمي وفهمه وتقييمه بسرعة: من الصفحة الأولى والملخص إلى النص الكامل وسلاسل الحالات والتجارب العشوائية والتحليل التلوي.
+- [Study Design in Clinical Research](https://biosyneg.com/course-study-design-in-clinical-research.html): recorded course, 12 lectures, ~2.0 hours, البحث السريري — دورة مسجلة في تصميم الدراسات السريرية: تقارير الحالات والدراسات المقطعية ودراسات الحالات والشواهد والأتراب، والتجارب العشوائية المضبوطة ومراحلها.
+- [Python in Bioinformatics](https://biosyneg.com/course-python-in-bioinformatics.html): recorded course, 6 lectures, ~15.5 hours, المعلوماتية الحيوية — تعلّم بايثون من البداية وطبّقها في المعلوماتية الحيوية: أساسيات البرمجة، والتعامل مع الملفات والتسلسلات، وتحليل البيانات البيولوجية.
+- [R Language in Bioinformatics](https://biosyneg.com/course-r-language-in-bioinformatics.html): recorded course, 6 lectures, ~16.8 hours, المعلوماتية الحيوية — تعلّم لغة R من الصفر لتحليل البيانات البيولوجية: التعامل مع البيانات وتنظيفها وتحليلها إحصائيًا ورسمها، مع مشروع تطبيقي في المعلوماتية الحيوية.
+- [Basics of IVF Laboratories](https://biosyneg.com/course-basics-of-ivf-laboratories.html): recorded course, 11 lectures, ~7.3 hours, الطب التناسلي — دورة مسجلة باللغة العربية في أساسيات معامل الحقن المجهري وأطفال الأنابيب: تحليل السائل المنوي، وتجهيز البويضات، ونمو الأجنة حتى الكيسة الأريمية.
+
+## Courses by faculty
+- [كلية العلوم](https://biosyneg.com/topic-science.html)
+- [كلية بايوتكنولوجي](https://biosyneg.com/topic-biotech.html)
+- [كلية الطب](https://biosyneg.com/topic-medicine.html)
 
 ## Instructors
 - [إسراء مصطفي](https://biosyneg.com/teacher-e71638dc.html): بكالوريوس العلوم من جامعة الإسكندرية، تخصص كيمياء وعلوم بيئية.
