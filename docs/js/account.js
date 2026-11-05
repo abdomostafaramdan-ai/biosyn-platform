@@ -114,6 +114,22 @@
         + (soon.length ? `<h4 style="margin:22px 0 8px">شهادات في الطريق</h4>` + soon.map((e) => `<div class="bx-crow"><div class="bx-mine-code">${D.ic('cert')}</div><div><h4 dir="auto" style="text-align:right">${esc(e.courses.title)}</h4><small>${e.courses.ends_at ? 'هتصدر تلقائيًا يوم ' + D.date(e.courses.ends_at) + '، وهيوصلك إشعار وإيميل.' : 'هتصدر تلقائيًا بعد انتهاء الكورس، وهيوصلك إشعار وإيميل.'}</small></div><span class="bx-st">قريبًا</span></div>`).join('') : '')
         + `<p class="bx-hint" style="margin:16px 0 0">الاسم اللي بيظهر على الشهادة بييجي من «الاسم على الشهادة» في الإعدادات، ويتثبت على كل شهادة وقت صدورها.</p>`);
     },
+    async invite(main) {
+      const refs = await sb.rpc('my_referrals').catch(() => null);
+        if (!refs || !refs.code) { main.innerHTML = D.panel('شهر مجاني', '<div class="bx-empty-big"><b>رابط الدعوة مش جاهز</b>حاول تاني بعد شوية.</div>'); return; }
+        const link = new URL('index.html?ref=' + refs.code, location.href).href;
+        const since = Math.min(3, Number(refs.since_last || 0)), total = Number(refs.subscribed || 0);
+        const wait = refs.next_month_at && new Date(refs.next_month_at) > new Date();
+        const left = 3 - since, leftTxt = left === 1 ? 'صاحب واحد كمان' : left === 2 ? 'اتنين كمان' : '3 أصحاب';
+        const bar = (v, max) => `<div class="rf-bar"><i style="width:${Math.min(100, (v / max) * 100)}%"></i></div>`;
+        main.innerHTML = D.panel('ادعُ أصحابك واكسب شهور مجانية 🎁', `<p style="margin-top:0">شارك رابطك. صاحبك بيتحسب لما يشترك في أي باقة مدفوعة لأول مرة.</p>
+          <ul class="rf-rules"><li><b>3 أصحاب يشتركوا</b> = <b>شهر مجاني</b>، وتقدر تكسبه تاني كل 6 شهور بـ 3 أصحاب جداد.</li><li><b>10 أصحاب يشتركوا</b> = <b>6 شهور مجانًا</b> (مرة واحدة).</li></ul>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><input class="bx-input" dir="ltr" readonly value="${esc(link)}" id="reflink" style="flex:1;min-width:220px"><button class="bs-btn bs-btn-secondary" id="refcopy" type="button">نسخ الرابط</button></div>
+          <div class="rf-prog"><div><span>الشهر المجاني الجاي</span><b>${since} من 3</b>${bar(since, 3)}<small>${since >= 3 && wait ? 'هيتضاف تلقائي يوم ' + D.date(refs.next_month_at) : wait && since < 3 ? `فاضل ${leftTxt} · ومتاح بعد ${D.date(refs.next_month_at)}` : since < 3 ? `فاضل ${leftTxt}` : 'هيتضاف تلقائي'}</small></div>
+          <div><span>6 شهور مجانًا</span><b>${refs.semiannual_done ? '✓' : Math.min(total, 10) + ' من 10'}</b>${bar(refs.semiannual_done ? 10 : total, 10)}<small>${refs.semiannual_done ? 'كسبتها 🎉' : `فاضل ${10 - Math.min(total, 10)} صاحب`}</small></div></div>
+          <p class="bx-hint">سجّلوا من رابطك: <b>${refs.signed_up}</b> · اشتركوا: <b>${total}</b> · كسبت لحد دلوقتي: <b>${refs.months_earned || 0}</b> شهر مجاني</p>`);
+        $('#refcopy', main).onclick = async () => { try { await navigator.clipboard.writeText(link); ui.toast('تم نسخ رابط الدعوة.'); } catch { $('#reflink', main).select(); } };
+          },
     async settings(main) {
       main.innerHTML = D.panel('بيانات الحساب', `<form class="bx-form2" id="pf" novalidate><div class="row2"><div class="bx-field"><label for="pn">الاسم الكامل</label><input id="pn" class="bx-input" value="${esc(me.full_name)}"></div><div class="bx-field"><label for="pcn">الاسم على الشهادة (بالإنجليزي)</label><input id="pcn" class="bx-input" dir="ltr" maxlength="80" placeholder="Ahmed Mohamed Ali" value="${esc(me.cert_name || '')}"></div><div class="bx-field"><label for="pe">البريد الإلكتروني</label><input id="pe" class="bx-input" dir="ltr" value="${esc(sb.user.email)}" disabled></div></div>
         <div class="row2"><div class="bx-field"><label for="pp">الهاتف</label><input id="pp" class="bx-input" dir="ltr" type="tel" value="${esc(me.phone || '')}"></div><div class="bx-field"><label for="pw">واتساب</label><input id="pw" class="bx-input" dir="ltr" type="tel" value="${esc(me.whatsapp || '')}"></div><div class="bx-field"><label for="pc">الدولة</label><input id="pc" class="bx-input" value="${esc(me.country || '')}"></div></div>
@@ -130,24 +146,10 @@
         catch (e) { m.className = 'bx-formmsg err'; m.textContent = /reauth|recent/i.test(e.message) ? 'لأمان حسابك: سجّل خروج وادخل تاني، أو استخدم «نسيت كلمة المرور» من صفحة الدخول.' : /same|different from the old/i.test(e.message) ? 'اختار كلمة مرور مختلفة عن القديمة.' : arErr(e); }
         btn.disabled = false;
       };
-      const [devs, refs] = await Promise.all([sb.get('user_devices', { select: '*', user_id: 'eq.' + sb.user.id, order: 'last_seen.desc' }).catch(() => []), sb.rpc('my_referrals').catch(() => null)]);
+      const devs = await sb.get('user_devices', { select: '*', user_id: 'eq.' + sb.user.id, order: 'last_seen.desc' }).catch(() => []);
       const myDev = window.deviceId && deviceId();
       main.insertAdjacentHTML('beforeend', D.panel('الأجهزة', `<p class="bx-hint" style="margin-top:0">يمكنك مشاهدة المحاضرات من جهازين كحد أقصى. لإضافة جهاز جديد أزل جهازًا قديمًا (مرة كل 7 أيام).</p>` +
         D.table(['الجهاز', 'آخر استخدام', ''], devs.map((d) => [esc(d.label || 'جهاز') + (d.device_id === myDev ? ' <span class="bs-badge bs-badge-new">هذا الجهاز</span>' : ''), D.dateTime(d.last_seen), `<button class="bx-linkbtn" data-rmdev="${esc(d.device_id)}">إزالة</button>`]), 'لم تشاهد من أي جهاز بعد')));
-      if (refs && refs.code) {
-        const link = new URL('index.html?ref=' + refs.code, location.href).href;
-        const since = Math.min(3, Number(refs.since_last || 0)), total = Number(refs.subscribed || 0);
-        const wait = refs.next_month_at && new Date(refs.next_month_at) > new Date();
-        const left = 3 - since, leftTxt = left === 1 ? 'صاحب واحد كمان' : left === 2 ? 'اتنين كمان' : '3 أصحاب';
-        const bar = (v, max) => `<div class="rf-bar"><i style="width:${Math.min(100, (v / max) * 100)}%"></i></div>`;
-        main.insertAdjacentHTML('beforeend', D.panel('ادعُ أصحابك واكسب شهور مجانية 🎁', `<p style="margin-top:0">شارك رابطك. صاحبك بيتحسب لما يشترك في أي باقة مدفوعة لأول مرة.</p>
-          <ul class="rf-rules"><li><b>3 أصحاب يشتركوا</b> = <b>شهر مجاني</b>، وتقدر تكسبه تاني كل 6 شهور بـ 3 أصحاب جداد.</li><li><b>10 أصحاب يشتركوا</b> = <b>6 شهور مجانًا</b> (مرة واحدة).</li></ul>
-          <div style="display:flex;gap:8px;flex-wrap:wrap"><input class="bx-input" dir="ltr" readonly value="${esc(link)}" id="reflink" style="flex:1;min-width:220px"><button class="bs-btn bs-btn-secondary" id="refcopy" type="button">نسخ الرابط</button></div>
-          <div class="rf-prog"><div><span>الشهر المجاني الجاي</span><b dir="ltr">${since} / 3</b>${bar(since, 3)}<small>${since >= 3 && wait ? 'هيتضاف تلقائي يوم ' + D.date(refs.next_month_at) : wait && since < 3 ? `فاضل ${leftTxt} · ومتاح بعد ${D.date(refs.next_month_at)}` : since < 3 ? `فاضل ${leftTxt}` : 'هيتضاف تلقائي'}</small></div>
-          <div><span>6 شهور مجانًا</span><b dir="ltr">${refs.semiannual_done ? '✓' : Math.min(total, 10) + ' / 10'}</b>${bar(refs.semiannual_done ? 10 : total, 10)}<small>${refs.semiannual_done ? 'كسبتها 🎉' : `فاضل ${10 - Math.min(total, 10)} صاحب`}</small></div></div>
-          <p class="bx-hint">سجّلوا من رابطك: <b>${refs.signed_up}</b> · اشتركوا: <b>${total}</b> · كسبت لحد دلوقتي: <b>${refs.months_earned || 0}</b> شهر مجاني</p>`));
-        $('#refcopy', main).onclick = async () => { try { await navigator.clipboard.writeText(link); ui.toast('تم نسخ رابط الدعوة.'); } catch { $('#reflink', main).select(); } };
-      }
       $$('[data-rmdev]', main).forEach((b) => (b.onclick = async () => {
         if (!confirm('إزالة هذا الجهاز؟ يمكنك إزالة جهاز مرة واحدة كل 7 أيام.')) return;
         try { await sb.rpc('remove_my_device', { p_device: b.dataset.rmdev }); ui.toast('تمت إزالة الجهاز.'); D.reload(); } catch (err) { ui.toast(arErr(err), 'err'); }
@@ -177,7 +179,7 @@
     me = await D.guard(['student', 'instructor', 'support', 'admin']); if (!me) return;
     await D.shell({
       title: 'حسابي', who: me.full_name || sb.user.email, sub: D.roleAr[me.role],
-      items: [{ id: 'home', label: 'الرئيسية', icon: 'home' }, { id: 'payments', label: 'الاشتراك والمدفوعات', icon: 'card' }, { id: 'certs', label: 'الشهادات', icon: 'cert' }, { id: 'messages', label: 'الرسائل والدعم', icon: 'chat' }, { id: 'settings', label: 'الإعدادات', icon: 'cog' }],
+      items: [{ id: 'home', label: 'الرئيسية', icon: 'home' }, { id: 'payments', label: 'الاشتراك والمدفوعات', icon: 'card' }, { id: 'certs', label: 'الشهادات', icon: 'cert' }, { id: 'invite', label: 'شهر مجاني', icon: 'gift' }, { id: 'messages', label: 'الرسائل والدعم', icon: 'chat' }, { id: 'settings', label: 'الإعدادات', icon: 'cog' }],
       views, topLink: '<a href="courses.html" class="bs-btn bs-btn-secondary bs-btn-sm">تصفح الدورات</a>',
     });
     if (window.Chat) Chat.unreadCounts().then((u) => D.setBadge('messages', (u && u.student) || 0));
