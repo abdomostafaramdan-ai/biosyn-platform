@@ -1,6 +1,6 @@
 # Biosyn Egypt
 
-> منصة مصرية للتعليم العلمي والطبي بالعربي (biosyneg.com): كورسات مسجلة باشتراك واحد، وبرامج تفاعلية مباشرة، واستشارات وخدمات بحثية، وشهادات إتمام قابلة للتحقق. Egyptian EdTech platform for life-science, medical and bioinformatics education in Arabic.
+> منصة مصرية للتعليم العلمي والطبي باللغة العربية (biosyneg.com): دورات مسجلة باشتراك واحد، وبرامج تفاعلية مباشرة، واستشارات وخدمات بحثية، وشهادات إتمام قابلة للتحقق. Egyptian EdTech platform for life-science, medical and bioinformatics education in Arabic.
 
 ## Key facts
 - Website: https://biosyneg.com
@@ -34,10 +34,10 @@
 
 ## Main pages
 - [الرئيسية](https://biosyneg.com/)
-- [الكورسات المسجلة](https://biosyneg.com/courses.html)
-- [الكورسات التفاعلية](https://biosyneg.com/interactive.html)
+- [الدورات المسجلة](https://biosyneg.com/courses.html)
+- [الدورات التفاعلية](https://biosyneg.com/interactive.html)
 - [الأسعار والاشتراكات](https://biosyneg.com/pricing.html)
-- [المحاضرين](https://biosyneg.com/instructors.html)
+- [المحاضرون](https://biosyneg.com/instructors.html)
 - [الاستشارات والخدمات البحثية](https://biosyneg.com/consultations.html)
 - [حلول المؤسسات](https://biosyneg.com/institutions.html)
 - [انضم كمحاضر](https://biosyneg.com/teach.html)

@@ -7,6 +7,8 @@ Disallow: /watch.html
 Disallow: /login.html
 Disallow: /form.html
 Disallow: /certificate.html
+Disallow: /unsubscribe.html
+Disallow: /contract.html
 Allow: /
 
 User-agent: GPTBot
