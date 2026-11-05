@@ -393,3 +393,27 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .tx-hours div{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px}
 .tx-hours i{display:block;width:100%;background:var(--brand-lime,#c6f84a);border-radius:3px 3px 0 0;opacity:.8}
 .tx-hours small{font-size:10px;opacity:.6;height:12px}
+/* admin → السيو والظهور */
+.sx-actions{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 8px}
+.sx-files{margin:0 0 18px}
+.sx-audit{display:grid;gap:10px}
+.sx-row{display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:center;padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:12px}
+.sx-score{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:15px;border:3px solid currentColor}
+.sx-score.good{color:#7ee787}.sx-score.mid{color:#f5b84a}.sx-score.bad{color:#ff7b72}
+.sx-body b{margin-inline-end:6px}
+.sx-body>div{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.sx-chip{display:inline-block;font-size:12px;line-height:20px;padding:1px 9px;border-radius:999px;border:1px solid}
+.sx-ok{color:#7ee787;border-color:rgba(126,231,135,.4)}.sx-warn{color:#f5b84a;border-color:rgba(245,184,74,.4)}.sx-bad{color:#ff7b72;border-color:rgba(255,123,114,.45)}
+.sx-links{white-space:nowrap;font-size:14px}
+.sx-facs{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.sx-fac{display:grid;gap:4px;padding:12px;border-radius:12px;border:1px dashed rgba(255,255,255,.15)}
+.sx-fac.on{border-style:solid;border-color:rgba(198,248,74,.5)}
+.sx-fac span{font-size:13px;opacity:.75}
+.sx-faq{display:grid;grid-template-columns:1fr;gap:6px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.sx-faq .bx-linkbtn{justify-self:start}
+.sx-pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
+.sx-page{display:grid;gap:6px}
+.sx-cnt{font-size:12px;opacity:.6;margin-top:-4px}.sx-cnt.over{color:#ff7b72;opacity:1}
+.sx-switch{display:flex;gap:10px;align-items:center;font-weight:600}
+.sx-save{position:sticky;bottom:0;padding:12px 0;background:linear-gradient(transparent,var(--bg,#010232) 40%)}
+@media (max-width:640px){.sx-row{grid-template-columns:44px 1fr}.sx-links{grid-column:2}}

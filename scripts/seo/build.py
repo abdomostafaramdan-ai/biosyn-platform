@@ -37,6 +37,7 @@ STATIC = [
 PRIVATE = ['login.html', 'account.html', 'admin.html', 'instructor.html', 'watch.html', 'certificate.html', 'form.html', 'course.html', 'article.html', '404.html']
 AI_BOTS = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'Bingbot', 'CCBot', 'meta-externalagent']
 
+S = {}   # admin → «السيو والظهور» settings (seo_settings.data)
 e = lambda s: html.escape(str(s or ''), quote=True)
 AR = re.compile(r'[؀-ۿ]')
 
@@ -59,6 +60,13 @@ def rest(url, key, path):
         sys.exit(f'Supabase {x.code} on {path}: {x.read().decode("utf-8", "replace")[:400]}')
 
 
+def rpc(url, key, name, body=None):
+    req = urllib.request.Request(f'{url}/rest/v1/rpc/{name}', data=json.dumps(body or {}).encode(), method='POST',
+                                 headers={'apikey': key, 'Content-Type': 'application/json', 'Accept': 'application/json', 'User-Agent': 'biosyn-seo-build/1.0'})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return json.loads(r.read().decode('utf-8'))
+
+
 def load(fixture):
     url, key, facs = config()
     if fixture:
@@ -69,8 +77,11 @@ def load(fixture):
             'featured_instructors': rest(url, key, 'featured_instructors?select=id,name,title,photo_url,profile_id,visible,faculty'),
             'plans': rest(url, key, 'plans?select=code,name,price_egp,old_price_egp,intl_price,duration_months&active=eq.true&order=duration_months'),
             'posts': rest(url, key, 'posts?select=slug,title,excerpt,tag,published_at,updated_at&published=eq.true&order=published_at.desc'),
+            'settings': (rest(url, key, 'seo_settings?select=data,rebuild_requested_at&id=eq.1') or [{}])[0],
+            'fp': rpc(url, key, 'seo_fingerprint'),
         }
     d['faculties'] = facs
+    S.clear(); S.update(((d.get('settings') or {}).get('data')) or {})
     for c in d['courses']:
         c['lectures'] = sorted(c.get('lectures') or [], key=lambda l: l.get('position') or 0)
     return d
@@ -131,8 +142,24 @@ def indexable(c, all_courses):
     sm = (c.get('summary') or '').strip().lower()
     junk = bool(sm) and bool(re.fullmatch(r'[a-z\s]{1,20}', sm)) and not c.get('description')   # placeholder text like "dvcbvb"
     if junk: return False
-    if c['kind'] == 'interactive': return text >= 200
-    return text >= 200 or len(c['lectures']) >= 5
+    mc, ml = int(S.get('min_chars') or 200), int(S.get('min_lectures') or 5)
+    if c['kind'] == 'interactive': return text >= mc
+    return text >= mc or len(c['lectures']) >= ml
+
+
+def why_not(c, all_courses):
+    """Human-readable reasons a course page is kept out of the index (shown in the admin dashboard)."""
+    if indexable(c, all_courses): return []
+    r, text = [], len((c.get('description') or '') + (c.get('summary') or ''))
+    mc, ml = int(S.get('min_chars') or 200), int(S.get('min_lectures') or 5)
+    body = _norm(c.get('description') or c.get('summary'))
+    if body and any(o is not c and o.get('created_at', '') < c.get('created_at', '') and _norm(o.get('description') or o.get('summary')) == body for o in all_courses):
+        r.append('الوصف منسوخ من كورس تاني')
+    sm = (c.get('summary') or '').strip().lower()
+    if sm and re.fullmatch(r'[a-z\s]{1,20}', sm) and not c.get('description'): r.append('الوصف نص تجريبي')
+    if text < mc: r.append(f'الوصف أقل من {mc} حرف')
+    if c['kind'] == 'recorded' and len(c['lectures']) < ml: r.append(f'أقل من {ml} محاضرات')
+    return r or ['محتوى قليل']
 
 
 def ld(obj): return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/') + '</script>'
@@ -369,6 +396,11 @@ def llms(d, courses, topics, teachers):
          '- Interactive courses: live online sessions with separate fees; refundable within 7 days of payment',
          '- Certificates: every completed course issues a Biosyn Egypt certificate of completion with an ID and QR code, verifiable at ' + SITE + '/verify.html',
          '- Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available']
+    if (S.get('org_description') or '').strip(): L.insert(2, '> ' + S['org_description'].strip().replace('\n', ' '))
+    facts = [x.strip(' -•') for x in (S.get('facts') or '').splitlines() if x.strip()]
+    if facts: L += [''] + ['- ' + x for x in facts]
+    links = [u for u in (S.get('same_as') or []) if (u or '').startswith('https://')]
+    if links: L += ['- Official profiles: ' + ', '.join(links)]
     if plans:
         L += ['', '## Subscription prices (EGP)'] + [f"- {p['name']}: {int(float(p['price_egp']))} EGP" + (f" (international: {float(p['intl_price']):g} in local currency)" if p.get('intl_price') else '') for p in plans] + [f'- Details: {SITE}/pricing.html']
     L += ['', '## Courses']
@@ -399,9 +431,14 @@ def llms_full(d, courses):
     return '\n'.join(out) + '\n'
 
 
+TRAINING_BOTS = {'GPTBot', 'CCBot', 'Google-Extended', 'Applebot-Extended', 'meta-externalagent', 'ClaudeBot'}
+
+
 def robots():
     lines = ['# Biosyn Egypt — search and AI crawlers are welcome on public pages', 'User-agent: *'] + [f'Disallow: /{p}' for p in ['account.html', 'admin.html', 'instructor.html', 'watch.html', 'login.html', 'form.html', 'certificate.html']] + ['Allow: /', '']
-    for b in AI_BOTS: lines += [f'User-agent: {b}', 'Allow: /', 'Disallow: /account.html', 'Disallow: /admin.html', 'Disallow: /watch.html', '']
+    block = S.get('ai_training') is False   # admin choice: keep AI *search* bots, refuse model-training crawlers
+    for b in AI_BOTS:
+        lines += [f'User-agent: {b}'] + (['Disallow: /'] if block and b in TRAINING_BOTS else ['Allow: /', 'Disallow: /account.html', 'Disallow: /admin.html', 'Disallow: /watch.html']) + ['']
     lines += [f'Sitemap: {SITE}/sitemap.xml', '']
     return '\n'.join(lines)
 
@@ -419,9 +456,50 @@ def write(path, text, changed, manifest, url=None):
             manifest[url] = {'h': h, 'lastmod': TODAY}; changed.append(url)
 
 
+def apply_org():
+    """Organization facts from the dashboard go into every page's JSON-LD and llms.txt."""
+    if (S.get('org_description') or '').strip(): ORG['description'] = S['org_description'].strip()
+    links = [u.strip() for u in (S.get('same_as') or []) if re.match(r'^https://', (u or '').strip())]
+    if links: ORG['sameAs'] = links
+    if (S.get('phone') or '').strip():
+        ORG['telephone'] = S['phone'].strip(); ORG['contactPoint']['telephone'] = S['phone'].strip()
+    if (S.get('city') or '').strip(): ORG['address'] = {'@type': 'PostalAddress', 'addressLocality': S['city'].strip(), 'addressCountry': 'EG'}
+    if re.match(r'^\d{4}$', str(S.get('founded') or '')): ORG['foundingDate'] = str(S['founded'])
+
+
+FAQ_RE = re.compile(r'<!--seo-faq:start-->.*?<!--seo-faq:end-->', re.S)
+PLUS = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>'
+
+
+def inject_faq(doc):
+    """Extra Q&A written in the dashboard: shown in the home page FAQ (visible text + FAQPage schema), and in llms-full.txt."""
+    doc = FAQ_RE.sub('', doc)
+    items = [(q.get('q', '').strip(), q.get('a', '').strip()) for q in (S.get('faq') or []) if q.get('q', '').strip() and q.get('a', '').strip()]
+    if not items: return doc
+    block = '<!--seo-faq:start-->' + ''.join(f'\n    <details>\n      <summary>{e(q)}{PLUS}</summary>\n      <p>{e(a)}</p>\n    </details>' for q, a in items) + '<!--seo-faq:end-->'
+    m = re.search(r'(<section class="bs-section" id="faq">.*?)(\s*</div></section>)', doc, re.S)
+    return doc[:m.end(1)] + block + doc[m.end(1):] if m else doc
+
+
+def verify_tags():
+    v, out = S.get('verify') or {}, ''
+    for k, name in (('bing', 'msvalidate.01'), ('yandex', 'yandex-verification'), ('facebook', 'facebook-domain-verification'), ('pinterest', 'p:domain_verify'), ('google', 'google-site-verification')):
+        val = re.sub(r'[^\w.-]', '', str(v.get(k) or ''))[:120]
+        if val: out += f'<meta name="{name}" content="{val}">'
+    return out
+
+
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--fixture'); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument('--fixture'); ap.add_argument('--force', action='store_true'); a = ap.parse_args()
     d = load(a.fixture)
+    # skip when neither the data (remote fingerprint) nor the page templates / this script changed
+    spath = os.path.join(HERE, 'state.json')
+    state = json.load(open(spath)) if os.path.exists(spath) else {}
+    local = hashlib.sha1(b''.join(SEO_RE.sub('', open(os.path.join(DOCS, f), encoding='utf-8').read()).encode() for f, _, _ in STATIC + [('course.html', 0, 0), ('verify.html', 0, 0)]) + open(__file__, 'rb').read()).hexdigest()
+    fp = f"{d.get('fp') or ''}:{local}"
+    if not a.force and not a.fixture and state.get('fp') == fp:
+        print('no changes since last build'); open(os.path.join(HERE, 'changed.txt'), 'w').write(''); return
+    apply_org()
     mpath = os.path.join(HERE, 'manifest.json')
     manifest = json.load(open(mpath)) if os.path.exists(mpath) else {}
     changed, sitemap = [], []
@@ -455,10 +533,15 @@ def main():
             graph.append({'@type': 'ItemList', 'name': 'الكورسات المسجلة', 'itemListElement': [{'@type': 'ListItem', 'position': i + 1, 'url': f'{SITE}/course-{c["slug"]}.html', 'name': c['title']} for i, c in enumerate([c for c in ok_courses if c['kind'] == 'recorded'])]})
         if f == 'interactive.html' and ok_courses:
             graph.append({'@type': 'ItemList', 'name': 'الكورسات التفاعلية', 'itemListElement': [{'@type': 'ListItem', 'position': i + 1, 'url': f'{SITE}/course-{c["slug"]}.html', 'name': c['title']} for i, c in enumerate([c for c in ok_courses if c['kind'] == 'interactive'])]})
+        if f == 'index.html': doc = inject_faq(doc)
         qa = details_faq(doc)
         if qa: graph.append(faq_ld(qa))
-        title = re.search(r'<title>(.*?)</title>', doc, re.S).group(1)
-        write(f, put_head(doc, head_block(url, html.unescape(title), meta(doc, 'description'), graph)), changed, manifest, url)
+        ov = (S.get('pages') or {}).get(f) or {}
+        title = (ov.get('title') or '').strip() or html.unescape(re.search(r'<title>(.*?)</title>', doc, re.S).group(1))
+        desc = (ov.get('description') or '').strip() or meta(doc, 'description')
+        block = head_block(url, title, desc, graph)
+        if f == 'index.html': block = block.replace('<!--seo:end-->', verify_tags() + '<!--seo:end-->')
+        write(f, put_head(doc, block, title if ov.get('title') else None, desc if ov.get('description') else None), changed, manifest, url)
         sitemap.append((url, prio))
     for f in PRIVATE:
         p = os.path.join(DOCS, f)
@@ -496,6 +579,14 @@ def main():
     write('llms.txt', llms(d, ok_courses, [f for f, _ in topics], [t for t, _ in teachers]), changed, {})
     write('llms-full.txt', llms_full(d, ok_courses), changed, {})
     json.dump(manifest, open(mpath, 'w'), indent=1, sort_keys=True)
+    status = {'built_at': datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds'), 'sitemap_urls': len(sitemap),
+              'indexable': [{'slug': c['slug'], 'title': c['title'], 'url': f"{SITE}/course-{c['slug']}.html"} for c in ok_courses],
+              'noindex': [{'slug': c['slug'], 'title': c['title'], 'why': why_not(c, courses)} for c in courses if c not in ok_courses],
+              'topics': [{'id': f['id'], 'name': f['name'], 'courses': len(cs)} for f, cs in topics],
+              'teachers': [{'name': t['name'], 'url': f"{SITE}/teacher-{t['id'][:8]}.html"} for t, _ in teachers],
+              'ai_training': S.get('ai_training') is not False, 'changed': len(set(changed))}
+    write('seo-status.json', json.dumps(status, ensure_ascii=False, indent=1) + '\n', [], {})
+    if not a.fixture: json.dump({'fp': fp, 'built_at': status['built_at']}, open(spath, 'w'))
     open(os.path.join(HERE, 'changed.txt'), 'w').write('\n'.join(sorted(set(changed))) + ('\n' if changed else ''))
     print(f'courses {len(courses)} (indexable {len(ok_courses)}) · topics {len(topics)} · teachers {len(teachers)} · sitemap {len(sitemap)} · changed {len(set(changed))}')
     skipped = [c['title'] for c in courses if c not in ok_courses]
