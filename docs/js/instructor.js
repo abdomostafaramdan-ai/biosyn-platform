@@ -61,6 +61,7 @@
     },
 
     async live(main) { await window.courseAnalytics(main, { admin: false }); },
+    async contracts(main) { await window.myContracts(main); },
 
     async messages(main) {
       main.innerHTML = D.panel('أسئلة الطلاب', `<p class="bx-hint" style="margin-top:0">الطلاب المشتركين بيسألوك هنا من صفحة الكورس. بيوصلك إيميل مع كل سؤال جديد، والطالب بيوصله إيميل لما ترد.</p><div data-ib></div>`);
@@ -98,7 +99,7 @@
     me = await D.guard(['instructor', 'admin']); if (!me) return;
     await D.shell({
       title: 'لوحة المحاضر', who: me.full_name || sb.user.email, sub: D.roleAr[me.role],
-      items: [{ id: 'home', label: 'نظرة عامة', icon: 'home' }, { id: 'live', label: 'المشاهدات لايف', icon: 'chart' }, { id: 'messages', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'promo', label: 'كود الخصم بتاعي', icon: 'tag' }, { id: 'courses', label: 'كورساتي', icon: 'book' }, { id: 'earnings', label: 'الأرباح والسحب', icon: 'coin' }],
+      items: [{ id: 'home', label: 'نظرة عامة', icon: 'home' }, { id: 'live', label: 'المشاهدات لايف', icon: 'chart' }, { id: 'messages', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'promo', label: 'كود الخصم بتاعي', icon: 'tag' }, { id: 'courses', label: 'كورساتي', icon: 'book' }, { id: 'earnings', label: 'الأرباح والسحب', icon: 'coin' }, { id: 'contracts', label: 'اتفاقياتي', icon: 'list' }],
       views, topLink: '<a href="account.html" class="bs-btn bs-btn-secondary bs-btn-sm">حسابي</a>',
     });
     const pulse = () => Chat.unreadCounts().then((u) => D.setBadge('messages', (u && u.instructor) || 0));

@@ -590,6 +590,7 @@
     const forms = $$('form.bx-form');
     wireRequestForm(forms.find((f) => $('#r-n', f)), 'instructor_recorded', { name: 'r-n', email: 'r-e' });
     wireRequestForm(forms.find((f) => $('#i-n', f)), 'instructor_interactive', { name: 'i-n', email: 'i-e' });
+    wireRequestForm(forms.find((f) => $('#h-n', f)), 'instructor_recording_help', { name: 'h-n', email: 'h-e', phone: 'h-p' });
     // earnings calculator (illustrative)
     const inc = $('#c-inc'), tv = $('#c-tv'), cv = $('#c-cv'); if (!inc) return;
     const fmt = (n, d) => Number(n).toLocaleString('en-US', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });

@@ -424,3 +424,4 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .rf-prog small{grid-column:1/-1;opacity:.75}
 .rf-bar{grid-column:1/-1;height:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
 .rf-bar i{display:block;height:100%;background:var(--brand-lime,#c6f84a);border-radius:99px}
+.bx-tracks > .bx-track-wide { grid-column: 1 / -1; }

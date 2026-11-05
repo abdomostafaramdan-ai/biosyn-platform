@@ -190,21 +190,59 @@
     };
   }
 
-  function stepReview() {
+  async function stepReview() {
     const n = L.length, withVid = L.filter((l) => l.uploaded || l.video_url).length;
+    root.innerHTML = '<div class="bx-loading">جارٍ تجهيز الاتفاقية…</div>';
+    let K = null, signed = null;
+    try {
+      [K, signed] = await Promise.all([sb.rpc('render_contract', { p_kind: 'instructor_recorded', p_proposal: P.id }),
+        sb.get('contracts', { select: 'id,signed_at,pdf_path', proposal_id: 'eq.' + P.id, status: 'eq.signed', limit: 1 }).then((r) => r[0] || null)]);
+    } catch (x) { root.innerHTML = `<div class="bx-empty-big"><b>تعذّر تحميل الاتفاقية</b>${esc(err(x))}</div>`; return; }
     root.innerHTML = `<form class="bx-form" id="wz4" novalidate style="gap:16px">
-      <h4 class="bx-stephead"><span>المراجعة والإرسال<small>راجع البيانات قبل ما تبعت. بعد الإرسال مش هتقدر تعدّل لحد ما الفريق يراجع.</small></span></h4>
+      <h4 class="bx-stephead"><span>المراجعة والتوقيع والإرسال<small>راجع البيانات، اقرأ اتفاقية النشر ووقّع عليها، وبعدين ابعت. بعد الإرسال مش هتقدر تعدّل لحد ما الفريق يراجع.</small></span></h4>
       <dl class="bx-kv bx-wzsum"><dt>المحاضر</dt><dd>${esc(P.name)} · <span dir="ltr">${esc(P.email)}</span></dd><dt>الكورس</dt><dd>${esc(P.title)}</dd><dt>التخصص</dt><dd>${esc(P.specialty || '—')}</dd><dt>المستوى</dt><dd>${esc(P.level || '—')}</dd><dt>الدروس</dt><dd>${n} درس · ${withVid} بفيديو</dd></dl>
       <ol class="bx-wzreview">${L.map((l) => `<li>${esc(l.title)} ${l.uploaded ? '<small class="bx-hint">· فيديو مرفوع</small>' : l.video_url ? '<small class="bx-hint">· لينك</small>' : ''}</li>`).join('')}</ol>
-      <label class="bx-check"><input type="checkbox" id="w-ok"> أؤكد إن المحتوى من إعدادي ولي حق نشره، وموافق على <a class="bx-link" href="terms.html" target="_blank">الشروط والأحكام</a></label>
-      ${foot(back(), '<button type="submit" class="bs-btn bs-btn-primary bs-btn-lg">إرسال للمراجعة</button>')}</form>`;
+      <h4 class="bx-stephead" style="margin-top:8px"><span>اتفاقية نشر الكورس<small>اتفاقية واحدة لكل كورس، بتتحفظ نسخة PDF منها في حسابك وعندنا، وبيوصلك إيميل بيها.</small></span></h4>
+      ${signed ? `<div class="kc-ok"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>وقّعت الاتفاقية ✓ · رقم <b dir="ltr">${esc(signed.id.slice(0, 8).toUpperCase())}</b> · <a class="bx-link" href="contract.html?id=${signed.id}" target="_blank">عرض الاتفاقية</a></span></div>`
+        : `<div class="kc-box" tabindex="0" aria-label="نص الاتفاقية">${window.contractDoc(K)}</div>
+      <div class="kc-signform">
+        <div class="bx-field"><label for="k-name">اكتب اسمك الكامل كما في البطاقة *</label><input id="k-name" class="bx-input" autocomplete="name" maxlength="80" placeholder="الاسم ثلاثي على الأقل"></div>
+        <div class="bx-field"><label>توقيعك *</label><div class="kc-pad"><canvas id="k-pad" aria-label="مساحة التوقيع"></canvas><span>وقّع هنا بالماوس أو بصباعك</span><button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" id="k-clear">مسح</button></div></div>
+        <label class="bx-check"><input type="checkbox" id="k-ok"> قرأت «${esc(K.title)}» (الإصدار ${K.version}) وأوافق على كل بنودها، وأقر إن المحتوى من إعدادي ولي حق نشره، وإن اسمي وتوقيعي هنا توقيع ملزم مني.</label>
+      </div>`}
+      ${foot(back(), `<button type="submit" class="bs-btn bs-btn-primary bs-btn-lg">${signed ? 'إرسال للمراجعة' : 'توقيع الاتفاقية وإرسال الكورس'}</button>`)}</form>`;
+    const pad = signed ? null : window.signaturePad($('#k-pad', root));
+    if (pad) $('#k-clear', root).onclick = () => pad.clear();
     $('[data-back]', root).onclick = () => setStep(3);
     $('#wz4', root).onsubmit = async (e) => {
       e.preventDefault();
-      if (!$('#w-ok', root).checked) return say('وافق على الشروط عشان تبعت.', 'err');
-      const b = $('button[type=submit]', root); b.disabled = true; say('جارٍ الإرسال…');
+      const b = $('button[type=submit]', root);
+      if (!signed) {
+        const nm = $('#k-name', root).value.trim().replace(/\s+/g, ' ');
+        if (nm.split(' ').length < 3) return say('اكتب اسمك الكامل (ثلاثي على الأقل).', 'err');
+        if (pad.isEmpty()) return say('ارسم توقيعك في المساحة البيضا.', 'err');
+        if (!$('#k-ok', root).checked) return say('لازم توافق على الاتفاقية عشان تبعت.', 'err');
+        b.disabled = true; say('جارٍ توقيع الاتفاقية…');
+        try {
+          const id = await sb.rpc('sign_contract', { p_kind: 'instructor_recorded', p_proposal: P.id, p_sha256: K.sha256, p_name: nm, p_signature: pad.toDataURL() });
+          signed = { id };
+          // PDF copy (best effort: the signed record is already saved even if this fails)
+          say('جارٍ حفظ نسخة PDF…');
+          try {
+            const c = (await sb.get('contracts', { select: '*', id: 'eq.' + id }))[0];
+            const blob = await Promise.race([window.contractPdf({ ...c, title: K.title }), new Promise((_, r) => setTimeout(() => r(new Error('timeout')), 30000))]);
+            const path = `${sb.user.id}/${id}.pdf`;
+            await sb.storage.upload('contracts', path, new File([blob], id + '.pdf', { type: 'application/pdf' }));
+            await sb.rpc('set_contract_pdf', { p_id: id, p_path: path });
+          } catch (pe) { console.warn('contract pdf', pe); }
+        } catch (x) {
+          b.disabled = false;
+          return say(/changed/.test(x.message) ? 'نص الاتفاقية اتحدّث. اعمل تحديث للصفحة ووقّع تاني.' : /full name/.test(x.message) ? 'اكتب اسمك الكامل.' : /signature/.test(x.message) ? 'ارسم توقيعك بشكل أوضح.' : err(x), 'err');
+        }
+      }
+      b.disabled = true; say('جارٍ الإرسال…');
       try { await sb.rpc('submit_course_proposal', { p_id: P.id }); window.track && track('lead', { type: 'instructor_recorded' }); P.status = 'submitted'; drawStatus(); }
-      catch (x) { b.disabled = false; say(/no lessons/.test(x.message) ? 'ضيف دروس الأول.' : /missing/.test(x.message) ? 'كمّل بيانات الخطوة الأولى.' : err(x), 'err'); }
+      catch (x) { b.disabled = false; say(/no lessons/.test(x.message) ? 'ضيف دروس الأول.' : /missing/.test(x.message) ? 'كمّل بيانات الخطوة الأولى.' : /contract/.test(x.message) ? 'وقّع الاتفاقية الأول.' : err(x), 'err'); }
     };
   }
 
