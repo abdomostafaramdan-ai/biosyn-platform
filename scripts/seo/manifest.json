@@ -1,82 +1,86 @@
 {
  "https://biosyneg.com/": {
-  "h": "646e196d9df98186",
+  "h": "9b95a3266bc761d9",
+  "lastmod": "2026-11-05"
+ },
+ "https://biosyneg.com/about.html": {
+  "h": "afc6cbd3faf2eb20",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/blog.html": {
-  "h": "5d529e8b33e71714",
+  "h": "7557f5c5ad8b1bb4",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/consultations.html": {
-  "h": "f95ea86acd457c1d",
+  "h": "0e7b7bc477d4cf81",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/course-bioinformtics-diploma.html": {
-  "h": "6e499ed49b710638",
+  "h": "f805d550b07022d0",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/course-microbiology-course-362803.html": {
-  "h": "d8899bbb267bc815",
+  "h": "3834e28ad17744b4",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/course-molecular-biology-course-614141.html": {
-  "h": "b3b5c55adbc691d7",
+  "h": "9798e1233f7e4e75",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/courses.html": {
-  "h": "b37016bc6a1c0d09",
+  "h": "6cd56bf32ea5df1d",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/institutions.html": {
-  "h": "91a9acf2b41abff3",
+  "h": "26eb06a3a299b46a",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/instructors.html": {
-  "h": "f133a42f2b1abd63",
+  "h": "d0b34b1fdac89f03",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/interactive.html": {
-  "h": "c8df6e25242a017f",
+  "h": "14ff94eb1f12eec4",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/pricing.html": {
-  "h": "3e52b7805f15b9c3",
+  "h": "e434480b908ec96c",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/privacy.html": {
-  "h": "3c15801b81f5413b",
+  "h": "f8b60a6158e5294e",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/refund.html": {
-  "h": "3c0523374f69ddf8",
+  "h": "d44dc1e05bd9c79f",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/teach.html": {
-  "h": "9e436a598b6e9f3a",
+  "h": "91aeed7501595d4f",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/teacher-6308ea6d.html": {
-  "h": "e621b0b3026da555",
+  "h": "595d4254282c7309",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/teacher-ad83c2d3.html": {
-  "h": "c2677b3957fc751d",
+  "h": "948175942688b4a3",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/teacher-e71638dc.html": {
-  "h": "83b58ae873ccdd4e",
+  "h": "51d3924ae11ba03a",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/teacher-f297c76b.html": {
-  "h": "d221e2cac1328dc7",
+  "h": "d9df3b67e3ec7cfd",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/terms.html": {
-  "h": "198e6c8cd03e6a17",
+  "h": "648f4740baa59c45",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/verify.html": {
-  "h": "a9d2959f54d9f2a5",
+  "h": "5b1f07623eb5a4cf",
   "lastmod": "2026-11-05"
  }
 }

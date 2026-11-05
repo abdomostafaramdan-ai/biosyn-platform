@@ -1,6 +1,6 @@
 {
- "built_at": "2026-11-05T05:00:33+00:00",
- "sitemap_urls": 20,
+ "built_at": "2026-11-05T05:52:34+00:00",
+ "sitemap_urls": 21,
  "indexable": [
   {
    "slug": "bioinformtics-diploma",
@@ -57,5 +57,5 @@
   }
  ],
  "ai_training": true,
- "changed": 0
+ "changed": 21
 }
