@@ -32,11 +32,12 @@ STATIC = [
     ('index.html', 'الرئيسية', '1.0'), ('courses.html', 'الكورسات المسجلة', '0.9'), ('interactive.html', 'الكورسات التفاعلية', '0.9'),
     ('pricing.html', 'الأسعار والاشتراكات', '0.9'), ('instructors.html', 'المحاضرين', '0.7'), ('consultations.html', 'الاستشارات والخدمات البحثية', '0.7'),
     ('institutions.html', 'حلول المؤسسات', '0.7'), ('teach.html', 'انضم كمحاضر', '0.6'), ('blog.html', 'المدونة', '0.6'),
-    ('verify.html', 'التحقق من الشهادات', '0.4'), ('terms.html', 'الشروط والأحكام', '0.2'), ('privacy.html', 'سياسة الخصوصية', '0.2'), ('refund.html', 'سياسة الاسترداد', '0.2'),
+    ('about.html', 'من نحن', '0.7'), ('verify.html', 'التحقق من الشهادات', '0.4'), ('terms.html', 'الشروط والأحكام', '0.2'), ('privacy.html', 'سياسة الخصوصية', '0.2'), ('refund.html', 'سياسة الاسترداد', '0.2'),
 ]
 PRIVATE = ['login.html', 'account.html', 'admin.html', 'instructor.html', 'watch.html', 'certificate.html', 'form.html', 'course.html', 'article.html', '404.html']
 AI_BOTS = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'Bingbot', 'CCBot', 'meta-externalagent']
 
+ABOUT = {}  # admin → «صفحة من نحن» (site_content.about)
 S = {}   # admin → «السيو والظهور» settings (seo_settings.data)
 e = lambda s: html.escape(str(s or ''), quote=True)
 AR = re.compile(r'[؀-ۿ]')
@@ -79,9 +80,12 @@ def load(fixture):
             'posts': rest(url, key, 'posts?select=slug,title,excerpt,tag,published_at,updated_at&published=eq.true&order=published_at.desc'),
             'settings': (rest(url, key, 'seo_settings?select=data,rebuild_requested_at&id=eq.1') or [{}])[0],
             'fp': rpc(url, key, 'seo_fingerprint'),
+            'about': ((rest(url, key, 'site_content?select=data&key=eq.about') or [{}])[0]).get('data') or {},
+            'about_stats': rpc(url, key, 'about_stats'),
         }
     d['faculties'] = facs
     S.clear(); S.update(((d.get('settings') or {}).get('data')) or {})
+    ABOUT.clear(); ABOUT.update(d.get('about') or {}); ABOUT['_stats'] = d.get('about_stats') or {}
     for c in d['courses']:
         c['lectures'] = sorted(c.get('lectures') or [], key=lambda l: l.get('position') or 0)
     return d
@@ -397,6 +401,10 @@ def llms(d, courses, topics, teachers):
          '- Certificates: every completed course issues a Biosyn Egypt certificate of completion with an ID and QR code, verifiable at ' + SITE + '/verify.html',
          '- Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available']
     if (S.get('org_description') or '').strip(): L.insert(2, '> ' + S['org_description'].strip().replace('\n', ' '))
+    st = ABOUT.get('_stats') or {}
+    L += [f"- Founded: {ABOUT.get('founded') or 2020}, by {(ABOUT.get('founder_name') or 'Abdo Mostafa').strip()} (B.Sc. in Science)"]
+    if st.get('students'): L += [f"- Served: more than {int(st['students']):,} students, researchers and university staff in {int(st.get('countries') or 7)} countries"]
+    L += [f'- About page: {SITE}/about.html']
     facts = [x.strip(' -•') for x in (S.get('facts') or '').splitlines() if x.strip()]
     if facts: L += [''] + ['- ' + x for x in facts]
     links = [u for u in (S.get('same_as') or []) if (u or '').startswith('https://')]
@@ -465,6 +473,9 @@ def apply_org():
         ORG['telephone'] = S['phone'].strip(); ORG['contactPoint']['telephone'] = S['phone'].strip()
     if (S.get('city') or '').strip(): ORG['address'] = {'@type': 'PostalAddress', 'addressLocality': S['city'].strip(), 'addressCountry': 'EG'}
     if re.match(r'^\d{4}$', str(S.get('founded') or '')): ORG['foundingDate'] = str(S['founded'])
+    ORG['foundingDate'] = str(ABOUT.get('founded') or ORG.get('foundingDate') or 2020)
+    ORG['founder'] = {'@type': 'Person', 'name': (ABOUT.get('founder_name') or 'Abdo Mostafa').strip(), 'jobTitle': 'Founder',
+                      'image': SITE + '/img/founder.jpg', 'url': SITE + '/about.html#founder'}
 
 
 FAQ_RE = re.compile(r'<!--seo-faq:start-->.*?<!--seo-faq:end-->', re.S)
@@ -479,6 +490,29 @@ def inject_faq(doc):
     block = '<!--seo-faq:start-->' + ''.join(f'\n    <details>\n      <summary>{e(q)}{PLUS}</summary>\n      <p>{e(a)}</p>\n    </details>' for q, a in items) + '<!--seo-faq:end-->'
     m = re.search(r'(<section class="bs-section" id="faq">.*?)(\s*</div></section>)', doc, re.S)
     return doc[:m.end(1)] + block + doc[m.end(1):] if m else doc
+
+
+def render_about(doc):
+    """Put the dashboard's «من نحن» text into the static page, so search engines and AI read the current version."""
+    A = ABOUT
+    def put(key, inner):
+        nonlocal doc
+        doc = re.sub(r'(<(\w+)[^>]*\sdata-ab="' + key + r'"[^>]*>)(.*?)(</\2>)', lambda m: m.group(1) + inner + m.group(4), doc, count=1, flags=re.S)
+    paras = lambda t: ''.join(f'<p>{e(x.strip())}</p>' for x in re.split(r'\n+', t) if x.strip())
+    for k in ('lead', 'vision', 'mission', 'founder_name', 'founder_title', 'email', 'whatsapp'):
+        if (A.get(k) or '').strip(): put(k, e(A[k].strip()))
+    for k in ('story', 'founder_bio'):
+        if (A.get(k) or '').strip(): put(k, paras(A[k]))
+    sv = [x for x in (A.get('services') or []) if (x or {}).get('title')]
+    if sv:
+        html_ = ''.join(f'<article class="ab-svc"><span class="ab-num">{i + 1:02d}</span><h3>{e(x["title"])}</h3>' + (f'<p>{e(x.get("desc"))}</p>' if x.get('desc') else '') + '</article>' for i, x in enumerate(sv))
+        doc = re.sub(r'(<div class="ab-services" data-ab-list="services">).*?(</div>\s*</section>)', lambda m: m.group(1) + html_ + m.group(2), doc, count=1, flags=re.S)
+    st = A.get('_stats') or {}
+    for k in ('students', 'countries', 'years', 'courses'):
+        if st.get(k) is not None:
+            v = int(st[k]); txt = ('+' if k == 'students' else '') + f'{v:,}'
+            doc = re.sub(r'(<b data-count="' + k + r'" data-base=")\d+(">)[^<]*(</b>)', lambda m: m.group(1) + str(v) + m.group(2) + txt + m.group(3), doc, count=1)
+    return doc
 
 
 def verify_tags():
@@ -534,6 +568,9 @@ def main():
         if f == 'interactive.html' and ok_courses:
             graph.append({'@type': 'ItemList', 'name': 'الكورسات التفاعلية', 'itemListElement': [{'@type': 'ListItem', 'position': i + 1, 'url': f'{SITE}/course-{c["slug"]}.html', 'name': c['title']} for i, c in enumerate([c for c in ok_courses if c['kind'] == 'interactive'])]})
         if f == 'index.html': doc = inject_faq(doc)
+        if f == 'about.html':
+            doc = render_about(doc)
+            graph.append({'@type': 'AboutPage', '@id': url, 'url': url, 'name': 'من نحن | ' + BRAND, 'inLanguage': 'ar', 'about': ORG_REF, 'mainEntity': ORG_REF})
         qa = details_faq(doc)
         if qa: graph.append(faq_ld(qa))
         ov = (S.get('pages') or {}).get(f) or {}

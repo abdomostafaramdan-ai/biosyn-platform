@@ -1082,7 +1082,25 @@ window.I18N_EN = {
 "6 شهور مجانًا": "6 free months",
 "كسبتها 🎉": "Earned 🎉",
 "هيتضاف تلقائي": "Will be added automatically",
-"جميع الحقوق محفوظة": "All rights reserved"
+"جميع الحقوق محفوظة": "All rights reserved",
+"من نحن | Biosyn Egypt": "About us | Biosyn Egypt",
+"من نحن": "About us",
+"طالب وباحث وعضو هيئة تدريس": "students, researchers & university staff",
+"دول وصلنالها": "countries reached",
+"سنين من 2020": "years since 2020",
+"كورس ودبلومة على المنصة": "courses & diplomas on the platform",
+"الأرقام دي بتتحدث تلقائي مع كل طالب جديد وكل دولة جديدة": "These numbers update automatically with every new student and country",
+"حكايتنا": "Our story",
+"نبذة عن Biosyn Egypt": "About Biosyn Egypt",
+"رؤيتنا": "Our vision",
+"هدفنا": "Our mission",
+"بنقدّم إيه": "What we do",
+"خدماتنا": "Our services",
+"المؤسس": "Founder",
+"محتاج تسأل عن حاجة؟": "Have a question?",
+"فريقنا بيرد على الإيميل والواتساب في أوقات العمل.": "Our team answers email and WhatsApp during working hours.",
+"الإيميل": "Email",
+"صفحة من نحن": "About page"
 };
 
 window.I18N_EN_PATTERNS = (function () {

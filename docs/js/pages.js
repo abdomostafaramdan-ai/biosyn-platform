@@ -401,6 +401,29 @@
     });
   }
 
+  // ---------- about (من نحن): text from site_content.about (admin), live counters from about_stats() ----------
+  window.waLink = (num) => { let d = String(num || '').replace(/\D/g, ''); if (/^01\d{9}$/.test(d)) d = '2' + d; else if (/^1\d{9}$/.test(d)) d = '20' + d; return d ? 'https://wa.me/' + d : ''; };
+  P.about = async () => {
+    const [row, st] = await Promise.all([sb.one('site_content', { select: 'data', key: 'eq.about' }).catch(() => null), sb.rpc('about_stats').catch(() => null)]);
+    const A = (row && row.data) || {};
+    const paras = (t) => String(t).split(/\n\s*\n|\n/).map((x) => x.trim()).filter(Boolean).map((x) => `<p>${esc(x)}</p>`).join('');
+    ['lead', 'vision', 'mission', 'founder_name', 'founder_title', 'email', 'whatsapp'].forEach((k) => { const el = $(`[data-ab="${k}"]`); if (el && (A[k] || '').trim()) el.textContent = A[k].trim(); });
+    ['story', 'founder_bio'].forEach((k) => { const el = $(`[data-ab="${k}"]`); if (el && (A[k] || '').trim()) el.innerHTML = paras(A[k]); });
+    const sv = (A.services || []).filter((x) => x && x.title);
+    if (sv.length) $('[data-ab-list="services"]').innerHTML = sv.map((x, i) => `<article class="ab-svc"><span class="ab-num">${String(i + 1).padStart(2, '0')}</span><h3>${esc(x.title)}</h3>${x.desc ? `<p>${esc(x.desc)}</p>` : ''}</article>`).join('');
+    if ((A.email || '').trim()) $('[data-ab-href="email"]').href = 'mailto:' + A.email.trim();
+    if ((A.whatsapp || '').trim() && waLink(A.whatsapp)) $('[data-ab-href="whatsapp"]').href = waLink(A.whatsapp);
+    if ((A.founder_photo || '').startsWith('https://')) { const img = $('[data-ab-img="founder_photo"]'); img.src = A.founder_photo; const src = img.previousElementSibling; if (src) src.remove(); }
+    // counters: count up once when visible
+    const fmt = (k, v) => (k === 'students' ? '+' : '') + Number(v).toLocaleString('en-US');
+    const els = $$('[data-count]');
+    const run = (el) => { const k = el.dataset.count, to = Number((st && st[k]) ?? el.dataset.base) || 0, t0 = performance.now(), dur = 1400;
+      const step = (t) => { const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = fmt(k, Math.round(to * e)); if (p < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step); };
+    if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { run(e.target); io.unobserve(e.target); } }), { threshold: .4 }); els.forEach((el) => io.observe(el)); }
+    else els.forEach(run);
+  };
+
   P.verify = async () => {
     const f = $('#vf'), inp = $('#vc'), out = $('#vr');
     const run = async () => {
