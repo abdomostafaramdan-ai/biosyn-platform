@@ -1075,7 +1075,13 @@ window.I18N_EN = {
 "عدد ساعات التدريب (يُطبع على الشهادة)": "Training hours (printed on the certificate)",
 "تاريخ الانتهاء لازم يكون بعد تاريخ البدء.": "The end date must be after the start date.",
 "الاسم اللي بيظهر على الشهادة بييجي من «الاسم على الشهادة» في الإعدادات، ويتثبت على كل شهادة وقت صدورها.": "The name printed on certificates comes from “Name on certificate” in Settings and is fixed on each certificate when it is issued.",
-"شهادة إتمام عند الانتهاء من الكورس": "Certificate of completion when you finish a course"
+"شهادة إتمام عند الانتهاء من الكورس": "Certificate of completion when you finish a course",
+"ادعُ أصحابك واكسب شهور مجانية 🎁": "Invite friends and earn free months 🎁",
+"شارك رابطك. صاحبك بيتحسب لما يشترك في أي باقة مدفوعة لأول مرة.": "Share your link. A friend counts once they subscribe to any paid plan for the first time.",
+"الشهر المجاني الجاي": "Next free month",
+"6 شهور مجانًا": "6 free months",
+"كسبتها 🎉": "Earned 🎉",
+"هيتضاف تلقائي": "Will be added automatically"
 };
 
 window.I18N_EN_PATTERNS = (function () {

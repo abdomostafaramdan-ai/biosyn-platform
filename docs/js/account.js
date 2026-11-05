@@ -136,7 +136,16 @@
         D.table(['الجهاز', 'آخر استخدام', ''], devs.map((d) => [esc(d.label || 'جهاز') + (d.device_id === myDev ? ' <span class="bs-badge bs-badge-new">هذا الجهاز</span>' : ''), D.dateTime(d.last_seen), `<button class="bx-linkbtn" data-rmdev="${esc(d.device_id)}">إزالة</button>`]), 'لم تشاهد من أي جهاز بعد')));
       if (refs && refs.code) {
         const link = new URL('index.html?ref=' + refs.code, location.href).href;
-        main.insertAdjacentHTML('beforeend', D.panel('ادعُ صديقًا واحصل على شهر مجاني', `<p style="margin-top:0">شارك رابطك. عندما يشترك صديقك لأول مرة في أي باقة مدفوعة نضيف لك <b>شهرًا مجانيًا</b> تلقائيًا.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><input class="bx-input" dir="ltr" readonly value="${esc(link)}" id="reflink" style="flex:1;min-width:220px"><button class="bs-btn bs-btn-secondary" id="refcopy" type="button">نسخ الرابط</button></div><p class="bx-hint">سجّل من رابطك: <b>${refs.signed_up}</b> · حصلت على: <b>${refs.rewarded}</b> شهر مجاني</p>`));
+        const since = Math.min(3, Number(refs.since_last || 0)), total = Number(refs.subscribed || 0);
+        const wait = refs.next_month_at && new Date(refs.next_month_at) > new Date();
+        const left = 3 - since, leftTxt = left === 1 ? 'صاحب واحد كمان' : left === 2 ? 'اتنين كمان' : '3 أصحاب';
+        const bar = (v, max) => `<div class="rf-bar"><i style="width:${Math.min(100, (v / max) * 100)}%"></i></div>`;
+        main.insertAdjacentHTML('beforeend', D.panel('ادعُ أصحابك واكسب شهور مجانية 🎁', `<p style="margin-top:0">شارك رابطك. صاحبك بيتحسب لما يشترك في أي باقة مدفوعة لأول مرة.</p>
+          <ul class="rf-rules"><li><b>3 أصحاب يشتركوا</b> = <b>شهر مجاني</b>، وتقدر تكسبه تاني كل 6 شهور بـ 3 أصحاب جداد.</li><li><b>10 أصحاب يشتركوا</b> = <b>6 شهور مجانًا</b> (مرة واحدة).</li></ul>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><input class="bx-input" dir="ltr" readonly value="${esc(link)}" id="reflink" style="flex:1;min-width:220px"><button class="bs-btn bs-btn-secondary" id="refcopy" type="button">نسخ الرابط</button></div>
+          <div class="rf-prog"><div><span>الشهر المجاني الجاي</span><b dir="ltr">${since} / 3</b>${bar(since, 3)}<small>${since >= 3 && wait ? 'هيتضاف تلقائي يوم ' + D.date(refs.next_month_at) : wait && since < 3 ? `فاضل ${leftTxt} · ومتاح بعد ${D.date(refs.next_month_at)}` : since < 3 ? `فاضل ${leftTxt}` : 'هيتضاف تلقائي'}</small></div>
+          <div><span>6 شهور مجانًا</span><b dir="ltr">${refs.semiannual_done ? '✓' : Math.min(total, 10) + ' / 10'}</b>${bar(refs.semiannual_done ? 10 : total, 10)}<small>${refs.semiannual_done ? 'كسبتها 🎉' : `فاضل ${10 - Math.min(total, 10)} صاحب`}</small></div></div>
+          <p class="bx-hint">سجّلوا من رابطك: <b>${refs.signed_up}</b> · اشتركوا: <b>${total}</b> · كسبت لحد دلوقتي: <b>${refs.months_earned || 0}</b> شهر مجاني</p>`));
         $('#refcopy', main).onclick = async () => { try { await navigator.clipboard.writeText(link); ui.toast('تم نسخ رابط الدعوة.'); } catch { $('#reflink', main).select(); } };
       }
       $$('[data-rmdev]', main).forEach((b) => (b.onclick = async () => {

@@ -417,3 +417,10 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .sx-switch{display:flex;gap:10px;align-items:center;font-weight:600}
 .sx-save{position:sticky;bottom:0;padding:12px 0;background:linear-gradient(transparent,var(--bg,#010232) 40%)}
 @media (max-width:640px){.sx-row{grid-template-columns:44px 1fr}.sx-links{grid-column:2}}
+/* account → referral progress */
+.rf-rules{margin:0 0 14px;padding-inline-start:18px;display:grid;gap:4px}
+.rf-prog{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0 4px}
+.rf-prog>div{display:grid;grid-template-columns:1fr auto;gap:6px 10px;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.1)}
+.rf-prog small{grid-column:1/-1;opacity:.75}
+.rf-bar{grid-column:1/-1;height:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
+.rf-bar i{display:block;height:100%;background:var(--brand-lime,#c6f84a);border-radius:99px}
