@@ -1,0 +1,47 @@
+# Biosyn Egypt
+
+> منصة مصرية للتعليم العلمي والطبي بالعربي (biosyneg.com): كورسات مسجلة باشتراك واحد، وبرامج تفاعلية مباشرة، واستشارات وخدمات بحثية، وشهادات إتمام قابلة للتحقق. Egyptian EdTech platform for life-science, medical and bioinformatics education in Arabic.
+
+## Key facts
+- Website: https://biosyneg.com
+- Contact: contact@biosynegypt.com
+- Language: Arabic explanations, scientific terms kept in English
+- Audience: students, graduates and researchers of science, biotechnology, pharmacy, medicine, dentistry, veterinary, agriculture and applied health sciences faculties in Egypt and the Arab region
+- Recorded courses: all included in one subscription; the subscription does not renew automatically
+- Interactive courses: live online sessions with separate fees; refundable within 7 days of payment
+- Certificates: every completed course issues a Biosyn Egypt certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify.html
+- Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available
+
+## Subscription prices (EGP)
+- اشتراك شهري: 200 EGP (international: 20 in local currency)
+- اشتراك نصف سنوي: 800 EGP (international: 100 in local currency)
+- اشتراك سنوي: 2000 EGP (international: 200 in local currency)
+- Details: https://biosyneg.com/pricing.html
+
+## Courses
+- [Bioinformtics Diploma](https://biosyneg.com/course-bioinformtics-diploma.html): live interactive course — ادخل عالم تحليل البيانات الجينية وابدأ مسارك في Bioinformatics إذا كنت طالبًا أو باحثًا في العلوم أو الطب وتبحث عن مهارة مطلوبة عالميًا وتفتح لك فرصًا في البحث والعمل الحر، فهذا…
+- [Molecular Biology Course](https://biosyneg.com/course-molecular-biology-course-614141.html): recorded course, 14 lectures, ~4.0 hours — يهدف كورس البيولوجيا الجزيئية (Molecular Biology) إلى تقديم أساس علمي قوي لفهم العمليات الجزيئية داخل الخلية، بدايةً من تركيب DNA وRNA، مرورًا بتضاعف DNA والتعبير الجيني، وصولًا…
+
+## Instructors
+- [إسراء مصطفي](https://biosyneg.com/teacher-e71638dc.html): بكالوريوس العلوم من جامعة الإسكندرية، تخصص كيمياء وعلوم بيئية.
+- [د. محمد إمام](https://biosyneg.com/teacher-ad83c2d3.html): طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
+- [د. شريف عرفه](https://biosyneg.com/teacher-f297c76b.html): طالب دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
+- [د. اسراء المليجي](https://biosyneg.com/teacher-6308ea6d.html): إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics).
+
+## Main pages
+- [الرئيسية](https://biosyneg.com/)
+- [الكورسات المسجلة](https://biosyneg.com/courses.html)
+- [الكورسات التفاعلية](https://biosyneg.com/interactive.html)
+- [الأسعار والاشتراكات](https://biosyneg.com/pricing.html)
+- [المحاضرين](https://biosyneg.com/instructors.html)
+- [الاستشارات والخدمات البحثية](https://biosyneg.com/consultations.html)
+- [حلول المؤسسات](https://biosyneg.com/institutions.html)
+- [انضم كمحاضر](https://biosyneg.com/teach.html)
+- [المدونة](https://biosyneg.com/blog.html)
+- [التحقق من الشهادات](https://biosyneg.com/verify.html)
+- [الشروط والأحكام](https://biosyneg.com/terms.html)
+- [سياسة الخصوصية](https://biosyneg.com/privacy.html)
+- [سياسة الاسترداد](https://biosyneg.com/refund.html)
+
+## Optional
+- [Full content for LLMs](https://biosyneg.com/llms-full.txt)

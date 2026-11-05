@@ -362,3 +362,10 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .bs-plan.is-current{outline:2px solid var(--accent-text);outline-offset:-2px}
 .bs-plan-cta[aria-disabled="true"]{opacity:.55;cursor:not-allowed;pointer-events:none}
 .bx-plan-note{display:block;margin-top:8px;font-size:12px;color:var(--ink-muted);text-align:center}
+/* SEO pages: FAQ block under course pages, topic & teacher pages */
+.bx-seo-extra{max-width:1180px;margin:0 auto;padding:24px 16px 56px}
+.bx-seo-links{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.bx-seo-links a{display:inline-block;padding:8px 14px;border:1px solid var(--line,rgba(255,255,255,.14));border-radius:999px;color:inherit;text-decoration:none}
+.bx-seo-links a:hover{border-color:var(--brand-lime,#c6f84a)}
+.bx-topic h1{font:700 34px/48px var(--font-display);margin:12px 0 10px}
+.bx-topic .bx-faq details{margin-bottom:8px}

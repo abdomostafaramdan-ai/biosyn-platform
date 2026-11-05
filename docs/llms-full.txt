@@ -1,0 +1,84 @@
+# Biosyn Egypt
+
+> منصة مصرية للتعليم العلمي والطبي بالعربي (biosyneg.com): كورسات مسجلة باشتراك واحد، وبرامج تفاعلية مباشرة، واستشارات وخدمات بحثية، وشهادات إتمام قابلة للتحقق. Egyptian EdTech platform for life-science, medical and bioinformatics education in Arabic.
+
+## Key facts
+- Website: https://biosyneg.com
+- Contact: contact@biosynegypt.com
+- Language: Arabic explanations, scientific terms kept in English
+- Audience: students, graduates and researchers of science, biotechnology, pharmacy, medicine, dentistry, veterinary, agriculture and applied health sciences faculties in Egypt and the Arab region
+- Recorded courses: all included in one subscription; the subscription does not renew automatically
+- Interactive courses: live online sessions with separate fees; refundable within 7 days of payment
+- Certificates: every completed course issues a Biosyn Egypt certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify.html
+- Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available
+
+## Subscription prices (EGP)
+- اشتراك شهري: 200 EGP (international: 20 in local currency)
+- اشتراك نصف سنوي: 800 EGP (international: 100 in local currency)
+- اشتراك سنوي: 2000 EGP (international: 200 in local currency)
+- Details: https://biosyneg.com/pricing.html
+
+## Course details
+
+### Bioinformtics Diploma
+URL: https://biosyneg.com/course-bioinformtics-diploma.html
+Type: Live interactive · Level: Beginner · Price: 15٬000 ج.م
+Starts: 2027-01-01
+Instructors: إسراء مصطفي — بكالوريوس العلوم من جامعة الإسكندرية، تخصص كيمياء وعلوم بيئية.; د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال; د. شريف عرفه — طالب دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
+
+ادخل عالم تحليل البيانات الجينية وابدأ مسارك في Bioinformatics  إذا كنت طالبًا أو باحثًا في العلوم أو الطب وتبحث عن مهارة مطلوبة عالميًا وتفتح لك فرصًا في البحث والعمل الحر، فهذا المسار صُمم لك: مسار تدريجي يجمع بين البيولوجيا والبرمجة والتحليل، مع تطبيق عملي على بيانات حقيقية ومشروع نهائي لبناء Portfolio قوي.
+
+### Molecular Biology Course
+URL: https://biosyneg.com/course-molecular-biology-course-614141.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. اسراء المليجي — إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics).
+
+يقدم كورس البيولوجيا الجزيئية (Molecular Biology) رحلة تعليمية متكاملة لفهم الأساس الجزيئي للحياة.
+يتناول الكورس تركيب ووظيفة الأحماض النووية DNA وRNA، وآليات تضاعف DNA، وعمليتي النسخ والترجمة.
+يركز الكورس على تبسيط المفاهيم العلمية وربطها بالتطبيقات العملية.
+
+Lectures:
+1. Video 1 - Introduction
+2. Video 2 - What is DNA
+3. Video 3 - What is RNA
+4. Video 4 - DNA Replication
+5. Video 5 - What is Protein
+6. Video 6 - Central Dogma of Biology - Transcription
+7. Video 7 - Central Dogma of Biology - Post Transcriptional Modifications
+8. Video 8 - Central Dogma of Biology - Translation and PTMs
+9. Video 9 - Mutations
+10. Video 10 - PCR and Gel
+11. Video 11 - PCR and Gel
+12. Video 12 - Sanger Sequencing
+13. Video 13 - NGS
+14. Video 14 - ONT
+
+## FAQ
+
+Q: ما الفرق بين الدورات المسجلة والتفاعلية؟
+A: المسجلة تشاهدها في أي وقت وبالسرعة التي تناسبك. التفاعلية جلسات مباشرة مع المحاضر في مواعيد محددة وعدد مقاعد محدود، مع واجبات ومتابعة.
+
+Q: هل الدورات باللغة العربية؟
+A: نعم، الشرح بالعربية مع بقاء المصطلحات العلمية بالإنجليزية كما هي في المجال.
+
+Q: كيف أشترك وأبدأ؟
+A: أنشئ حسابك، اختر الباقة المناسبة، وابدأ أي دورة مسجلة فوراً. الدورات التفاعلية لها تسجيل منفصل حسب المقاعد المتاحة.
+
+Q: هل أحصل على شهادة؟
+A: نعم، تحصل على شهادة إتمام عند إنهاء الكورس.
+
+Q: هل يمكنني إلغاء الاشتراك؟
+A: الاشتراك في الباقات غير قابل للاسترداد، حتى لو ألغيت اشتراكك. أما الكورسات التفاعلية فيمكن استرداد رسومها خلال أسبوع من تاريخ الدفع.
+
+Q: هل الاشتراك يشمل الكورسات التفاعلية؟
+A: لا. باقات الاشتراك تغطي الكورسات المسجلة المحددة فقط، وللبرامج التفاعلية رسوم مستقلة تُعلن قبل التسجيل.
+
+Q: كيف أدفع؟
+A: داخل مصر: الدفع إلكتروني عبر بوابات دفع آمنة (بطاقة بنكية - محافظ إلكترونية مثل فودافون كاش - فوري - أمان) أو تحويل إنستاباي، وتظهر لك وسائل الدفع المتاحة عند إتمام الطلب. من خارج مصر (حتى لو مصري مقيم برّه): الأسعار بتظهر بعملة بلدك، وتدفع ببطاقة بنكية (فيزا / ماستركارد) عن طريق فواتيرك، ومعاها طرق الدفع التانية اللي بتظهرلك هناك، أو من حسابك على PayPal.
+
+Q: هل يمكنني إلغاء الاشتراك أو استرداد المبلغ؟
+A: الاشتراك في الباقات لا يمكن استرداده، حتى لو ألغيت اشتراكك. أما الكورسات التفاعلية فيمكن استرداد رسومها خلال أسبوع من الدفع.
+
+Q: هل يتجدد الاشتراك تلقائيًا؟
+A: لا، الاشتراك لا يتجدد تلقائيًا. ينتهي بانتهاء مدته، ولن يُخصم منك أي مبلغ إلا إذا اشتركت من جديد.
+

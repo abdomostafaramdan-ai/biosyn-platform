@@ -60,7 +60,15 @@
     }
     if (ga && !window.gtag) {
       const sc = document.createElement('script'); sc.async = true; sc.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(ga); document.head.appendChild(sc);
-      window.dataLayer = window.dataLayer || []; window.gtag = function () { dataLayer.push(arguments); }; gtag('js', new Date()); gtag('config', ga);
+      window.dataLayer = window.dataLayer || []; window.gtag = function () { dataLayer.push(arguments); }; gtag('js', new Date());
+      // content groups make GA reports readable by page type (course pages, faculty pages, checkout, dashboard…)
+      const pg = document.body.dataset.page || '', fn = location.pathname.split('/').pop();
+      const group = /^course-/.test(fn) || pg === 'course' ? 'course' : /^topic-/.test(fn) ? 'faculty' : /^teacher-/.test(fn) ? 'instructor' : pg || 'other';
+      gtag('config', ga, Object.assign({ content_group: group }, sb.user ? { user_id: sb.user.id } : {}));
+      // visits sent by AI assistants / answer engines (GEO): one event so they can be compared in GA
+      const ref = document.referrer || '', utm = new URLSearchParams(location.search).get('utm_source') || '';
+      const ai = (ref + ' ' + utm).match(/chatgpt|openai|perplexity|claude\.ai|anthropic|gemini\.google|bard\.google|copilot\.microsoft|bing\.com\/chat|you\.com|phind|deepseek|meta\.ai|grok|x\.ai/i);
+      if (ai) gtag('event', 'ai_referral', { ai_source: ai[0].toLowerCase(), landing: fn || 'index.html' });
     }
   });
   window.track = function (name, d) {
@@ -79,6 +87,8 @@
         else if (name === 'purchase') gtag('event', 'purchase', { transaction_id: d.id, value: d.value, currency: 'EGP' });
         else if (name === 'sign_up') gtag('event', 'sign_up');
         else if (name === 'lead') gtag('event', 'generate_lead', { lead_type: d.type });
+        else if (name === 'search') gtag('event', 'search', { search_term: d.search_term });
+        else if (name === 'login') gtag('event', 'login', { method: d.method || 'email' });
         else gtag('event', name, d);
       }
     } catch (e) { /* tracking must never break the page */ }
@@ -95,7 +105,12 @@
   window.setMeta = (title, desc, image) => {
     if (title) document.title = title;
     const put = (attr, key, val) => { if (!val) return; let el = document.head.querySelector(`meta[${attr}="${key}"]`); if (!el) { el = document.createElement('meta'); el.setAttribute(attr, key); document.head.appendChild(el); } el.setAttribute('content', val); };
-    put('name', 'description', desc); put('property', 'og:title', title); put('property', 'og:description', desc); put('property', 'og:image', image); put('property', 'og:url', location.href.split('#')[0]);
+    put('name', 'description', desc); put('property', 'og:title', title); put('property', 'og:description', desc); put('property', 'og:image', image);
+    // course.html?c=slug and course-slug.html are the same page: point search engines at the pre-rendered one
+    const q = new URLSearchParams(location.search), slug = document.body.dataset.slug || (document.body.dataset.page === 'course' && q.get('c'));
+    const canon = slug ? `https://biosyneg.com/course-${encodeURIComponent(slug)}.html` : location.href.split('#')[0];
+    put('property', 'og:url', canon);
+    let ln = document.head.querySelector('link[rel=canonical]'); if (!ln) { ln = document.createElement('link'); ln.rel = 'canonical'; document.head.appendChild(ln); } ln.href = canon;
   };
 
   // ---------- AI support chat (enable with BIOSYN.SUPPORT_CHAT = true after setting ANTHROPIC_API_KEY) ----------
@@ -180,7 +195,7 @@
     $$('.bs-nav a').forEach((a) => { if (a.getAttribute('href') === cur) a.setAttribute('aria-current', 'page'); });
     // search box -> course list
     const form = $('.bx-hsearch');
-    if (form) form.addEventListener('submit', (e) => { e.preventDefault(); const q = $('input', form).value.trim(); location.href = 'courses.html' + (q ? '?q=' + encodeURIComponent(q) : ''); });
+    if (form) form.addEventListener('submit', (e) => { e.preventDefault(); const q = $('input', form).value.trim(); if (q) track('search', { search_term: q }); location.href = 'courses.html' + (q ? '?q=' + encodeURIComponent(q) : ''); });
     // drawer for narrow screens
     const hdr = $('.bs-header');
     if (hdr && !$('.bx-drawer')) {
@@ -398,7 +413,7 @@
   window.hydratePlansNow = hydratePlans;
 
   // ---------- catalogue ----------
-  window.courseCard = (c, inst, nLect, href) => `<a class="bs-course" href="${href || 'course.html?c=' + encodeURIComponent(c.slug)}"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span></div><div class="bs-course-body"><span class="bs-course-kind">${c.kind === 'interactive' ? 'دورة تفاعلية' : 'دورة مسجلة'}</span><h3 class="bs-course-title">${esc(c.title)}</h3><div class="bs-course-meta">${nLect != null ? `<span>${nLect} محاضرة</span>` : ''}${c.kind === 'recorded' ? `<span>${LEVEL[c.level] || ''}</span>` : `<span>${EGP(c.price_egp)} ج.م</span>`}${inst ? `<span>${esc(inst)}</span>` : ''}</div></div></a>`;
+  window.courseCard = (c, inst, nLect, href) => `<a class="bs-course" href="${href || 'course-' + encodeURIComponent(c.slug) + '.html'}"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span></div><div class="bs-course-body"><span class="bs-course-kind">${c.kind === 'interactive' ? 'دورة تفاعلية' : 'دورة مسجلة'}</span><h3 class="bs-course-title">${esc(c.title)}</h3><div class="bs-course-meta">${nLect != null ? `<span>${nLect} محاضرة</span>` : ''}${c.kind === 'recorded' ? `<span>${LEVEL[c.level] || ''}</span>` : `<span>${EGP(c.price_egp)} ج.م</span>`}${inst ? `<span>${esc(inst)}</span>` : ''}</div></div></a>`;
 
   async function loadCatalog(kind) {
     const [courses, insts, feat] = await Promise.all([
@@ -481,7 +496,7 @@
   };
   window.BX_ICO = ICO;
   function programCard(c) {
-    const f = facOf(c), href = `course.html?c=${encodeURIComponent(c.slug)}`;
+    const f = facOf(c), href = `course-${encodeURIComponent(c.slug)}.html`;
     const facts = [
       c.starts_at ? `<li>${ICO.cal}<span>يبدأ ${esc(fmtDay(c.starts_at))}</span></li>` : '',
       c.seats ? `<li>${ICO.seat}<span>${c.seats} مقعد</span></li>` : '',

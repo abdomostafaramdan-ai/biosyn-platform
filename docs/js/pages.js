@@ -5,7 +5,7 @@
   const { toast } = window.ui;
   const dur = (s) => { s = Math.round(s || 0); const m = Math.floor(s / 60), r = s % 60; return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0'); };
   const hoursText = (secs) => { const m = Math.round(secs / 60); return m >= 60 ? `${Math.floor(m / 60)} ساعة${m % 60 ? ' و' + (m % 60) + ' دقيقة' : ''}` : `${m} دقيقة`; };
-  const nextUrl = () => { const n = new URLSearchParams(location.search).get('next') || ''; return /^[a-z-]+\.html(\?[\w=&%.-]*)?$/i.test(n) ? n : 'account.html'; };
+  const nextUrl = () => { const n = new URLSearchParams(location.search).get('next') || ''; return /^[a-z0-9-]+\.html(\?[\w=&%.-]*)?$/i.test(n) ? n : 'account.html'; };
   const ICON_CHECK = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>';
   const ICON_PLAY = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
   const ICON_LOCK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
@@ -94,7 +94,7 @@
 
     $('#f-in').addEventListener('submit', async (ev) => {
       ev.preventDefault(); const b = $('button[type=submit]', ev.target); b.disabled = true; say('#m-in', 'جارٍ تسجيل الدخول…');
-      try { await sb.auth.signIn($('#l-e').value.trim(), $('#l-p').value); location.href = nextUrl(); }
+      try { await sb.auth.signIn($('#l-e').value.trim(), $('#l-p').value); window.track && track('login', { method: 'email' }); location.href = nextUrl(); }
       catch (e) { say('#m-in', authErr(e), 'err'); b.disabled = false; }
     });
     $('#f-up').addEventListener('submit', async (ev) => {
@@ -144,17 +144,18 @@
   const teacherChip = (list) => (list && list.length ? `<div class="bx-teachers">${list.map((t) => `<div class="bs-teacher"><div class="bs-inst-photo">${t.photo_url ? `<img src="${esc(t.photo_url)}" alt="">` : `<span>${esc((window.instInitials ? window.instInitials(t.name) : t.name.charAt(0)) || '')}</span>`}</div><div><small>${list.length > 1 ? 'محاضر' : 'المحاضر'}</small><b>${esc(t.name)}</b></div></div>`).join('')}</div>` : '');
   const aboutInst = (list) => { const l = (list || []).filter((t) => t.title); return l.length ? `<section class="bs-block-sec bx-aboutinst"><h2>${l.length > 1 ? 'عن المحاضرين' : 'عن المحاضر'}</h2><div style="display:grid;gap:12px">${l.map((t) => `<div class="bs-inst-wide"><div class="bs-inst-photo">${t.photo_url ? `<img src="${esc(t.photo_url)}" alt="">` : `<span>${esc(window.instInitials ? window.instInitials(t.name) : '')}</span>`}</div><div><h3>${esc(t.name)}</h3><p>${esc(t.title)}</p></div></div>`).join('')}</div></section>` : ''; };
   P.course = async () => {
-    const root = $('#course-root'), slug = new URLSearchParams(location.search).get('c');
+    const root = $('#course-root'), slug = document.body.dataset.slug || new URLSearchParams(location.search).get('c');
     if (!slug) { location.replace('courses.html'); return; }
     try { window.REGION_NOW = await window.REGION; } catch {}
     let c;
-    try { c = await sb.one('courses', { select: '*,lectures(id,position,title,duration_seconds,is_preview)', slug: 'eq.' + slug }); } catch (e) { root.innerHTML = `<div class="bx-empty-big" style="margin:80px 16px"><b>تعذّر تحميل الدورة</b>${esc(arErr(e))}</div>`; return; }
-    if (!c) { root.innerHTML = '<div class="bx-empty-big" style="margin:80px auto;max-width:560px"><b>هذه الدورة غير متاحة</b>قد تكون غير منشورة بعد. <a class="bx-link" href="courses.html">تصفح الدورات</a></div>'; return; }
+    const pre = !!document.body.dataset.slug;   // pre-rendered SEO page: keep its content if live data can't load
+    try { c = await sb.one('courses', { select: '*,lectures(id,position,title,duration_seconds,is_preview)', slug: 'eq.' + slug }); } catch (e) { if (pre) return; root.innerHTML = `<div class="bx-empty-big" style="margin:80px 16px"><b>تعذّر تحميل الدورة</b>${esc(arErr(e))}</div>`; return; }
+    if (!c) { const x = $('#seo-extra'); if (x) x.remove(); root.innerHTML = '<div class="bx-empty-big" style="margin:80px auto;max-width:560px"><b>هذه الدورة غير متاحة</b>قد تكون غير منشورة بعد. <a class="bx-link" href="courses.html">تصفح الدورات</a></div>'; return; }
     const nL = Number(await sb.rpc('course_learners', { p_course: c.id }).catch(() => 0)) || 0;
     // Arabic number agreement: 1 طالب واحد / 2 طالبان / 3-10 طلاب / 11+ طالبًا
     const learnersTxt = (plural, one, two) => nL > 0 ? `<span class="bx-learners">👥 ${nL === 1 ? `طالب واحد ${one}` : nL === 2 ? `طالبان ${two}` : `<b>${EGP(nL)}</b> ${nL % 100 >= 3 && nL % 100 <= 10 ? 'طلاب' : 'طالبًا'} ${plural}`}</span>` : `<span class="bx-learners">👥 كن من أوائل المشتركين</span>`;
     if (c.kind === 'interactive') {
-      document.title = c.title + ' | Biosyn Egypt';
+      if (!pre) { document.title = c.title + ' | Biosyn Egypt'; window.setMeta && setMeta(c.title + ' | Biosyn Egypt', (c.summary || c.description || '').slice(0, 160)); }
       const T = await courseInst(c);
       const fc = window.facOf ? window.facOf(c) : null, I = window.BX_ICO || {};
       root.innerHTML = `<section class="bs-course-hero"><span class="bs-wm" aria-hidden="true"></span><div class="bs-course-hero-in"><div>
@@ -174,9 +175,9 @@
       $('#reg').onclick = () => attendeeThen(() => window.checkout({ course_id: c.id, title: c.title, price: c.price_egp, intl: c.intl_price }));
       return;
     }
-    document.title = c.title + ' | Biosyn Egypt';
+    if (!pre) document.title = c.title + ' | Biosyn Egypt';
     window.track && track('view_content', { item: c.title, id: c.id });
-    window.setMeta && setMeta(c.title + ' | Biosyn Egypt', (c.summary || c.description || 'دورة مسجلة على منصة Biosyn Egypt').slice(0, 160));
+    !pre && window.setMeta && setMeta(c.title + ' | Biosyn Egypt', (c.summary || c.description || 'دورة مسجلة على منصة Biosyn Egypt').slice(0, 160));
     const lects = (c.lectures || []).sort((a, b) => a.position - b.position);
     const total = lects.reduce((s, l) => s + (l.duration_seconds || 0), 0);
     const [T, plans, subscribed] = await Promise.all([courseInst(c), sb.get('plans', { select: '*', active: 'eq.true', order: 'duration_months' }).catch(() => []), hasSubscription()]);

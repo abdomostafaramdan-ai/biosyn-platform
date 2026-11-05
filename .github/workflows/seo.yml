@@ -1,0 +1,47 @@
+name: SEO build (programmatic pages, sitemap, llms.txt)
+
+on:
+  schedule:
+    - cron: '23 */3 * * *'   # every 3 hours
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths: ['scripts/seo/**']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: seo-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build SEO pages from live data
+        run: python3 scripts/seo/build.py
+      - name: Commit changes
+        id: commit
+        run: |
+          git config user.name "biosyn-seo-bot"
+          git config user.email "seo-bot@users.noreply.github.com"
+          git add -A docs scripts/seo/manifest.json scripts/seo/changed.txt
+          if git diff --cached --quiet; then echo "changed=0" >> "$GITHUB_OUTPUT"; exit 0; fi
+          git commit -m "SEO: rebuild programmatic pages and sitemap"
+          git push
+          echo "changed=1" >> "$GITHUB_OUTPUT"
+      - name: Ping IndexNow (Bing, Yandex, Seznam; Bing feeds ChatGPT/Copilot search)
+        if: steps.commit.outputs.changed == '1'
+        run: |
+          KEY=$(cat scripts/seo/indexnow.key)
+          URLS=$(grep -v '^$' scripts/seo/changed.txt | head -9000 | python3 -c 'import sys,json;print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))')
+          [ "$URLS" = "[]" ] && exit 0
+          sleep 60  # give GitHub Pages time to publish
+          curl -sS -m 30 -X POST https://api.indexnow.org/indexnow -H 'Content-Type: application/json; charset=utf-8' \
+            -d "{\"host\":\"biosyneg.com\",\"key\":\"$KEY\",\"keyLocation\":\"https://biosyneg.com/$KEY.txt\",\"urlList\":$URLS}" -w ' HTTP %{http_code}\n' || true

@@ -1,6 +1,90 @@
+# Biosyn Egypt — search and AI crawlers are welcome on public pages
 User-agent: *
 Disallow: /account.html
 Disallow: /admin.html
 Disallow: /instructor.html
 Disallow: /watch.html
+Disallow: /login.html
+Disallow: /form.html
+Disallow: /certificate.html
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+Disallow: /account.html
+Disallow: /admin.html
+Disallow: /watch.html
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /account.html
+Disallow: /admin.html
+Disallow: /watch.html
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /account.html
+Disallow: /admin.html
+Disallow: /watch.html
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /account.html
+Disallow: /admin.html
+Disallow: /watch.html
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /account.html
+Disallow: /admin.html
+Disallow: /watch.html
+
+User-agent: Claude-User
+Allow: /
+Disallow: /account.html
+Disallow: /admin.html
+Disallow: /watch.html
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /account.html
+Disallow: /admin.html
+Disallow: /watch.html
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /account.html
+Disallow: /admin.html
+Disallow: /watch.html
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /account.html
+Disallow: /admin.html
+Disallow: /watch.html
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /account.html
+Disallow: /admin.html
+Disallow: /watch.html
+
+User-agent: Bingbot
+Allow: /
+Disallow: /account.html
+Disallow: /admin.html
+Disallow: /watch.html
+
+User-agent: CCBot
+Allow: /
+Disallow: /account.html
+Disallow: /admin.html
+Disallow: /watch.html
+
+User-agent: meta-externalagent
+Allow: /
+Disallow: /account.html
+Disallow: /admin.html
+Disallow: /watch.html
+
 Sitemap: https://biosyneg.com/sitemap.xml
