@@ -369,3 +369,27 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .bx-seo-links a:hover{border-color:var(--brand-lime,#c6f84a)}
 .bx-topic h1{font:700 34px/48px var(--font-display);margin:12px 0 10px}
 .bx-topic .bx-faq details{margin-bottom:8px}
+/* admin → زيارات المنصة */
+.tx-head{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
+.tx-ranges{display:flex;flex-wrap:wrap;gap:6px}
+.tx-kpis,.tx-range{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.tx-chart{width:100%;height:auto;display:block}
+.tx-bar{fill:var(--brand-lime,#c6f84a);opacity:.85}
+.tx-bar:hover{opacity:1}
+.tx-line{fill:none;stroke:#8ea2ff;stroke-width:2;stroke-linejoin:round}
+.tx-grid{stroke:rgba(255,255,255,.12);stroke-width:1}
+.tx-ax{fill:currentColor;opacity:.6;font-size:11px}
+.tx-legend{display:flex;gap:16px;font-size:13px;opacity:.8;margin-top:6px}
+.tx-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-end:6px;vertical-align:middle}
+.tx-k1{background:var(--brand-lime,#c6f84a)}.tx-k2{background:#8ea2ff}
+.tx-grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}
+.tx-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.tx-list li{position:relative;display:flex;justify-content:space-between;gap:12px;padding:8px 10px;border-radius:8px;overflow:hidden}
+.tx-list li>i{position:absolute;inset-block:0;inset-inline-start:0;background:rgba(198,248,74,.10);z-index:0}
+.tx-list span{position:relative;z-index:1}
+.tx-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tx-num{font-weight:700;white-space:nowrap}.tx-num small{font-weight:400;opacity:.6;margin-inline-start:8px}
+.tx-hours{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;height:120px;align-items:end;direction:ltr}
+.tx-hours div{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px}
+.tx-hours i{display:block;width:100%;background:var(--brand-lime,#c6f84a);border-radius:3px 3px 0 0;opacity:.8}
+.tx-hours small{font-size:10px;opacity:.6;height:12px}

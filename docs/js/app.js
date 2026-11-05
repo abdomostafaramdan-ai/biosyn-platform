@@ -695,6 +695,38 @@
   };
   window.videoDuration = (file) => new Promise((res) => { try { const v = document.createElement('video'); v.preload = 'metadata'; v.onloadedmetadata = () => { URL.revokeObjectURL(v.src); res(Math.round(v.duration) || null); }; v.onerror = () => res(null); v.src = URL.createObjectURL(file); } catch { res(null); } });
 
+  // ---------- first-party traffic analytics (admin → «زيارات المنصة»). No IPs, no cookies: an anonymous id in localStorage ----------
+  const AI_SRC = [['chatgpt', /chatgpt|openai/], ['perplexity', /perplexity/], ['claude', /claude\.ai|anthropic/], ['gemini', /gemini\.google|bard\.google/], ['copilot', /copilot|bing\.com\/chat/], ['deepseek', /deepseek/]];
+  const REF_SRC = [['google', /(^|\.)google\./], ['bing', /(^|\.)bing\.com$/], ['facebook', /facebook\.com$|(^|\.)fb\.(com|me)$/], ['instagram', /instagram\.com$/], ['x', /(^|\.)(t\.co|twitter\.com|x\.com)$/],
+    ['linkedin', /linkedin\.com$|lnkd\.in$/], ['youtube', /youtube\.com$|youtu\.be$/], ['tiktok', /tiktok\.com$/], ['whatsapp', /whatsapp\.(com|net)$|wa\.me$/], ['telegram', /t\.me$|telegram\.org$/], ['yahoo', /yahoo\./], ['duckduckgo', /duckduckgo\.com$/]];
+  function trackVisit() {
+    try {
+      const ua = navigator.userAgent || '';
+      if (navigator.webdriver || /bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit|whatsapp\/|telegrambot/i.test(ua)) return;
+      if (/(admin|instructor)\.html$/.test(location.pathname)) return;
+      const rid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 12));
+      let vid = localStorage.getItem('biosyn.vid'), isNew = false;
+      if (!vid) { vid = rid(); isNew = true; localStorage.setItem('biosyn.vid', vid); }
+      const q = new URLSearchParams(location.search), now = Date.now();
+      let ses = null; try { ses = JSON.parse(localStorage.getItem('biosyn.ses') || 'null'); } catch {}
+      const refHost = (() => { try { return document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : ''; } catch { return ''; } })();
+      const internal = !refHost || /biosyneg\.com$|biosynegypt\.com$|github\.io$|localhost$/.test(refHost);
+      const utm = (q.get('utm_source') || '').toLowerCase();
+      if (!ses || now - ses.t > 30 * 60e3 || (utm && utm !== ses.utm) || (!internal && refHost !== ses.ref)) {   // new session, or a new campaign/referral inside it
+        const hit = (list, v) => (list.find(([, re]) => re.test(v)) || [])[0];
+        const src = utm ? (hit(AI_SRC, utm) || utm.slice(0, 40)) : internal ? 'direct' : (hit(AI_SRC, refHost) || hit(REF_SRC, refHost) || refHost);
+        ses = { id: rid(), src, ref: internal ? '' : refHost, utm };
+      }
+      ses.t = now; localStorage.setItem('biosyn.ses', JSON.stringify(ses));
+      const dev = /iPad|Tablet|PlayBook|Silk|(Android(?!.*Mobi))/i.test(ua) ? 'tablet' : /Mobi|iPhone|Android/i.test(ua) ? 'mobile' : 'desktop';
+      const br = /Edg\//.test(ua) ? 'Edge' : /OPR\/|Opera/.test(ua) ? 'Opera' : /SamsungBrowser/.test(ua) ? 'Samsung' : /Firefox\//.test(ua) ? 'Firefox' : /Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : 'Other';
+      const os = /Android/.test(ua) ? 'Android' : /iPhone|iPad|iPod/.test(ua) ? 'iOS' : /Windows/.test(ua) ? 'Windows' : /Mac OS X/.test(ua) ? 'macOS' : /Linux/.test(ua) ? 'Linux' : 'Other';
+      const path = location.pathname.replace(/\/index\.html$/, '/') + (document.body.dataset.page === 'course' && q.get('c') ? '?c=' + q.get('c') : '');
+      const send = (cc) => sb.rpc('track_visit', { p: { vid, sid: ses.id, path, ref: ses.ref, src: ses.src, cc: cc || '', dev, br, os, lang: (document.documentElement.lang || 'ar').slice(0, 5), new: isNew } }).catch(() => {});
+      Promise.race([REGION, new Promise((r) => setTimeout(() => r(null), 4500))]).then((R) => send(R && R.at ? R.country : ''));
+    } catch {}
+  }
+
   // ---------- boot ----------
   const pages = { instructors: pageInstructors, index: pageHome, home: pageHome, courses: pageCourses, interactive: pageInteractive, teach: pageTeach, institutions: pageInstitutions, consultations: pageConsultations };
   window.BiosynPages = window.BiosynPages || {};
@@ -710,6 +742,7 @@
     hydratePlans();
     mountSupport();
     mountInstStrip();
+    sb.auth.ready.then(trackVisit);
     const p = document.body.dataset.page;
     const fn = pages[p] || window.BiosynPages[p];
     if (fn) { try { await fn(); } catch (e) { console.error(e); } }
