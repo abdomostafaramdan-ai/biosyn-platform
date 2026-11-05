@@ -21,6 +21,7 @@
 ## Courses
 - [Bioinformtics Diploma](https://biosyneg.com/course-bioinformtics-diploma.html): live interactive course — ادخل عالم تحليل البيانات الجينية وابدأ مسارك في Bioinformatics إذا كنت طالبًا أو باحثًا في العلوم أو الطب وتبحث عن مهارة مطلوبة عالميًا وتفتح لك فرصًا في البحث والعمل الحر، فهذا…
 - [Molecular Biology Course](https://biosyneg.com/course-molecular-biology-course-614141.html): recorded course, 14 lectures, ~4.0 hours — يهدف كورس البيولوجيا الجزيئية (Molecular Biology) إلى تقديم أساس علمي قوي لفهم العمليات الجزيئية داخل الخلية، بدايةً من تركيب DNA وRNA، مرورًا بتضاعف DNA والتعبير الجيني، وصولًا…
+- [Microbiology Course](https://biosyneg.com/course-microbiology-course-362803.html): recorded course, 10 lectures, ~3.8 hours
 
 ## Instructors
 - [إسراء مصطفي](https://biosyneg.com/teacher-e71638dc.html): بكالوريوس العلوم من جامعة الإسكندرية، تخصص كيمياء وعلوم بيئية.
