@@ -54,7 +54,7 @@
       const vsY = k.yesterday_v ? Math.round(((k.today_v - k.yesterday_v) / k.yesterday_v) * 100) : null;
       const by = r.signups_by || {}, hours = Array.from({ length: 24 }, (_, h) => Number((d.hours.find((x) => x.h === h) || {}).pv || 0)), hmax = Math.max(...hours, 1);
       main.innerHTML = `
-        <div class="tx-head"><div><h2 style="margin:0">زيارات المنصة</h2><p class="bx-hint" style="margin:4px 0 0"><span class="bx-live"><i></i></span> بيتحدث كل دقيقة · بتوقيت القاهرة · زيارات فريق العمل مش محسوبة</p></div>
+        <div class="tx-head"><div><p class="bx-hint" style="margin:0"><span class="bx-live"><i></i></span> بيتحدث كل دقيقة · بتوقيت القاهرة · زيارات فريق العمل مش محسوبة</p></div>
           <div class="tx-ranges" role="group" aria-label="الفترة">${RANGES.map(([id, t]) => `<button type="button" class="bx-chip" data-r="${id}" aria-pressed="${id === range}">${t}</button>`).join('')}</div></div>
         <div class="bx-stats tx-kpis">
           ${D.stat('موجودين دلوقتي', n(k.online), 'آخر 5 دقايق')}
