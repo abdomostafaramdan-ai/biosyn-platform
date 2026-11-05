@@ -127,8 +127,22 @@
     async courses(main) {
       const [courses, insts, fl] = await Promise.all([sb.get('courses', { select: '*,lectures(id)', order: 'created_at.desc' }), sb.rpc('admin_users').then((u) => u.filter((x) => x.role === 'instructor')).catch(() => []), sb.get('featured_instructors', { select: 'id,name' }).catch(() => [])]);
       const nameOf = Object.fromEntries(insts.map((i) => [i.id, i.full_name || i.email])), fName = Object.fromEntries(fl.map((i) => [i.id, i.name]));
-      main.innerHTML = D.panel('الدورات', D.table(['الدورة', 'النوع', 'المحاضر', 'المحاضرات', 'الحالة', ''], courses.map((c) => [`<b class="bs-latin">${esc(c.title)}</b>`, c.kind === 'interactive' ? 'تفاعلي' : 'مسجل', esc((c.featured_instructor_ids || []).map((id) => fName[id]).filter(Boolean).join('، ') || fName[c.featured_instructor_id] || nameOf[c.instructor_id] || '—'), (c.lectures || []).length, D.badge('course', c.status), isAdmin() ? `<button class="bx-linkbtn" data-edit="${c.id}">تعديل</button>` : '']), 'لا توجد دورات'),
+      const STL = { '': 'الكل', published: 'منشور', draft: 'مسودة', review: 'قيد المراجعة', archived: 'مؤرشف' };
+      let fst = (() => { try { return localStorage.getItem('biosyn.admin.cst') || ''; } catch (e) { return ''; } })(), fkind = '', fq = '';
+      const cnt = (k) => (k ? courses.filter((c) => c.status === k).length : courses.length);
+      main.innerHTML = D.panel('الدورات', `<div class="bx-row" style="gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+          <div class="nw-chips" style="margin:0" role="group" aria-label="تصفية حسب الحالة">${Object.entries(STL).map(([k, v]) => `<button type="button" class="bx-chip" data-st="${k}" aria-pressed="${k === fst}">${v} <small>(${cnt(k)})</small></button>`).join('')}</div>
+          <select id="cfk" class="bx-select" style="max-width:160px" aria-label="النوع"><option value="">كل الأنواع</option><option value="recorded">مسجل</option><option value="interactive">تفاعلي</option></select>
+          <input id="cfq" class="bx-input" type="search" placeholder="ابحث باسم الدورة" style="max-width:240px" aria-label="بحث"></div><div id="clist"></div>`,
         isAdmin() ? '<span class="bx-btnrow"><button class="bs-btn bs-btn-ghost bs-btn-sm" id="newbl">+ دورة من مكتبة Bunny</button><button class="bs-btn bs-btn-primary bs-btn-sm" id="newc">+ دورة جديدة</button></span>' : '');
+      const drawList = () => {
+        const list = courses.filter((c) => (!fst || c.status === fst) && (!fkind || c.kind === fkind) && (!fq || (c.title + ' ' + (c.slug || '')).toLowerCase().includes(fq)));
+        $('#clist', main).innerHTML = D.table(['الدورة', 'النوع', 'المحاضر', 'المحاضرات', 'الحالة', ''], list.map((c) => [`<b class="bs-latin">${esc(c.title)}</b>`, c.kind === 'interactive' ? 'تفاعلي' : 'مسجل', esc((c.featured_instructor_ids || []).map((id) => fName[id]).filter(Boolean).join('، ') || fName[c.featured_instructor_id] || nameOf[c.instructor_id] || '—'), (c.lectures || []).length, D.badge('course', c.status), isAdmin() ? `<button class="bx-linkbtn" data-edit="${c.id}">تعديل</button>` : '']), fst || fkind || fq ? 'لا توجد دورات بهذه التصفية' : 'لا توجد دورات');
+        $$('[data-edit]', main).forEach((b) => (b.onclick = () => open(courses.find((c) => c.id === b.dataset.edit))));
+      };
+      $$('[data-st]', main).forEach((b) => (b.onclick = () => { fst = b.dataset.st; try { localStorage.setItem('biosyn.admin.cst', fst); } catch (e) {} $$('[data-st]', main).forEach((x) => x.setAttribute('aria-pressed', String(x === b))); drawList(); }));
+      $('#cfk', main).onchange = (e) => { fkind = e.target.value; drawList(); };
+      $('#cfq', main).oninput = (e) => { fq = e.target.value.trim().toLowerCase(); drawList(); };
       const open = (c) => courseForm(c, insts);
       const nc = $('#newc', main); if (nc) nc.onclick = () => open(null);
       const nb = $('#newbl', main); if (nb) nb.onclick = () => pickLibrary(async (lib) => {
@@ -137,7 +151,7 @@
         const n = await addLibraryLectures(c.id, lib, []);
         ui.toast(`تم إنشاء دورة «${lib.name}» بـ ${n} محاضرة كمسودة. أكمل بياناتها ثم انشرها.`); D.reload(); setTimeout(() => open(c), 400);
       });
-      $$('[data-edit]', main).forEach((b) => (b.onclick = () => open(courses.find((c) => c.id === b.dataset.edit))));
+      drawList();
     },
 
     async users(main) {

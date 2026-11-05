@@ -6,7 +6,7 @@
   const KEY = 'biosyn.txo.v1', TTL = 5 * 60 * 1000;
   const norm = (s) => String(s || '').replace(/\s+/g, ' ').trim();
   const ATTRS = ['placeholder', 'title', 'aria-label'];
-  const SKIP = 'SCRIPT,STYLE,NOSCRIPT,TEXTAREA,CODE,PRE';
+  const SKIP = 'SCRIPT,STYLE,NOSCRIPT,TEXTAREA,CODE,PRE', SKIP_SET = new Set(SKIP.split(','));
   const isEn = () => document.documentElement.getAttribute('data-lang') === 'en';
   let rows = [], map = new Map(), lastSet = new WeakMap(), origOf = new WeakMap(), editing = false;
 
@@ -30,7 +30,7 @@
     if (!map.size || !root) return;
     if (root.nodeType === 3) { if (!root.parentElement || !root.parentElement.closest(SKIP + ',[data-no-txo]')) fixText(root); return; }
     if (root.nodeType !== 1 || root.closest(SKIP + ',[data-no-txo]')) return;
-    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, { acceptNode: (n) => (n.nodeType === 1 && (SKIP.includes(n.nodeName) || n.hasAttribute('data-no-txo')) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) });
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, { acceptNode: (n) => (n.nodeType === 1 && (SKIP_SET.has(n.nodeName) || n.hasAttribute('data-no-txo')) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) });
     fixEl(root);
     for (let n = w.nextNode(); n; n = w.nextNode()) n.nodeType === 3 ? fixText(n) : fixEl(n);
     if (root === document.body) { const t = norm(document.title); if (map.has(t)) document.title = map.get(t); }
