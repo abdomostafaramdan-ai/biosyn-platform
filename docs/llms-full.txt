@@ -72,45 +72,6 @@ Lectures:
 16. LIF Neuron in Python (Part 5)
 17. LIF Neuron in Python (Part 6)
 
-### Introduction To Immunology
-URL: https://biosyneg.com/course-introduction-to-immunology.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-
-تقدّم هذه الدورة مدخلًا شاملًا إلى علم المناعة، فتشرح كيف يتعرّف الجسم على الميكروبات ويدافع عن نفسه، بلغة واضحة ومنظمة تناسب من يدرس المناعة لأول مرة.
-
-تبدأ بنظرة عامة على الجهاز المناعي ومكوناته، ثم المناعة الفطرية، والمستضدات ومعقد التوافق النسيجي (MHC)، ثم المناعة الخلوية (CMI) والاستجابة المناعية الخلطية والأجسام المضادة، وتُختتم بنظام المتمّمة (Complement).
-
-الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم والتكنولوجيا الحيوية، ولكل من يحتاج إلى أساس قوي في المناعة قبل دراسة الأمراض المناعية أو اللقاحات.
-
-Lectures:
-1. Overview of the Immune System
-2. Basics of Immunology
-3. Innate Immunity
-4. Antigens and MHC
-5. Cell-Mediated Immunity (CMI)
-6. Humoral Immune Response
-7. The Complement System
-
-### Introduction To Genetic Engineering
-URL: https://biosyneg.com/course-introduction-to-genetic-engineering.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-
-الهندسة الوراثية هي الأساس الذي تقوم عليه صناعة الإنسولين واللقاحات والإنزيمات والمحاصيل المحسّنة. تشرح هذه الدورة كيف نقرأ الحمض النووي ونقطعه وننقله ونعيد كتابته، خطوة بخطوة وباللغة العربية.
-
-تبدأ الدورة بالحمض النووي بوصفه شفرة الحياة، ثم تشريح الناقل الوظيفي (Vector) ومكوناته، وإنزيمات القطع وتسلسلات التعرف، ومراحل عزل الجين ومضاعفته بتقنية PCR، ثم استخدام الإشريكية القولونية (E. coli) عائلًا للإنتاج، والانتقال من المعمل إلى التخمير والمفاعلات الحيوية. وتتناول بعد ذلك تقنيات تحرير الجينوم مثل إيقاف الجين وإدخاله والاستبدال الدقيق، وتُختتم بجلسة تطبيقية لتصميم تجربة استنساخ على الحاسوب.
-
-الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والزراعة، ولكل من يريد فهمًا عمليًا للهندسة الوراثية قبل العمل في معامل البيولوجيا الجزيئية أو الصناعات الحيوية.
-
-Lectures:
-1. DNA: The Code of Life
-2. The Anatomy of a Functional Vector
-3. Restriction Enzymes and Recognition Sequences
-4. Gene Isolation and PCR Amplification
-5. E. coli: The Biotech Workhorse
-6. Scaling Up: Fermentation and Bioreactors
-7. Genome Editing: Knockout, Insertion and Replacement
-8. In Silico Cloning Design (Practical)
-
 ### Some Concepts in Clinical Research
 URL: https://biosyneg.com/course-some-concepts-in-clinical-research.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
@@ -132,11 +93,50 @@ Lectures:
 8. Informed Consent & IRB
 9. Recap & Quiz
 
+### Introduction To Genetic Engineering
+URL: https://biosyneg.com/course-introduction-to-genetic-engineering.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+الهندسة الوراثية هي الأساس الذي تقوم عليه صناعة الإنسولين واللقاحات والإنزيمات والمحاصيل المحسّنة. تشرح هذه الدورة كيف نقرأ الحمض النووي ونقطعه وننقله ونعيد كتابته، خطوة بخطوة وباللغة العربية.
+
+تبدأ الدورة بالحمض النووي بوصفه شفرة الحياة، ثم تشريح الناقل الوظيفي (Vector) ومكوناته، وإنزيمات القطع وتسلسلات التعرف، ومراحل عزل الجين ومضاعفته بتقنية PCR، ثم استخدام الإشريكية القولونية (E. coli) عائلًا للإنتاج، والانتقال من المعمل إلى التخمير والمفاعلات الحيوية. وتتناول بعد ذلك تقنيات تحرير الجينوم مثل إيقاف الجين وإدخاله والاستبدال الدقيق، وتُختتم بجلسة تطبيقية لتصميم تجربة استنساخ على الحاسوب.
+
+الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والزراعة، ولكل من يريد فهمًا عمليًا للهندسة الوراثية قبل العمل في معامل البيولوجيا الجزيئية أو الصناعات الحيوية.
+
+Lectures:
+1. DNA: The Code of Life
+2. The Anatomy of a Functional Vector
+3. Restriction Enzymes and Recognition Sequences
+4. Gene Isolation and PCR Amplification
+5. E. coli: The Biotech Workhorse
+6. Scaling Up: Fermentation and Bioreactors
+7. Genome Editing: Knockout, Insertion and Replacement
+8. In Silico Cloning Design (Practical)
+
+### Introduction To Immunology
+URL: https://biosyneg.com/course-introduction-to-immunology.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+تقدّم هذه الدورة مدخلًا شاملًا إلى علم المناعة، فتشرح كيف يتعرّف الجسم على الميكروبات ويدافع عن نفسه، بلغة واضحة ومنظمة تناسب من يدرس المناعة لأول مرة.
+
+تبدأ بنظرة عامة على الجهاز المناعي ومكوناته، ثم المناعة الفطرية، والمستضدات ومعقد التوافق النسيجي (MHC)، ثم المناعة الخلوية (CMI) والاستجابة المناعية الخلطية والأجسام المضادة، وتُختتم بنظام المتمّمة (Complement).
+
+الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم والتكنولوجيا الحيوية، ولكل من يحتاج إلى أساس قوي في المناعة قبل دراسة الأمراض المناعية أو اللقاحات.
+
+Lectures:
+1. Overview of the Immune System
+2. Basics of Immunology
+3. Innate Immunity
+4. Antigens and MHC
+5. Cell-Mediated Immunity (CMI)
+6. Humoral Immune Response
+7. The Complement System
+
 ### Bioinformatics Diploma
 URL: https://biosyneg.com/course-bioinformtics-diploma.html
 Type: Live interactive · Level: Beginner · Price: 15٬000 ج.م
 Starts: 2027-01-01
-Instructors: إسراء مصطفي — بكالوريوس العلوم من جامعة الإسكندرية، تخصص كيمياء وعلوم بيئية.; د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال; د. شريف عرفه — طالب دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
+Instructors: إسراء مصطفي — بكالوريوس العلوم من جامعة الإسكندرية، تخصص كيمياء وعلوم بيئية.; د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال; د. شريف عرفه — دكتوراه من قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
 
 ادخل عالم تحليل البيانات الجينية وابدأ مسارك في Bioinformatics
 
@@ -189,6 +189,29 @@ Lectures:
 9. Mycoplasmas
 10. Introduction to Parasitology
 
+### Basics of IVF Laboratories
+URL: https://biosyneg.com/course-basics-of-ivf-laboratories.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+تأخذك هذه الدورة في رحلة متكاملة داخل معمل أطفال الأنابيب (IVF)، بدءًا من دورة الخلية وتكوين الحيوانات المنوية والبويضات، وصولًا إلى نمو الجنين حتى مرحلة الكيسة الأريمية (Blastocyst).
+
+تشرح المحاضرات خطوات العمل الفعلية في المعمل: تحليل السائل المنوي الروتيني والاختبارات المساعدة، وتجهيز الحيوانات المنوية وتجميدها، والعوامل المؤثرة في جودتها، ثم تجهيز البويضات وإزالة الخلايا المحيطة بها وتقييمها، وتجميد البويضات والأجنة، ثم الفحص الجيني قبل الانغراس (PGT) والانغراس، وتفسير النتائج.
+
+الدورة مناسبة لخريجي العلوم والطب والتكنولوجيا الحيوية الراغبين في العمل بمعامل الإخصاب المساعد، ولأخصائيي المختبرات الذين يريدون فهمًا منظمًا لهذا المجال باللغة العربية.
+
+Lectures:
+1. Cell Cycle and Spermatogenesis
+2. Routine Semen Analysis
+3. Ancillary Semen Tests
+4. Sperm Processing and Cryopreservation
+5. Factors Affecting Sperm Quality
+6. Menstrual Cycle and Oogenesis
+7. Oocyte Preparation, Denudation and Assessment
+8. From Fertilization to Blastocyst
+9. Oocyte and Embryo Cryopreservation
+10. PGT and Implantation
+11. Interpretations
+
 ### How to Read and Understand a Research Paper
 URL: https://biosyneg.com/course-how-to-read-a-research-paper.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
@@ -235,6 +258,7 @@ Lectures:
 ### Python in Bioinformatics
 URL: https://biosyneg.com/course-python-in-bioinformatics.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
 
 بايثون من أهم لغات البرمجة في المعلوماتية الحيوية وتحليل البيانات. تقدّم هذه الدورة أساسيات البرمجة بلغة بايثون في سياق بيولوجي واضح، دون أن تفترض أي خبرة برمجية سابقة.
 
@@ -253,6 +277,7 @@ Lectures:
 ### R Language in Bioinformatics
 URL: https://biosyneg.com/course-r-language-in-bioinformatics.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
 
 لغة R هي الأداة الأكثر استخدامًا في التحليل الإحصائي للبيانات البيولوجية والطبية. تبدأ هذه الدورة من الصفر، فتشرح أساسيات البرمجة بلغة R وبيئة RStudio، ثم تنتقل إلى التعامل مع البيانات واستيرادها وتنظيفها وإعادة تشكيلها (Data Manipulation).
 
@@ -268,81 +293,10 @@ Lectures:
 5. Session 5
 6. Final Project
 
-### Basics of IVF Laboratories
-URL: https://biosyneg.com/course-basics-of-ivf-laboratories.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-
-تأخذك هذه الدورة في رحلة متكاملة داخل معمل أطفال الأنابيب (IVF)، بدءًا من دورة الخلية وتكوين الحيوانات المنوية والبويضات، وصولًا إلى نمو الجنين حتى مرحلة الكيسة الأريمية (Blastocyst).
-
-تشرح المحاضرات خطوات العمل الفعلية في المعمل: تحليل السائل المنوي الروتيني والاختبارات المساعدة، وتجهيز الحيوانات المنوية وتجميدها، والعوامل المؤثرة في جودتها، ثم تجهيز البويضات وإزالة الخلايا المحيطة بها وتقييمها، وتجميد البويضات والأجنة، ثم الفحص الجيني قبل الانغراس (PGT) والانغراس، وتفسير النتائج.
-
-الدورة مناسبة لخريجي العلوم والطب والتكنولوجيا الحيوية الراغبين في العمل بمعامل الإخصاب المساعد، ولأخصائيي المختبرات الذين يريدون فهمًا منظمًا لهذا المجال باللغة العربية.
-
-Lectures:
-1. Cell Cycle and Spermatogenesis
-2. Routine Semen Analysis
-3. Ancillary Semen Tests
-4. Sperm Processing and Cryopreservation
-5. Factors Affecting Sperm Quality
-6. Menstrual Cycle and Oogenesis
-7. Oocyte Preparation, Denudation and Assessment
-8. From Fertilization to Blastocyst
-9. Oocyte and Embryo Cryopreservation
-10. PGT and Implantation
-11. Interpretations
-
-### Computational Biology
-URL: https://biosyneg.com/course-computational-biology.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-
-البيولوجيا الحاسوبية هي الطريق لتحويل البيانات البيولوجية الضخمة إلى نتائج يمكن فهمها ونشرها. تجمع هذه الدورة بين الشرح النظري والتطبيق العملي في 37 محاضرة، لتأخذك من أول قاعدة بيانات إلى تحليل التعبير الجيني.
-
-تبدأ الدورة بصيغ التسلسلات وقواعد البيانات الأساسية مع تطبيق عملي على NCBI وUniProt وRCSB PDB، ثم تحليل التسلسلات والمحاذاة وBLAST. بعدها تشرح مفاهيم تقنيات التسلسل: سانجر والجيل التالي (NGS) وأكسفورد نانوبور (ONT)، ثم تحليل بيانات تسلسل الحمض النووي: فحص الجودة بأداة FastQC وقراءة التقارير الجيدة والسيئة، والمحاذاة على الجينوم المرجعي (Mapping)، والعمل على سطر أوامر لينكس.
-
-ويُختتم المسار بتسلسل الحمض النووي الريبي (RNA-Seq) ومنهجية تحليل التعبير الجيني التفاضلي، مع مقدمة عملية في لغة R وتطبيق كامل لتحليل التعبير التفاضلي. الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والطب، وللباحثين الذين يريدون تحليل بيانات التسلسل بأنفسهم.
-
-Lectures:
-1. Introduction to Computational Biology
-2. Sequence Formats and Databases (Part 1)
-3. Sequence Formats and Databases (Part 2)
-4. Practice: Navigating NCBI (Part 1)
-5. Practice: Navigating NCBI (Part 2)
-6. Practice: Navigating UniProt
-7. Practice: Navigating the RCSB PDB
-8. Sequence Analysis (Part 1)
-9. Sequence Analysis (Part 2)
-10. Practice: Sequence Alignment
-11. Practice: BLAST
-12. Sequencing Concepts: Sanger Sequencing
-13. Sequencing Concepts: NGS
-14. Sequencing Concepts: Oxford Nanopore (ONT)
-15. DNA Sequencing Analysis: Quality Control with FastQC
-16. DNA Sequencing Analysis: Mapping (Part 1)
-17. DNA Sequencing Analysis: Mapping (Part 2)
-18. DNA Sequencing Analysis: Introduction to Linux
-19. Practice: Reading a Bad QC Report
-20. Practice: Reading a Good QC Report
-21. Practice: Sequencing Resources
-22. Practice: Introduction to Linux (Part 1)
-23. Practice: Introduction to Linux (Part 2)
-24. Practice: DNA Sequencing Analysis (Part 1)
-25. Practice: DNA Sequencing Analysis (Part 2)
-26. Sequencing Goals
-27. RNA Sequencing (Part 1)
-28. RNA Sequencing (Part 2)
-29. Differential Expression Analysis Methodology
-30. Practice: Exploring Important Databases
-31. Practice: Introduction to R (Part 1)
-32. Practice: Introduction to R (Part 2)
-33. Practice: Introduction to R (Part 3)
-34. Practice: Introduction to R (Part 4)
-35. Practice: Differential Expression Analysis (Part 1)
-36. Practice: Differential Expression Analysis (Part 2)
-37. Practice: Differential Expression Analysis (Part 3)
-
 ### Structural Bioinformatics, Molecular Docking and Drug Design
 URL: https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html
-Type: Recorded (subscription) · Level: Intermediate · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. شريف عرفه — دكتوراه من قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
 
 تصميم الأدوية بمساعدة الحاسوب أصبح خطوة أساسية في اكتشاف الأدوية الحديثة، لأنه يقلل عدد المركبات التي تحتاج إلى اختبار في المعمل. تأخذك هذه الدورة في مشروع متكامل خطوة بخطوة، من اختيار البروتين الهدف حتى تحليل نتائج الالتحام الجزيئي.
 
@@ -414,6 +368,56 @@ Lectures:
 61. Protein–Ligand Interactions and ADMET (Part 6)
 62. Protein–Ligand Interactions and ADMET (Part 7)
 63. Protein–Ligand Interactions and ADMET (Part 8)
+
+### Computational Biology
+URL: https://biosyneg.com/course-computational-biology.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. اسراء المليجي — إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics). تعمل كمساعدة تدريس، وتهتم بتبسيط…
+
+البيولوجيا الحاسوبية هي الطريق لتحويل البيانات البيولوجية الضخمة إلى نتائج يمكن فهمها ونشرها. تجمع هذه الدورة بين الشرح النظري والتطبيق العملي في 37 محاضرة، لتأخذك من أول قاعدة بيانات إلى تحليل التعبير الجيني.
+
+تبدأ الدورة بصيغ التسلسلات وقواعد البيانات الأساسية مع تطبيق عملي على NCBI وUniProt وRCSB PDB، ثم تحليل التسلسلات والمحاذاة وBLAST. بعدها تشرح مفاهيم تقنيات التسلسل: سانجر والجيل التالي (NGS) وأكسفورد نانوبور (ONT)، ثم تحليل بيانات تسلسل الحمض النووي: فحص الجودة بأداة FastQC وقراءة التقارير الجيدة والسيئة، والمحاذاة على الجينوم المرجعي (Mapping)، والعمل على سطر أوامر لينكس.
+
+ويُختتم المسار بتسلسل الحمض النووي الريبي (RNA-Seq) ومنهجية تحليل التعبير الجيني التفاضلي، مع مقدمة عملية في لغة R وتطبيق كامل لتحليل التعبير التفاضلي. الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والطب، وللباحثين الذين يريدون تحليل بيانات التسلسل بأنفسهم.
+
+Lectures:
+1. Introduction to Computational Biology
+2. Sequence Formats and Databases (Part 1)
+3. Sequence Formats and Databases (Part 2)
+4. Practice: Navigating NCBI (Part 1)
+5. Practice: Navigating NCBI (Part 2)
+6. Practice: Navigating UniProt
+7. Practice: Navigating the RCSB PDB
+8. Sequence Analysis (Part 1)
+9. Sequence Analysis (Part 2)
+10. Practice: Sequence Alignment
+11. Practice: BLAST
+12. Sequencing Concepts: Sanger Sequencing
+13. Sequencing Concepts: NGS
+14. Sequencing Concepts: Oxford Nanopore (ONT)
+15. DNA Sequencing Analysis: Quality Control with FastQC
+16. DNA Sequencing Analysis: Mapping (Part 1)
+17. DNA Sequencing Analysis: Mapping (Part 2)
+18. DNA Sequencing Analysis: Introduction to Linux
+19. Practice: Reading a Bad QC Report
+20. Practice: Reading a Good QC Report
+21. Practice: Sequencing Resources
+22. Practice: Introduction to Linux (Part 1)
+23. Practice: Introduction to Linux (Part 2)
+24. Practice: DNA Sequencing Analysis (Part 1)
+25. Practice: DNA Sequencing Analysis (Part 2)
+26. Sequencing Goals
+27. RNA Sequencing (Part 1)
+28. RNA Sequencing (Part 2)
+29. Differential Expression Analysis Methodology
+30. Practice: Exploring Important Databases
+31. Practice: Introduction to R (Part 1)
+32. Practice: Introduction to R (Part 2)
+33. Practice: Introduction to R (Part 3)
+34. Practice: Introduction to R (Part 4)
+35. Practice: Differential Expression Analysis (Part 1)
+36. Practice: Differential Expression Analysis (Part 2)
+37. Practice: Differential Expression Analysis (Part 3)
 
 ## FAQ
 

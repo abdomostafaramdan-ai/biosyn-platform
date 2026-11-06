@@ -1,5 +1,5 @@
 {
- "built_at": "2026-11-06T00:02:12+00:00",
+ "built_at": "2026-11-06T00:59:09+00:00",
  "sitemap_urls": 47,
  "indexable": [
   {
@@ -13,9 +13,9 @@
    "url": "https://biosyneg.com/course-computational-neuroscience.html"
   },
   {
-   "slug": "introduction-to-immunology",
-   "title": "Introduction To Immunology",
-   "url": "https://biosyneg.com/course-introduction-to-immunology.html"
+   "slug": "some-concepts-in-clinical-research",
+   "title": "Some Concepts in Clinical Research",
+   "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
   },
   {
    "slug": "introduction-to-genetic-engineering",
@@ -23,9 +23,9 @@
    "url": "https://biosyneg.com/course-introduction-to-genetic-engineering.html"
   },
   {
-   "slug": "some-concepts-in-clinical-research",
-   "title": "Some Concepts in Clinical Research",
-   "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
+   "slug": "introduction-to-immunology",
+   "title": "Introduction To Immunology",
+   "url": "https://biosyneg.com/course-introduction-to-immunology.html"
   },
   {
    "slug": "bioinformtics-diploma",
@@ -41,6 +41,11 @@
    "slug": "microbiology-course-362803",
    "title": "Intro To Basic Microbiology",
    "url": "https://biosyneg.com/course-microbiology-course-362803.html"
+  },
+  {
+   "slug": "basics-of-ivf-laboratories",
+   "title": "Basics of IVF Laboratories",
+   "url": "https://biosyneg.com/course-basics-of-ivf-laboratories.html"
   },
   {
    "slug": "how-to-read-a-research-paper",
@@ -63,19 +68,14 @@
    "url": "https://biosyneg.com/course-r-language-in-bioinformatics.html"
   },
   {
-   "slug": "basics-of-ivf-laboratories",
-   "title": "Basics of IVF Laboratories",
-   "url": "https://biosyneg.com/course-basics-of-ivf-laboratories.html"
+   "slug": "structural-bioinformatics-molecular-docking-drug-design",
+   "title": "Structural Bioinformatics, Molecular Docking and Drug Design",
+   "url": "https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html"
   },
   {
    "slug": "computational-biology",
    "title": "Computational Biology",
    "url": "https://biosyneg.com/course-computational-biology.html"
-  },
-  {
-   "slug": "structural-bioinformatics-molecular-docking-drug-design",
-   "title": "Structural Bioinformatics, Molecular Docking and Drug Design",
-   "url": "https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html"
   }
  ],
  "noindex": [],
@@ -106,14 +106,14 @@
    "url": "https://biosyneg.com/teacher-ad83c2d3.html"
   },
   {
-   "name": "د. شريف عرفه",
-   "url": "https://biosyneg.com/teacher-f297c76b.html"
-  },
-  {
    "name": "د. اسراء المليجي",
    "url": "https://biosyneg.com/teacher-6308ea6d.html"
+  },
+  {
+   "name": "د. شريف عرفه",
+   "url": "https://biosyneg.com/teacher-f297c76b.html"
   }
  ],
  "ai_training": true,
- "changed": 15
+ "changed": 17
 }
