@@ -1,11 +1,11 @@
 {
- "built_at": "2026-11-05T23:57:44+00:00",
- "sitemap_urls": 43,
+ "built_at": "2026-11-06T00:02:12+00:00",
+ "sitemap_urls": 47,
  "indexable": [
   {
-   "slug": "some-concepts-in-clinical-research",
-   "title": "Some Concepts in Clinical Research",
-   "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
+   "slug": "introduction-to-genetics",
+   "title": "Introduction To Genetics",
+   "url": "https://biosyneg.com/course-introduction-to-genetics.html"
   },
   {
    "slug": "computational-neuroscience",
@@ -16,6 +16,16 @@
    "slug": "introduction-to-immunology",
    "title": "Introduction To Immunology",
    "url": "https://biosyneg.com/course-introduction-to-immunology.html"
+  },
+  {
+   "slug": "introduction-to-genetic-engineering",
+   "title": "Introduction To Genetic Engineering",
+   "url": "https://biosyneg.com/course-introduction-to-genetic-engineering.html"
+  },
+  {
+   "slug": "some-concepts-in-clinical-research",
+   "title": "Some Concepts in Clinical Research",
+   "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
   },
   {
    "slug": "bioinformtics-diploma",
@@ -56,6 +66,16 @@
    "slug": "basics-of-ivf-laboratories",
    "title": "Basics of IVF Laboratories",
    "url": "https://biosyneg.com/course-basics-of-ivf-laboratories.html"
+  },
+  {
+   "slug": "computational-biology",
+   "title": "Computational Biology",
+   "url": "https://biosyneg.com/course-computational-biology.html"
+  },
+  {
+   "slug": "structural-bioinformatics-molecular-docking-drug-design",
+   "title": "Structural Bioinformatics, Molecular Docking and Drug Design",
+   "url": "https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html"
   }
  ],
  "noindex": [],
@@ -63,12 +83,12 @@
   {
    "id": "science",
    "name": "كلية العلوم",
-   "courses": 4
+   "courses": 5
   },
   {
    "id": "biotech",
    "name": "كلية بايوتكنولوجي",
-   "courses": 5
+   "courses": 8
   },
   {
    "id": "medicine",
@@ -95,5 +115,5 @@
   }
  ],
  "ai_training": true,
- "changed": 0
+ "changed": 15
 }

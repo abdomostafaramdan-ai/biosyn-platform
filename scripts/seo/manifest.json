@@ -4,8 +4,8 @@
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/about.html": {
-  "h": "2aafcf689915b65e",
-  "lastmod": "2026-11-05"
+  "h": "2788b21948a12d0d",
+  "lastmod": "2026-11-06"
  },
  "https://biosyneg.com/blog-clinical-research-ethics-history.html": {
   "h": "3001ac3e9dde4f77",
@@ -56,52 +56,68 @@
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/course-basics-of-ivf-laboratories.html": {
-  "h": "e5f79068e49c21a9",
-  "lastmod": "2026-11-05"
+  "h": "314083433c0b8d5c",
+  "lastmod": "2026-11-06"
  },
  "https://biosyneg.com/course-bioinformtics-diploma.html": {
   "h": "98ef7a5e7274b7b8",
   "lastmod": "2026-11-05"
  },
+ "https://biosyneg.com/course-computational-biology.html": {
+  "h": "313b8f9084ce9ca6",
+  "lastmod": "2026-11-06"
+ },
  "https://biosyneg.com/course-computational-neuroscience.html": {
-  "h": "5bbf5c1146e648eb",
-  "lastmod": "2026-11-05"
+  "h": "94cf5e2155b455a0",
+  "lastmod": "2026-11-06"
  },
  "https://biosyneg.com/course-how-to-read-a-research-paper.html": {
   "h": "df42d528af4ea139",
   "lastmod": "2026-11-05"
+ },
+ "https://biosyneg.com/course-introduction-to-genetic-engineering.html": {
+  "h": "0787a9cf3456264c",
+  "lastmod": "2026-11-06"
+ },
+ "https://biosyneg.com/course-introduction-to-genetics.html": {
+  "h": "4a593d9cf3f2740e",
+  "lastmod": "2026-11-06"
  },
  "https://biosyneg.com/course-introduction-to-immunology.html": {
   "h": "5025a1c18afb2584",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/course-microbiology-course-362803.html": {
-  "h": "5dd4932bbffd9fca",
-  "lastmod": "2026-11-05"
+  "h": "72a616a367cd5048",
+  "lastmod": "2026-11-06"
  },
  "https://biosyneg.com/course-molecular-biology-course-614141.html": {
   "h": "b3bc5cb5f0c8e2e2",
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/course-python-in-bioinformatics.html": {
-  "h": "c5c7b16a1ff2ce48",
-  "lastmod": "2026-11-05"
+  "h": "765f240896ac04c0",
+  "lastmod": "2026-11-06"
  },
  "https://biosyneg.com/course-r-language-in-bioinformatics.html": {
-  "h": "d349865af12ac039",
-  "lastmod": "2026-11-05"
+  "h": "de317341f98f53a2",
+  "lastmod": "2026-11-06"
  },
  "https://biosyneg.com/course-some-concepts-in-clinical-research.html": {
   "h": "71d46b0231efa2c8",
   "lastmod": "2026-11-05"
  },
+ "https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html": {
+  "h": "7a01b74c2314ff56",
+  "lastmod": "2026-11-06"
+ },
  "https://biosyneg.com/course-study-design-in-clinical-research.html": {
-  "h": "646c7905e908133e",
-  "lastmod": "2026-11-05"
+  "h": "21844ae62fe32ffb",
+  "lastmod": "2026-11-06"
  },
  "https://biosyneg.com/courses.html": {
-  "h": "dfc9e3d345fd84fd",
-  "lastmod": "2026-11-05"
+  "h": "399ccc1a69ef92fd",
+  "lastmod": "2026-11-06"
  },
  "https://biosyneg.com/institutions.html": {
   "h": "f0ef6ee9ed52b60e",
@@ -156,16 +172,16 @@
   "lastmod": "2026-11-05"
  },
  "https://biosyneg.com/topic-biotech.html": {
-  "h": "9ae97abbbb7b6ce7",
-  "lastmod": "2026-11-05"
+  "h": "0e06433986dc8965",
+  "lastmod": "2026-11-06"
  },
  "https://biosyneg.com/topic-medicine.html": {
-  "h": "291a9a7a78ecd6ec",
-  "lastmod": "2026-11-05"
+  "h": "3b47286bf77df140",
+  "lastmod": "2026-11-06"
  },
  "https://biosyneg.com/topic-science.html": {
-  "h": "d30f1ccc38754c6d",
-  "lastmod": "2026-11-05"
+  "h": "b91c5c9c6b385459",
+  "lastmod": "2026-11-06"
  },
  "https://biosyneg.com/verify.html": {
   "h": "df0051c50e81996e",

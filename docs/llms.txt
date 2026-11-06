@@ -12,7 +12,7 @@
 - Certificates: every completed course issues a Biosyn Egypt certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify.html
 - Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available
 - Founded: 2020, by Abdo Mostafa (B.Sc. in Science)
-- Served: more than 20,005 students, researchers and university staff in 8 countries
+- Served: more than 20,006 students, researchers and university staff in 8 countries
 - About page: https://biosyneg.com/about.html
 
 ## Subscription prices (EGP)
@@ -22,9 +22,11 @@
 - Details: https://biosyneg.com/pricing.html
 
 ## Courses
-- [Some Concepts in Clinical Research](https://biosyneg.com/course-some-concepts-in-clinical-research.html): recorded course, 9 lectures, ~1.2 hours, البحث السريري — دورة مسجلة في المفاهيم الأساسية وأخلاقيات البحث السريري: تاريخه، وقانون نورمبرغ وإعلان هلسنكي، والمبادئ الأخلاقية، والموافقة المستنيرة ولجان الأخلاقيات.
+- [Introduction To Genetics](https://biosyneg.com/course-introduction-to-genetics.html): recorded course, 8 lectures, ~3.4 hours, الوراثة — دورة مسجلة باللغة العربية في أساسيات علم الوراثة: من قوانين مندل والانقسام الاختزالي إلى الارتباط والخرائط الجينية، والعقيدة المركزية، ووراثة العشائر.
 - [Computational Neuroscience](https://biosyneg.com/course-computational-neuroscience.html): recorded course, 17 lectures, ~1.9 hours, الفيزياء الحيوية — مقدمة في علوم الأعصاب الحسابية: علم الدماغ والقياسات النفسية الفيزيائية، والنشاط الكهربي للخلايا العصبية، وإشارات EEG وMEG، ونمذجة العصبون LIF ببايثون.
 - [Introduction To Immunology](https://biosyneg.com/course-introduction-to-immunology.html): recorded course, 7 lectures, ~3.4 hours, المناعة — دورة مسجلة باللغة العربية في أساسيات علم المناعة: الجهاز المناعي، والمناعة الفطرية، والمستضدات وMHC، والمناعة الخلوية والخلطية، والمتمّمة.
+- [Introduction To Genetic Engineering](https://biosyneg.com/course-introduction-to-genetic-engineering.html): recorded course, 8 lectures, ~2.6 hours, الهندسة الوراثية — دورة مسجلة باللغة العربية في أساسيات الهندسة الوراثية: النواقل وإنزيمات القطع وعزل الجينات، والإشريكية القولونية كعائل، والتخمير، وتحرير الجينوم، والتصميم بالحاسوب.
+- [Some Concepts in Clinical Research](https://biosyneg.com/course-some-concepts-in-clinical-research.html): recorded course, 9 lectures, ~1.2 hours, البحث السريري — دورة مسجلة في المفاهيم الأساسية وأخلاقيات البحث السريري: تاريخه، وقانون نورمبرغ وإعلان هلسنكي، والمبادئ الأخلاقية، والموافقة المستنيرة ولجان الأخلاقيات.
 - [Bioinformatics Diploma](https://biosyneg.com/course-bioinformtics-diploma.html): live interactive course — ادخل عالم تحليل البيانات الجينية وابدأ مسارك في Bioinformatics إذا كنت طالبًا أو باحثًا في العلوم أو الطب وتبحث عن مهارة مطلوبة عالميًا وتفتح لك فرصًا في البحث والعمل الحر، فهذا…
 - [Molecular Biology](https://biosyneg.com/course-molecular-biology-course-614141.html): recorded course, 14 lectures, ~4.0 hours — يهدف كورس البيولوجيا الجزيئية (Molecular Biology) إلى تقديم أساس علمي قوي لفهم العمليات الجزيئية داخل الخلية، بدايةً من تركيب DNA وRNA، مرورًا بتضاعف DNA والتعبير الجيني، وصولًا…
 - [Intro To Basic Microbiology](https://biosyneg.com/course-microbiology-course-362803.html): recorded course, 10 lectures, ~3.8 hours, الأحياء الدقيقة الطبية — دورة مسجلة باللغة العربية في أساسيات الميكروبيولوجيا الطبية: تصنيف البكتيريا وتركيبها وأهميتها السريرية، من المكورات موجبة الجرام إلى الطفيليات.
@@ -33,6 +35,8 @@
 - [Python in Bioinformatics](https://biosyneg.com/course-python-in-bioinformatics.html): recorded course, 6 lectures, ~15.5 hours, المعلوماتية الحيوية — تعلّم بايثون من البداية وطبّقها في المعلوماتية الحيوية: أساسيات البرمجة، والتعامل مع الملفات والتسلسلات، وتحليل البيانات البيولوجية.
 - [R Language in Bioinformatics](https://biosyneg.com/course-r-language-in-bioinformatics.html): recorded course, 6 lectures, ~16.8 hours, المعلوماتية الحيوية — تعلّم لغة R من الصفر لتحليل البيانات البيولوجية: التعامل مع البيانات وتنظيفها وتحليلها إحصائيًا ورسمها، مع مشروع تطبيقي في المعلوماتية الحيوية.
 - [Basics of IVF Laboratories](https://biosyneg.com/course-basics-of-ivf-laboratories.html): recorded course, 11 lectures, ~7.3 hours, الطب التناسلي — دورة مسجلة باللغة العربية في أساسيات معامل الحقن المجهري وأطفال الأنابيب: تحليل السائل المنوي، وتجهيز البويضات، ونمو الأجنة حتى الكيسة الأريمية.
+- [Computational Biology](https://biosyneg.com/course-computational-biology.html): recorded course, 37 lectures, ~14.5 hours, المعلوماتية الحيوية — دورة عملية في البيولوجيا الحاسوبية: قواعد البيانات الحيوية، وتحليل التسلسلات وBLAST، وتقنيات التسلسل، وتحليل بيانات DNA وRNA-Seq، والتعبير الجيني التفاضلي بلغة R.
+- [Structural Bioinformatics, Molecular Docking and Drug Design](https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html): recorded course, 63 lectures, ~19.0 hours, المعلوماتية الحيوية — دورة عملية من 63 محاضرة في المعلوماتية الحيوية البنيوية وتصميم الأدوية بالحاسوب: اختيار الهدف، والتنبؤ ببنية البروتين، ومكتبات المركبات، والالتحام الجزيئي، وتحليل التداخلات وADMET.
 
 ## Courses by faculty
 - [كلية العلوم](https://biosyneg.com/topic-science.html)

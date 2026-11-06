@@ -12,7 +12,7 @@
 - Certificates: every completed course issues a Biosyn Egypt certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify.html
 - Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available
 - Founded: 2020, by Abdo Mostafa (B.Sc. in Science)
-- Served: more than 20,005 students, researchers and university staff in 8 countries
+- Served: more than 20,006 students, researchers and university staff in 8 countries
 - About page: https://biosyneg.com/about.html
 
 ## Subscription prices (EGP)
@@ -23,26 +23,25 @@
 
 ## Course details
 
-### Some Concepts in Clinical Research
-URL: https://biosyneg.com/course-some-concepts-in-clinical-research.html
+### Introduction To Genetics
+URL: https://biosyneg.com/course-introduction-to-genetics.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 
-تقدّم هذه الدورة المفاهيم الأساسية للبحث السريري من زاوية تاريخية وأخلاقية، لتفهم لماذا وُضعت قواعد البحث على البشر بهذا الشكل.
+تقدّم هذه الدورة مدخلًا منظمًا إلى علم الوراثة، يبدأ من الأسئلة الأولى: كيف تنتقل الصفات من الآباء إلى الأبناء؟ وكيف تحوّلت قوانين مندل المجردة إلى فهم مادي للكروموسومات والحمض النووي؟
 
-تبدأ الدورة بتاريخ البحث السريري، ثم تعرض التجارب غير الأخلاقية التي غيّرت القواعد، وقانون نورمبرغ، وإعلان هلسنكي وتجارب الأدوية، وتشرح المبادئ الأخلاقية الأساسية، والموافقة المستنيرة (Informed Consent) ودور لجان الأخلاقيات (IRB)، ثم تُختتم بمراجعة واختبار قصير.
+تشرح الدورة الأساس الخلوي للوراثة من خلال الانقسام الاختزالي والعبور الجيني، ثم الوراثة المندلية والتهجين الثنائي، والارتباط الجيني وحساب تكرار إعادة الاتحاد ورسم الخرائط الجينية. بعد ذلك تنتقل إلى العقيدة المركزية للبيولوجيا الجزيئية وتنظيم التعبير الجيني بعد النسخ، ثم وراثة العشائر وشروط اتزان هاردي-واينبرغ، وتُختتم بتفاعل الجينات مع البيئة في الصفات المعقدة.
 
-الدورة مناسبة لطلاب الطب والصيدلة والعلوم الصحية، وللباحثين الذين يستعدون لتقديم بروتوكول بحثي إلى لجنة أخلاقيات.
+الدورة مناسبة لطلاب العلوم والتكنولوجيا الحيوية والطب والصيدلة والزراعة، ولكل من يحتاج إلى أساس واضح في الوراثة قبل دراسة البيولوجيا الجزيئية أو الهندسة الوراثية أو المعلوماتية الحيوية.
 
 Lectures:
-1. History of Clinical Research
-2. Nazi Experiments (Part 1)
-3. Nazi Experiments (Part 2)
-4. Other Unethical Experiments
-5. The Nuremberg Code
-6. Declaration of Helsinki & Drug Trials
-7. Ethical Principles
-8. Informed Consent & IRB
-9. Recap & Quiz
+1. Foundations: From Mendel to DNA
+2. Meiosis and Recombination
+3. Mendelian Inheritance and the Dihybrid Cross
+4. Linkage and Genetic Mapping
+5. The Central Dogma of Molecular Biology
+6. Gene Regulation Beyond Transcription
+7. Population Genetics and Hardy–Weinberg Equilibrium
+8. Genes, Environment and Complex Traits
 
 ### Computational Neuroscience
 URL: https://biosyneg.com/course-computational-neuroscience.html
@@ -91,6 +90,47 @@ Lectures:
 5. Cell-Mediated Immunity (CMI)
 6. Humoral Immune Response
 7. The Complement System
+
+### Introduction To Genetic Engineering
+URL: https://biosyneg.com/course-introduction-to-genetic-engineering.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+الهندسة الوراثية هي الأساس الذي تقوم عليه صناعة الإنسولين واللقاحات والإنزيمات والمحاصيل المحسّنة. تشرح هذه الدورة كيف نقرأ الحمض النووي ونقطعه وننقله ونعيد كتابته، خطوة بخطوة وباللغة العربية.
+
+تبدأ الدورة بالحمض النووي بوصفه شفرة الحياة، ثم تشريح الناقل الوظيفي (Vector) ومكوناته، وإنزيمات القطع وتسلسلات التعرف، ومراحل عزل الجين ومضاعفته بتقنية PCR، ثم استخدام الإشريكية القولونية (E. coli) عائلًا للإنتاج، والانتقال من المعمل إلى التخمير والمفاعلات الحيوية. وتتناول بعد ذلك تقنيات تحرير الجينوم مثل إيقاف الجين وإدخاله والاستبدال الدقيق، وتُختتم بجلسة تطبيقية لتصميم تجربة استنساخ على الحاسوب.
+
+الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والزراعة، ولكل من يريد فهمًا عمليًا للهندسة الوراثية قبل العمل في معامل البيولوجيا الجزيئية أو الصناعات الحيوية.
+
+Lectures:
+1. DNA: The Code of Life
+2. The Anatomy of a Functional Vector
+3. Restriction Enzymes and Recognition Sequences
+4. Gene Isolation and PCR Amplification
+5. E. coli: The Biotech Workhorse
+6. Scaling Up: Fermentation and Bioreactors
+7. Genome Editing: Knockout, Insertion and Replacement
+8. In Silico Cloning Design (Practical)
+
+### Some Concepts in Clinical Research
+URL: https://biosyneg.com/course-some-concepts-in-clinical-research.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+تقدّم هذه الدورة المفاهيم الأساسية للبحث السريري من زاوية تاريخية وأخلاقية، لتفهم لماذا وُضعت قواعد البحث على البشر بهذا الشكل.
+
+تبدأ الدورة بتاريخ البحث السريري، ثم تعرض التجارب غير الأخلاقية التي غيّرت القواعد، وقانون نورمبرغ، وإعلان هلسنكي وتجارب الأدوية، وتشرح المبادئ الأخلاقية الأساسية، والموافقة المستنيرة (Informed Consent) ودور لجان الأخلاقيات (IRB)، ثم تُختتم بمراجعة واختبار قصير.
+
+الدورة مناسبة لطلاب الطب والصيدلة والعلوم الصحية، وللباحثين الذين يستعدون لتقديم بروتوكول بحثي إلى لجنة أخلاقيات.
+
+Lectures:
+1. History of Clinical Research
+2. Nazi Experiments (Part 1)
+3. Nazi Experiments (Part 2)
+4. Other Unethical Experiments
+5. The Nuremberg Code
+6. Declaration of Helsinki & Drug Trials
+7. Ethical Principles
+8. Informed Consent & IRB
+9. Recap & Quiz
 
 ### Bioinformatics Diploma
 URL: https://biosyneg.com/course-bioinformtics-diploma.html
@@ -250,6 +290,130 @@ Lectures:
 9. Oocyte and Embryo Cryopreservation
 10. PGT and Implantation
 11. Interpretations
+
+### Computational Biology
+URL: https://biosyneg.com/course-computational-biology.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+البيولوجيا الحاسوبية هي الطريق لتحويل البيانات البيولوجية الضخمة إلى نتائج يمكن فهمها ونشرها. تجمع هذه الدورة بين الشرح النظري والتطبيق العملي في 37 محاضرة، لتأخذك من أول قاعدة بيانات إلى تحليل التعبير الجيني.
+
+تبدأ الدورة بصيغ التسلسلات وقواعد البيانات الأساسية مع تطبيق عملي على NCBI وUniProt وRCSB PDB، ثم تحليل التسلسلات والمحاذاة وBLAST. بعدها تشرح مفاهيم تقنيات التسلسل: سانجر والجيل التالي (NGS) وأكسفورد نانوبور (ONT)، ثم تحليل بيانات تسلسل الحمض النووي: فحص الجودة بأداة FastQC وقراءة التقارير الجيدة والسيئة، والمحاذاة على الجينوم المرجعي (Mapping)، والعمل على سطر أوامر لينكس.
+
+ويُختتم المسار بتسلسل الحمض النووي الريبي (RNA-Seq) ومنهجية تحليل التعبير الجيني التفاضلي، مع مقدمة عملية في لغة R وتطبيق كامل لتحليل التعبير التفاضلي. الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والطب، وللباحثين الذين يريدون تحليل بيانات التسلسل بأنفسهم.
+
+Lectures:
+1. Introduction to Computational Biology
+2. Sequence Formats and Databases (Part 1)
+3. Sequence Formats and Databases (Part 2)
+4. Practice: Navigating NCBI (Part 1)
+5. Practice: Navigating NCBI (Part 2)
+6. Practice: Navigating UniProt
+7. Practice: Navigating the RCSB PDB
+8. Sequence Analysis (Part 1)
+9. Sequence Analysis (Part 2)
+10. Practice: Sequence Alignment
+11. Practice: BLAST
+12. Sequencing Concepts: Sanger Sequencing
+13. Sequencing Concepts: NGS
+14. Sequencing Concepts: Oxford Nanopore (ONT)
+15. DNA Sequencing Analysis: Quality Control with FastQC
+16. DNA Sequencing Analysis: Mapping (Part 1)
+17. DNA Sequencing Analysis: Mapping (Part 2)
+18. DNA Sequencing Analysis: Introduction to Linux
+19. Practice: Reading a Bad QC Report
+20. Practice: Reading a Good QC Report
+21. Practice: Sequencing Resources
+22. Practice: Introduction to Linux (Part 1)
+23. Practice: Introduction to Linux (Part 2)
+24. Practice: DNA Sequencing Analysis (Part 1)
+25. Practice: DNA Sequencing Analysis (Part 2)
+26. Sequencing Goals
+27. RNA Sequencing (Part 1)
+28. RNA Sequencing (Part 2)
+29. Differential Expression Analysis Methodology
+30. Practice: Exploring Important Databases
+31. Practice: Introduction to R (Part 1)
+32. Practice: Introduction to R (Part 2)
+33. Practice: Introduction to R (Part 3)
+34. Practice: Introduction to R (Part 4)
+35. Practice: Differential Expression Analysis (Part 1)
+36. Practice: Differential Expression Analysis (Part 2)
+37. Practice: Differential Expression Analysis (Part 3)
+
+### Structural Bioinformatics, Molecular Docking and Drug Design
+URL: https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html
+Type: Recorded (subscription) · Level: Intermediate · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+تصميم الأدوية بمساعدة الحاسوب أصبح خطوة أساسية في اكتشاف الأدوية الحديثة، لأنه يقلل عدد المركبات التي تحتاج إلى اختبار في المعمل. تأخذك هذه الدورة في مشروع متكامل خطوة بخطوة، من اختيار البروتين الهدف حتى تحليل نتائج الالتحام الجزيئي.
+
+تبدأ الدورة بأساسيات بنية البروتين ووظيفته، ثم إطار العمل لمشروعك: كيف تفكر في المشروع، وتختار الهدف، وتحصل على بنيته من قواعد البيانات، مع دراسة حالة عملية على مثبطات إنزيم COX، وطرق عرض البروتين وتحليله بصريًا. بعد ذلك تشرح التنبؤ ببنية البروتين: طي البروتين، والنمذجة بالتماثل، وطرق التنبؤ من البداية (Ab initio)، وتقييم جودة النماذج.
+
+وتنتقل الدورة إلى مكتبات المركبات وقواعد بياناتها مثل ChEMBL وPubChem وZINC وDrugBank والفحص الافتراضي وقواعد شبه الدواء (Lipinski)، ثم نظرية الالتحام الجزيئي وخوارزميات البحث ودوال التقييم والتحقق من صحة الالتحام، وتجهيز البروتين والمركبات وتنفيذ الالتحام عمليًا، وتحليل التداخلات بين البروتين والمركب والتنبؤ بخصائص ADMET. الدورة مناسبة لطلاب الصيدلة والتكنولوجيا الحيوية والعلوم والباحثين في اكتشاف الأدوية.
+
+Lectures:
+1. Course Preview
+2. Introduction (Part 1)
+3. Introduction (Part 2)
+4. Protein Structure and Function (Part 1)
+5. Protein Structure and Function (Part 2)
+6. A Quick Word Before We Proceed
+7. The Project Framework
+8. Think About Your Project
+9. Choose Your Target
+10. Retrieve Your Target Structure (Part 1)
+11. Retrieve Your Target Structure (Part 2)
+12. Practical Case Study: COX Inhibitors
+13. Visualize Your Protein (Part 1)
+14. Visualize Your Protein (Part 2)
+15. Visualize Your Protein (Part 3)
+16. Protein Structure Prediction (Part 1)
+17. Protein Structure Prediction (Part 2)
+18. Protein Structure Prediction (Part 3)
+19. Protein Structure Prediction (Part 4)
+20. Protein Structure Prediction (Part 5)
+21. Protein Structure Prediction (Part 6)
+22. Protein Structure Prediction (Part 7)
+23. Protein Structure Prediction (Part 8)
+24. Protein Structure Prediction (Part 9)
+25. Protein Structure Prediction (Part 10)
+26. Protein Structure Prediction (Part 11)
+27. Protein Structure Prediction (Part 12)
+28. Protein Structure Prediction (Part 13)
+29. Protein Structure Prediction (Part 14)
+30. Protein Structure Prediction (Part 15)
+31. Protein Structure Prediction (Part 16)
+32. Protein Structure Prediction (Part 17)
+33. Protein Structure Prediction (Part 18)
+34. Protein Structure Prediction (Part 19)
+35. Compound Libraries and Virtual Screening (Part 1)
+36. Compound Libraries and Virtual Screening (Part 2)
+37. Compound Libraries and Virtual Screening (Part 3)
+38. Compound Libraries and Virtual Screening (Part 4)
+39. Compound Libraries and Virtual Screening (Part 5)
+40. Compound Libraries and Virtual Screening (Part 6)
+41. Compound Libraries and Virtual Screening (Part 7)
+42. Compound Libraries and Virtual Screening (Part 8)
+43. Molecular Docking: Theory and Setup (Part 1)
+44. Molecular Docking: Theory and Setup (Part 2)
+45. Molecular Docking: Theory and Setup (Part 3)
+46. Molecular Docking: Theory and Setup (Part 4)
+47. Molecular Docking: Theory and Setup (Part 5)
+48. Molecular Docking: Theory and Setup (Part 6)
+49. Molecular Docking: Theory and Setup (Part 7)
+50. Running Molecular Docking (Part 1)
+51. Running Molecular Docking (Part 2)
+52. Running Molecular Docking (Part 3)
+53. Running Molecular Docking (Part 4)
+54. Running Molecular Docking (Part 5)
+55. Running Molecular Docking (Part 6)
+56. Protein–Ligand Interactions and ADMET (Part 1)
+57. Protein–Ligand Interactions and ADMET (Part 2)
+58. Protein–Ligand Interactions and ADMET (Part 3)
+59. Protein–Ligand Interactions and ADMET (Part 4)
+60. Protein–Ligand Interactions and ADMET (Part 5)
+61. Protein–Ligand Interactions and ADMET (Part 6)
+62. Protein–Ligand Interactions and ADMET (Part 7)
+63. Protein–Ligand Interactions and ADMET (Part 8)
 
 ## FAQ
 
