@@ -1896,7 +1896,11 @@ window.I18N_EN = {
   "سلمى صبحي": "Salma Sobhy",
   "د. محمود محمد": "Dr. Mahmoud Mohamed",
   "دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر": "PhD in Pharmaceutical Sciences (Microbiology and Immunology), Faculty of Pharmacy, Al-Azhar University",
-  "حاصل على دكتوراه وماجستير العلوم الصيدلانية في الميكروبيولوجيا والمناعة من كلية الصيدلة، جامعة الأزهر، وبكالوريوس العلوم الصيدلانية من الكلية نفسها بتقدير امتياز مع مرتبة الشرف.": "Holds a PhD and an MSc in Pharmaceutical Sciences (Microbiology and Immunology) from the Faculty of Pharmacy, Al-Azhar University, and a Bachelor of Pharmaceutical Sciences from the same faculty with Excellent with Honors."
+  "حاصل على دكتوراه وماجستير العلوم الصيدلانية في الميكروبيولوجيا والمناعة من كلية الصيدلة، جامعة الأزهر، وبكالوريوس العلوم الصيدلانية من الكلية نفسها بتقدير امتياز مع مرتبة الشرف.": "Holds a PhD and an MSc in Pharmaceutical Sciences (Microbiology and Immunology) from the Faculty of Pharmacy, Al-Azhar University, and a Bachelor of Pharmaceutical Sciences from the same faculty with Excellent with Honors.",
+  "أو استخدم صورة رمزية:": "Or use an avatar:",
+  "رجل": "Man",
+  "امرأة": "Woman",
+  "تم اختيار الصورة الرمزية. اضغط «حفظ».": "Avatar selected. Click “Save”."
 };
 
 window.I18N_EN_PATTERNS = (function () {

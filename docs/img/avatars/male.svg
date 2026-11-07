@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" role="img" aria-label="Instructor"><defs><linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b3fb0"/><stop offset="1" stop-color="#14176b"/></linearGradient><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9edff"/><stop offset="1" stop-color="#c9cff5"/></linearGradient><clipPath id="c"><circle cx="250" cy="250" r="250"/></clipPath></defs>
+<g clip-path="url(#c)"><rect width="500" height="500" fill="url(#b)"/>
+<path d="M70 520c0-110 80-170 180-170s180 60 180 170z" fill="#010232"/>
+<path d="M210 330h80v50c0 22-18 40-40 40s-40-18-40-40z" fill="url(#s)"/>
+<path d="M214 352l36 44 36-44 22 12-58 64-58-64z" fill="#c6f84a"/>
+<circle cx="250" cy="225" r="88" fill="url(#s)"/>
+<path d="M162 222c-4-62 36-104 92-104 54 0 92 34 90 100-14-30-40-46-74-50-34-4-74 6-108 54z" fill="#010232"/></g></svg>

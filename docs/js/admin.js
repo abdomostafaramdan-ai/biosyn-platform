@@ -413,12 +413,14 @@
           <div class="bx-field"><label for="fs">الترتيب</label><input id="fs" class="bx-input" type="number" dir="ltr" value="${x.sort}"></div></div>
           <div class="bx-field"><label for="fpf">الصورة (اختياري)</label>${x.photo_url ? `<img src="${esc(x.photo_url)}" alt="" style="width:96px;height:96px;border-radius:50%;object-fit:cover">` : ''}<input id="fpf" type="file" accept="image/png,image/jpeg,image/webp" class="bx-input"><small class="bx-hint">ستظهر أداة لقص الصورة مربعة (500 × 500). إذا لم توجد صورة فسيظهر أول حرفين من الاسم.</small>
             <div class="bx-field"><label for="fpa">النص البديل للصورة (Alt)</label><input id="fpa" class="bx-input" maxlength="160" value="${esc(x.photo_alt || '')}" placeholder="صورة ${esc(x.name || 'المحاضر')}"></div>
+            <div class="bx-btnrow" style="margin-top:6px;align-items:center"><small class="bx-hint" style="margin:0">أو استخدم صورة رمزية:</small><button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" data-av="male">رجل</button><button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" data-av="female">امرأة</button></div>
             <input type="hidden" id="fpu" value="${esc(x.photo_url || '')}">${x.photo_url ? `<label class="bx-hint" style="display:flex;gap:6px;align-items:center;margin-top:6px"><input type="checkbox" id="fpr"> حذف الصورة الحالية</label>` : ''}</div>
           <label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="fvv" ${x.visible ? 'checked' : ''}> ظاهر في الموقع</label>
           <div class="bx-formmsg" aria-live="polite"></div>
           <div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" type="submit">حفظ</button>${isNew ? '' : '<button type="button" class="bs-btn bs-btn-ghost" data-del style="color:var(--danger-text)">حذف</button>'}<button type="button" class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div></form>`,
         (m, close) => {
           $('[data-x]', m).onclick = close;
+          $$('[data-av]', m).forEach((b) => (b.onclick = () => { $('#fpu', m).value = `https://biosyneg.com/img/avatars/${b.dataset.av}.svg`; $('#fpf', m).value = ''; const r = $('#fpr', m); if (r) r.checked = false; ui.toast('تم اختيار الصورة الرمزية. اضغط «حفظ».'); }));
           const del = $('[data-del]', m); if (del) del.onclick = async () => { if (!confirm('حذف المحاضر من الموقع؟')) return; try { await sb.remove('featured_instructors', { id: 'eq.' + x.id }); close(); D.reload(); } catch (e) { ui.toast(arErr(e), 'err'); } };
           $('#fif', m).onsubmit = async (e) => {
             e.preventDefault(); const msg = $('.bx-formmsg', m), btn = $('button[type=submit]', m);
