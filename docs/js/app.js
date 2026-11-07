@@ -591,18 +591,6 @@
     wireRequestForm(forms.find((f) => $('#r-n', f)), 'instructor_recorded', { name: 'r-n', email: 'r-e' });
     wireRequestForm(forms.find((f) => $('#i-n', f)), 'instructor_interactive', { name: 'i-n', email: 'i-e' });
     wireRequestForm(forms.find((f) => $('#h-n', f)), 'instructor_recording_help', { name: 'h-n', email: 'h-e', phone: 'h-p' });
-    // earnings calculator (illustrative)
-    const inc = $('#c-inc'), tv = $('#c-tv'), cv = $('#c-cv'); if (!inc) return;
-    const fmt = (n, d) => Number(n).toLocaleString('en-US', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
-    const tiles = $$('.bx-calc-tile'); const warn = $('.bx-calc-warn');
-    const draw = () => {
-      const I = +inc.value || 0, T = +tv.value || 0, C = +cv.value || 0;
-      const per = T > 0 ? I / T : 0, val = per * C;
-      const set = (i, big, small) => { const t = tiles[i]; if (!t) return; $('b', t).innerHTML = `${big} <small>ج.م</small>`; if (small !== undefined && t.querySelectorAll(':scope > small').length) t.querySelector(':scope > small').textContent = small; };
-      set(0, fmt(per, 2)); set(1, fmt(val, 2), `${fmt(C)} مشاهدة × ${fmt(per, 2)} ج.م`); set(2, fmt(val * 0.3, 2)); set(3, fmt(val * 0.7, 2));
-      if (warn) warn.style.display = T > 0 && C > T ? '' : 'none';
-    };
-    [inc, tv, cv].forEach((e) => e.addEventListener('input', draw)); draw();
   }
 
   function pageInstitutions() { wireRequestForm($('form.bx-formcard'), 'institution', { name: 'o-c', email: 'o-e', phone: 'o-p' }); }
