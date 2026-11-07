@@ -1,4 +1,4 @@
-/* Biosyn Egypt: site behaviour. Pages are static HTML; this file wires them to Supabase. */
+/* Biosyn Eg: site behaviour. Pages are static HTML; this file wires them to Supabase. */
 (() => {
   'use strict';
   const $ = (s, r = document) => r.querySelector(s);
@@ -413,11 +413,11 @@
   window.hydratePlansNow = hydratePlans;
 
   // ---------- catalogue ----------
-  window.courseCard = (c, inst, nLect, href) => `<a class="bs-course" href="${href || 'course-' + encodeURIComponent(c.slug) + '.html'}"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span>${c.cover_url ? `<img class="bs-cover-img" src="${esc(c.cover_url)}" alt="" loading="lazy">` : ''}</div><div class="bs-course-body"><span class="bs-course-kind">${c.kind === 'interactive' ? 'دورة تفاعلية' : 'دورة مسجلة'}</span><h3 class="bs-course-title">${esc(c.title)}</h3><div class="bs-course-meta">${nLect != null ? `<span>${nLect} محاضرة</span>` : ''}${c.kind === 'recorded' ? `<span>${LEVEL[c.level] || ''}</span>` : `<span>${EGP(c.price_egp)} ج.م</span>`}${inst ? `<span>${esc(inst)}</span>` : ''}</div></div></a>`;
+  window.courseCard = (c, inst, nLect, href) => `<a class="bs-course" href="${href || 'course-' + encodeURIComponent(c.slug) + '.html'}"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span>${c.cover_url ? `<img class="bs-cover-img" src="${esc(c.cover_url)}" alt="${esc(c.cover_alt || c.title)}" loading="lazy" width="1280" height="720">` : ''}</div><div class="bs-course-body"><span class="bs-course-kind">${c.kind === 'interactive' ? 'دورة تفاعلية' : 'دورة مسجلة'}</span><h3 class="bs-course-title">${esc(c.title)}</h3><div class="bs-course-meta">${nLect != null ? `<span>${nLect} محاضرة</span>` : ''}${c.kind === 'recorded' ? `<span>${LEVEL[c.level] || ''}</span>` : `<span>${EGP(c.price_egp)} ج.م</span>`}${inst ? `<span>${esc(inst)}</span>` : ''}</div></div></a>`;
 
   async function loadCatalog(kind) {
     const [courses, insts, feat] = await Promise.all([
-      sb.get('courses', { select: '*,lectures(id)', kind: 'eq.' + kind, status: 'eq.published', order: 'created_at.desc' }),
+      sb.get('courses', { select: '*,lectures(id),course_faculties(faculty,specialty,fit)', kind: 'eq.' + kind, status: 'eq.published', order: 'created_at.desc' }),
       sb.get('public_instructors', { select: '*' }).catch(() => []),
       sb.get('featured_instructors', { select: 'id,name' }).catch(() => []),
     ]);
@@ -438,11 +438,11 @@
     const u0 = new URL(location.href);
     let fac = FAC.some((f) => f.id === u0.searchParams.get('f')) ? u0.searchParams.get('f') : '';
     let spec = u0.searchParams.get('s') || '';
-    all.forEach((c) => (c.fac = window.facultyOf ? window.facultyOf(c) : ''));
+    all.forEach((c) => { c.fac = window.facultyOf ? window.facultyOf(c) : ''; c.facs = window.facultiesOf ? window.facultiesOf(c) : new Set([c.fac]); c.specs = new Set([c.specialty, ...(c.course_faculties || []).map((r) => r.specialty)].filter(Boolean)); });
     function fillSpecs() {
       if (!specSel) return;
       const f = FAC.find((x) => x.id === fac);
-      const extra = [...new Set(all.filter((c) => (!fac || c.fac === fac) && c.specialty).map((c) => c.specialty))];
+      const extra = [...new Set(all.filter((c) => !fac || c.facs.has(fac)).flatMap((c) => [...c.specs]))];
       const list = [...new Set([...(f ? f.specs : FAC.flatMap((x) => x.specs)), ...extra])].filter((x) => x !== ALL_SPECS);
       if (spec && !list.includes(spec)) spec = '';
       specSel.innerHTML = '<option value="">كل التخصصات</option>' + list.map((s) => `<option ${s === spec ? 'selected' : ''}>${esc(s)}</option>`).join('');
@@ -470,7 +470,7 @@
     function draw() {
       const t = (q ? q.value : '').trim().toLowerCase();
       const levels = lv.map((c, i) => (c.checked ? ['beginner', 'intermediate', 'advanced'][i] : null)).filter(Boolean);
-      let list = all.filter((c) => (!t || (c.title + ' ' + c.inst).toLowerCase().includes(t)) && (!fac || c.fac === fac || c.fac === 'all') && (!spec || c.specialty === spec || c.specialty === ALL_SPECS) && (!levels.length || (LEVEL_SPAN[c.level] || [c.level]).some((l) => levels.includes(l))) && (!sel || !sel.value || c.inst === sel.value));
+      let list = all.filter((c) => (!t || (c.title + ' ' + c.inst).toLowerCase().includes(t)) && (!fac || c.facs.has(fac) || c.fac === 'all') && (!spec || c.specs.has(spec) || c.specialty === ALL_SPECS) && (!levels.length || (LEVEL_SPAN[c.level] || [c.level]).some((l) => levels.includes(l))) && (!sel || !sel.value || c.inst === sel.value));
       const s = sort ? sort.selectedIndex : 0;
       if (s === 3) list.sort((a, b) => a.title.localeCompare(b.title)); else if (s === 2) list.reverse();
       grid.innerHTML = list.length ? list.map((c) => courseCard(c, c.inst, c.n)).join('') : `<div class="bx-empty-big" style="grid-column:1/-1"><b>${all.length ? 'لا توجد نتائج مطابقة' : 'لا توجد دورات منشورة بعد'}</b>${all.length ? 'جرّب تغيير البحث أو الفلاتر.' : 'سنضيف الدورات هنا فور نشرها.'}</div>`;
@@ -645,12 +645,14 @@
   // ---------- instructors (featured_instructors table, managed from Admin) ----------
   const initials = (n) => String(n || '').replace(/^(د|أ\.?د|م)\.\s*/, '').trim().split(/\s+/).slice(0, 2).map((w) => w.replace(/^ال(?=..)/, '').charAt(0)).join(' ');
   window.instInitials = initials;
+  window.teacherHref = window.teacherHref || ((t) => (t.slug && ((t.title || '').length >= 30 || (t.bio || '').length >= 60) ? `teacher-${encodeURIComponent(t.slug)}.html` : ''));
   function instCard(i) {
-    const ph = i.photo_url ? `<img src="${esc(i.photo_url)}" alt="${esc(i.name)}" loading="lazy">` : `<span>${esc(initials(i.name))}</span>`;
-    return `<div class="bs-inst"><div class="bs-inst-photo">${ph}</div><h3 class="bs-inst-name">${esc(i.name)}</h3>${i.title ? `<p class="bs-inst-role">${esc(i.title)}</p>` : ''}</div>`;
+    const ph = i.photo_url ? `<img src="${esc(i.photo_url)}" alt="${esc(i.photo_alt || i.name)}" loading="lazy">` : `<span>${esc(initials(i.name))}</span>`;
+    const h = window.teacherHref ? window.teacherHref(i) : '';
+    return `<${h ? `a href="${h}"` : 'div'} class="bs-inst"><div class="bs-inst-photo">${ph}</div><h3 class="bs-inst-name">${esc(i.name)}</h3>${i.title ? `<p class="bs-inst-role">${esc(i.title)}</p>` : ''}</${h ? 'a' : 'div'}>`;
   }
   async function loadInstructors() {
-    return sb.get('featured_instructors', { select: 'id,name,title,photo_url,faculty,sort', visible: 'eq.true', order: 'sort.asc,created_at.asc' });
+    return sb.get('featured_instructors', { select: 'id,name,title,photo_url,photo_alt,slug,bio,faculty,sort', visible: 'eq.true', order: 'sort.asc,created_at.asc' });
   }
   async function mountInstStrip() {
     const box = $('[data-inst-strip]'); if (!box) return;

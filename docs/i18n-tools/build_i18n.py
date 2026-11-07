@@ -55,7 +55,7 @@ window.I18N_EN_PATTERNS = (function () {
     [new RegExp('^' + N + ' مشاهدة × ' + N + ' ج\\.م$'), (m, a, b) => `${a} views × EGP ${b}`],
     [new RegExp('^' + N + ' دورة$'), (m, n) => `${n} courses`],
     [/^مستوى (.+?) · بالعربية$/, (m, l) => `${T(l)} level · in Arabic`],
-    [/^(.+) \| Biosyn Egypt$/, (m, x) => { const r = T(x); return r === x ? null : `${r} | Biosyn Egypt`; }],
+    [/^(.+) \| Biosyn Eg$/, (m, x) => { const r = T(x); return r === x ? null : `${r} | Biosyn Eg`; }],
     [/^(.+)، (\d{1,2}:\d{2}) ([صم])$/, (m, d, t, ap) => `${d}, ${t} ${ap === 'ص' ? 'AM' : 'PM'}`],
     [/^أكثر من (\d+)$/, (m, n) => `More than ${n}`],
     [/^(.+) (←|→)$/, (m, x, a) => { const r = T(x); return r === x ? null : `${r} →`; }],

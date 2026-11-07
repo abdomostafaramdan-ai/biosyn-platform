@@ -63,16 +63,16 @@
     try { r = await sb.rpc('verify_certificate', { p_code: code }); } catch (e) { return fail('تعذّر تحميل الشهادة', esc(arErr(e))); }
     if (!r || !r.code) return fail('لم نجد شهادة بهذا الرقم', 'تأكد من الرابط، أو <a class="bx-link" href="verify.html">تحقق برقم الشهادة</a>.');
     const url = new URL('certificate.html?c=' + r.code, location.href).href;
-    document.title = `${r.name || 'Certificate'} · ${r.course} | Biosyn Egypt`;
+    document.title = `${r.name || 'Certificate'} · ${r.course} | Biosyn Eg`;
     render(stage, r, new URL('verify.html?c=' + r.code, location.href).href);
     addEventListener('resize', () => fit(stage));
 
     const bar = $('[data-bar]'); bar.hidden = false;
-    $('[data-sub]', bar).innerHTML = `✓ شهادة صحيحة صادرة من Biosyn Egypt · رقم <span class="bs-latin" dir="ltr">${esc(r.code)}</span>`;
+    $('[data-sub]', bar).innerHTML = `✓ شهادة صحيحة صادرة من Biosyn Eg · رقم <span class="bs-latin" dir="ltr">${esc(r.code)}</span>`;
     $('[data-print]', bar).onclick = () => window.print();
     $('[data-copy]', bar).onclick = async () => { try { await navigator.clipboard.writeText(url); ui.toast('تم نسخ رابط الشهادة.'); } catch { ui.toast(url); } };
     const iss = new Date(r.issued_at);
-    $('[data-li]', bar).href = 'https://www.linkedin.com/profile/add?' + new URLSearchParams({ startTask: 'CERTIFICATION_NAME', name: r.course, organizationName: 'Biosyn Egypt', issueYear: iss.getFullYear(), issueMonth: iss.getMonth() + 1, certUrl: url, certId: r.code });
+    $('[data-li]', bar).href = 'https://www.linkedin.com/profile/add?' + new URLSearchParams({ startTask: 'CERTIFICATION_NAME', name: r.course, organizationName: 'Biosyn Eg', issueYear: iss.getFullYear(), issueMonth: iss.getMonth() + 1, certUrl: url, certId: r.code });
 
     // the owner fixes a missing printed name once (it is frozen after that)
     if (!r.name && sb.user) {

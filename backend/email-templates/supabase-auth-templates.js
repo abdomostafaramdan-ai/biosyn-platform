@@ -4,7 +4,7 @@ const B = (l, h) => `<table role="presentation" cellpadding="0" cellspacing="0" 
 const FB = (h) => `<p style="margin:14px 0 0;font-size:12px;line-height:20px;color:#5d6088">لو الزرار مش شغال، انسخ الرابط ده وافتحه في المتصفح:<br><a href="${h}" style="color:#3b3fd8;word-break:break-all" dir="ltr">${h}</a></p>`;
 const C = (c) => `<div style="margin:18px 0;padding:16px;border-radius:12px;background:#f3f5ff;border:1px dashed #c7cdea;text-align:center"><span dir="ltr" style="font-family:Consolas,Menlo,monospace;font-size:30px;font-weight:700;letter-spacing:8px;color:#010232">${c}</span></div>`;
 const N = (t) => `<p style="margin:18px 0 0;padding:12px 14px;border-radius:10px;background:#f7f8fc;font-size:13px;line-height:22px;color:#5d6088">${t}</p>`;
-const L = (pre, h, body) => `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"><title>Biosyn Egypt</title></head>
+const L = (pre, h, body) => `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"><title>Biosyn Eg</title></head>
 <body style="margin:0;padding:0;background:#eef0f8">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0">${pre}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#eef0f8"><tr><td align="center" style="padding:28px 12px">
@@ -16,15 +16,15 @@ const L = (pre, h, body) => `<!doctype html><html lang="ar" dir="rtl"><head><met
 ${body}
 </td></tr>
 <tr><td style="padding:22px 30px 26px;text-align:right"><hr style="border:none;border-top:1px solid #e5e7f2;margin:0 0 16px">
-<p style="margin:0 0 6px;font-size:13px;line-height:21px;color:#010232;font-weight:700">Biosyn Egypt · تعليم علمي وطبي بمحتوى مهني</p>
-<p style="margin:0;font-size:12px;line-height:20px;color:#5d6088"><a href="https://biosyneg.com" style="color:#5d6088;text-decoration:underline">biosyneg.com</a> · <a href="mailto:contact@biosynegypt.com" style="color:#5d6088;text-decoration:underline">contact@biosynegypt.com</a><br>وصلك الإيميل ده لأن عندك حساب على منصة Biosyn Egypt.</p>
+<p style="margin:0 0 6px;font-size:13px;line-height:21px;color:#010232;font-weight:700">Biosyn Eg · تعليم علمي وطبي بمحتوى مهني</p>
+<p style="margin:0;font-size:12px;line-height:20px;color:#5d6088"><a href="https://biosyneg.com" style="color:#5d6088;text-decoration:underline">biosyneg.com</a> · <a href="mailto:contact@biosynegypt.com" style="color:#5d6088;text-decoration:underline">contact@biosynegypt.com</a><br>وصلك الإيميل ده لأن عندك حساب على منصة Biosyn Eg.</p>
 </td></tr></table>
 </td></tr></table></body></html>`;
 const T = {
-  'confirm-sign-up': ['أكّد حسابك في Biosyn Egypt', L('خطوة واحدة وحسابك يبقى جاهز.', 'أهلاً بيك في Biosyn 👋', P('شكرًا إنك سجّلت على منصة Biosyn Egypt. فاضل خطوة واحدة بس: أكّد إيميلك عشان نفعّل حسابك.') + B('أكّد حسابي', CU) + FB(CU) + N('بعد التأكيد تقدر تتصفّح الكورسات وتختار الباقة اللي تناسبك. لو ما عملتش الحساب ده، تجاهل الإيميل وماحدش هيقدر يستخدمه.'))],
+  'confirm-sign-up': ['أكّد حسابك في Biosyn Eg', L('خطوة واحدة وحسابك يبقى جاهز.', 'أهلاً بيك في Biosyn 👋', P('شكرًا إنك سجّلت على منصة Biosyn Eg. فاضل خطوة واحدة بس: أكّد إيميلك عشان نفعّل حسابك.') + B('أكّد حسابي', CU) + FB(CU) + N('بعد التأكيد تقدر تتصفّح الكورسات وتختار الباقة اللي تناسبك. لو ما عملتش الحساب ده، تجاهل الإيميل وماحدش هيقدر يستخدمه.'))],
   'reset-password': ['إعادة تعيين كلمة المرور · Biosyn', L('رابط تعيين كلمة مرور جديدة لحسابك.', 'نسيت كلمة المرور؟', P('وصلنا طلب لإعادة تعيين كلمة المرور الخاصة بحسابك <span dir="ltr">{{ .Email }}</span>. اضغط الزرار واختار كلمة مرور جديدة.') + B('تعيين كلمة مرور جديدة', CU) + FB(CU) + N('الرابط صالح لمدة محدودة ويُستخدم مرة واحدة. لو ما طلبتش ده، تجاهل الإيميل وكلمة المرور الحالية هتفضل زي ما هي.'))],
-  'magic-link-or-otp': ['رابط الدخول لحسابك · Biosyn', L('ادخل حسابك بضغطة واحدة.', 'رابط الدخول لحسابك', P('اضغط الزرار عشان تدخل حسابك على Biosyn Egypt من غير كلمة مرور.') + B('ادخل حسابي', CU) + FB(CU) + N('الرابط صالح لمدة محدودة ويُستخدم مرة واحدة. لو ما طلبتش الدخول، تجاهل الإيميل.'))],
-  'invite-user': ['دعوة للانضمام لمنصة Biosyn Egypt', L('اتدعيت تنضم لمنصة Biosyn Egypt.', 'اتدعيت تنضم لـ Biosyn 🎉', P('فريق Biosyn Egypt بيدعوك تنضم للمنصة. اضغط الزرار عشان تقبل الدعوة وتعمل كلمة المرور بتاعتك.') + B('اقبل الدعوة', CU) + FB(CU) + N('لو مش متوقع الدعوة دي، تقدر تتجاهل الإيميل.'))],
+  'magic-link-or-otp': ['رابط الدخول لحسابك · Biosyn', L('ادخل حسابك بضغطة واحدة.', 'رابط الدخول لحسابك', P('اضغط الزرار عشان تدخل حسابك على Biosyn Eg من غير كلمة مرور.') + B('ادخل حسابي', CU) + FB(CU) + N('الرابط صالح لمدة محدودة ويُستخدم مرة واحدة. لو ما طلبتش الدخول، تجاهل الإيميل.'))],
+  'invite-user': ['دعوة للانضمام لمنصة Biosyn Eg', L('اتدعيت تنضم لمنصة Biosyn Eg.', 'اتدعيت تنضم لـ Biosyn 🎉', P('فريق Biosyn Eg بيدعوك تنضم للمنصة. اضغط الزرار عشان تقبل الدعوة وتعمل كلمة المرور بتاعتك.') + B('اقبل الدعوة', CU) + FB(CU) + N('لو مش متوقع الدعوة دي، تقدر تتجاهل الإيميل.'))],
   'change-email-address': ['أكّد تغيير الإيميل · Biosyn', L('أكّد الإيميل الجديد لحسابك.', 'تأكيد تغيير الإيميل', P('طلبت تغيير إيميل حسابك على Biosyn من <span dir="ltr">{{ .Email }}</span> إلى <span dir="ltr">{{ .NewEmail }}</span>. اضغط الزرار عشان تأكد التغيير.') + B('أكّد الإيميل الجديد', CU) + FB(CU) + N('لو ما طلبتش التغيير ده، تجاهل الإيميل وغيّر كلمة المرور من الإعدادات احتياطيًا.'))],
   'reauthentication': ['كود التحقق: {{ .Token }}', L('كود التحقق الخاص بحسابك.', 'كود التحقق', P('استخدم الكود ده عشان تكمّل العملية اللي بدأتها على حسابك:') + C('{{ .Token }}') + N('الكود صالح لدقايق قليلة. ماتشاركش الكود ده مع أي حد، وفريق Biosyn عمره ما هيطلبه منك.'))],
 };

@@ -136,7 +136,7 @@
   async function courseInst(c) {
     const ids = (c.featured_instructor_ids && c.featured_instructor_ids.length) ? c.featured_instructor_ids : c.featured_instructor_id ? [c.featured_instructor_id] : [];
     if (ids.length) {
-      const f = await sb.get('featured_instructors', { select: 'id,name,title,photo_url', id: 'in.(' + ids.join(',') + ')' }).catch(() => []);
+      const f = await sb.get('featured_instructors', { select: 'id,name,title,photo_url,photo_alt,slug,bio', id: 'in.(' + ids.join(',') + ')' }).catch(() => []);
       const out = ids.map((id) => f.find((x) => x.id === id)).filter(Boolean); if (out.length) return out;
     }
     if (c.instructor_id) {
@@ -146,20 +146,32 @@
     return [];
   }
   const teacherChip = (list) => (list && list.length ? `<div class="bx-teachers">${list.map((t) => `<div class="bs-teacher"><div class="bs-inst-photo">${t.photo_url ? `<img src="${esc(t.photo_url)}" alt="">` : `<span>${esc((window.instInitials ? window.instInitials(t.name) : t.name.charAt(0)) || '')}</span>`}</div><div><small>${list.length > 1 ? 'محاضر' : 'المحاضر'}</small><b>${esc(t.name)}</b></div></div>`).join('')}</div>` : '');
-  const aboutInst = (list) => { const l = (list || []).filter((t) => t.title); return l.length ? `<section class="bs-block-sec bx-aboutinst"><h2>${l.length > 1 ? 'عن المحاضرين' : 'عن المحاضر'}</h2><div style="display:grid;gap:12px">${l.map((t) => `<div class="bs-inst-wide"><div class="bs-inst-photo">${t.photo_url ? `<img src="${esc(t.photo_url)}" alt="">` : `<span>${esc(window.instInitials ? window.instInitials(t.name) : '')}</span>`}</div><div><h3>${esc(t.name)}</h3><p>${esc(t.title)}</p></div></div>`).join('')}</div></section>` : ''; };
+  // instructor profile pages (teacher-<slug>.html) are built for instructors with a real bio or a full title
+  const teacherHref = (t) => (t.slug && ((t.title || '').length >= 30 || (t.bio || '').length >= 60) ? `teacher-${encodeURIComponent(t.slug)}.html` : '');
+  window.teacherHref = teacherHref;
+  const aboutInst = (list) => { const l = (list || []).filter((t) => t.title || t.bio); return l.length ? `<section class="bs-block-sec bx-aboutinst"><h2>${l.length > 1 ? 'عن المحاضرين' : 'عن المحاضر'}</h2><div style="display:grid;gap:12px">${l.map((t) => { const h = teacherHref(t); return `<div class="bs-inst-wide"><div class="bs-inst-photo">${t.photo_url ? `<img src="${esc(t.photo_url)}" alt="${esc(t.photo_alt || t.name)}" loading="lazy">` : `<span>${esc(window.instInitials ? window.instInitials(t.name) : '')}</span>`}</div><div><h3>${h ? `<a class="bx-link" href="${h}">${esc(t.name)}</a>` : esc(t.name)}</h3>${t.title ? `<p>${esc(t.title)}</p>` : ''}${t.bio ? `<p class="bx-muted">${esc(t.bio.length > 260 ? t.bio.slice(0, 257) + '…' : t.bio)}</p>` : ''}${h ? `<a class="bx-link" href="${h}">الملف الكامل والدورات ←</a>` : ''}</div></div>`; }).join('')}</div></section>` : ''; };
+  // «لمن هذه الدورة؟» from the primary faculty + admin-chosen faculties (course_faculties) with fit levels
+  const FIT = { direct: 'مناسبة مباشرة', prereq: 'مناسبة بعد معرفة مسبقة', related: 'مناسبة للتخصصات القريبة' };
+  const fitsHtml = (c) => {
+    const FAC = window.FACULTIES || [], by = Object.fromEntries(FAC.map((f) => [f.id, f])), rows = [], seen = new Set();
+    const add = (fid, sp, fit) => { const f = by[fid], k = fid + '|' + (sp || ''); if (f && !seen.has(k)) { seen.add(k); rows.push({ f, sp: sp && sp !== 'كل التخصصات' ? sp : '', fit: fit || 'direct' }); } };
+    add(c.faculty, c.specialty, 'direct'); (c.course_faculties || []).forEach((r) => add(r.faculty, r.specialty, r.fit));
+    if (!rows.length) return '';
+    return `<section class="bs-block-sec bx-fits"><h2>لمن هذه الدورة؟</h2>${['direct', 'prereq', 'related'].filter((k) => rows.some((r) => r.fit === k)).map((k) => `<p><b>${FIT[k]}:</b> ${rows.filter((r) => r.fit === k).map((r) => `<a class="bx-link" href="courses.html?f=${encodeURIComponent(r.f.id)}">${esc(r.f.name)}</a>${r.sp ? ` (${esc(r.sp)})` : ''}`).join('، ')}</p>`).join('')}</section>`;
+  };
   P.course = async () => {
     const root = $('#course-root'), slug = document.body.dataset.slug || new URLSearchParams(location.search).get('c');
     if (!slug) { location.replace('courses.html'); return; }
     try { window.REGION_NOW = await window.REGION; } catch {}
     let c;
     const pre = !!document.body.dataset.slug;   // pre-rendered SEO page: keep its content if live data can't load
-    try { c = await sb.one('courses', { select: '*,lectures(id,position,title,duration_seconds,is_preview)', slug: 'eq.' + slug }); } catch (e) { if (pre) return; root.innerHTML = `<div class="bx-empty-big" style="margin:80px 16px"><b>تعذّر تحميل الدورة</b>${esc(arErr(e))}</div>`; return; }
+    try { c = await sb.one('courses', { select: '*,lectures(id,position,title,duration_seconds,is_preview),course_faculties(faculty,specialty,fit)', slug: 'eq.' + slug }); } catch (e) { if (pre) return; root.innerHTML = `<div class="bx-empty-big" style="margin:80px 16px"><b>تعذّر تحميل الدورة</b>${esc(arErr(e))}</div>`; return; }
     if (!c) { const x = $('#seo-extra'); if (x) x.remove(); root.innerHTML = '<div class="bx-empty-big" style="margin:80px auto;max-width:560px"><b>هذه الدورة غير متاحة</b>قد تكون غير منشورة بعد. <a class="bx-link" href="courses.html">تصفح الدورات</a></div>'; return; }
     const nL = Number(await sb.rpc('course_learners', { p_course: c.id }).catch(() => 0)) || 0;
     // Arabic number agreement: 1 طالب واحد / 2 طالبان / 3-10 طلاب / 11+ طالبًا
     const learnersTxt = (plural, one, two) => nL > 0 ? `<span class="bx-learners">👥 ${nL === 1 ? `طالب واحد ${one}` : nL === 2 ? `طالبان ${two}` : `<b>${EGP(nL)}</b> ${nL % 100 >= 3 && nL % 100 <= 10 ? 'طلاب' : 'طالبًا'} ${plural}`}</span>` : `<span class="bx-learners">👥 كن من أوائل المشتركين</span>`;
     if (c.kind === 'interactive') {
-      if (!pre) { document.title = c.title + ' | Biosyn Egypt'; window.setMeta && setMeta(c.title + ' | Biosyn Egypt', (c.summary || c.description || '').slice(0, 160)); }
+      if (!pre) { document.title = c.title + ' | Biosyn Eg'; window.setMeta && setMeta(c.title + ' | Biosyn Eg', (c.summary || c.description || '').slice(0, 160)); }
       const T = await courseInst(c);
       const fc = window.facOf ? window.facOf(c) : null, I = window.BX_ICO || {};
       root.innerHTML = `<section class="bs-course-hero"><span class="bs-wm" aria-hidden="true"></span><div class="bs-course-hero-in"><div>
@@ -170,7 +182,7 @@
         ${teacherChip(T)}
         </div><div class="bs-spacer"></div></div></section>
         <div class="bs-course-main"><div>${c.description ? `<section class="bs-block-sec" style="margin-top:48px"><h2>عن الدورة</h2>${c.description.split(/\n{2,}/).map((p) => `<p>${esc(p)}</p>`).join('')}</section>` : '<div style="height:48px"></div>'}
-        ${aboutInst(T)}<section class="bs-block-sec"><h2>سياسة الاسترداد</h2><p>يمكن استرداد رسوم الدورة التفاعلية خلال 7 أيام من تاريخ الدفع.</p></section></div>
+        ${fitsHtml(c)}${aboutInst(T)}<section class="bs-block-sec"><h2>سياسة الاسترداد</h2><p>يمكن استرداد رسوم الدورة التفاعلية خلال 7 أيام من تاريخ الدفع.</p></section></div>
         <aside class="bs-enroll"><div class="bs-cover bx-icover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span>${fc ? `<span class="bx-pcard-ic"><svg viewBox="0 0 24 24">${fc.icon}</svg></span><span class="bx-pcard-fac">${esc(fc.name)}</span>` : `<span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span>`}</div>
         <div class="bs-enroll-body"><div class="bs-enroll-access"><b>${priceTxt(c.price_egp, window.REGION_NOW, c.intl_price)}</b></div>
         <ul class="bx-pcard-facts bx-ifacts">${c.starts_at ? `<li>${I.cal}<span>يبدأ ${esc(window.fmtDay(c.starts_at))}</span></li>` : ''}${c.seats ? `<li>${I.seat}<span>${c.seats} مقعد</span></li>` : ''}${LEVEL[c.level] ? `<li>${I.lvl}<span>${LEVEL[c.level]}</span></li>` : ''}<li>${I.live}<span>مباشر أونلاين</span></li></ul>
@@ -179,9 +191,9 @@
       $('#reg').onclick = () => attendeeThen(() => window.checkout({ course_id: c.id, title: c.title, price: c.price_egp, intl: c.intl_price }));
       return;
     }
-    if (!pre) document.title = c.title + ' | Biosyn Egypt';
+    if (!pre) document.title = c.title + ' | Biosyn Eg';
     window.track && track('view_content', { item: c.title, id: c.id });
-    !pre && window.setMeta && setMeta(c.title + ' | Biosyn Egypt', (c.summary || c.description || 'دورة مسجلة على منصة Biosyn Egypt').slice(0, 160));
+    !pre && window.setMeta && setMeta(c.title + ' | Biosyn Eg', (c.summary || c.description || 'دورة مسجلة على منصة Biosyn Eg').slice(0, 160));
     const lects = (c.lectures || []).sort((a, b) => a.position - b.position);
     const total = lects.reduce((s, l) => s + (l.duration_seconds || 0), 0);
     const [T, plans, subscribed] = await Promise.all([courseInst(c), sb.get('plans', { select: '*', active: 'eq.true', order: 'duration_months' }).catch(() => []), hasSubscription()]);
@@ -201,10 +213,11 @@
       </div><div class="bs-spacer"></div></div></section>
     <div class="bs-course-main"><div>
       ${c.description ? `<section class="bs-block-sec" style="margin-top:48px"><h2>عن الدورة</h2>${c.description.split(/\n{2,}/).map((p) => `<p>${esc(p)}</p>`).join('')}</section>` : ''}
+      ${fitsHtml(c)}
       <section class="bs-block-sec" style="${c.description ? '' : 'margin-top:48px'}"><h2>محتوى الدورة</h2>
         ${lects.length ? `<div class="bs-curr"><div class="bs-curr-head"><b>محتوى الدورة</b><span>${lects.length} محاضرة${total ? ' · ' + esc(hoursText(total)) : ''}</span></div><ol class="bs-curr-list">${lects.map((l, i) => `<li class="bs-curr-item"><span class="bs-curr-num bs-latin">${String(i + 1).padStart(2, '0')}</span><span class="bs-play" aria-hidden="true">${subscribed || l.is_preview ? ICON_PLAY : ICON_LOCK}</span><span class="bs-curr-title bs-latin">${subscribed || l.is_preview ? `<a href="watch.html?c=${esc(c.slug)}&l=${l.id}" style="color:inherit;text-decoration:none">${esc(l.title)}</a>` : esc(l.title)}${!subscribed && l.is_preview ? ' <span class="bs-badge bs-badge-new" style="margin-inline-start:6px">معاينة مجانية</span>' : ''}</span><span class="bs-curr-dur bs-latin">${l.duration_seconds ? dur(l.duration_seconds) : ''}</span></li>`).join('')}</ol></div>` : '<div class="bx-empty-big"><b>المحاضرات قيد الإضافة</b>سنعلن عند نشر الدورة كاملة.</div>'}
       </section>${aboutInst(T)}</div>
-      <aside class="bs-enroll"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span>${c.cover_url ? `<img class="bs-cover-img" src="${esc(c.cover_url)}" alt="">` : ''}</div>
+      <aside class="bs-enroll"><div class="bs-cover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span><span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span>${c.cover_url ? `<img class="bs-cover-img" src="${esc(c.cover_url)}" alt="${esc(c.cover_alt || c.title)}" width="1280" height="720">` : ''}</div>
         <div class="bs-enroll-body"><div class="bs-enroll-access"><span>${subscribed ? 'اشتراكك ساري' : 'متاحة مع الاشتراك'}</span>${!subscribed && from ? `<b>تبدأ من ${priceTxt(from.price_egp, window.REGION_NOW, from.intl_price)} / ${from.duration_months === 1 ? 'شهريًا' : from.duration_months + ' أشهر'}</b>` : ''}</div>
         ${cta}
         <ul class="bs-checks bs-checks-sm"><li>${ICON_CHECK}<span>${lects.length} محاضرة مسجلة${total ? ' (حوالي ' + esc(hoursText(total)) + ')' : ''}</span></li><li>${ICON_CHECK}<span>شهادة إتمام عند إنهاء الدورة</span></li><li>${ICON_CHECK}<span>مستوى ${LEVEL[c.level] || 'مبتدئ'} · بالعربية</span></li></ul></div></aside></div>
@@ -228,7 +241,7 @@
     if (!c) return fail('هذه الدورة غير متاحة', '');
     const lects = (c.lectures || []).sort((a, b) => a.position - b.position);
     if (!lects.length) return fail('المحاضرات قيد الإضافة', 'سنعلن عند نشرها.', ' <a class="bx-link" href="courses.html">رجوع</a>');
-    document.title = c.title + ' | Biosyn Egypt';
+    document.title = c.title + ' | Biosyn Eg';
 
     let prog = {};
     const loadProg = async () => {
@@ -474,7 +487,7 @@
     if (document.body.dataset.slug && !box.querySelector('.bx-loading')) return;   // pre-rendered SEO page
     let x; try { x = await sb.one('posts', { select: '*', slug: 'eq.' + slug, published: 'eq.true' }); } catch (e) { box.innerHTML = `<div class="bx-empty-big"><b>تعذّر التحميل</b>${esc(arErr(e))}</div>`; return; }
     if (!x) { box.innerHTML = '<div class="bx-empty-big"><b>المقال غير موجود</b><a class="bx-link" href="blog.html">كل المقالات</a></div>'; return; }
-    window.setMeta && setMeta(x.title + ' | Biosyn Egypt', (x.excerpt || x.body || '').slice(0, 160));
+    window.setMeta && setMeta(x.title + ' | Biosyn Eg', (x.excerpt || x.body || '').slice(0, 160));
     box.innerHTML = `<nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><a href="blog.html">المدونة</a></nav><small class="bx-hint">${esc(x.tag || 'مقال')} · ${fdate(x.published_at)}</small><h1>${esc(x.title)}</h1>${x.excerpt ? `<p class="bs-lead" style="color:var(--ink-muted)">${esc(x.excerpt)}</p>` : ''}<div class="bx-prose" style="margin-top:32px">${md(x.body)}</div><div class="bx-banner" style="display:block;margin-top:40px"><b>تعلّم أكثر مع Biosyn</b><p style="margin:6px 0 0">دورات مسجلة في العلوم الحيوية والطبية باشتراك واحد. <a class="bx-link" href="courses.html">تصفح الدورات</a></p></div>`;
   };
   window.renderPostBody = md;
@@ -486,7 +499,7 @@
     if (!slug) return fail('النموذج غير موجود', 'تأكد من الرابط.');
     let f; try { f = await sb.one('forms', { select: 'slug,title,description,fields,submit_label,success_message,settings', slug: 'eq.' + slug }); } catch (e) { return fail('تعذّر تحميل النموذج', esc(arErr(e))); }
     if (!f) return fail('النموذج غير متاح', 'قد يكون مغلقًا أو الرابط غير صحيح.');
-    document.title = f.title + ' | Biosyn Egypt'; window.setMeta && setMeta(f.title + ' | Biosyn Egypt', (f.description || '').slice(0, 160));
+    document.title = f.title + ' | Biosyn Eg'; window.setMeta && setMeta(f.title + ' | Biosyn Eg', (f.description || '').slice(0, 160));
     const fld = (x) => {
       const id = 'ff-' + x.id, req = x.required ? ' required' : '', star = x.required ? ' *' : '', opts = (x.options || []).filter(Boolean);
       const lab = `<label for="${id}">${esc(x.label)}${star}</label>`;

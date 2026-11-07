@@ -1,4 +1,4 @@
-# Biosyn Egypt — search and AI crawlers are welcome on public pages
+# Biosyn Eg — search and AI crawlers are welcome on public pages
 User-agent: *
 Disallow: /account.html
 Disallow: /admin.html

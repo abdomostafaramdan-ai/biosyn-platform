@@ -52,7 +52,7 @@
   const ATTRS = ['placeholder', 'aria-label', 'title', 'alt'];
   function textNode(n) {
     const v = n.nodeValue; if (!v || !AR.test(v)) return;
-    const p = n.parentNode; if (p && (p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE' || p.closest && p.closest('[data-no-i18n]'))) return;
+    const p = n.parentNode; if (p && (p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE' || p.nodeName === 'TEXTAREA' || p.closest && p.closest('[data-no-i18n]'))) return;
     const r = tr(v);
     if (r != null && r !== norm(v)) { const nv = (v.match(/^\s*/)[0]) + r + (v.match(/\s*$/)[0]); if (nv !== v) n.nodeValue = nv; }
   }

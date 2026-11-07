@@ -25,10 +25,15 @@ window.FACULTIES = [
     specs: ['التشريح البيطري', 'الطفيليات', 'الفيروسات البيطرية', 'الأمراض المعدية للحيوان', 'الأدوية البيطرية', 'الرقابة الصحية على الأغذية'] },
   { id: 'dentistry', name: 'كلية طب الأسنان', icon: '<path d="M7 3C4.8 3 3 4.8 3 7.2c0 2.3 1 3.6 1.6 5.6.6 2 .9 4.4 1.6 6.6.4 1.3 1.1 2.6 2.1 2.6 1.6 0 1.4-3.2 2-5 .3-.9.9-1.5 1.7-1.5s1.4.6 1.7 1.5c.6 1.8.4 5 2 5 1 0 1.7-1.3 2.1-2.6.7-2.2 1-4.6 1.6-6.6.6-2 1.6-3.3 1.6-5.6C21 4.8 19.2 3 17 3c-2 0-3 1-5 1S9 3 7 3Z"/>',
     specs: ['علم أمراض الفم', 'تقويم الأسنان', 'علاج الجذور', 'جراحة الفم والوجه والفكين', 'المواد السنية', 'طب أسنان الأطفال'] },
+  { id: 'computers', name: 'كلية الحاسبات والمعلومات', icon: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><path d="m9 9-2 1.5L9 12M15 9l2 1.5-2 1.5"/>',
+    specs: ['علوم الحاسب', 'نظم المعلومات', 'علوم البيانات', 'الذكاء الاصطناعي', 'المعلوماتية الحيوية'] },
+  { id: 'engineering', name: 'كلية الهندسة', icon: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+    specs: ['الهندسة الطبية الحيوية', 'الهندسة الكيميائية', 'هندسة الحاسبات'] },
   { id: 'health_tech', name: 'كلية تكنولوجيا العلوم الصحية التطبيقية', icon: '<path d="M6 18h8M3 22h18"/><path d="M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/>',
     specs: ['المختبرات الطبية', 'الأشعة والتصوير الطبي', 'العلاج التنفسي', 'تكنولوجيا الأجهزة الطبية', 'الإسعاف والطوارئ', 'البصريات'] },
 ];
 window.FAC_ALL = { id: 'all', name: 'لكل الكليات', icon: '<path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/><path d="M22 10v6"/>', specs: [] };
+window.facultiesOf = (c) => { const ids = new Set([window.facultyOf(c)].filter(Boolean)); (c.course_faculties || []).forEach((r) => ids.add(r.faculty)); return ids; };
 window.facultyOf = (c) => c.faculty || ((window.FACULTIES.find((f) => f.specs.includes(c.specialty)) || {}).id) || '';
 // phone country codes for the signup form (Egypt first, then the region, then the rest alphabetically)
 window.COUNTRIES = [

@@ -34,7 +34,7 @@
     const disc = loc ? 0 : Number(p.discount_egp || 0), list = loc ? amt : Number(p.list_price_egp ?? p.amount_egp);
     const M = (v) => (loc ? `${EGP(v)} ${p.currency}` : D.money(v));
     const row = (k, v) => `<tr><td style="padding:6px 0;color:inherit;opacity:.75">${k}</td><td style="padding:6px 0;text-align:left">${v}</td></tr>`;
-    ui.modal(`<div class="bx-cert" style="text-align:right"><h4 style="text-align:center">Biosyn Egypt</h4><small style="display:block;text-align:center">إيصال دفع</small>
+    ui.modal(`<div class="bx-cert" style="text-align:right"><h4 style="text-align:center">Biosyn Eg</h4><small style="display:block;text-align:center">إيصال دفع</small>
       <table style="width:100%;border-collapse:collapse;margin-top:12px;font-size:14px">
       ${row('رقم الإيصال', `<b class="bs-latin">${esc(String(p.receipt_no || '—'))}</b>`)}${row('التاريخ', D.dateTime(p.paid_at || p.created_at))}${row('العميل', esc(me.full_name || '') + '<br><span class="bs-latin">' + esc(sb.user.email) + '</span>')}
       ${row('البند', esc(item))}${row('السعر', M(list))}${disc ? row('الخصم', '− ' + M(disc)) : ''}${fee ? row('رسوم بوابة الدفع', M(fee)) : ''}

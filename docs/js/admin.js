@@ -55,6 +55,7 @@
     async contracts(main) { await window.contractsAdmin(main, isAdmin()); },
     async campaign(main) { await window.campaignAdmin(main); },
     async news(main) { await window.newsAdmin(main); },
+    async faculties(main) { await window.facultiesAdmin(main); },
     async emails(main) { await window.emailsAdmin(main); },
     async mailcampaigns(main) { await window.campaignsAdmin(main); },
     async texts(main) { await window.textsAdmin(main); },
@@ -398,10 +399,20 @@
         const isNew = !x; x = x || { name: '', title: '', photo_url: '', faculty: '', sort: (rows.length ? Math.max(...rows.map((r) => r.sort)) + 10 : 10), visible: true };
         ui.modal(`<h3>${isNew ? 'إضافة محاضر' : 'تعديل المحاضر'}</h3><form class="bx-form2" id="fif" novalidate>
           <div class="bx-field"><label for="fn">الاسم</label><input id="fn" class="bx-input" maxlength="80" value="${esc(x.name)}" placeholder="د. الاسم"></div>
-          <div class="bx-field"><label for="ft">الوصف (الدرجة والجهة)</label><textarea id="ft" class="bx-textarea" rows="2" maxlength="240">${esc(x.title || '')}</textarea></div>
+          <div class="row2"><div class="bx-field"><label for="fne">الاسم بالإنجليزية</label><input id="fne" class="bx-input" dir="ltr" maxlength="80" value="${esc(x.name_en || '')}" placeholder="Dr. Name"></div>
+          <div class="bx-field"><label for="fsl">رابط صفحته (slug)</label><input id="fsl" class="bx-input" dir="ltr" maxlength="60" value="${esc(x.slug || '')}" placeholder="ahmed-said"><small class="bx-hint">صفحته: teacher-<b>slug</b>.html</small></div></div>
+          <div class="bx-field"><label for="ft">المسمى الوظيفي والجهة</label><textarea id="ft" class="bx-textarea" rows="2" maxlength="240">${esc(x.title || '')}</textarea></div>
+          <div class="row2"><div class="bx-field"><label for="fdg">الدرجة العلمية</label><input id="fdg" class="bx-input" maxlength="120" value="${esc(x.degree || '')}" placeholder="دكتوراه الباثولوجيا الإكلينيكية"></div>
+          <div class="bx-field"><label for="fsp">التخصص</label><input id="fsp" class="bx-input" maxlength="160" value="${esc(x.specialty || '')}"></div></div>
+          <div class="bx-field"><label for="fbi">نبذة تعريفية</label><textarea id="fbi" class="bx-textarea" rows="3" maxlength="1500">${esc(x.bio || '')}</textarea></div>
+          <div class="bx-field"><label for="fex">الخبرات والمؤهلات (سطر لكل خبرة)</label><textarea id="fex" class="bx-textarea" rows="4" maxlength="3000">${esc(x.experience || '')}</textarea></div>
+          <div class="bx-field"><label for="fpb">الأبحاث والمنشورات (سطر لكل بحث، اختياري)</label><textarea id="fpb" class="bx-textarea" rows="2" maxlength="3000">${esc(x.publications || '')}</textarea></div>
+          <div class="bx-field"><label for="flk">روابط الحسابات الأكاديمية (سطر لكل رابط https، اختياري)</label><textarea id="flk" class="bx-textarea" rows="2" dir="ltr" maxlength="1500" placeholder="https://scholar.google.com/…">${esc(x.links || '')}</textarea></div>
+          <small class="bx-hint">تُنشأ له صفحة مستقلة قابلة للفهرسة عندما تكون له نبذة أو مسمى كامل ودورة منشورة واحدة على الأقل. اكتب البيانات الحقيقية فقط.</small>
           <div class="row2"><div class="bx-field"><label for="ff">الكلية</label><select id="ff" class="bx-select"><option value="">—</option>${FAC.map((f) => `<option value="${f.id}" ${f.id === x.faculty ? 'selected' : ''}>${esc(f.name)}</option>`).join('')}</select></div>
           <div class="bx-field"><label for="fs">الترتيب</label><input id="fs" class="bx-input" type="number" dir="ltr" value="${x.sort}"></div></div>
-          <div class="bx-field"><label for="fpf">الصورة (اختياري)</label><input id="fpf" type="file" accept="image/png,image/jpeg,image/webp" class="bx-input"><small class="bx-hint">يُفضّل أن تكون الصورة مربعة وأقل من 2 ميجابايت. إذا لم توجد صورة فسيظهر أول حرفين من الاسم.</small>
+          <div class="bx-field"><label for="fpf">الصورة (اختياري)</label>${x.photo_url ? `<img src="${esc(x.photo_url)}" alt="" style="width:96px;height:96px;border-radius:50%;object-fit:cover">` : ''}<input id="fpf" type="file" accept="image/png,image/jpeg,image/webp" class="bx-input"><small class="bx-hint">ستظهر أداة لقص الصورة مربعة (500 × 500). إذا لم توجد صورة فسيظهر أول حرفين من الاسم.</small>
+            <div class="bx-field"><label for="fpa">النص البديل للصورة (Alt)</label><input id="fpa" class="bx-input" maxlength="160" value="${esc(x.photo_alt || '')}" placeholder="صورة ${esc(x.name || 'المحاضر')}"></div>
             <input type="hidden" id="fpu" value="${esc(x.photo_url || '')}">${x.photo_url ? `<label class="bx-hint" style="display:flex;gap:6px;align-items:center;margin-top:6px"><input type="checkbox" id="fpr"> حذف الصورة الحالية</label>` : ''}</div>
           <label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="fvv" ${x.visible ? 'checked' : ''}> ظاهر في الموقع</label>
           <div class="bx-formmsg" aria-live="polite"></div>
@@ -412,18 +423,22 @@
           $('#fif', m).onsubmit = async (e) => {
             e.preventDefault(); const msg = $('.bx-formmsg', m), btn = $('button[type=submit]', m);
             const name = $('#fn', m).value.trim(); if (name.length < 2) return say(msg, 'اكتب اسم المحاضر.', 'err');
-            const row = { name, title: $('#ft', m).value.trim() || null, faculty: $('#ff', m).value || null, sort: Number($('#fs', m).value) || 100, visible: $('#fvv', m).checked, photo_url: $('#fpu', m).value || null };
+            const tv = (id) => ($('#' + id, m).value || '').trim() || null;
+            const slug = (tv('fsl') || '').toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '') || null;
+            const links = (tv('flk') || '').split('\n').map((l) => l.trim()).filter(Boolean);
+            if (links.some((l) => !/^https:\/\//.test(l))) return say(msg, 'كل رابط يجب أن يبدأ بـ https://', 'err');
+            const row = { name, title: tv('ft'), faculty: $('#ff', m).value || null, sort: Number($('#fs', m).value) || 100, visible: $('#fvv', m).checked, photo_url: $('#fpu', m).value || null,
+              name_en: tv('fne'), slug, degree: tv('fdg'), specialty: tv('fsp'), bio: tv('fbi'), experience: tv('fex'), publications: tv('fpb'), links: links.join('\n') || null, photo_alt: tv('fpa') };
             if ($('#fpr', m) && $('#fpr', m).checked) row.photo_url = null;
             const file = $('#fpf', m).files[0];
             btn.disabled = true;
             try {
               if (file) {
                 if (!/^image\/(png|jpeg|webp)$/.test(file.type)) throw new Error('يجب أن تكون الصورة PNG أو JPG أو WebP.');
-                if (file.size > 2 * 1024 * 1024) throw new Error('حجم الصورة أكبر من 2 ميجابايت.');
+                const blob = window.cropImage ? await window.cropImage(file, { w: 500, h: 500 }) : file;
+                if (!blob) { btn.disabled = false; return; }
                 say(msg, 'جارٍ رفع الصورة…');
-                const path = `instructors/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${file.type.split('/')[1].replace('jpeg', 'jpg')}`;
-                await sb.storage.upload('site-media', path, file);
-                row.photo_url = `${BIOSYN.SUPABASE_URL}/storage/v1/object/public/site-media/${path}`;
+                row.photo_url = window.uploadCropped ? await window.uploadCropped(blob, 'instructors') : null;
               }
               if (isNew) await sb.insert('featured_instructors', row); else await sb.update('featured_instructors', { id: 'eq.' + x.id }, row);
               ui.toast('تم الحفظ.'); close(); D.reload();
@@ -526,8 +541,8 @@
           `<div class="row2">${field('STRIPE_SECRET_KEY', 'Secret key', 'sk_live_…')}${field('STRIPE_WEBHOOK_SECRET', 'Webhook signing secret', 'whsec_…')}</div>${fee('STRIPE')}${hook('webhook-stripe')}`)}
         ${card('bunny', 'Bunny Stream — استضافة الفيديو', 'الأسهل: من Bunny افتح Account settings ← API وانسخ «API Key» الخاص بالحساب (Account API Key). يكفي هذا وحده لتتمكن المنصة من رؤية كل مكتباتك واستيراد الدورات منها ورفع فيديوهات جديدة. وفي Library ID اكتب رقم المكتبة التي تُرفع إليها الفيديوهات الجديدة (من المحاضرين ومنك).', ['BUNNY_ACCOUNT_KEY', 'BUNNY_LIBRARY_ID'],
           `<div class="row2">${field('BUNNY_ACCOUNT_KEY', 'Account API Key', '')}${field('BUNNY_LIBRARY_ID', 'Library ID (للرفع الجديد)', '614141', 'text')}</div><details><summary class="bx-hint">إعدادات اختيارية</summary><div class="row2">${field('BUNNY_API_KEY', 'API Key الخاص بالمكتبة (إذا لم تستخدم Account key)', '')}${field('BUNNY_TOKEN_KEY', 'Token authentication key (لو مفعّل في المكتبة)', '')}</div></details>`)}
-        ${card('resend', 'Resend — رسائل البريد في المنصة', 'من resend.com: API Keys، وفعّل دومين الإرسال من Domains. عنوان المرسل مثل: Biosyn Egypt &lt;noreply@biosyneg.com&gt;', ['RESEND_API_KEY', 'MAIL_FROM'],
-          `<div class="row2">${field('RESEND_API_KEY', 'API key', 're_…')}${field('MAIL_FROM', 'عنوان المرسل', 'Biosyn Egypt <noreply@biosyneg.com>', 'text')}</div>`)}
+        ${card('resend', 'Resend — رسائل البريد في المنصة', 'من resend.com: API Keys، وفعّل دومين الإرسال من Domains. عنوان المرسل مثل: Biosyn Eg &lt;noreply@biosyneg.com&gt;', ['RESEND_API_KEY', 'MAIL_FROM'],
+          `<div class="row2">${field('RESEND_API_KEY', 'API key', 're_…')}${field('MAIL_FROM', 'عنوان المرسل', 'Biosyn Eg <noreply@biosyneg.com>', 'text')}</div>`)}
         ${card('meta', 'Meta Pixel وGoogle Analytics — تتبع الإعلانات', 'رقم الـPixel من Events Manager، وتوكن Conversions API من إعدادات الـPixel (اختياري)، ومعرّف GA4 يبدأ بـ G-.', ['META_PIXEL_ID'],
           `<div class="row2">${field('META_PIXEL_ID', 'Pixel ID', '1234567890', 'text')}${field('META_CAPI_TOKEN', 'Conversions API token (اختياري)', '')}</div>${field('GA4_ID', 'Google Analytics 4 ID (اختياري)', 'G-XXXXXXX', 'text')}`)}
         ${card('claude', 'مساعد الدعم بالذكاء الاصطناعي (Claude)', 'مفتاح من console.anthropic.com. بمجرد الحفظ يظهر زر «مساعدة» للزوار ويرد من سياسات المنصة وباقاتها فقط.', ['ANTHROPIC_API_KEY'],
@@ -744,6 +759,7 @@
       lects = await sb.get('lectures', { select: '*,lecture_videos(bunny_video_id)', course_id: 'eq.' + c.id, order: 'position' });
     }
     const opt = (map, cur) => Object.entries(map).map(([k, v]) => `<option value="${k}" ${k === cur ? 'selected' : ''}>${v}</option>`).join('');
+    const facsCur = window.CourseExtras ? await CourseExtras.load(c) : [];
     const close = ui.modal(`<h3>${isNew ? 'دورة جديدة' : 'تعديل: ' + esc(c.title)}</h3>
       <form class="bx-form2" id="cf" novalidate>
         <div class="row2"><div class="bx-field"><label for="ct">العنوان</label><input id="ct" class="bx-input" value="${esc(c.title || '')}"></div><div class="bx-field"><label for="cs">الرابط (slug)</label><input id="cs" class="bx-input" dir="ltr" value="${esc(c.slug || '')}"></div></div>
@@ -760,8 +776,9 @@
         <div class="bx-field"><label for="csu">وصف مختصر</label><input id="csu" class="bx-input" value="${esc(c.summary || '')}"></div>
         <div class="bx-field"><label for="cd">الوصف الكامل</label><textarea id="cd" class="bx-textarea">${esc(c.description || '')}</textarea></div>
         <div class="row2" id="ia" ${c.kind === 'interactive' ? '' : 'hidden'}><div class="bx-field"><label for="cp">سعر الدورة (ج.م)</label><input id="cp" class="bx-input" type="number" min="0" value="${c.price_egp ?? ''}"></div><div class="bx-field"><label for="cpi">السعر خارج مصر (بعملة البلد)</label><input id="cpi" class="bx-input" type="number" min="0" step="0.5" value="${c.intl_price ?? ''}" placeholder="فارغ = سعر الجنيه × المعامل"></div><div class="bx-field"><label for="cse">المقاعد</label><input id="cse" class="bx-input" type="number" min="1" value="${c.seats ?? ''}"></div><div class="bx-field"><label for="cdt">تاريخ البدء</label><input id="cdt" class="bx-input" type="date" value="${c.starts_at ? String(c.starts_at).slice(0, 10) : ''}"></div><div class="bx-field"><label for="cde">تاريخ الانتهاء (تصدر فيه الشهادات تلقائيًا)</label><input id="cde" class="bx-input" type="date" value="${c.ends_at ? String(c.ends_at).slice(0, 10) : ''}"></div><div class="bx-field"><label for="chr">عدد ساعات التدريب (يُطبع على الشهادة)</label><input id="chr" class="bx-input" type="number" min="0" step="0.5" value="${c.hours ?? ''}"></div></div>
+        ${window.CourseExtras ? CourseExtras.html(c, facsCur) : ''}
         <div class="bx-formmsg" id="cm" aria-live="polite"></div>
-        <div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">${isNew ? 'إنشاء' : 'حفظ'}</button><button class="bs-btn bs-btn-ghost" type="button" data-x>إغلاق</button></div>
+        <div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">${isNew ? 'إنشاء' : 'حفظ'}</button>${isNew ? '' : `<a class="bs-btn bs-btn-secondary" href="course.html?c=${encodeURIComponent(c.slug)}" target="_blank" rel="noopener">معاينة الصفحة</a>`}<button class="bs-btn bs-btn-ghost" type="button" data-x>إغلاق</button>${isNew ? '' : '<button class="bs-btn bs-btn-ghost" type="button" id="cdel" style="color:var(--danger-text);margin-inline-start:auto">حذف الدورة</button>'}</div>
       </form>
       ${isNew ? '<p class="bx-hint">بعد الإنشاء يمكنك إضافة المحاضرات.</p>' : `<hr style="border:0;border-top:1px solid var(--line);width:100%"><div class="bx-spread"><h3>المحاضرات</h3><button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" id="lbimp">استيراد من مكتبة Bunny</button></div><div id="ll"></div><div id="lfiles" style="margin-top:12px"></div>
       <form class="bx-form2" id="lf" novalidate><div class="row2"><div class="bx-field"><label for="lt">عنوان المحاضرة</label><input id="lt" class="bx-input"></div><div class="bx-field"><label for="lv">فيديو المحاضرة (Bunny)</label><input id="lv" class="bx-input" dir="ltr" placeholder="ارفع فيديو أو الصق GUID"><span class="bx-btnrow" style="margin-top:6px;align-items:center"><label class="bs-btn bs-btn-ghost bs-btn-sm" style="cursor:pointer">رفع فيديو من جهازك<input type="file" id="lfile" accept="video/*" hidden></label><small class="bx-hint" id="lup"></small></span></div><div class="bx-field"><label for="ld">المدة (دقائق:ثواني)</label><input id="ld" class="bx-input" dir="ltr" placeholder="12:30"></div></div><label class="bx-hint" style="display:flex;gap:6px;align-items:center;margin:8px 0"><input type="checkbox" id="lpv"> محاضرة معاينة مجانية (يشاهدها أي زائر مسجّل دخوله)</label><div class="bx-formmsg" id="lm" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-secondary" type="submit">+ إضافة محاضرة</button></div></form>`}`,
@@ -842,6 +859,14 @@
         } catch (err) { say(msg, arErr(err), 'err'); }
       };
       if ($('#cimg-rm', m)) $('#cimg-rm', m).onclick = () => { $('#cimgu', m).value = ''; $('#cimg-prev', m).innerHTML = '<small class="bx-hint" style="margin:0">ستُزال الصورة عند الحفظ</small>'; };
+      if (window.CourseExtras) CourseExtras.bind(m, c);
+      const cdel = $('#cdel', m);
+      if (cdel) cdel.onclick = async () => {
+        const typed = prompt(`حذف الدورة نهائيًا مع محاضراتها لا يمكن التراجع عنه.\nللتأكيد اكتب رابط الدورة: ${c.slug}\n(لإخفائها فقط اختر الحالة «مؤرشف» بدلًا من الحذف)`);
+        if (typed === null) return; if (typed.trim() !== c.slug) return ui.toast('لم يتطابق الرابط، لم يُحذف شيء.', 'err');
+        try { await sb.remove('courses', { id: 'eq.' + c.id }); ui.toast('تم حذف الدورة.'); cl(); D.reload(); }
+        catch (err) { ui.toast(/foreign|violates|23503/i.test(err.message || '') ? 'لا يمكن حذف دورة لها اشتراكات أو مدفوعات أو شهادات. غيّر حالتها إلى «مؤرشف» بدلًا من ذلك.' : arErr(err), 'err'); }
+      };
       $('#cf', m).onsubmit = async (e) => {
         e.preventDefault(); const msg = $('#cm', m), g = (id) => $('#' + id, m).value.trim();
         if (!g('ct') || !g('cs')) return say(msg, 'اكتب العنوان والرابط.', 'err');
@@ -851,7 +876,14 @@
         if (row.starts_at && row.ends_at && row.ends_at < row.starts_at) return say(msg, 'يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء.', 'err');
         if (kind === 'interactive' && row.status === 'published' && row.price_egp === null) return say(msg, 'حدّد سعر الدورة التفاعلية قبل النشر.', 'err');
         if (kind === 'recorded' && row.status === 'published' && !lects.length) return say(msg, 'أضف محاضرة واحدة على الأقل قبل نشر الدورة.', 'err');
-        try { Object.assign(row, await instFields()); isNew ? await sb.insert('courses', row) : await sb.update('courses', { id: 'eq.' + c.id }, row); ui.toast('تم الحفظ.'); cl(); D.reload(); }
+        try {
+          const X = window.CourseExtras ? CourseExtras.collect(m) : null; if (X) Object.assign(row, X.row);
+          Object.assign(row, await instFields());
+          let id = c.id;
+          if (isNew) { const r = await sb.insert('courses', row); id = (Array.isArray(r) ? r[0] : r || {}).id; } else await sb.update('courses', { id: 'eq.' + c.id }, row);
+          if (X && id) await CourseExtras.saveFacs(id, X.facs);
+          ui.toast('تم الحفظ. تتحدث صفحات البحث خلال 15 دقيقة.'); cl(); D.reload();
+        }
         catch (err) { say(msg, /duplicate/.test(err.message) ? 'هذا الرابط مستخدم لدورة أخرى.' : /[\u0600-\u06FF]/.test(err.message || '') ? err.message : arErr(err), 'err'); }
       };
       if (!isNew) {
@@ -920,7 +952,7 @@
 
   window.BiosynPages.admin = async () => {
     me = await D.guard(['admin', 'support']); if (!me) return;
-    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'insights', label: 'مركز التحليلات', icon: 'chart' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'texts', label: 'نصوص الموقع', icon: 'book' }, { id: 'news', label: 'الأخبار والفعاليات', icon: 'book' }, { id: 'testimonials', label: 'آراء الطلاب', icon: 'chat' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'mailcampaigns', label: 'حملات البريد', icon: 'inbox' }, { id: 'emails', label: 'رسائل البريد', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
+    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'insights', label: 'مركز التحليلات', icon: 'chart' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'faculties', label: 'الكليات والتخصصات', icon: 'list' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'texts', label: 'نصوص الموقع', icon: 'book' }, { id: 'news', label: 'الأخبار والفعاليات', icon: 'book' }, { id: 'testimonials', label: 'آراء الطلاب', icon: 'chat' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'mailcampaigns', label: 'حملات البريد', icon: 'inbox' }, { id: 'emails', label: 'رسائل البريد', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
     // live counters: new requests + open refund requests (refreshes every minute and when the tab regains focus)
     let lastRef = -1;

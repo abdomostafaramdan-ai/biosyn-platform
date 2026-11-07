@@ -460,3 +460,13 @@ html[dir="rtl"] .in-tip{transform:translateX(50%)}
 .in-feed li{display:grid;grid-template-columns:24px 1fr auto;gap:8px;align-items:center;padding:7px 4px;border-bottom:1px solid rgba(255,255,255,.06);font-size:14px}
 .in-feed time{font-size:12px;opacity:.6;white-space:nowrap}
 @media (max-width:600px){.in-mini{grid-template-columns:1fr 1fr}.in-tip{min-width:140px}}
+/* course editor add-ons */
+.cx-sec { border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; display: grid; gap: 10px; }
+.cx-sec > summary { cursor: pointer; font-weight: 700; }
+.cx-sec[open] > summary { margin-bottom: 4px; }
+.cx-frow { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+.cx-ogp { width: 100%; max-width: 320px; aspect-ratio: 1200 / 630; border-radius: 10px; overflow: hidden; background: var(--surface-raised); display: grid; place-items: center; border: 1px dashed var(--line); }
+.cx-ogp img { width: 100%; height: 100%; object-fit: cover; }
+.cx-stage { max-width: 100%; border-radius: 10px; overflow: hidden; touch-action: none; cursor: grab; margin: 8px auto; }
+.cx-stage canvas { display: block; }
+@media (max-width: 600px) { .cx-frow { grid-template-columns: 1fr 1fr; } }

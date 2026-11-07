@@ -54,7 +54,7 @@
     if (id && /^[0-9a-f-]{36}$/.test(id)) {
       let n = null; try { n = await sb.one('news_items', { select: '*', id: 'eq.' + id }); } catch (e) {}
       if (!n) { root.innerHTML = `<div class="bx-empty-big"><b>${t('لم نعثر على هذا الخبر')}</b><a class="bx-link" href="news.html">${t('كل الأخبار والفعاليات')}</a></div>`; return; }
-      document.title = n.title + ' | Biosyn Egypt';
+      document.title = n.title + ' | Biosyn Eg';
       root.parentElement.querySelectorAll(':scope > h1, :scope > .bx-hint').forEach((e) => (e.hidden = true));
       const gal = Array.isArray(n.gallery) ? n.gallery : [];
       const paras = String(n.body || '').split(/\n+/).filter((p) => p.trim()).map((p) => `<p dir="auto">${esc(p).replace(/(https?:\/\/[^\s<]+)/g, '<a class="bx-link" href="$1" target="_blank" rel="noopener">$1</a>')}</p>`).join('');

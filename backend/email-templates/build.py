@@ -31,7 +31,7 @@ def note(text):
 
 
 def layout(preheader, heading, body):
-    return f'''<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"><title>Biosyn Egypt</title></head>
+    return f'''<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"><title>Biosyn Eg</title></head>
 <body style="margin:0;padding:0;background:{BG}">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0">{preheader}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{BG}"><tr><td align="center" style="padding:28px 12px">
@@ -43,8 +43,8 @@ def layout(preheader, heading, body):
 {body}
 </td></tr>
 <tr><td style="padding:22px 30px 26px;text-align:right"><hr style="border:none;border-top:1px solid #e5e7f2;margin:0 0 16px">
-<p style="margin:0 0 6px;font-size:13px;line-height:21px;color:{NAVY};font-weight:700">Biosyn Egypt · تعليم علمي وطبي بمحتوى مهني</p>
-<p style="margin:0;font-size:12px;line-height:20px;color:{MUTED}"><a href="{SITE}" style="color:{MUTED};text-decoration:underline">biosyneg.com</a> · <a href="mailto:contact@biosynegypt.com" style="color:{MUTED};text-decoration:underline">contact@biosynegypt.com</a><br>وصلك الإيميل ده لأن عندك حساب على منصة Biosyn Egypt.</p>
+<p style="margin:0 0 6px;font-size:13px;line-height:21px;color:{NAVY};font-weight:700">Biosyn Eg · تعليم علمي وطبي بمحتوى مهني</p>
+<p style="margin:0;font-size:12px;line-height:20px;color:{MUTED}"><a href="{SITE}" style="color:{MUTED};text-decoration:underline">biosyneg.com</a> · <a href="mailto:contact@biosynegypt.com" style="color:{MUTED};text-decoration:underline">contact@biosynegypt.com</a><br>وصلك الإيميل ده لأن عندك حساب على منصة Biosyn Eg.</p>
 </td></tr></table>
 </td></tr></table></body></html>'''
 
@@ -52,9 +52,9 @@ def layout(preheader, heading, body):
 # ---------- Supabase Auth templates (Go template variables) ----------
 CU = '{{ .ConfirmationURL }}'
 AUTH = {
-    'confirmation': ('أكّد حسابك في Biosyn Egypt',
+    'confirmation': ('أكّد حسابك في Biosyn Eg',
         layout('خطوة واحدة وحسابك يبقى جاهز.', 'أهلاً بيك في Biosyn 👋',
-            p('شكرًا إنك سجّلت على منصة Biosyn Egypt. فاضل خطوة واحدة بس: أكّد إيميلك عشان نفعّل حسابك.')
+            p('شكرًا إنك سجّلت على منصة Biosyn Eg. فاضل خطوة واحدة بس: أكّد إيميلك عشان نفعّل حسابك.')
             + button('أكّد حسابي', CU) + fallback(CU)
             + note('بعد التأكيد تقدر تتصفّح الكورسات وتختار الباقة اللي تناسبك. لو ما عملتش الحساب ده، تجاهل الإيميل وماحدش هيقدر يستخدمه.'))),
     'recovery': ('إعادة تعيين كلمة المرور · Biosyn',
@@ -64,12 +64,12 @@ AUTH = {
             + note('الرابط صالح لمدة محدودة ويُستخدم مرة واحدة. لو ما طلبتش ده، تجاهل الإيميل وكلمة المرور الحالية هتفضل زي ما هي.'))),
     'magic_link': ('رابط الدخول لحسابك · Biosyn',
         layout('ادخل حسابك بضغطة واحدة.', 'رابط الدخول لحسابك',
-            p('اضغط الزرار عشان تدخل حسابك على Biosyn Egypt من غير كلمة مرور.')
+            p('اضغط الزرار عشان تدخل حسابك على Biosyn Eg من غير كلمة مرور.')
             + button('ادخل حسابي', CU) + fallback(CU)
             + note('الرابط صالح لمدة محدودة ويُستخدم مرة واحدة. لو ما طلبتش الدخول، تجاهل الإيميل.'))),
-    'invite': ('دعوة للانضمام لمنصة Biosyn Egypt',
-        layout('اتدعيت تنضم لمنصة Biosyn Egypt.', 'اتدعيت تنضم لـ Biosyn 🎉',
-            p('فريق Biosyn Egypt بيدعوك تنضم للمنصة. اضغط الزرار عشان تقبل الدعوة وتعمل كلمة المرور بتاعتك.')
+    'invite': ('دعوة للانضمام لمنصة Biosyn Eg',
+        layout('اتدعيت تنضم لمنصة Biosyn Eg.', 'اتدعيت تنضم لـ Biosyn 🎉',
+            p('فريق Biosyn Eg بيدعوك تنضم للمنصة. اضغط الزرار عشان تقبل الدعوة وتعمل كلمة المرور بتاعتك.')
             + button('اقبل الدعوة', CU) + fallback(CU)
             + note('لو مش متوقع الدعوة دي، تقدر تتجاهل الإيميل.'))),
     'email_change': ('أكّد تغيير الإيميل · Biosyn',
