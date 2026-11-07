@@ -152,6 +152,7 @@
   const aboutInst = (list) => { const l = (list || []).filter((t) => t.title || t.bio); return l.length ? `<section class="bs-block-sec bx-aboutinst"><h2>${l.length > 1 ? 'عن المحاضرين' : 'عن المحاضر'}</h2><div style="display:grid;gap:12px">${l.map((t) => { const h = teacherHref(t); return `<div class="bs-inst-wide"><div class="bs-inst-photo">${t.photo_url ? `<img src="${esc(t.photo_url)}" alt="${esc(t.photo_alt || t.name)}" loading="lazy">` : `<span>${esc(window.instInitials ? window.instInitials(t.name) : '')}</span>`}</div><div><h3>${h ? `<a class="bx-link" href="${h}">${esc(t.name)}</a>` : esc(t.name)}</h3>${t.title ? `<p>${esc(t.title)}</p>` : ''}${t.bio ? `<p class="bx-muted">${esc(t.bio.length > 260 ? t.bio.slice(0, 257) + '…' : t.bio)}</p>` : ''}${h ? `<a class="bx-link" href="${h}">الملف الكامل والدورات ←</a>` : ''}</div></div>`; }).join('')}</div></section>` : ''; };
   // «لمن هذه الدورة؟» from the primary faculty + admin-chosen faculties (course_faculties) with fit levels
   const FIT = { direct: 'مناسبة مباشرة', prereq: 'مناسبة بعد معرفة مسبقة', related: 'مناسبة للتخصصات القريبة' };
+  const learnHtml = (c) => { const l = String(c.outcomes || '').split('\n').map((x) => x.trim()).filter(Boolean); return l.length ? `<section class="bs-block-sec"><h2>ماذا ستتعلم في هذه الدورة؟</h2><div class="bs-learn"><ul class="bs-checks">${l.map((x) => `<li>${ICON_CHECK}<span>${esc(x)}</span></li>`).join('')}</ul></div></section>` : ''; };
   const fitsHtml = (c) => {
     const FAC = window.FACULTIES || [], by = Object.fromEntries(FAC.map((f) => [f.id, f])), rows = [], seen = new Set();
     const add = (fid, sp, fit) => { const f = by[fid], k = fid + '|' + (sp || ''); if (f && !seen.has(k)) { seen.add(k); rows.push({ f, sp: sp && sp !== 'كل التخصصات' ? sp : '', fit: fit || 'direct' }); } };
@@ -182,7 +183,7 @@
         ${teacherChip(T)}
         </div><div class="bs-spacer"></div></div></section>
         <div class="bs-course-main"><div>${c.description ? `<section class="bs-block-sec" style="margin-top:48px"><h2>عن الدورة</h2>${c.description.split(/\n{2,}/).map((p) => `<p>${esc(p)}</p>`).join('')}</section>` : '<div style="height:48px"></div>'}
-        ${fitsHtml(c)}${aboutInst(T)}<section class="bs-block-sec"><h2>سياسة الاسترداد</h2><p>يمكن استرداد رسوم الدورة التفاعلية خلال 7 أيام من تاريخ الدفع.</p></section></div>
+        ${learnHtml(c)}${fitsHtml(c)}${aboutInst(T)}<section class="bs-block-sec"><h2>سياسة الاسترداد</h2><p>يمكن استرداد رسوم الدورة التفاعلية خلال 7 أيام من تاريخ الدفع.</p></section></div>
         <aside class="bs-enroll"><div class="bs-cover bx-icover"><span aria-hidden="true" class="bs-wm bs-wm-brand"></span>${fc ? `<span class="bx-pcard-ic"><svg viewBox="0 0 24 24">${fc.icon}</svg></span><span class="bx-pcard-fac">${esc(fc.name)}</span>` : `<span class="bs-cover-code">${esc(c.cover_code || c.title.slice(0, 2).toUpperCase())}</span>`}</div>
         <div class="bs-enroll-body"><div class="bs-enroll-access"><b>${priceTxt(c.price_egp, window.REGION_NOW, c.intl_price)}</b></div>
         <ul class="bx-pcard-facts bx-ifacts">${c.starts_at ? `<li>${I.cal}<span>يبدأ ${esc(window.fmtDay(c.starts_at))}</span></li>` : ''}${c.seats ? `<li>${I.seat}<span>${c.seats} مقعد</span></li>` : ''}${LEVEL[c.level] ? `<li>${I.lvl}<span>${LEVEL[c.level]}</span></li>` : ''}<li>${I.live}<span>مباشر أونلاين</span></li></ul>
@@ -213,7 +214,7 @@
       </div><div class="bs-spacer"></div></div></section>
     <div class="bs-course-main"><div>
       ${c.description ? `<section class="bs-block-sec" style="margin-top:48px"><h2>عن الدورة</h2>${c.description.split(/\n{2,}/).map((p) => `<p>${esc(p)}</p>`).join('')}</section>` : ''}
-      ${fitsHtml(c)}
+      ${learnHtml(c)}${fitsHtml(c)}
       <section class="bs-block-sec" style="${c.description ? '' : 'margin-top:48px'}"><h2>محتوى الدورة</h2>
         ${lects.length ? `<div class="bs-curr"><div class="bs-curr-head"><b>محتوى الدورة</b><span>${lects.length} محاضرة${total ? ' · ' + esc(hoursText(total)) : ''}</span></div><ol class="bs-curr-list">${lects.map((l, i) => `<li class="bs-curr-item"><span class="bs-curr-num bs-latin">${String(i + 1).padStart(2, '0')}</span><span class="bs-play" aria-hidden="true">${subscribed || l.is_preview ? ICON_PLAY : ICON_LOCK}</span><span class="bs-curr-title bs-latin">${subscribed || l.is_preview ? `<a href="watch.html?c=${esc(c.slug)}&l=${l.id}" style="color:inherit;text-decoration:none">${esc(l.title)}</a>` : esc(l.title)}${!subscribed && l.is_preview ? ' <span class="bs-badge bs-badge-new" style="margin-inline-start:6px">معاينة مجانية</span>' : ''}</span><span class="bs-curr-dur bs-latin">${l.duration_seconds ? dur(l.duration_seconds) : ''}</span></li>`).join('')}</ol></div>` : '<div class="bx-empty-big"><b>المحاضرات قيد الإضافة</b>سنعلن عند نشر الدورة كاملة.</div>'}
       </section>${aboutInst(T)}</div>

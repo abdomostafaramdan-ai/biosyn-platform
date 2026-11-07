@@ -328,6 +328,8 @@ def course_page(tpl, c, d, related):
     if fits: course['audience'] = [{'@type': 'EducationalAudience', 'educationalRole': 'student', 'audienceType': f['name'] + (f' — {sp}' if sp else '')} for f, sp, fit in fits if fit != 'related'] or None
     if not course.get('audience'): course.pop('audience', None)
     if kw: course['keywords'] = kw
+    outs = [x.strip() for x in (c.get('outcomes') or '').split('\n') if x.strip()]
+    if outs: course['teaches'] = outs
     if c.get('specialty') and c['specialty'] != 'كل التخصصات': course['about'] = c['specialty']
     if n: course['syllabusSections'] = [{'@type': 'Syllabus', 'name': clean_lecture(l['title']), **({'timeRequired': iso_duration(l['duration_seconds'])} if l.get('duration_seconds') else {})} for l in c['lectures'][:40]]
     if rec and plans:
@@ -368,6 +370,7 @@ def course_page(tpl, c, d, related):
             f'<div class="bs-stats">{stats}</div>' + (f'<div class="bx-teachers">{who}</div>' if who else '') + '</div><div class="bs-spacer"></div></div></section>'
             '<div class="bs-course-main"><div>' +
             (f'<section class="bs-block-sec" style="margin-top:48px"><h2>عن الدورة</h2>' + ''.join(f'<p>{e(p)}</p>' for p in paras(c.get('description'))) + '</section>' if c.get('description') else '') +
+            (f'<section class="bs-block-sec"><h2>ماذا ستتعلم في هذه الدورة؟</h2><div class="bs-learn"><ul class="bs-checks">' + ''.join(f'<li><span>{e(x)}</span></li>' for x in outs) + '</ul></div></section>' if outs else '') +
             fit_html + inst_html +
             (f'<section class="bs-block-sec"><h2>محتوى الدورة</h2><div class="bs-curr"><div class="bs-curr-head"><b>محتوى الدورة</b><span>{n} محاضرة{" · " + e(hours_ar(total)) if total else ""}</span></div><ol class="bs-curr-list">{lec}</ol></div></section>' if n else '') +
             f'</div><aside class="bs-enroll"><div class="bs-enroll-body"><div class="bs-enroll-access"><b>{e(price)}</b></div>'

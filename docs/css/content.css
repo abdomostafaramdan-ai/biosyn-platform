@@ -105,3 +105,5 @@ a.bs-inst:hover, a.bs-inst:focus-visible { border-color: var(--brand-lime); tran
 .bx-tp-facts { list-style: none; padding: 0; }
 .bx-teacher section { margin-top: 28px; }
 @media (max-width: 600px) { .bx-tp-photo { width: 120px; height: 120px; } .bx-tp-head { gap: 16px; } }
+@media (max-width: 900px) { .bs-course-main .bs-enroll { order: -1; margin-top: 24px; } .bs-course-main > div:first-child > .bs-block-sec:first-child { margin-top: 24px !important; } }
+.bs-learn .bs-checks li { align-items: flex-start; }
