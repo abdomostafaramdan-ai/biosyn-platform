@@ -1,13 +1,18 @@
 https://biosyneg.com/blog-clinical-research-ethics-history.html
+https://biosyneg.com/blog-computational-biology.html
 https://biosyneg.com/blog-how-to-read-a-scientific-paper.html
+https://biosyneg.com/blog-introduction-to-genetic-engineering.html
+https://biosyneg.com/blog-introduction-to-genetics.html
 https://biosyneg.com/blog-introduction-to-immunology-basics.html
 https://biosyneg.com/blog-ivf-lab-embryologist-career.html
 https://biosyneg.com/blog-medical-microbiology-guide.html
 https://biosyneg.com/blog-molecular-biology-central-dogma.html
 https://biosyneg.com/blog-python-for-bioinformatics-beginners.html
 https://biosyneg.com/blog-r-programming-for-biologists.html
+https://biosyneg.com/blog-structural-bioinformatics-molecular-docking-drug-design.html
 https://biosyneg.com/blog-study-designs-in-medical-research.html
 https://biosyneg.com/blog-what-is-computational-neuroscience.html
+https://biosyneg.com/blog.html
 https://biosyneg.com/course-basics-of-ivf-laboratories.html
 https://biosyneg.com/course-bioinformtics-diploma.html
 https://biosyneg.com/course-computational-biology.html
@@ -23,6 +28,7 @@ https://biosyneg.com/course-r-language-in-bioinformatics.html
 https://biosyneg.com/course-some-concepts-in-clinical-research.html
 https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html
 https://biosyneg.com/course-study-design-in-clinical-research.html
+https://biosyneg.com/courses.html
 https://biosyneg.com/teacher-ahmed-said.html
 https://biosyneg.com/teacher-esraa-elmeligy.html
 https://biosyneg.com/teacher-mahmoud-mohamed.html

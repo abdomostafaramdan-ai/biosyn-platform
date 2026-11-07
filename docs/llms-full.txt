@@ -23,28 +23,6 @@
 
 ## Course details
 
-### Some Concepts in Clinical Research
-URL: https://biosyneg.com/course-some-concepts-in-clinical-research.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
-
-تقدّم هذه الدورة المفاهيم الأساسية للبحث السريري من زاوية تاريخية وأخلاقية، لتفهم لماذا وُضعت قواعد البحث على البشر بهذا الشكل.
-
-تبدأ الدورة بتاريخ البحث السريري، ثم تعرض التجارب غير الأخلاقية التي غيّرت القواعد، وقانون نورمبرغ، وإعلان هلسنكي وتجارب الأدوية، وتشرح المبادئ الأخلاقية الأساسية، والموافقة المستنيرة (Informed Consent) ودور لجان الأخلاقيات (IRB)، ثم تُختتم بمراجعة واختبار قصير.
-
-الدورة مناسبة لطلاب الطب والصيدلة والعلوم الصحية، وللباحثين الذين يستعدون لتقديم بروتوكول بحثي إلى لجنة أخلاقيات.
-
-Lectures:
-1. History of Clinical Research
-2. Nazi Experiments (Part 1)
-3. Nazi Experiments (Part 2)
-4. Other Unethical Experiments
-5. The Nuremberg Code
-6. Declaration of Helsinki & Drug Trials
-7. Ethical Principles
-8. Informed Consent & IRB
-9. Recap & Quiz
-
 ### Computational Neuroscience
 URL: https://biosyneg.com/course-computational-neuroscience.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
@@ -75,26 +53,47 @@ Lectures:
 16. LIF Neuron in Python (Part 5)
 17. LIF Neuron in Python (Part 6)
 
-### Introduction To Genetics
-URL: https://biosyneg.com/course-introduction-to-genetics.html
+### Introduction To Immunology
+URL: https://biosyneg.com/course-introduction-to-immunology.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: سلمى صبحي — باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية
+Instructors: د. محمود محمد — دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
 
-تقدّم هذه الدورة مدخلًا منظمًا إلى علم الوراثة، يبدأ من الأسئلة الأولى: كيف تنتقل الصفات من الآباء إلى الأبناء؟ وكيف تحوّلت قوانين مندل المجردة إلى فهم مادي للكروموسومات والحمض النووي؟
+تقدّم هذه الدورة مدخلًا شاملًا إلى علم المناعة، فتشرح كيف يتعرّف الجسم على الميكروبات ويدافع عن نفسه، بلغة واضحة ومنظمة تناسب من يدرس المناعة لأول مرة.
 
-تشرح الدورة الأساس الخلوي للوراثة من خلال الانقسام الاختزالي والعبور الجيني، ثم الوراثة المندلية والتهجين الثنائي، والارتباط الجيني وحساب تكرار إعادة الاتحاد ورسم الخرائط الجينية. بعد ذلك تنتقل إلى العقيدة المركزية للبيولوجيا الجزيئية وتنظيم التعبير الجيني بعد النسخ، ثم وراثة العشائر وشروط اتزان هاردي-واينبرغ، وتُختتم بتفاعل الجينات مع البيئة في الصفات المعقدة.
+تبدأ بنظرة عامة على الجهاز المناعي ومكوناته، ثم المناعة الفطرية، والمستضدات ومعقد التوافق النسيجي (MHC)، ثم المناعة الخلوية (CMI) والاستجابة المناعية الخلطية والأجسام المضادة، وتُختتم بنظام المتمّمة (Complement).
 
-الدورة مناسبة لطلاب العلوم والتكنولوجيا الحيوية والطب والصيدلة والزراعة، ولكل من يحتاج إلى أساس واضح في الوراثة قبل دراسة البيولوجيا الجزيئية أو الهندسة الوراثية أو المعلوماتية الحيوية.
+الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم والتكنولوجيا الحيوية، ولكل من يحتاج إلى أساس قوي في المناعة قبل دراسة الأمراض المناعية أو اللقاحات.
 
 Lectures:
-1. Foundations: From Mendel to DNA
-2. Meiosis and Recombination
-3. Mendelian Inheritance and the Dihybrid Cross
-4. Linkage and Genetic Mapping
-5. The Central Dogma of Molecular Biology
-6. Gene Regulation Beyond Transcription
-7. Population Genetics and Hardy–Weinberg Equilibrium
-8. Genes, Environment and Complex Traits
+1. Overview of the Immune System
+2. Basics of Immunology
+3. Innate Immunity
+4. Antigens and MHC
+5. Cell-Mediated Immunity (CMI)
+6. Humoral Immune Response
+7. The Complement System
+
+### Some Concepts in Clinical Research
+URL: https://biosyneg.com/course-some-concepts-in-clinical-research.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
+
+تقدّم هذه الدورة المفاهيم الأساسية للبحث السريري من زاوية تاريخية وأخلاقية، لتفهم لماذا وُضعت قواعد البحث على البشر بهذا الشكل.
+
+تبدأ الدورة بتاريخ البحث السريري، ثم تعرض التجارب غير الأخلاقية التي غيّرت القواعد، وقانون نورمبرغ، وإعلان هلسنكي وتجارب الأدوية، وتشرح المبادئ الأخلاقية الأساسية، والموافقة المستنيرة (Informed Consent) ودور لجان الأخلاقيات (IRB)، ثم تُختتم بمراجعة واختبار قصير.
+
+الدورة مناسبة لطلاب الطب والصيدلة والعلوم الصحية، وللباحثين الذين يستعدون لتقديم بروتوكول بحثي إلى لجنة أخلاقيات.
+
+Lectures:
+1. History of Clinical Research
+2. Nazi Experiments (Part 1)
+3. Nazi Experiments (Part 2)
+4. Other Unethical Experiments
+5. The Nuremberg Code
+6. Declaration of Helsinki & Drug Trials
+7. Ethical Principles
+8. Informed Consent & IRB
+9. Recap & Quiz
 
 ### Introduction To Genetic Engineering
 URL: https://biosyneg.com/course-introduction-to-genetic-engineering.html
@@ -117,25 +116,26 @@ Lectures:
 7. Genome Editing: Knockout, Insertion and Replacement
 8. In Silico Cloning Design (Practical)
 
-### Introduction To Immunology
-URL: https://biosyneg.com/course-introduction-to-immunology.html
+### Introduction To Genetics
+URL: https://biosyneg.com/course-introduction-to-genetics.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: د. محمود محمد — دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
+Instructors: سلمى صبحي — باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية
 
-تقدّم هذه الدورة مدخلًا شاملًا إلى علم المناعة، فتشرح كيف يتعرّف الجسم على الميكروبات ويدافع عن نفسه، بلغة واضحة ومنظمة تناسب من يدرس المناعة لأول مرة.
+تقدّم هذه الدورة مدخلًا منظمًا إلى علم الوراثة، يبدأ من الأسئلة الأولى: كيف تنتقل الصفات من الآباء إلى الأبناء؟ وكيف تحوّلت قوانين مندل المجردة إلى فهم مادي للكروموسومات والحمض النووي؟
 
-تبدأ بنظرة عامة على الجهاز المناعي ومكوناته، ثم المناعة الفطرية، والمستضدات ومعقد التوافق النسيجي (MHC)، ثم المناعة الخلوية (CMI) والاستجابة المناعية الخلطية والأجسام المضادة، وتُختتم بنظام المتمّمة (Complement).
+تشرح الدورة الأساس الخلوي للوراثة من خلال الانقسام الاختزالي والعبور الجيني، ثم الوراثة المندلية والتهجين الثنائي، والارتباط الجيني وحساب تكرار إعادة الاتحاد ورسم الخرائط الجينية. بعد ذلك تنتقل إلى العقيدة المركزية للبيولوجيا الجزيئية وتنظيم التعبير الجيني بعد النسخ، ثم وراثة العشائر وشروط اتزان هاردي-واينبرغ، وتُختتم بتفاعل الجينات مع البيئة في الصفات المعقدة.
 
-الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم والتكنولوجيا الحيوية، ولكل من يحتاج إلى أساس قوي في المناعة قبل دراسة الأمراض المناعية أو اللقاحات.
+الدورة مناسبة لطلاب العلوم والتكنولوجيا الحيوية والطب والصيدلة والزراعة، ولكل من يحتاج إلى أساس واضح في الوراثة قبل دراسة البيولوجيا الجزيئية أو الهندسة الوراثية أو المعلوماتية الحيوية.
 
 Lectures:
-1. Overview of the Immune System
-2. Basics of Immunology
-3. Innate Immunity
-4. Antigens and MHC
-5. Cell-Mediated Immunity (CMI)
-6. Humoral Immune Response
-7. The Complement System
+1. Foundations: From Mendel to DNA
+2. Meiosis and Recombination
+3. Mendelian Inheritance and the Dihybrid Cross
+4. Linkage and Genetic Mapping
+5. The Central Dogma of Molecular Biology
+6. Gene Regulation Beyond Transcription
+7. Population Genetics and Hardy–Weinberg Equilibrium
+8. Genes, Environment and Complex Traits
 
 ### Bioinformatics Diploma
 URL: https://biosyneg.com/course-bioinformtics-diploma.html
@@ -195,25 +195,6 @@ Lectures:
 9. Mycoplasmas
 10. Introduction to Parasitology
 
-### Python in Bioinformatics
-URL: https://biosyneg.com/course-python-in-bioinformatics.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
-
-بايثون من أهم لغات البرمجة في المعلوماتية الحيوية وتحليل البيانات. تقدّم هذه الدورة أساسيات البرمجة بلغة بايثون في سياق بيولوجي واضح، دون أن تفترض أي خبرة برمجية سابقة.
-
-تتعلم المتغيرات وأنواع البيانات والشروط والتكرار والدوال، ثم التعامل مع الملفات وتسلسلات الحمض النووي والبروتين، واستخدام المكتبات الأساسية لتحليل البيانات وأتمتة المهام المتكررة في البحث العلمي.
-
-الدورة مناسبة لطلاب العلوم والتكنولوجيا الحيوية والصيدلة، وللباحثين الذين يريدون الدخول إلى مجال المعلوماتية الحيوية بأداة عملية مطلوبة في سوق العمل.
-
-Lectures:
-1. Session 1
-2. Session 2
-3. Session 3
-4. Session 4
-5. Session 5
-6. Session 6
-
 ### How to Read and Understand a Research Paper
 URL: https://biosyneg.com/course-how-to-read-a-research-paper.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
@@ -233,6 +214,25 @@ Lectures:
 5. Randomized Controlled Trials
 6. Meta-analysis
 7. Recap & Quiz
+
+### Python in Bioinformatics
+URL: https://biosyneg.com/course-python-in-bioinformatics.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
+
+بايثون من أهم لغات البرمجة في المعلوماتية الحيوية وتحليل البيانات. تقدّم هذه الدورة أساسيات البرمجة بلغة بايثون في سياق بيولوجي واضح، دون أن تفترض أي خبرة برمجية سابقة.
+
+تتعلم المتغيرات وأنواع البيانات والشروط والتكرار والدوال، ثم التعامل مع الملفات وتسلسلات الحمض النووي والبروتين، واستخدام المكتبات الأساسية لتحليل البيانات وأتمتة المهام المتكررة في البحث العلمي.
+
+الدورة مناسبة لطلاب العلوم والتكنولوجيا الحيوية والصيدلة، وللباحثين الذين يريدون الدخول إلى مجال المعلوماتية الحيوية بأداة عملية مطلوبة في سوق العمل.
+
+Lectures:
+1. Session 1
+2. Session 2
+3. Session 3
+4. Session 4
+5. Session 5
+6. Session 6
 
 ### R Language in Bioinformatics
 URL: https://biosyneg.com/course-r-language-in-bioinformatics.html

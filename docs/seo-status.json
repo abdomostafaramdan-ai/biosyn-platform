@@ -1,21 +1,21 @@
 {
- "built_at": "2026-11-07T20:18:26+00:00",
- "sitemap_urls": 57,
+ "built_at": "2026-11-07T20:26:33+00:00",
+ "sitemap_urls": 61,
  "indexable": [
-  {
-   "slug": "some-concepts-in-clinical-research",
-   "title": "Some Concepts in Clinical Research",
-   "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
-  },
   {
    "slug": "computational-neuroscience",
    "title": "Computational Neuroscience",
    "url": "https://biosyneg.com/course-computational-neuroscience.html"
   },
   {
-   "slug": "introduction-to-genetics",
-   "title": "Introduction To Genetics",
-   "url": "https://biosyneg.com/course-introduction-to-genetics.html"
+   "slug": "introduction-to-immunology",
+   "title": "Introduction To Immunology",
+   "url": "https://biosyneg.com/course-introduction-to-immunology.html"
+  },
+  {
+   "slug": "some-concepts-in-clinical-research",
+   "title": "Some Concepts in Clinical Research",
+   "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
   },
   {
    "slug": "introduction-to-genetic-engineering",
@@ -23,9 +23,9 @@
    "url": "https://biosyneg.com/course-introduction-to-genetic-engineering.html"
   },
   {
-   "slug": "introduction-to-immunology",
-   "title": "Introduction To Immunology",
-   "url": "https://biosyneg.com/course-introduction-to-immunology.html"
+   "slug": "introduction-to-genetics",
+   "title": "Introduction To Genetics",
+   "url": "https://biosyneg.com/course-introduction-to-genetics.html"
   },
   {
    "slug": "bioinformtics-diploma",
@@ -43,14 +43,14 @@
    "url": "https://biosyneg.com/course-microbiology-course-362803.html"
   },
   {
-   "slug": "python-in-bioinformatics",
-   "title": "Python in Bioinformatics",
-   "url": "https://biosyneg.com/course-python-in-bioinformatics.html"
-  },
-  {
    "slug": "how-to-read-a-research-paper",
    "title": "How to Read and Understand a Research Paper",
    "url": "https://biosyneg.com/course-how-to-read-a-research-paper.html"
+  },
+  {
+   "slug": "python-in-bioinformatics",
+   "title": "Python in Bioinformatics",
+   "url": "https://biosyneg.com/course-python-in-bioinformatics.html"
   },
   {
    "slug": "r-language-in-bioinformatics",
@@ -160,5 +160,5 @@
   }
  ],
  "ai_training": true,
- "changed": 42
+ "changed": 48
 }
