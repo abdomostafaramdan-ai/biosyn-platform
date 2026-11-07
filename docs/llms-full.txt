@@ -23,47 +23,6 @@
 
 ## Course details
 
-### Introduction To Immunology
-URL: https://biosyneg.com/course-introduction-to-immunology.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-
-تقدّم هذه الدورة مدخلًا شاملًا إلى علم المناعة، فتشرح كيف يتعرّف الجسم على الميكروبات ويدافع عن نفسه، بلغة واضحة ومنظمة تناسب من يدرس المناعة لأول مرة.
-
-تبدأ بنظرة عامة على الجهاز المناعي ومكوناته، ثم المناعة الفطرية، والمستضدات ومعقد التوافق النسيجي (MHC)، ثم المناعة الخلوية (CMI) والاستجابة المناعية الخلطية والأجسام المضادة، وتُختتم بنظام المتمّمة (Complement).
-
-الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم والتكنولوجيا الحيوية، ولكل من يحتاج إلى أساس قوي في المناعة قبل دراسة الأمراض المناعية أو اللقاحات.
-
-Lectures:
-1. Overview of the Immune System
-2. Basics of Immunology
-3. Innate Immunity
-4. Antigens and MHC
-5. Cell-Mediated Immunity (CMI)
-6. Humoral Immune Response
-7. The Complement System
-
-### Some Concepts in Clinical Research
-URL: https://biosyneg.com/course-some-concepts-in-clinical-research.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
-
-تقدّم هذه الدورة المفاهيم الأساسية للبحث السريري من زاوية تاريخية وأخلاقية، لتفهم لماذا وُضعت قواعد البحث على البشر بهذا الشكل.
-
-تبدأ الدورة بتاريخ البحث السريري، ثم تعرض التجارب غير الأخلاقية التي غيّرت القواعد، وقانون نورمبرغ، وإعلان هلسنكي وتجارب الأدوية، وتشرح المبادئ الأخلاقية الأساسية، والموافقة المستنيرة (Informed Consent) ودور لجان الأخلاقيات (IRB)، ثم تُختتم بمراجعة واختبار قصير.
-
-الدورة مناسبة لطلاب الطب والصيدلة والعلوم الصحية، وللباحثين الذين يستعدون لتقديم بروتوكول بحثي إلى لجنة أخلاقيات.
-
-Lectures:
-1. History of Clinical Research
-2. Nazi Experiments (Part 1)
-3. Nazi Experiments (Part 2)
-4. Other Unethical Experiments
-5. The Nuremberg Code
-6. Declaration of Helsinki & Drug Trials
-7. Ethical Principles
-8. Informed Consent & IRB
-9. Recap & Quiz
-
 ### Introduction To Genetics
 URL: https://biosyneg.com/course-introduction-to-genetics.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
@@ -135,6 +94,49 @@ Lectures:
 15. LIF Neuron in Python (Part 4)
 16. LIF Neuron in Python (Part 5)
 17. LIF Neuron in Python (Part 6)
+
+### Some Concepts in Clinical Research
+URL: https://biosyneg.com/course-some-concepts-in-clinical-research.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
+
+تقدّم هذه الدورة المفاهيم الأساسية للبحث السريري من زاوية تاريخية وأخلاقية، لتفهم لماذا وُضعت قواعد البحث على البشر بهذا الشكل.
+
+تبدأ الدورة بتاريخ البحث السريري، ثم تعرض التجارب غير الأخلاقية التي غيّرت القواعد، وقانون نورمبرغ، وإعلان هلسنكي وتجارب الأدوية، وتشرح المبادئ الأخلاقية الأساسية، والموافقة المستنيرة (Informed Consent) ودور لجان الأخلاقيات (IRB)، ثم تُختتم بمراجعة واختبار قصير.
+
+الدورة مناسبة لطلاب الطب والصيدلة والعلوم الصحية، وللباحثين الذين يستعدون لتقديم بروتوكول بحثي إلى لجنة أخلاقيات.
+
+Lectures:
+1. History of Clinical Research
+2. Nazi Experiments (Part 1)
+3. Nazi Experiments (Part 2)
+4. Other Unethical Experiments
+5. The Nuremberg Code
+6. Declaration of Helsinki & Drug Trials
+7. Ethical Principles
+8. Informed Consent & IRB
+9. Recap & Quiz
+
+### Introduction To Immunology
+URL: https://biosyneg.com/course-introduction-to-immunology.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+تقدّم هذه الدورة مدخلًا شاملًا إلى علم المناعة، فتشرح كيف يتعرّف الجسم على الميكروبات ويدافع عن نفسه، بلغة واضحة ومنظمة تناسب من يدرس المناعة لأول مرة.
+
+تبدأ بنظرة عامة على الجهاز المناعي ومكوناته، ثم المناعة الفطرية، والمستضدات ومعقد التوافق النسيجي (MHC)، ثم المناعة الخلوية (CMI) والاستجابة المناعية الخلطية والأجسام المضادة، وتُختتم بنظام المتمّمة (Complement).
+
+الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم والتكنولوجيا الحيوية، ولكل من يحتاج إلى أساس قوي في المناعة قبل دراسة الأمراض المناعية أو اللقاحات.
+
+مؤهلات محاضر الدورة: دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، وماجستير العلوم الصيدلانية في الميكروبيولوجيا والمناعة، وبكالوريوس العلوم الصيدلانية بتقدير امتياز مع مرتبة الشرف، وجميعها من كلية الصيدلة، جامعة الأزهر، مصر.
+
+Lectures:
+1. Overview of the Immune System
+2. Basics of Immunology
+3. Innate Immunity
+4. Antigens and MHC
+5. Cell-Mediated Immunity (CMI)
+6. Humoral Immune Response
+7. The Complement System
 
 ### Bioinformatics Diploma
 URL: https://biosyneg.com/course-bioinformtics-diploma.html

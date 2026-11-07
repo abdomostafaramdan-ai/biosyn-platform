@@ -1,17 +1,7 @@
 {
- "built_at": "2026-11-07T19:39:44+00:00",
+ "built_at": "2026-11-07T19:41:00+00:00",
  "sitemap_urls": 59,
  "indexable": [
-  {
-   "slug": "introduction-to-immunology",
-   "title": "Introduction To Immunology",
-   "url": "https://biosyneg.com/course-introduction-to-immunology.html"
-  },
-  {
-   "slug": "some-concepts-in-clinical-research",
-   "title": "Some Concepts in Clinical Research",
-   "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
-  },
   {
    "slug": "introduction-to-genetics",
    "title": "Introduction To Genetics",
@@ -26,6 +16,16 @@
    "slug": "computational-neuroscience",
    "title": "Computational Neuroscience",
    "url": "https://biosyneg.com/course-computational-neuroscience.html"
+  },
+  {
+   "slug": "some-concepts-in-clinical-research",
+   "title": "Some Concepts in Clinical Research",
+   "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
+  },
+  {
+   "slug": "introduction-to-immunology",
+   "title": "Introduction To Immunology",
+   "url": "https://biosyneg.com/course-introduction-to-immunology.html"
   },
   {
    "slug": "bioinformtics-diploma",
@@ -170,5 +170,5 @@
   }
  ],
  "ai_training": true,
- "changed": 11
+ "changed": 9
 }
