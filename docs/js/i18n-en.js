@@ -1889,7 +1889,11 @@ window.I18N_EN = {
   "بعد معرفة مسبقة": "With prior knowledge",
   "للتخصصات القريبة": "For related fields",
   "الملف الكامل والدورات ←": "Full profile and courses →",
-  "— الكلية —": "— Faculty —"
+  "— الكلية —": "— Faculty —",
+  "مؤهلات محاضر الدورة: دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، وماجستير العلوم الصيدلانية في الميكروبيولوجيا والمناعة، وبكالوريوس العلوم الصيدلانية بتقدير امتياز مع مرتبة الشرف، وجميعها من كلية الصيدلة، جامعة الأزهر، مصر.": "Instructor qualifications: PhD in Pharmaceutical Sciences (Microbiology and Immunology), MSc in Pharmaceutical Sciences (Microbiology and Immunology), and a Bachelor of Pharmaceutical Sciences with Excellent with Honors — all from the Faculty of Pharmacy, Al-Azhar University, Egypt.",
+  "باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية": "Biotechnologist — biosensor development and molecular biology",
+  "باحثة في التكنولوجيا الحيوية لديها خبرة في تطوير المستشعرات الحيوية والبيولوجيا الجزيئية وتقنية النانو. حصلت على بكالوريوس التكنولوجيا الحيوية من جامعة القاهرة، وتدرس حاليًا الماجستير في التكنولوجيا الحيوية مع التركيز على تصنيع المستشعرات الحيوية للكشف عن مؤشرات miRNA.": "A biotechnologist with experience in biosensor development, molecular biology and nanotechnology. She earned a Bachelor’s degree in Biotechnology from Cairo University and is currently pursuing a Master’s degree in Biotechnology, focusing on biosensor manufacturing for miRNA marker detection.",
+  "سلمى صبحي": "Salma Sobhy"
 };
 
 window.I18N_EN_PATTERNS = (function () {
