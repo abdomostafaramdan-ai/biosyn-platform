@@ -49,10 +49,10 @@
 - [كلية تكنولوجيا العلوم الصحية التطبيقية](https://biosyneg.com/topic-health_tech.html)
 
 ## Instructors
-- [د. اسراء المليجي](https://biosyneg.com/teacher-esraa-elmeligy.html): إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics). تعمل كمساعدة تدريس، وتهتم بتبسيط…
 - [د. أحمد سيد](https://biosyneg.com/teacher-ahmed-said.html): محاضر علم الأجنة، كلية العلوم، جامعة الأزهر، أسيوط، مصر
 - [د. محمد إمام](https://biosyneg.com/teacher-mohamed-emam.html): طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
 - [د. شريف عرفه](https://biosyneg.com/teacher-sherif-arafa.html): طالب دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
+- [د. اسراء المليجي](https://biosyneg.com/teacher-esraa-elmeligy.html): إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics). تعمل كمساعدة تدريس، وتهتم بتبسيط…
 - [د. شيماء محمد](https://biosyneg.com/teacher-shaimaa-mohamed.html): مدرس الباثولوجيا الإكلينيكية، كلية الطب، جامعة عين شمس
 - [د. ناردين زريف](https://biosyneg.com/teacher-nardine-zarif.html): رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 - [م. ندى صلاح](https://biosyneg.com/teacher-nada-salah.html): باحثة في علوم الأعصاب الحسابية
