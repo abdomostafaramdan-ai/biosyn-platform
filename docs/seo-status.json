@@ -1,5 +1,5 @@
 {
- "built_at": "2026-11-07T19:41:00+00:00",
+ "built_at": "2026-11-07T19:42:15+00:00",
  "sitemap_urls": 59,
  "indexable": [
   {
@@ -137,10 +137,6 @@
    "url": "https://biosyneg.com/teacher-esraa-elmeligy.html"
   },
   {
-   "name": "إسراء مصطفي",
-   "url": "https://biosyneg.com/teacher-esraa-mostafa.html"
-  },
-  {
    "name": "د. أحمد سيد",
    "url": "https://biosyneg.com/teacher-ahmed-said.html"
   },
@@ -167,8 +163,12 @@
   {
    "name": "سلمى صبحي",
    "url": "https://biosyneg.com/teacher-salma-sobhy.html"
+  },
+  {
+   "name": "د. محمود محمد",
+   "url": "https://biosyneg.com/teacher-mahmoud-mohamed.html"
   }
  ],
  "ai_training": true,
- "changed": 9
+ "changed": 6
 }

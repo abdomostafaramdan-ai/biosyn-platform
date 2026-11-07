@@ -52,7 +52,6 @@
 
 ## Instructors
 - [د. اسراء المليجي](https://biosyneg.com/teacher-esraa-elmeligy.html): إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics). تعمل كمساعدة تدريس، وتهتم بتبسيط…
-- [إسراء مصطفي](https://biosyneg.com/teacher-esraa-mostafa.html): بكالوريوس العلوم من جامعة الإسكندرية، تخصص كيمياء وعلوم بيئية.
 - [د. أحمد سيد](https://biosyneg.com/teacher-ahmed-said.html): محاضر علم الأجنة، كلية العلوم، جامعة الأزهر، أسيوط، مصر
 - [د. محمد إمام](https://biosyneg.com/teacher-mohamed-emam.html): طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
 - [د. شريف عرفه](https://biosyneg.com/teacher-sherif-arafa.html): طالب دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
@@ -60,6 +59,7 @@
 - [د. ناردين زريف](https://biosyneg.com/teacher-nardine-zarif.html): رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 - [م. ندى صلاح](https://biosyneg.com/teacher-nada-salah.html): باحثة في علوم الأعصاب الحسابية
 - [سلمى صبحي](https://biosyneg.com/teacher-salma-sobhy.html): باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية
+- [د. محمود محمد](https://biosyneg.com/teacher-mahmoud-mohamed.html): دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
 
 ## Articles
 - [البيولوجيا الجزيئية للمبتدئين: من DNA إلى البروتين وتقنيات PCR والتسلسل](https://biosyneg.com/blog-molecular-biology-central-dogma.html): شرح مبسط لأساسيات البيولوجيا الجزيئية: تركيب DNA وRNA، والعقيدة المركزية، والطفرات، وأهم التقنيات مثل PCR والرحلان الكهربائي وتسلسل سانجر وNGS.
