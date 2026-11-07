@@ -208,6 +208,52 @@
     }
   }
 
+  // ---------- footer: social links (site_content.social, editable by admin) + newsletter sign-up ----------
+  const SOCIAL = [
+    ['facebook', 'Facebook', 'M14 8h3V4h-3a4 4 0 0 0-4 4v2H8v4h2v8h4v-8h3l1-4h-4V8.5a.5.5 0 0 1 .5-.5Z'],
+    ['instagram', 'Instagram', 'M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4ZM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM17.5 6.5h.01'],
+    ['linkedin', 'LinkedIn', 'M4 9h4v12H4zM6 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM10 9h4v1.7c.6-1 1.9-2 3.8-2 3 0 4.2 2 4.2 5V21h-4v-6.5c0-1.6-.6-2.5-1.9-2.5-1.5 0-2.1 1-2.1 2.5V21h-4z'],
+    ['tiktok', 'TikTok', 'M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.4 2.6 2.2 4.4 5 4.6'],
+    ['youtube', 'YouTube', 'M2.5 8.2a3 3 0 0 1 2.1-2.1C6.5 5.6 12 5.6 12 5.6s5.5 0 7.4.5a3 3 0 0 1 2.1 2.1c.5 1.9.5 3.8.5 3.8s0 1.9-.5 3.8a3 3 0 0 1-2.1 2.1c-1.9.5-7.4.5-7.4.5s-5.5 0-7.4-.5a3 3 0 0 1-2.1-2.1C2 15.9 2 14 2 12s0-1.9.5-3.8ZM10 15l5-3-5-3z'],
+    ['x', 'X', 'M4 4l16 16M20 4 4 20'],
+    ['whatsapp', 'WhatsApp', 'M3 21l1.6-4.6A9 9 0 1 1 8 19.6L3 21ZM9 8.5c0 3.5 3 6.5 6.5 6.5l1.2-1.6-2.2-1-1 .9a5 5 0 0 1-2.8-2.8l.9-1-1-2.2Z'],
+  ];
+  const SOCIAL_DEF = { facebook: 'https://www.facebook.com/share/1DXjWkp4oc/', instagram: 'https://www.instagram.com/biosyn_eg', linkedin: 'https://www.linkedin.com/company/biosyneg/', tiktok: 'https://www.tiktok.com/@biosyneg', whatsapp: 'https://wa.me/201069151456' };
+  function mountFooterExtras() {
+    const box = $('[data-social]');
+    const draw = (links) => {
+      if (!box) return;
+      box.innerHTML = SOCIAL.filter(([k]) => /^https:\/\//.test(links[k] || '')).map(([k, label, d]) =>
+        `<a href="${esc(links[k])}" target="_blank" rel="noopener" aria-label="${label}" title="${label}" data-net="${k}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg></a>`).join('');
+      $$('a', box).forEach((a) => a.addEventListener('click', () => track('social_click', { network: a.dataset.net })));
+    };
+    let cached = null; try { cached = JSON.parse(localStorage.getItem('biosyn.social') || 'null'); } catch {}
+    draw(cached || SOCIAL_DEF);
+    sb.get('site_content', { select: 'data', key: 'eq.social' }).then((r) => {
+      const links = (r && r[0] && r[0].data) || SOCIAL_DEF; draw(links);
+      try { localStorage.setItem('biosyn.social', JSON.stringify(links)); } catch {}
+    }).catch(() => {});
+
+    const form = $('[data-newsletter]'); if (!form) return;
+    const inp = $('input', form), btn = $('button', form), msg = $('.bx-newsmsg', form);
+    if (sb.user && sb.user.email) inp.value = sb.user.email;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const v = inp.value.trim();
+      msg.className = 'bx-newsmsg err';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { msg.textContent = 'اكتب بريدًا إلكترونيًا صحيحًا.'; inp.focus(); return; }
+      btn.disabled = true;
+      try {
+        const r = await sb.rpc('newsletter_subscribe', { p_email: v, p_source: 'footer:' + here() });
+        msg.className = 'bx-newsmsg ok';
+        msg.textContent = r === 'exists' ? 'بريدك مشترك بالفعل في النشرة.' : 'تم الاشتراك. ستصلك أخبار Biosyn على بريدك.';
+        if (r !== 'exists') { track('newsletter_signup', { source: here() }); inp.value = ''; }
+      } catch (err) {
+        msg.textContent = /too many/.test(err.message) ? 'محاولات كثيرة. حاول مرة أخرى بعد قليل.' : /invalid email/.test(err.message) ? 'اكتب بريدًا إلكترونيًا صحيحًا.' : arErr(err);
+      } finally { btn.disabled = false; }
+    });
+  }
+
   async function mountUserMenu() {
     const tools = $('.bs-header-tools');
     if (!tools || !sb.user) return;
@@ -727,7 +773,7 @@
     try { if (sessionStorage.getItem('biosyn.recovery') === '1' && !/login\.html$/.test(location.pathname) && sb.session) { await sb.auth.ready; location.replace('login.html?mode=reset'); return; } } catch {}
     sb.auth.loadUser();
     try { const c = new URLSearchParams(location.search).get('code'); if (c && /^[\w-]{3,40}$/.test(c)) localStorage.setItem('biosyn.code', c.toUpperCase()); } catch {}
-    mountLayout();
+    mountLayout(); mountFooterExtras();
     mountToggles();
     mountUserMenu();
     hydratePlans();

@@ -82,6 +82,7 @@ def load(fixture):
             'settings': (rest(url, key, 'seo_settings?select=data,rebuild_requested_at&id=eq.1') or [{}])[0],
             'fp': rpc(url, key, 'seo_fingerprint'),
             'about': ((rest(url, key, 'site_content?select=data&key=eq.about') or [{}])[0]).get('data') or {},
+            'social': ((rest(url, key, 'site_content?select=data&key=eq.social') or [{}])[0]).get('data') or {},
             'about_stats': rpc(url, key, 'about_stats'),
         }
     ov = d.get('faculties_override')
@@ -91,6 +92,9 @@ def load(fixture):
     d['faculties'] = facs
     d.setdefault('posts', [])
     S.clear(); S.update(((d.get('settings') or {}).get('data')) or {})
+    # footer social accounts (admin → «السوشيال والنشرة البريدية») also feed Organization.sameAs
+    soc = [v for k, v in (d.get('social') or {}).items() if k != 'whatsapp' and isinstance(v, str) and v.startswith('https://')]
+    S['same_as'] = list(dict.fromkeys([*(S.get('same_as') or []), *soc]))
     ABOUT.clear(); ABOUT.update(d.get('about') or {}); ABOUT['_stats'] = d.get('about_stats') or {}
     for c in d['courses']:
         c['lectures'] = sorted(c.get('lectures') or [], key=lambda l: l.get('position') or 0)

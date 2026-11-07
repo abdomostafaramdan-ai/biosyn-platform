@@ -91,7 +91,7 @@
   };
 
   // ---------------- campaigns ----------------
-  const AUD = { all_users: 'كل المستخدمين المسجلين', subscribers: 'المشتركون حاليًا', non_subscribers: 'الطلاب غير المشتركين', instructors: 'المحاضرون', legacy_all: 'كل مستخدمي المنصة القديمة', legacy_pending: 'مستخدمو المنصة القديمة الذين لم يفعّلوا حساباتهم' };
+  const AUD = { all_users: 'كل المستخدمين المسجلين', subscribers: 'المشتركون حاليًا', non_subscribers: 'الطلاب غير المشتركين', instructors: 'المحاضرون', legacy_all: 'كل مستخدمي المنصة القديمة', legacy_pending: 'مستخدمو المنصة القديمة الذين لم يفعّلوا حساباتهم', newsletter: 'مشتركو النشرة البريدية' };
   const ST = { draft: ['مسودة', 'mute'], sending: ['جارٍ الإرسال', 'info'], paused: ['متوقفة مؤقتًا', 'warn'], done: ['اكتملت', 'ok'] };
   window.campaignsAdmin = async function (main) {
     const list = await sb.get('email_campaigns', { select: '*', order: 'created_at.desc', limit: 200 }).catch(() => []);

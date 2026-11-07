@@ -2042,6 +2042,31 @@ window.I18N_EN = {
 "تحقق هدفك من اشتراكات كودك وحدها.": "Your goal is met by your code subscriptions alone.",
 "أدخل قيمة المشاهدة لحساب المشاهدات المطلوبة لهدفك.": "Enter the view value to calculate the views you need for your goal.",
 "كيف تُحتسب أرباحك؟": "How are your earnings calculated?",
+"تابع أخبار Biosyn": "Follow Biosyn news",
+"دورات جديدة وفعاليات ومقالات علمية تصلك على بريدك. يمكنك إلغاء الاشتراك في أي وقت.": "New courses, events and science articles delivered to your inbox. Unsubscribe anytime.",
+"بريدك الإلكتروني": "Your email",
+"بريدك مشترك بالفعل في النشرة.": "Your email is already subscribed.",
+"تم الاشتراك. ستصلك أخبار Biosyn على بريدك.": "You're subscribed. Biosyn news will arrive in your inbox.",
+"محاولات كثيرة. حاول مرة أخرى بعد قليل.": "Too many attempts. Please try again shortly.",
+"السوشيال والنشرة البريدية": "Social & newsletter",
+"مشتركو النشرة البريدية": "Newsletter subscribers",
+"من صندوق «تابع أخبار Biosyn» أسفل كل صفحة": "From the “Follow Biosyn news” box at the bottom of every page",
+"اشتركوا هذا الشهر": "Subscribed this month",
+"حسابات السوشيال ميديا": "Social media accounts",
+"تظهر كأيقونات أسفل كل صفحات الموقع بالترتيب نفسه. اترك الخانة فارغة لإخفاء الأيقونة. الرابط يجب أن يبدأ بـ https://": "Shown as icons at the bottom of every page, in this order. Leave a field empty to hide its icon. Links must start with https://",
+"حفظ الروابط": "Save links",
+"معاينة في الموقع ↗": "Preview on site ↗",
+"المشتركون في النشرة البريدية": "Newsletter subscribers",
+"ابحث بالبريد": "Search by email",
+"تصدير CSV": "Export CSV",
+"أرسل حملة للمشتركين": "Send a campaign to subscribers",
+"لإرسال الأخبار: من «رسائل البريد» أنشئ حملة واختر الجمهور «مشتركو النشرة البريدية». كل رسالة تحتوي على رابط لإلغاء الاشتراك، ولا تُرسل لمن ألغى اشتراكه.": "To send news: in “Emails”, create a campaign and choose the audience “Newsletter subscribers”. Every email includes an unsubscribe link and is never sent to people who unsubscribed.",
+"مكان الاشتراك": "Signed up from",
+"حساب": "Account",
+"لا توجد نتائج": "No results",
+"لا يوجد مشتركون بعد. صندوق الاشتراك يظهر أسفل كل صفحات الموقع.": "No subscribers yet. The sign-up box appears at the bottom of every page.",
+"تم الحفظ. تظهر الروابط الجديدة أسفل صفحات الموقع فورًا.": "Saved. The new links appear at the bottom of the site's pages right away.",
+"تم الحذف.": "Deleted.",
 };
 
 window.I18N_EN_PATTERNS = (function () {
@@ -2049,6 +2074,11 @@ window.I18N_EN_PATTERNS = (function () {
   const T = (s) => (window.t ? window.t(s) : s);
   const lec = (n) => (Number(String(n).replace(/,/g, '')) === 1 ? 'lecture' : 'lectures');
   return [
+  [/^منهم لديهم حساب على المنصة (\d+)$/, '$1 of them have a platform account'],
+  [/^(\d+) منهم لديهم حساب على المنصة$/, '$1 of them have a platform account'],
+  [/^أسفل الصفحة · (.+)$/, 'Page footer · $1'],
+  [/^رابط (.+) غير صحيح\. يجب أن يبدأ بـ https:\/\/$/, '$1 link is invalid. It must start with https://'],
+  [/^يظهر أول 300 من (\d+)\. استخدم البحث أو التصدير\.$/, 'Showing the first 300 of $1. Use search or export.'],
   [/^حتى اليوم (\d+) من (\d+)$/, 'As of day $1 of $2'],
   [/^قيمة المشاهدة الفعلية لشهر (.+)$/, 'Actual view value for $1'],
   [/^أرباح المشاهدات \(([\d.]+)٪\)$/, 'View earnings ($1%)'],
