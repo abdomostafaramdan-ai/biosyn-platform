@@ -45,13 +45,12 @@ Deno.serve(async (req) => {
     if (st.ok) { const s = await st.json(); const sum = (o: any) => Object.values(o || {}).reduce((a: number, b: any) => a + Number(b || 0), 0);
       libInfo[lib].stats = { views: sum(s.viewsChart), watch_s: sum(s.watchTimeChart), from, countries: s.countryViewCounts || {} }; }
   }
-  // Lifetime watch time per library. Bunny's statistics endpoint keeps a limited history, so its views can be lower than
-  // the videos' lifetime view counters; scale its watch time by that ratio (per-video totalWatchTime wins when Bunny fills it).
+  // Watch time per library exactly as Bunny records it (per-video totalWatchTime when filled, else the statistics endpoint). No estimates.
   let watchTotal = 0;
   for (const lib of Object.keys(libInfo)) {
     const vs = videos.filter((v) => v.lib === lib), vViews = vs.reduce((a, v) => a + v.views, 0), vWatch = vs.reduce((a, v) => a + v.watch_s, 0);
     const st = libInfo[lib].stats; let w = vWatch;
-    if (!w && st && st.watch_s) w = st.watch_s * (st.views > 0 ? Math.max(1, vViews / st.views) : 1);
+    if (!w && st && st.watch_s) w = st.watch_s;
     libInfo[lib].views = vViews; libInfo[lib].watch_est_s = Math.round(w); watchTotal += w;
   }
   const totalViews = videos.reduce((a, v) => a + v.views, 0);
