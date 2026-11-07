@@ -1,190 +1,234 @@
 {
  "https://biosyneg.com/": {
-  "h": "6479158457ec9afb",
-  "lastmod": "2026-11-05"
+  "h": "11dfecaac6bab804",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/about.html": {
-  "h": "6414b030bef4d9e7",
+  "h": "343e1f2fa6b74991",
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog-clinical-research-ethics-history.html": {
-  "h": "3001ac3e9dde4f77",
-  "lastmod": "2026-11-05"
+  "h": "9d2ac6ba1e3d6193",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog-how-to-read-a-scientific-paper.html": {
-  "h": "ef1597508b8f2ec3",
-  "lastmod": "2026-11-05"
+  "h": "fee95cad92af200b",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog-introduction-to-immunology-basics.html": {
-  "h": "08ec1b36e801589b",
-  "lastmod": "2026-11-05"
+  "h": "8a8aca8400621dc5",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog-ivf-lab-embryologist-career.html": {
-  "h": "6fb2cb368d94f623",
-  "lastmod": "2026-11-05"
+  "h": "4d75bbaa511d69b3",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog-medical-microbiology-guide.html": {
-  "h": "0031614ab787748f",
-  "lastmod": "2026-11-05"
+  "h": "0eedd7f905692763",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog-molecular-biology-central-dogma.html": {
-  "h": "0915ed37c93fcd57",
-  "lastmod": "2026-11-05"
+  "h": "b00846eb999db356",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog-python-for-bioinformatics-beginners.html": {
-  "h": "afeca9a815830e71",
-  "lastmod": "2026-11-05"
+  "h": "b2abd11d6b8f7db6",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog-r-programming-for-biologists.html": {
-  "h": "bc6479b099d46f4a",
-  "lastmod": "2026-11-05"
+  "h": "3b326efbfe92a188",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog-study-designs-in-medical-research.html": {
-  "h": "5925e713f6b8b4dc",
-  "lastmod": "2026-11-05"
+  "h": "ae5af16bd08b2482",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog-what-is-computational-neuroscience.html": {
-  "h": "655bff26f88f78f7",
-  "lastmod": "2026-11-05"
+  "h": "4d8f4cd452b94d6c",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog.html": {
-  "h": "76b2a90eb977829b",
-  "lastmod": "2026-11-05"
+  "h": "aea45471d0684eec",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/consultations.html": {
-  "h": "0a215147395ff5c8",
-  "lastmod": "2026-11-05"
+  "h": "df9269171b6f9044",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-basics-of-ivf-laboratories.html": {
-  "h": "e5f79068e49c21a9",
-  "lastmod": "2026-11-06"
+  "h": "2b865848366880fc",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-bioinformtics-diploma.html": {
-  "h": "2b18b0c502f7ad32",
-  "lastmod": "2026-11-06"
+  "h": "f8ca58a39cf19f69",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-computational-biology.html": {
-  "h": "6fb69f67576be9f8",
-  "lastmod": "2026-11-06"
+  "h": "45092caceb001577",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-computational-neuroscience.html": {
-  "h": "94cf5e2155b455a0",
-  "lastmod": "2026-11-06"
+  "h": "e9e0e50baf1f47d3",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-how-to-read-a-research-paper.html": {
-  "h": "df42d528af4ea139",
-  "lastmod": "2026-11-05"
+  "h": "6185fbeba6c666cf",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-introduction-to-genetic-engineering.html": {
-  "h": "9fed87288c12ec3d",
-  "lastmod": "2026-11-06"
+  "h": "cd65aa4e6be3c334",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-introduction-to-genetics.html": {
-  "h": "4a593d9cf3f2740e",
-  "lastmod": "2026-11-06"
+  "h": "a055804b60c0c906",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-introduction-to-immunology.html": {
-  "h": "2598e9667b856054",
-  "lastmod": "2026-11-06"
+  "h": "34fa3196cf581b4d",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-microbiology-course-362803.html": {
-  "h": "a86144d44bc893b0",
-  "lastmod": "2026-11-06"
+  "h": "0ff098dbc224d90d",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-molecular-biology-course-614141.html": {
-  "h": "b3bc5cb5f0c8e2e2",
-  "lastmod": "2026-11-05"
+  "h": "c0d653c93cf313e6",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-python-in-bioinformatics.html": {
-  "h": "6e1547a8a95e286f",
-  "lastmod": "2026-11-06"
+  "h": "6d43d5a193605325",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-r-language-in-bioinformatics.html": {
-  "h": "7b11f9ea3f6486f2",
-  "lastmod": "2026-11-06"
+  "h": "5503f50fcad490ef",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-some-concepts-in-clinical-research.html": {
-  "h": "499033f249a284c1",
-  "lastmod": "2026-11-06"
+  "h": "c8afeabfc3083b1d",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html": {
-  "h": "9bf2456c3306d69e",
-  "lastmod": "2026-11-06"
+  "h": "515a9e5a7ae17404",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-study-design-in-clinical-research.html": {
-  "h": "83356e58caa58944",
-  "lastmod": "2026-11-06"
+  "h": "7a248c34ceb04c6a",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/courses.html": {
-  "h": "5cfaf37b722ca8d0",
-  "lastmod": "2026-11-06"
+  "h": "1f1b7b0463995b3e",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/institutions.html": {
-  "h": "f0ef6ee9ed52b60e",
-  "lastmod": "2026-11-05"
+  "h": "03162799eed8c33d",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/instructors.html": {
-  "h": "5cd0748406cc8ebd",
-  "lastmod": "2026-11-05"
+  "h": "92b78acaea6aa5ff",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/interactive.html": {
-  "h": "a77b0767e46b26a1",
-  "lastmod": "2026-11-05"
+  "h": "5a271b193ad499cb",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/news.html": {
-  "h": "fbedcbbd1bdf5393",
-  "lastmod": "2026-11-05"
+  "h": "ab1f010b863a9bb4",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/pricing.html": {
-  "h": "e07343331173f0c7",
-  "lastmod": "2026-11-05"
+  "h": "c9ba330820d986dc",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/privacy.html": {
-  "h": "09172ec9883c352e",
-  "lastmod": "2026-11-05"
+  "h": "72f9ed4371eca9f8",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/refund.html": {
-  "h": "cda3bcd3fb45a7eb",
-  "lastmod": "2026-11-05"
+  "h": "d2bf1a81a4362093",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/teach.html": {
-  "h": "029278a348f74b3c",
-  "lastmod": "2026-11-05"
+  "h": "f091926d6080a9f1",
+  "lastmod": "2026-11-07"
  },
- "https://biosyneg.com/teacher-6308ea6d.html": {
-  "h": "89c17d9511ceaea9",
-  "lastmod": "2026-11-06"
+ "https://biosyneg.com/teacher-ahmed-said.html": {
+  "h": "ae89cfa0427e8eed",
+  "lastmod": "2026-11-07"
  },
- "https://biosyneg.com/teacher-ad83c2d3.html": {
-  "h": "c08886683de98380",
-  "lastmod": "2026-11-06"
+ "https://biosyneg.com/teacher-esraa-elmeligy.html": {
+  "h": "03fc1fc3e95ff10d",
+  "lastmod": "2026-11-07"
  },
- "https://biosyneg.com/teacher-e71638dc.html": {
-  "h": "12e6d18cc4a88206",
-  "lastmod": "2026-11-05"
+ "https://biosyneg.com/teacher-esraa-mostafa.html": {
+  "h": "7b8f014ce97c36eb",
+  "lastmod": "2026-11-07"
  },
- "https://biosyneg.com/teacher-f297c76b.html": {
-  "h": "c39ad66c0b0bed70",
-  "lastmod": "2026-11-06"
+ "https://biosyneg.com/teacher-mohamed-emam.html": {
+  "h": "0d41b67f73592252",
+  "lastmod": "2026-11-07"
+ },
+ "https://biosyneg.com/teacher-nada-salah.html": {
+  "h": "83d5af638f79db27",
+  "lastmod": "2026-11-07"
+ },
+ "https://biosyneg.com/teacher-nardine-zarif.html": {
+  "h": "0e96f012d3070d6f",
+  "lastmod": "2026-11-07"
+ },
+ "https://biosyneg.com/teacher-shaimaa-mohamed.html": {
+  "h": "e7207d70861eb789",
+  "lastmod": "2026-11-07"
+ },
+ "https://biosyneg.com/teacher-sherif-arafa.html": {
+  "h": "0755345b8857cb06",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/terms.html": {
-  "h": "a7825d8128bed5e3",
-  "lastmod": "2026-11-05"
+  "h": "7067a403cb54d64c",
+  "lastmod": "2026-11-07"
+ },
+ "https://biosyneg.com/topic-agriculture.html": {
+  "h": "75bc80770a5305f3",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/topic-biotech.html": {
-  "h": "58bd8ae22c3b6aff",
-  "lastmod": "2026-11-06"
+  "h": "76b2d88caa2ec87b",
+  "lastmod": "2026-11-07"
+ },
+ "https://biosyneg.com/topic-computers.html": {
+  "h": "084d4c0cb242058d",
+  "lastmod": "2026-11-07"
+ },
+ "https://biosyneg.com/topic-dentistry.html": {
+  "h": "659b585ce3b79bb3",
+  "lastmod": "2026-11-07"
+ },
+ "https://biosyneg.com/topic-engineering.html": {
+  "h": "3c7b2f317a89e9ff",
+  "lastmod": "2026-11-07"
+ },
+ "https://biosyneg.com/topic-health_tech.html": {
+  "h": "2187e918939bdcad",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/topic-medicine.html": {
-  "h": "686d0774f1d47a45",
-  "lastmod": "2026-11-06"
+  "h": "63e0cc6c8faf586b",
+  "lastmod": "2026-11-07"
+ },
+ "https://biosyneg.com/topic-pharmacy.html": {
+  "h": "d1c252df08577eda",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/topic-science.html": {
-  "h": "b91c5c9c6b385459",
-  "lastmod": "2026-11-06"
+  "h": "353d1ec8ba832cdf",
+  "lastmod": "2026-11-07"
+ },
+ "https://biosyneg.com/topic-veterinary.html": {
+  "h": "561871e051e1207a",
+  "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/verify.html": {
-  "h": "df0051c50e81996e",
-  "lastmod": "2026-11-05"
+  "h": "6bd7f2ecbd6a17c7",
+  "lastmod": "2026-11-07"
  }
 }

@@ -12,7 +12,7 @@
 - Certificates: every completed course issues a Biosyn Eg certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify.html
 - Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available
 - Founded: 2020, by Abdo Mostafa (B.Sc. in Science)
-- Served: more than 20,009 students, researchers and university staff in 9 countries
+- Served: more than 20,011 students, researchers and university staff in 9 countries
 - About page: https://biosyneg.com/about.html
 
 ## Subscription prices (EGP)
@@ -23,29 +23,10 @@
 
 ## Course details
 
-### Introduction To Genetics
-URL: https://biosyneg.com/course-introduction-to-genetics.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-
-تقدّم هذه الدورة مدخلًا منظمًا إلى علم الوراثة، يبدأ من الأسئلة الأولى: كيف تنتقل الصفات من الآباء إلى الأبناء؟ وكيف تحوّلت قوانين مندل المجردة إلى فهم مادي للكروموسومات والحمض النووي؟
-
-تشرح الدورة الأساس الخلوي للوراثة من خلال الانقسام الاختزالي والعبور الجيني، ثم الوراثة المندلية والتهجين الثنائي، والارتباط الجيني وحساب تكرار إعادة الاتحاد ورسم الخرائط الجينية. بعد ذلك تنتقل إلى العقيدة المركزية للبيولوجيا الجزيئية وتنظيم التعبير الجيني بعد النسخ، ثم وراثة العشائر وشروط اتزان هاردي-واينبرغ، وتُختتم بتفاعل الجينات مع البيئة في الصفات المعقدة.
-
-الدورة مناسبة لطلاب العلوم والتكنولوجيا الحيوية والطب والصيدلة والزراعة، ولكل من يحتاج إلى أساس واضح في الوراثة قبل دراسة البيولوجيا الجزيئية أو الهندسة الوراثية أو المعلوماتية الحيوية.
-
-Lectures:
-1. Foundations: From Mendel to DNA
-2. Meiosis and Recombination
-3. Mendelian Inheritance and the Dihybrid Cross
-4. Linkage and Genetic Mapping
-5. The Central Dogma of Molecular Biology
-6. Gene Regulation Beyond Transcription
-7. Population Genetics and Hardy–Weinberg Equilibrium
-8. Genes, Environment and Complex Traits
-
 ### Computational Neuroscience
 URL: https://biosyneg.com/course-computational-neuroscience.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: م. ندى صلاح — باحثة في علوم الأعصاب الحسابية
 
 تقدّم هذه الدورة مدخلًا شاملًا إلى علوم الدماغ وعلوم الأعصاب الحسابية، وتجمع بين الأسس البيولوجية وطرق القياس والنمذجة الحاسوبية.
 
@@ -72,9 +53,29 @@ Lectures:
 16. LIF Neuron in Python (Part 5)
 17. LIF Neuron in Python (Part 6)
 
+### Introduction To Immunology
+URL: https://biosyneg.com/course-introduction-to-immunology.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+تقدّم هذه الدورة مدخلًا شاملًا إلى علم المناعة، فتشرح كيف يتعرّف الجسم على الميكروبات ويدافع عن نفسه، بلغة واضحة ومنظمة تناسب من يدرس المناعة لأول مرة.
+
+تبدأ بنظرة عامة على الجهاز المناعي ومكوناته، ثم المناعة الفطرية، والمستضدات ومعقد التوافق النسيجي (MHC)، ثم المناعة الخلوية (CMI) والاستجابة المناعية الخلطية والأجسام المضادة، وتُختتم بنظام المتمّمة (Complement).
+
+الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم والتكنولوجيا الحيوية، ولكل من يحتاج إلى أساس قوي في المناعة قبل دراسة الأمراض المناعية أو اللقاحات.
+
+Lectures:
+1. Overview of the Immune System
+2. Basics of Immunology
+3. Innate Immunity
+4. Antigens and MHC
+5. Cell-Mediated Immunity (CMI)
+6. Humoral Immune Response
+7. The Complement System
+
 ### Some Concepts in Clinical Research
 URL: https://biosyneg.com/course-some-concepts-in-clinical-research.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 
 تقدّم هذه الدورة المفاهيم الأساسية للبحث السريري من زاوية تاريخية وأخلاقية، لتفهم لماذا وُضعت قواعد البحث على البشر بهذا الشكل.
 
@@ -92,6 +93,26 @@ Lectures:
 7. Ethical Principles
 8. Informed Consent & IRB
 9. Recap & Quiz
+
+### Introduction To Genetics
+URL: https://biosyneg.com/course-introduction-to-genetics.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+
+تقدّم هذه الدورة مدخلًا منظمًا إلى علم الوراثة، يبدأ من الأسئلة الأولى: كيف تنتقل الصفات من الآباء إلى الأبناء؟ وكيف تحوّلت قوانين مندل المجردة إلى فهم مادي للكروموسومات والحمض النووي؟
+
+تشرح الدورة الأساس الخلوي للوراثة من خلال الانقسام الاختزالي والعبور الجيني، ثم الوراثة المندلية والتهجين الثنائي، والارتباط الجيني وحساب تكرار إعادة الاتحاد ورسم الخرائط الجينية. بعد ذلك تنتقل إلى العقيدة المركزية للبيولوجيا الجزيئية وتنظيم التعبير الجيني بعد النسخ، ثم وراثة العشائر وشروط اتزان هاردي-واينبرغ، وتُختتم بتفاعل الجينات مع البيئة في الصفات المعقدة.
+
+الدورة مناسبة لطلاب العلوم والتكنولوجيا الحيوية والطب والصيدلة والزراعة، ولكل من يحتاج إلى أساس واضح في الوراثة قبل دراسة البيولوجيا الجزيئية أو الهندسة الوراثية أو المعلوماتية الحيوية.
+
+Lectures:
+1. Foundations: From Mendel to DNA
+2. Meiosis and Recombination
+3. Mendelian Inheritance and the Dihybrid Cross
+4. Linkage and Genetic Mapping
+5. The Central Dogma of Molecular Biology
+6. Gene Regulation Beyond Transcription
+7. Population Genetics and Hardy–Weinberg Equilibrium
+8. Genes, Environment and Complex Traits
 
 ### Introduction To Genetic Engineering
 URL: https://biosyneg.com/course-introduction-to-genetic-engineering.html
@@ -113,30 +134,11 @@ Lectures:
 7. Genome Editing: Knockout, Insertion and Replacement
 8. In Silico Cloning Design (Practical)
 
-### Introduction To Immunology
-URL: https://biosyneg.com/course-introduction-to-immunology.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-
-تقدّم هذه الدورة مدخلًا شاملًا إلى علم المناعة، فتشرح كيف يتعرّف الجسم على الميكروبات ويدافع عن نفسه، بلغة واضحة ومنظمة تناسب من يدرس المناعة لأول مرة.
-
-تبدأ بنظرة عامة على الجهاز المناعي ومكوناته، ثم المناعة الفطرية، والمستضدات ومعقد التوافق النسيجي (MHC)، ثم المناعة الخلوية (CMI) والاستجابة المناعية الخلطية والأجسام المضادة، وتُختتم بنظام المتمّمة (Complement).
-
-الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم والتكنولوجيا الحيوية، ولكل من يحتاج إلى أساس قوي في المناعة قبل دراسة الأمراض المناعية أو اللقاحات.
-
-Lectures:
-1. Overview of the Immune System
-2. Basics of Immunology
-3. Innate Immunity
-4. Antigens and MHC
-5. Cell-Mediated Immunity (CMI)
-6. Humoral Immune Response
-7. The Complement System
-
 ### Bioinformatics Diploma
 URL: https://biosyneg.com/course-bioinformtics-diploma.html
 Type: Live interactive · Level: Beginner · Price: 15٬000 ج.م
 Starts: 2027-01-01
-Instructors: إسراء مصطفي — بكالوريوس العلوم من جامعة الإسكندرية، تخصص كيمياء وعلوم بيئية.; د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال; د. شريف عرفه — دكتوراه من قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
+Instructors: إسراء مصطفي — بكالوريوس العلوم من جامعة الإسكندرية، تخصص كيمياء وعلوم بيئية.; د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال; د. شريف عرفه — طالب دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
 
 ادخل عالم تحليل البيانات الجينية وابدأ مسارك في Bioinformatics
 
@@ -170,6 +172,7 @@ Lectures:
 ### Intro To Basic Microbiology
 URL: https://biosyneg.com/course-microbiology-course-362803.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. شيماء محمد — مدرس الباثولوجيا الإكلينيكية، كلية الطب، جامعة عين شمس
 
 تقدّم هذه الدورة أساسًا متينًا في علم الأحياء الدقيقة الطبية، مع التركيز على تصنيف الكائنات الدقيقة وتركيبها وأهميتها السريرية. تتعرّف خلالها على تنوع البكتيريا، ومنها المكورات موجبة الجرام والعصويات سالبة الجرام واللاهوائيات والملتويات والمتفطرات والمفطورات، ثم تختم بمقدمة في علم الطفيليات.
 
@@ -189,51 +192,10 @@ Lectures:
 9. Mycoplasmas
 10. Introduction to Parasitology
 
-### Basics of IVF Laboratories
-URL: https://biosyneg.com/course-basics-of-ivf-laboratories.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-
-تأخذك هذه الدورة في رحلة متكاملة داخل معمل أطفال الأنابيب (IVF)، بدءًا من دورة الخلية وتكوين الحيوانات المنوية والبويضات، وصولًا إلى نمو الجنين حتى مرحلة الكيسة الأريمية (Blastocyst).
-
-تشرح المحاضرات خطوات العمل الفعلية في المعمل: تحليل السائل المنوي الروتيني والاختبارات المساعدة، وتجهيز الحيوانات المنوية وتجميدها، والعوامل المؤثرة في جودتها، ثم تجهيز البويضات وإزالة الخلايا المحيطة بها وتقييمها، وتجميد البويضات والأجنة، ثم الفحص الجيني قبل الانغراس (PGT) والانغراس، وتفسير النتائج.
-
-الدورة مناسبة لخريجي العلوم والطب والتكنولوجيا الحيوية الراغبين في العمل بمعامل الإخصاب المساعد، ولأخصائيي المختبرات الذين يريدون فهمًا منظمًا لهذا المجال باللغة العربية.
-
-Lectures:
-1. Cell Cycle and Spermatogenesis
-2. Routine Semen Analysis
-3. Ancillary Semen Tests
-4. Sperm Processing and Cryopreservation
-5. Factors Affecting Sperm Quality
-6. Menstrual Cycle and Oogenesis
-7. Oocyte Preparation, Denudation and Assessment
-8. From Fertilization to Blastocyst
-9. Oocyte and Embryo Cryopreservation
-10. PGT and Implantation
-11. Interpretations
-
-### How to Read and Understand a Research Paper
-URL: https://biosyneg.com/course-how-to-read-a-research-paper.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-
-الأبحاث العلمية هي أساس العمل الأكاديمي، لكن قراءتها وفهمها قد يكونان صعبين في البداية. تقدّم هذه الدورة طريقة عملية خطوة بخطوة لقراءة أي بحث علمي وفهمه في وقت قصير.
-
-تتعرف على قواعد القراءة الذكية، وما الذي تبحث عنه في الصفحة الأولى والملخص، وكيف تقرأ النص الكامل بأقسامه، ثم تطبّق ذلك على أمثلة من سلاسل الحالات والتجارب العشوائية المضبوطة والتحليل التلوي (Meta-analysis)، وتُختتم الدورة بمراجعة واختبار قصير.
-
-الدورة مناسبة لطلاب الكليات العلمية والطبية في كل المراحل، ولطلاب الدراسات العليا الذين يحتاجون إلى قراءة عدد كبير من الأبحاث لكتابة رسائلهم.
-
-Lectures:
-1. Rules of Reading a Paper
-2. The Front Page
-3. Reading the Full Text
-4. Case Series
-5. Randomized Controlled Trials
-6. Meta-analysis
-7. Recap & Quiz
-
 ### Study Design in Clinical Research
 URL: https://biosyneg.com/course-study-design-in-clinical-research.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 
 اختيار تصميم الدراسة هو أول قرار يحدد قيمة أي بحث سريري. تشرح هذه الدورة أنواع تصاميم الدراسات في البحث الطبي بطريقة منظمة، بدءًا من تقارير الحالات وسلاسلها، مرورًا بالدراسات المقطعية (Cross-sectional) ودراسات الحالات والشواهد (Case-control) ودراسات الأتراب (Cohort)، وصولًا إلى الدراسات التجريبية.
 
@@ -293,10 +255,54 @@ Lectures:
 5. Session 5
 6. Final Project
 
+### How to Read and Understand a Research Paper
+URL: https://biosyneg.com/course-how-to-read-a-research-paper.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
+
+الأبحاث العلمية هي أساس العمل الأكاديمي، لكن قراءتها وفهمها قد يكونان صعبين في البداية. تقدّم هذه الدورة طريقة عملية خطوة بخطوة لقراءة أي بحث علمي وفهمه في وقت قصير.
+
+تتعرف على قواعد القراءة الذكية، وما الذي تبحث عنه في الصفحة الأولى والملخص، وكيف تقرأ النص الكامل بأقسامه، ثم تطبّق ذلك على أمثلة من سلاسل الحالات والتجارب العشوائية المضبوطة والتحليل التلوي (Meta-analysis)، وتُختتم الدورة بمراجعة واختبار قصير.
+
+الدورة مناسبة لطلاب الكليات العلمية والطبية في كل المراحل، ولطلاب الدراسات العليا الذين يحتاجون إلى قراءة عدد كبير من الأبحاث لكتابة رسائلهم.
+
+Lectures:
+1. Rules of Reading a Paper
+2. The Front Page
+3. Reading the Full Text
+4. Case Series
+5. Randomized Controlled Trials
+6. Meta-analysis
+7. Recap & Quiz
+
+### Basics of IVF Laboratories
+URL: https://biosyneg.com/course-basics-of-ivf-laboratories.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. أحمد سيد — محاضر علم الأجنة، كلية العلوم، جامعة الأزهر، أسيوط، مصر
+
+تأخذك هذه الدورة في رحلة متكاملة داخل معمل أطفال الأنابيب (IVF)، بدءًا من دورة الخلية وتكوين الحيوانات المنوية والبويضات، وصولًا إلى نمو الجنين حتى مرحلة الكيسة الأريمية (Blastocyst).
+
+تشرح المحاضرات خطوات العمل الفعلية في المعمل: تحليل السائل المنوي الروتيني والاختبارات المساعدة، وتجهيز الحيوانات المنوية وتجميدها، والعوامل المؤثرة في جودتها، ثم تجهيز البويضات وإزالة الخلايا المحيطة بها وتقييمها، وتجميد البويضات والأجنة، ثم الفحص الجيني قبل الانغراس (PGT) والانغراس، وتفسير النتائج.
+
+الدورة مناسبة لخريجي العلوم والطب والتكنولوجيا الحيوية الراغبين في العمل بمعامل الإخصاب المساعد، ولأخصائيي المختبرات الذين يريدون فهمًا منظمًا لهذا المجال باللغة العربية.
+
+Lectures:
+1. Cell Cycle and Spermatogenesis
+2. Routine Semen Analysis
+3. Ancillary Semen Tests
+4. Sperm Processing and Cryopreservation
+5. Factors Affecting Sperm Quality
+6. Menstrual Cycle and Oogenesis
+7. Oocyte Preparation, Denudation and Assessment
+8. From Fertilization to Blastocyst
+9. Oocyte and Embryo Cryopreservation
+10. PGT and Implantation
+11. Interpretations
+
 ### Structural Bioinformatics, Molecular Docking and Drug Design
 URL: https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: د. شريف عرفه — دكتوراه من قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
+Instructors: د. شريف عرفه — طالب دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
 
 تصميم الأدوية بمساعدة الحاسوب أصبح خطوة أساسية في اكتشاف الأدوية الحديثة، لأنه يقلل عدد المركبات التي تحتاج إلى اختبار في المعمل. تأخذك هذه الدورة في مشروع متكامل خطوة بخطوة، من اختيار البروتين الهدف حتى تحليل نتائج الالتحام الجزيئي.
 
