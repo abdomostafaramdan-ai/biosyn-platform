@@ -23,36 +23,6 @@
 
 ## Course details
 
-### Computational Neuroscience
-URL: https://biosyneg.com/course-computational-neuroscience.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: م. ندى صلاح — باحثة في علوم الأعصاب الحسابية
-
-تقدّم هذه الدورة مدخلًا شاملًا إلى علوم الدماغ وعلوم الأعصاب الحسابية، وتجمع بين الأسس البيولوجية وطرق القياس والنمذجة الحاسوبية.
-
-تبدأ بمقدمة في علم الدماغ، ثم القياسات النفسية الفيزيائية لدى الإنسان (Psychophysics) والمخرجات السلوكية، والنشاط الكهربي للخلايا العصبية (Spiking Activity)، وإشارات الدماغ مثل تخطيط كهربية الدماغ والمغناطيسية الدماغية (EEG وMEG)، ثم تنتقل إلى التطبيق العملي ببناء نموذج العصبون المتكامل المتسرب (LIF Neuron) بلغة بايثون خطوة بخطوة.
-
-الدورة مناسبة لطلاب العلوم والطب والهندسة الطبية والمعلوماتية الحيوية المهتمين بعلوم الأعصاب، ومن يريد بداية عملية في نمذجة الدماغ.
-
-Lectures:
-1. Course Introduction
-2. Introduction to Brain Science (Part 1)
-3. Introduction to Brain Science (Part 2)
-4. Human Psychophysics (Part 1)
-5. Human Psychophysics (Part 2)
-6. Human Psychophysics (Part 3)
-7. Behavioural Readouts
-8. Spiking Activity (Part 1)
-9. Spiking Activity (Part 2)
-10. Brain Signals: EEG & MEG (Part 1)
-11. Brain Signals: EEG & MEG (Part 2)
-12. LIF Neuron in Python (Part 1)
-13. LIF Neuron in Python (Part 2)
-14. LIF Neuron in Python (Part 3)
-15. LIF Neuron in Python (Part 4)
-16. LIF Neuron in Python (Part 5)
-17. LIF Neuron in Python (Part 6)
-
 ### Introduction To Immunology
 URL: https://biosyneg.com/course-introduction-to-immunology.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
@@ -97,6 +67,7 @@ Lectures:
 ### Introduction To Genetics
 URL: https://biosyneg.com/course-introduction-to-genetics.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: سلمى صبحي — باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية
 
 تقدّم هذه الدورة مدخلًا منظمًا إلى علم الوراثة، يبدأ من الأسئلة الأولى: كيف تنتقل الصفات من الآباء إلى الأبناء؟ وكيف تحوّلت قوانين مندل المجردة إلى فهم مادي للكروموسومات والحمض النووي؟
 
@@ -117,6 +88,7 @@ Lectures:
 ### Introduction To Genetic Engineering
 URL: https://biosyneg.com/course-introduction-to-genetic-engineering.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: سلمى صبحي — باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية
 
 الهندسة الوراثية هي الأساس الذي تقوم عليه صناعة الإنسولين واللقاحات والإنزيمات والمحاصيل المحسّنة. تشرح هذه الدورة كيف نقرأ الحمض النووي ونقطعه وننقله ونعيد كتابته، خطوة بخطوة وباللغة العربية.
 
@@ -133,6 +105,36 @@ Lectures:
 6. Scaling Up: Fermentation and Bioreactors
 7. Genome Editing: Knockout, Insertion and Replacement
 8. In Silico Cloning Design (Practical)
+
+### Computational Neuroscience
+URL: https://biosyneg.com/course-computational-neuroscience.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: م. ندى صلاح — باحثة في علوم الأعصاب الحسابية
+
+تقدّم هذه الدورة مدخلًا شاملًا إلى علوم الدماغ وعلوم الأعصاب الحسابية، وتجمع بين الأسس البيولوجية وطرق القياس والنمذجة الحاسوبية.
+
+تبدأ بمقدمة في علم الدماغ، ثم القياسات النفسية الفيزيائية لدى الإنسان (Psychophysics) والمخرجات السلوكية، والنشاط الكهربي للخلايا العصبية (Spiking Activity)، وإشارات الدماغ مثل تخطيط كهربية الدماغ والمغناطيسية الدماغية (EEG وMEG)، ثم تنتقل إلى التطبيق العملي ببناء نموذج العصبون المتكامل المتسرب (LIF Neuron) بلغة بايثون خطوة بخطوة.
+
+الدورة مناسبة لطلاب العلوم والطب والهندسة الطبية والمعلوماتية الحيوية المهتمين بعلوم الأعصاب، ومن يريد بداية عملية في نمذجة الدماغ.
+
+Lectures:
+1. Course Introduction
+2. Introduction to Brain Science (Part 1)
+3. Introduction to Brain Science (Part 2)
+4. Human Psychophysics (Part 1)
+5. Human Psychophysics (Part 2)
+6. Human Psychophysics (Part 3)
+7. Behavioural Readouts
+8. Spiking Activity (Part 1)
+9. Spiking Activity (Part 2)
+10. Brain Signals: EEG & MEG (Part 1)
+11. Brain Signals: EEG & MEG (Part 2)
+12. LIF Neuron in Python (Part 1)
+13. LIF Neuron in Python (Part 2)
+14. LIF Neuron in Python (Part 3)
+15. LIF Neuron in Python (Part 4)
+16. LIF Neuron in Python (Part 5)
+17. LIF Neuron in Python (Part 6)
 
 ### Bioinformatics Diploma
 URL: https://biosyneg.com/course-bioinformtics-diploma.html
@@ -192,6 +194,49 @@ Lectures:
 9. Mycoplasmas
 10. Introduction to Parasitology
 
+### Python in Bioinformatics
+URL: https://biosyneg.com/course-python-in-bioinformatics.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
+
+بايثون من أهم لغات البرمجة في المعلوماتية الحيوية وتحليل البيانات. تقدّم هذه الدورة أساسيات البرمجة بلغة بايثون في سياق بيولوجي واضح، دون أن تفترض أي خبرة برمجية سابقة.
+
+تتعلم المتغيرات وأنواع البيانات والشروط والتكرار والدوال، ثم التعامل مع الملفات وتسلسلات الحمض النووي والبروتين، واستخدام المكتبات الأساسية لتحليل البيانات وأتمتة المهام المتكررة في البحث العلمي.
+
+الدورة مناسبة لطلاب العلوم والتكنولوجيا الحيوية والصيدلة، وللباحثين الذين يريدون الدخول إلى مجال المعلوماتية الحيوية بأداة عملية مطلوبة في سوق العمل.
+
+Lectures:
+1. Session 1
+2. Session 2
+3. Session 3
+4. Session 4
+5. Session 5
+6. Session 6
+
+### Basics of IVF Laboratories
+URL: https://biosyneg.com/course-basics-of-ivf-laboratories.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. أحمد سيد — محاضر علم الأجنة، كلية العلوم، جامعة الأزهر، أسيوط، مصر
+
+تأخذك هذه الدورة في رحلة متكاملة داخل معمل أطفال الأنابيب (IVF)، بدءًا من دورة الخلية وتكوين الحيوانات المنوية والبويضات، وصولًا إلى نمو الجنين حتى مرحلة الكيسة الأريمية (Blastocyst).
+
+تشرح المحاضرات خطوات العمل الفعلية في المعمل: تحليل السائل المنوي الروتيني والاختبارات المساعدة، وتجهيز الحيوانات المنوية وتجميدها، والعوامل المؤثرة في جودتها، ثم تجهيز البويضات وإزالة الخلايا المحيطة بها وتقييمها، وتجميد البويضات والأجنة، ثم الفحص الجيني قبل الانغراس (PGT) والانغراس، وتفسير النتائج.
+
+الدورة مناسبة لخريجي العلوم والطب والتكنولوجيا الحيوية الراغبين في العمل بمعامل الإخصاب المساعد، ولأخصائيي المختبرات الذين يريدون فهمًا منظمًا لهذا المجال باللغة العربية.
+
+Lectures:
+1. Cell Cycle and Spermatogenesis
+2. Routine Semen Analysis
+3. Ancillary Semen Tests
+4. Sperm Processing and Cryopreservation
+5. Factors Affecting Sperm Quality
+6. Menstrual Cycle and Oogenesis
+7. Oocyte Preparation, Denudation and Assessment
+8. From Fertilization to Blastocyst
+9. Oocyte and Embryo Cryopreservation
+10. PGT and Implantation
+11. Interpretations
+
 ### Study Design in Clinical Research
 URL: https://biosyneg.com/course-study-design-in-clinical-research.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
@@ -216,25 +261,6 @@ Lectures:
 10. Secondary Study Designs (Part 1)
 11. Secondary Study Designs (Part 2)
 12. Recap & Quiz
-
-### Python in Bioinformatics
-URL: https://biosyneg.com/course-python-in-bioinformatics.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
-
-بايثون من أهم لغات البرمجة في المعلوماتية الحيوية وتحليل البيانات. تقدّم هذه الدورة أساسيات البرمجة بلغة بايثون في سياق بيولوجي واضح، دون أن تفترض أي خبرة برمجية سابقة.
-
-تتعلم المتغيرات وأنواع البيانات والشروط والتكرار والدوال، ثم التعامل مع الملفات وتسلسلات الحمض النووي والبروتين، واستخدام المكتبات الأساسية لتحليل البيانات وأتمتة المهام المتكررة في البحث العلمي.
-
-الدورة مناسبة لطلاب العلوم والتكنولوجيا الحيوية والصيدلة، وللباحثين الذين يريدون الدخول إلى مجال المعلوماتية الحيوية بأداة عملية مطلوبة في سوق العمل.
-
-Lectures:
-1. Session 1
-2. Session 2
-3. Session 3
-4. Session 4
-5. Session 5
-6. Session 6
 
 ### R Language in Bioinformatics
 URL: https://biosyneg.com/course-r-language-in-bioinformatics.html
@@ -274,30 +300,6 @@ Lectures:
 5. Randomized Controlled Trials
 6. Meta-analysis
 7. Recap & Quiz
-
-### Basics of IVF Laboratories
-URL: https://biosyneg.com/course-basics-of-ivf-laboratories.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: د. أحمد سيد — محاضر علم الأجنة، كلية العلوم، جامعة الأزهر، أسيوط، مصر
-
-تأخذك هذه الدورة في رحلة متكاملة داخل معمل أطفال الأنابيب (IVF)، بدءًا من دورة الخلية وتكوين الحيوانات المنوية والبويضات، وصولًا إلى نمو الجنين حتى مرحلة الكيسة الأريمية (Blastocyst).
-
-تشرح المحاضرات خطوات العمل الفعلية في المعمل: تحليل السائل المنوي الروتيني والاختبارات المساعدة، وتجهيز الحيوانات المنوية وتجميدها، والعوامل المؤثرة في جودتها، ثم تجهيز البويضات وإزالة الخلايا المحيطة بها وتقييمها، وتجميد البويضات والأجنة، ثم الفحص الجيني قبل الانغراس (PGT) والانغراس، وتفسير النتائج.
-
-الدورة مناسبة لخريجي العلوم والطب والتكنولوجيا الحيوية الراغبين في العمل بمعامل الإخصاب المساعد، ولأخصائيي المختبرات الذين يريدون فهمًا منظمًا لهذا المجال باللغة العربية.
-
-Lectures:
-1. Cell Cycle and Spermatogenesis
-2. Routine Semen Analysis
-3. Ancillary Semen Tests
-4. Sperm Processing and Cryopreservation
-5. Factors Affecting Sperm Quality
-6. Menstrual Cycle and Oogenesis
-7. Oocyte Preparation, Denudation and Assessment
-8. From Fertilization to Blastocyst
-9. Oocyte and Embryo Cryopreservation
-10. PGT and Implantation
-11. Interpretations
 
 ### Structural Bioinformatics, Molecular Docking and Drug Design
 URL: https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html

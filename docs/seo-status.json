@@ -1,12 +1,7 @@
 {
- "built_at": "2026-11-07T19:18:34+00:00",
- "sitemap_urls": 58,
+ "built_at": "2026-11-07T19:39:44+00:00",
+ "sitemap_urls": 59,
  "indexable": [
-  {
-   "slug": "computational-neuroscience",
-   "title": "Computational Neuroscience",
-   "url": "https://biosyneg.com/course-computational-neuroscience.html"
-  },
   {
    "slug": "introduction-to-immunology",
    "title": "Introduction To Immunology",
@@ -28,6 +23,11 @@
    "url": "https://biosyneg.com/course-introduction-to-genetic-engineering.html"
   },
   {
+   "slug": "computational-neuroscience",
+   "title": "Computational Neuroscience",
+   "url": "https://biosyneg.com/course-computational-neuroscience.html"
+  },
+  {
    "slug": "bioinformtics-diploma",
    "title": "Bioinformatics Diploma",
    "url": "https://biosyneg.com/course-bioinformtics-diploma.html"
@@ -43,14 +43,19 @@
    "url": "https://biosyneg.com/course-microbiology-course-362803.html"
   },
   {
-   "slug": "study-design-in-clinical-research",
-   "title": "Study Design in Clinical Research",
-   "url": "https://biosyneg.com/course-study-design-in-clinical-research.html"
-  },
-  {
    "slug": "python-in-bioinformatics",
    "title": "Python in Bioinformatics",
    "url": "https://biosyneg.com/course-python-in-bioinformatics.html"
+  },
+  {
+   "slug": "basics-of-ivf-laboratories",
+   "title": "Basics of IVF Laboratories",
+   "url": "https://biosyneg.com/course-basics-of-ivf-laboratories.html"
+  },
+  {
+   "slug": "study-design-in-clinical-research",
+   "title": "Study Design in Clinical Research",
+   "url": "https://biosyneg.com/course-study-design-in-clinical-research.html"
   },
   {
    "slug": "r-language-in-bioinformatics",
@@ -61,11 +66,6 @@
    "slug": "how-to-read-a-research-paper",
    "title": "How to Read and Understand a Research Paper",
    "url": "https://biosyneg.com/course-how-to-read-a-research-paper.html"
-  },
-  {
-   "slug": "basics-of-ivf-laboratories",
-   "title": "Basics of IVF Laboratories",
-   "url": "https://biosyneg.com/course-basics-of-ivf-laboratories.html"
   },
   {
    "slug": "structural-bioinformatics-molecular-docking-drug-design",
@@ -163,8 +163,12 @@
   {
    "name": "م. ندى صلاح",
    "url": "https://biosyneg.com/teacher-nada-salah.html"
+  },
+  {
+   "name": "سلمى صبحي",
+   "url": "https://biosyneg.com/teacher-salma-sobhy.html"
   }
  ],
  "ai_training": true,
- "changed": 58
+ "changed": 11
 }
