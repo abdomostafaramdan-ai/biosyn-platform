@@ -1,7 +1,17 @@
 {
- "built_at": "2026-11-07T19:48:34+00:00",
+ "built_at": "2026-11-07T20:09:00+00:00",
  "sitemap_urls": 57,
  "indexable": [
+  {
+   "slug": "some-concepts-in-clinical-research",
+   "title": "Some Concepts in Clinical Research",
+   "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
+  },
+  {
+   "slug": "computational-neuroscience",
+   "title": "Computational Neuroscience",
+   "url": "https://biosyneg.com/course-computational-neuroscience.html"
+  },
   {
    "slug": "introduction-to-genetics",
    "title": "Introduction To Genetics",
@@ -11,16 +21,6 @@
    "slug": "introduction-to-genetic-engineering",
    "title": "Introduction To Genetic Engineering",
    "url": "https://biosyneg.com/course-introduction-to-genetic-engineering.html"
-  },
-  {
-   "slug": "computational-neuroscience",
-   "title": "Computational Neuroscience",
-   "url": "https://biosyneg.com/course-computational-neuroscience.html"
-  },
-  {
-   "slug": "some-concepts-in-clinical-research",
-   "title": "Some Concepts in Clinical Research",
-   "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
   },
   {
    "slug": "introduction-to-immunology",
@@ -48,14 +48,9 @@
    "url": "https://biosyneg.com/course-python-in-bioinformatics.html"
   },
   {
-   "slug": "basics-of-ivf-laboratories",
-   "title": "Basics of IVF Laboratories",
-   "url": "https://biosyneg.com/course-basics-of-ivf-laboratories.html"
-  },
-  {
-   "slug": "study-design-in-clinical-research",
-   "title": "Study Design in Clinical Research",
-   "url": "https://biosyneg.com/course-study-design-in-clinical-research.html"
+   "slug": "how-to-read-a-research-paper",
+   "title": "How to Read and Understand a Research Paper",
+   "url": "https://biosyneg.com/course-how-to-read-a-research-paper.html"
   },
   {
    "slug": "r-language-in-bioinformatics",
@@ -63,19 +58,24 @@
    "url": "https://biosyneg.com/course-r-language-in-bioinformatics.html"
   },
   {
-   "slug": "how-to-read-a-research-paper",
-   "title": "How to Read and Understand a Research Paper",
-   "url": "https://biosyneg.com/course-how-to-read-a-research-paper.html"
+   "slug": "study-design-in-clinical-research",
+   "title": "Study Design in Clinical Research",
+   "url": "https://biosyneg.com/course-study-design-in-clinical-research.html"
   },
   {
-   "slug": "structural-bioinformatics-molecular-docking-drug-design",
-   "title": "Structural Bioinformatics, Molecular Docking and Drug Design",
-   "url": "https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html"
+   "slug": "basics-of-ivf-laboratories",
+   "title": "Basics of IVF Laboratories",
+   "url": "https://biosyneg.com/course-basics-of-ivf-laboratories.html"
   },
   {
    "slug": "computational-biology",
    "title": "Computational Biology",
    "url": "https://biosyneg.com/course-computational-biology.html"
+  },
+  {
+   "slug": "structural-bioinformatics-molecular-docking-drug-design",
+   "title": "Structural Bioinformatics, Molecular Docking and Drug Design",
+   "url": "https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html"
   }
  ],
  "noindex": [],
@@ -160,5 +160,5 @@
   }
  ],
  "ai_training": true,
- "changed": 16
+ "changed": 23
 }

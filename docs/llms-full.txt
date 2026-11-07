@@ -23,6 +23,58 @@
 
 ## Course details
 
+### Some Concepts in Clinical Research
+URL: https://biosyneg.com/course-some-concepts-in-clinical-research.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
+
+تقدّم هذه الدورة المفاهيم الأساسية للبحث السريري من زاوية تاريخية وأخلاقية، لتفهم لماذا وُضعت قواعد البحث على البشر بهذا الشكل.
+
+تبدأ الدورة بتاريخ البحث السريري، ثم تعرض التجارب غير الأخلاقية التي غيّرت القواعد، وقانون نورمبرغ، وإعلان هلسنكي وتجارب الأدوية، وتشرح المبادئ الأخلاقية الأساسية، والموافقة المستنيرة (Informed Consent) ودور لجان الأخلاقيات (IRB)، ثم تُختتم بمراجعة واختبار قصير.
+
+الدورة مناسبة لطلاب الطب والصيدلة والعلوم الصحية، وللباحثين الذين يستعدون لتقديم بروتوكول بحثي إلى لجنة أخلاقيات.
+
+Lectures:
+1. History of Clinical Research
+2. Nazi Experiments (Part 1)
+3. Nazi Experiments (Part 2)
+4. Other Unethical Experiments
+5. The Nuremberg Code
+6. Declaration of Helsinki & Drug Trials
+7. Ethical Principles
+8. Informed Consent & IRB
+9. Recap & Quiz
+
+### Computational Neuroscience
+URL: https://biosyneg.com/course-computational-neuroscience.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: م. ندى صلاح — باحثة في علوم الأعصاب الحسابية
+
+تقدّم هذه الدورة مدخلًا شاملًا إلى علوم الدماغ وعلوم الأعصاب الحسابية، وتجمع بين الأسس البيولوجية وطرق القياس والنمذجة الحاسوبية.
+
+تبدأ بمقدمة في علم الدماغ، ثم القياسات النفسية الفيزيائية لدى الإنسان (Psychophysics) والمخرجات السلوكية، والنشاط الكهربي للخلايا العصبية (Spiking Activity)، وإشارات الدماغ مثل تخطيط كهربية الدماغ والمغناطيسية الدماغية (EEG وMEG)، ثم تنتقل إلى التطبيق العملي ببناء نموذج العصبون المتكامل المتسرب (LIF Neuron) بلغة بايثون خطوة بخطوة.
+
+الدورة مناسبة لطلاب العلوم والطب والهندسة الطبية والمعلوماتية الحيوية المهتمين بعلوم الأعصاب، ومن يريد بداية عملية في نمذجة الدماغ.
+
+Lectures:
+1. Course Introduction
+2. Introduction to Brain Science (Part 1)
+3. Introduction to Brain Science (Part 2)
+4. Human Psychophysics (Part 1)
+5. Human Psychophysics (Part 2)
+6. Human Psychophysics (Part 3)
+7. Behavioural Readouts
+8. Spiking Activity (Part 1)
+9. Spiking Activity (Part 2)
+10. Brain Signals: EEG & MEG (Part 1)
+11. Brain Signals: EEG & MEG (Part 2)
+12. LIF Neuron in Python (Part 1)
+13. LIF Neuron in Python (Part 2)
+14. LIF Neuron in Python (Part 3)
+15. LIF Neuron in Python (Part 4)
+16. LIF Neuron in Python (Part 5)
+17. LIF Neuron in Python (Part 6)
+
 ### Introduction To Genetics
 URL: https://biosyneg.com/course-introduction-to-genetics.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
@@ -64,58 +116,6 @@ Lectures:
 6. Scaling Up: Fermentation and Bioreactors
 7. Genome Editing: Knockout, Insertion and Replacement
 8. In Silico Cloning Design (Practical)
-
-### Computational Neuroscience
-URL: https://biosyneg.com/course-computational-neuroscience.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: م. ندى صلاح — باحثة في علوم الأعصاب الحسابية
-
-تقدّم هذه الدورة مدخلًا شاملًا إلى علوم الدماغ وعلوم الأعصاب الحسابية، وتجمع بين الأسس البيولوجية وطرق القياس والنمذجة الحاسوبية.
-
-تبدأ بمقدمة في علم الدماغ، ثم القياسات النفسية الفيزيائية لدى الإنسان (Psychophysics) والمخرجات السلوكية، والنشاط الكهربي للخلايا العصبية (Spiking Activity)، وإشارات الدماغ مثل تخطيط كهربية الدماغ والمغناطيسية الدماغية (EEG وMEG)، ثم تنتقل إلى التطبيق العملي ببناء نموذج العصبون المتكامل المتسرب (LIF Neuron) بلغة بايثون خطوة بخطوة.
-
-الدورة مناسبة لطلاب العلوم والطب والهندسة الطبية والمعلوماتية الحيوية المهتمين بعلوم الأعصاب، ومن يريد بداية عملية في نمذجة الدماغ.
-
-Lectures:
-1. Course Introduction
-2. Introduction to Brain Science (Part 1)
-3. Introduction to Brain Science (Part 2)
-4. Human Psychophysics (Part 1)
-5. Human Psychophysics (Part 2)
-6. Human Psychophysics (Part 3)
-7. Behavioural Readouts
-8. Spiking Activity (Part 1)
-9. Spiking Activity (Part 2)
-10. Brain Signals: EEG & MEG (Part 1)
-11. Brain Signals: EEG & MEG (Part 2)
-12. LIF Neuron in Python (Part 1)
-13. LIF Neuron in Python (Part 2)
-14. LIF Neuron in Python (Part 3)
-15. LIF Neuron in Python (Part 4)
-16. LIF Neuron in Python (Part 5)
-17. LIF Neuron in Python (Part 6)
-
-### Some Concepts in Clinical Research
-URL: https://biosyneg.com/course-some-concepts-in-clinical-research.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
-
-تقدّم هذه الدورة المفاهيم الأساسية للبحث السريري من زاوية تاريخية وأخلاقية، لتفهم لماذا وُضعت قواعد البحث على البشر بهذا الشكل.
-
-تبدأ الدورة بتاريخ البحث السريري، ثم تعرض التجارب غير الأخلاقية التي غيّرت القواعد، وقانون نورمبرغ، وإعلان هلسنكي وتجارب الأدوية، وتشرح المبادئ الأخلاقية الأساسية، والموافقة المستنيرة (Informed Consent) ودور لجان الأخلاقيات (IRB)، ثم تُختتم بمراجعة واختبار قصير.
-
-الدورة مناسبة لطلاب الطب والصيدلة والعلوم الصحية، وللباحثين الذين يستعدون لتقديم بروتوكول بحثي إلى لجنة أخلاقيات.
-
-Lectures:
-1. History of Clinical Research
-2. Nazi Experiments (Part 1)
-3. Nazi Experiments (Part 2)
-4. Other Unethical Experiments
-5. The Nuremberg Code
-6. Declaration of Helsinki & Drug Trials
-7. Ethical Principles
-8. Informed Consent & IRB
-9. Recap & Quiz
 
 ### Introduction To Immunology
 URL: https://biosyneg.com/course-introduction-to-immunology.html
@@ -214,29 +214,44 @@ Lectures:
 5. Session 5
 6. Session 6
 
-### Basics of IVF Laboratories
-URL: https://biosyneg.com/course-basics-of-ivf-laboratories.html
+### How to Read and Understand a Research Paper
+URL: https://biosyneg.com/course-how-to-read-a-research-paper.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: د. أحمد سيد — محاضر علم الأجنة، كلية العلوم، جامعة الأزهر، أسيوط، مصر
+Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 
-تأخذك هذه الدورة في رحلة متكاملة داخل معمل أطفال الأنابيب (IVF)، بدءًا من دورة الخلية وتكوين الحيوانات المنوية والبويضات، وصولًا إلى نمو الجنين حتى مرحلة الكيسة الأريمية (Blastocyst).
+الأبحاث العلمية هي أساس العمل الأكاديمي، لكن قراءتها وفهمها قد يكونان صعبين في البداية. تقدّم هذه الدورة طريقة عملية خطوة بخطوة لقراءة أي بحث علمي وفهمه في وقت قصير.
 
-تشرح المحاضرات خطوات العمل الفعلية في المعمل: تحليل السائل المنوي الروتيني والاختبارات المساعدة، وتجهيز الحيوانات المنوية وتجميدها، والعوامل المؤثرة في جودتها، ثم تجهيز البويضات وإزالة الخلايا المحيطة بها وتقييمها، وتجميد البويضات والأجنة، ثم الفحص الجيني قبل الانغراس (PGT) والانغراس، وتفسير النتائج.
+تتعرف على قواعد القراءة الذكية، وما الذي تبحث عنه في الصفحة الأولى والملخص، وكيف تقرأ النص الكامل بأقسامه، ثم تطبّق ذلك على أمثلة من سلاسل الحالات والتجارب العشوائية المضبوطة والتحليل التلوي (Meta-analysis)، وتُختتم الدورة بمراجعة واختبار قصير.
 
-الدورة مناسبة لخريجي العلوم والطب والتكنولوجيا الحيوية الراغبين في العمل بمعامل الإخصاب المساعد، ولأخصائيي المختبرات الذين يريدون فهمًا منظمًا لهذا المجال باللغة العربية.
+الدورة مناسبة لطلاب الكليات العلمية والطبية في كل المراحل، ولطلاب الدراسات العليا الذين يحتاجون إلى قراءة عدد كبير من الأبحاث لكتابة رسائلهم.
 
 Lectures:
-1. Cell Cycle and Spermatogenesis
-2. Routine Semen Analysis
-3. Ancillary Semen Tests
-4. Sperm Processing and Cryopreservation
-5. Factors Affecting Sperm Quality
-6. Menstrual Cycle and Oogenesis
-7. Oocyte Preparation, Denudation and Assessment
-8. From Fertilization to Blastocyst
-9. Oocyte and Embryo Cryopreservation
-10. PGT and Implantation
-11. Interpretations
+1. Rules of Reading a Paper
+2. The Front Page
+3. Reading the Full Text
+4. Case Series
+5. Randomized Controlled Trials
+6. Meta-analysis
+7. Recap & Quiz
+
+### R Language in Bioinformatics
+URL: https://biosyneg.com/course-r-language-in-bioinformatics.html
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Instructors: د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
+
+لغة R هي الأداة الأكثر استخدامًا في التحليل الإحصائي للبيانات البيولوجية والطبية. تبدأ هذه الدورة من الصفر، فتشرح أساسيات البرمجة بلغة R وبيئة RStudio، ثم تنتقل إلى التعامل مع البيانات واستيرادها وتنظيفها وإعادة تشكيلها (Data Manipulation).
+
+تتعلم بعد ذلك كيفية إجراء التحليلات الإحصائية الأساسية وإنتاج الرسوم البيانية الاحترافية، مع أمثلة من بيانات بيولوجية حقيقية، وتُختتم الدورة بمشروع تطبيقي يجمع كل ما تعلمته.
+
+الدورة مناسبة لطلاب العلوم والتكنولوجيا الحيوية والصيدلة والطب، وللباحثين الذين يحتاجون إلى تحليل بيانات رسائلهم وأبحاثهم بأنفسهم دون خبرة برمجية سابقة.
+
+Lectures:
+1. Session 1
+2. Session 2
+3. Session 3
+4. Session 4
+5. Session 5
+6. Final Project
 
 ### Study Design in Clinical Research
 URL: https://biosyneg.com/course-study-design-in-clinical-research.html
@@ -263,44 +278,79 @@ Lectures:
 11. Secondary Study Designs (Part 2)
 12. Recap & Quiz
 
-### R Language in Bioinformatics
-URL: https://biosyneg.com/course-r-language-in-bioinformatics.html
+### Basics of IVF Laboratories
+URL: https://biosyneg.com/course-basics-of-ivf-laboratories.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
+Instructors: د. أحمد سيد — محاضر علم الأجنة، كلية العلوم، جامعة الأزهر، أسيوط، مصر
 
-لغة R هي الأداة الأكثر استخدامًا في التحليل الإحصائي للبيانات البيولوجية والطبية. تبدأ هذه الدورة من الصفر، فتشرح أساسيات البرمجة بلغة R وبيئة RStudio، ثم تنتقل إلى التعامل مع البيانات واستيرادها وتنظيفها وإعادة تشكيلها (Data Manipulation).
+تأخذك هذه الدورة في رحلة متكاملة داخل معمل أطفال الأنابيب (IVF)، بدءًا من دورة الخلية وتكوين الحيوانات المنوية والبويضات، وصولًا إلى نمو الجنين حتى مرحلة الكيسة الأريمية (Blastocyst).
 
-تتعلم بعد ذلك كيفية إجراء التحليلات الإحصائية الأساسية وإنتاج الرسوم البيانية الاحترافية، مع أمثلة من بيانات بيولوجية حقيقية، وتُختتم الدورة بمشروع تطبيقي يجمع كل ما تعلمته.
+تشرح المحاضرات خطوات العمل الفعلية في المعمل: تحليل السائل المنوي الروتيني والاختبارات المساعدة، وتجهيز الحيوانات المنوية وتجميدها، والعوامل المؤثرة في جودتها، ثم تجهيز البويضات وإزالة الخلايا المحيطة بها وتقييمها، وتجميد البويضات والأجنة، ثم الفحص الجيني قبل الانغراس (PGT) والانغراس، وتفسير النتائج.
 
-الدورة مناسبة لطلاب العلوم والتكنولوجيا الحيوية والصيدلة والطب، وللباحثين الذين يحتاجون إلى تحليل بيانات رسائلهم وأبحاثهم بأنفسهم دون خبرة برمجية سابقة.
+الدورة مناسبة لخريجي العلوم والطب والتكنولوجيا الحيوية الراغبين في العمل بمعامل الإخصاب المساعد، ولأخصائيي المختبرات الذين يريدون فهمًا منظمًا لهذا المجال باللغة العربية.
 
 Lectures:
-1. Session 1
-2. Session 2
-3. Session 3
-4. Session 4
-5. Session 5
-6. Final Project
+1. Cell Cycle and Spermatogenesis
+2. Routine Semen Analysis
+3. Ancillary Semen Tests
+4. Sperm Processing and Cryopreservation
+5. Factors Affecting Sperm Quality
+6. Menstrual Cycle and Oogenesis
+7. Oocyte Preparation, Denudation and Assessment
+8. From Fertilization to Blastocyst
+9. Oocyte and Embryo Cryopreservation
+10. PGT and Implantation
+11. Interpretations
 
-### How to Read and Understand a Research Paper
-URL: https://biosyneg.com/course-how-to-read-a-research-paper.html
+### Computational Biology
+URL: https://biosyneg.com/course-computational-biology.html
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
+Instructors: د. اسراء المليجي — إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics). تعمل كمساعدة تدريس، وتهتم بتبسيط…
 
-الأبحاث العلمية هي أساس العمل الأكاديمي، لكن قراءتها وفهمها قد يكونان صعبين في البداية. تقدّم هذه الدورة طريقة عملية خطوة بخطوة لقراءة أي بحث علمي وفهمه في وقت قصير.
+البيولوجيا الحاسوبية هي الطريق لتحويل البيانات البيولوجية الضخمة إلى نتائج يمكن فهمها ونشرها. تجمع هذه الدورة بين الشرح النظري والتطبيق العملي في 37 محاضرة، لتأخذك من أول قاعدة بيانات إلى تحليل التعبير الجيني.
 
-تتعرف على قواعد القراءة الذكية، وما الذي تبحث عنه في الصفحة الأولى والملخص، وكيف تقرأ النص الكامل بأقسامه، ثم تطبّق ذلك على أمثلة من سلاسل الحالات والتجارب العشوائية المضبوطة والتحليل التلوي (Meta-analysis)، وتُختتم الدورة بمراجعة واختبار قصير.
+تبدأ الدورة بصيغ التسلسلات وقواعد البيانات الأساسية مع تطبيق عملي على NCBI وUniProt وRCSB PDB، ثم تحليل التسلسلات والمحاذاة وBLAST. بعدها تشرح مفاهيم تقنيات التسلسل: سانجر والجيل التالي (NGS) وأكسفورد نانوبور (ONT)، ثم تحليل بيانات تسلسل الحمض النووي: فحص الجودة بأداة FastQC وقراءة التقارير الجيدة والسيئة، والمحاذاة على الجينوم المرجعي (Mapping)، والعمل على سطر أوامر لينكس.
 
-الدورة مناسبة لطلاب الكليات العلمية والطبية في كل المراحل، ولطلاب الدراسات العليا الذين يحتاجون إلى قراءة عدد كبير من الأبحاث لكتابة رسائلهم.
+ويُختتم المسار بتسلسل الحمض النووي الريبي (RNA-Seq) ومنهجية تحليل التعبير الجيني التفاضلي، مع مقدمة عملية في لغة R وتطبيق كامل لتحليل التعبير التفاضلي. الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والطب، وللباحثين الذين يريدون تحليل بيانات التسلسل بأنفسهم.
 
 Lectures:
-1. Rules of Reading a Paper
-2. The Front Page
-3. Reading the Full Text
-4. Case Series
-5. Randomized Controlled Trials
-6. Meta-analysis
-7. Recap & Quiz
+1. Introduction to Computational Biology
+2. Sequence Formats and Databases (Part 1)
+3. Sequence Formats and Databases (Part 2)
+4. Practice: Navigating NCBI (Part 1)
+5. Practice: Navigating NCBI (Part 2)
+6. Practice: Navigating UniProt
+7. Practice: Navigating the RCSB PDB
+8. Sequence Analysis (Part 1)
+9. Sequence Analysis (Part 2)
+10. Practice: Sequence Alignment
+11. Practice: BLAST
+12. Sequencing Concepts: Sanger Sequencing
+13. Sequencing Concepts: NGS
+14. Sequencing Concepts: Oxford Nanopore (ONT)
+15. DNA Sequencing Analysis: Quality Control with FastQC
+16. DNA Sequencing Analysis: Mapping (Part 1)
+17. DNA Sequencing Analysis: Mapping (Part 2)
+18. DNA Sequencing Analysis: Introduction to Linux
+19. Practice: Reading a Bad QC Report
+20. Practice: Reading a Good QC Report
+21. Practice: Sequencing Resources
+22. Practice: Introduction to Linux (Part 1)
+23. Practice: Introduction to Linux (Part 2)
+24. Practice: DNA Sequencing Analysis (Part 1)
+25. Practice: DNA Sequencing Analysis (Part 2)
+26. Sequencing Goals
+27. RNA Sequencing (Part 1)
+28. RNA Sequencing (Part 2)
+29. Differential Expression Analysis Methodology
+30. Practice: Exploring Important Databases
+31. Practice: Introduction to R (Part 1)
+32. Practice: Introduction to R (Part 2)
+33. Practice: Introduction to R (Part 3)
+34. Practice: Introduction to R (Part 4)
+35. Practice: Differential Expression Analysis (Part 1)
+36. Practice: Differential Expression Analysis (Part 2)
+37. Practice: Differential Expression Analysis (Part 3)
 
 ### Structural Bioinformatics, Molecular Docking and Drug Design
 URL: https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html
@@ -377,56 +427,6 @@ Lectures:
 61. Protein–Ligand Interactions and ADMET (Part 6)
 62. Protein–Ligand Interactions and ADMET (Part 7)
 63. Protein–Ligand Interactions and ADMET (Part 8)
-
-### Computational Biology
-URL: https://biosyneg.com/course-computational-biology.html
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
-Instructors: د. اسراء المليجي — إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics). تعمل كمساعدة تدريس، وتهتم بتبسيط…
-
-البيولوجيا الحاسوبية هي الطريق لتحويل البيانات البيولوجية الضخمة إلى نتائج يمكن فهمها ونشرها. تجمع هذه الدورة بين الشرح النظري والتطبيق العملي في 37 محاضرة، لتأخذك من أول قاعدة بيانات إلى تحليل التعبير الجيني.
-
-تبدأ الدورة بصيغ التسلسلات وقواعد البيانات الأساسية مع تطبيق عملي على NCBI وUniProt وRCSB PDB، ثم تحليل التسلسلات والمحاذاة وBLAST. بعدها تشرح مفاهيم تقنيات التسلسل: سانجر والجيل التالي (NGS) وأكسفورد نانوبور (ONT)، ثم تحليل بيانات تسلسل الحمض النووي: فحص الجودة بأداة FastQC وقراءة التقارير الجيدة والسيئة، والمحاذاة على الجينوم المرجعي (Mapping)، والعمل على سطر أوامر لينكس.
-
-ويُختتم المسار بتسلسل الحمض النووي الريبي (RNA-Seq) ومنهجية تحليل التعبير الجيني التفاضلي، مع مقدمة عملية في لغة R وتطبيق كامل لتحليل التعبير التفاضلي. الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والطب، وللباحثين الذين يريدون تحليل بيانات التسلسل بأنفسهم.
-
-Lectures:
-1. Introduction to Computational Biology
-2. Sequence Formats and Databases (Part 1)
-3. Sequence Formats and Databases (Part 2)
-4. Practice: Navigating NCBI (Part 1)
-5. Practice: Navigating NCBI (Part 2)
-6. Practice: Navigating UniProt
-7. Practice: Navigating the RCSB PDB
-8. Sequence Analysis (Part 1)
-9. Sequence Analysis (Part 2)
-10. Practice: Sequence Alignment
-11. Practice: BLAST
-12. Sequencing Concepts: Sanger Sequencing
-13. Sequencing Concepts: NGS
-14. Sequencing Concepts: Oxford Nanopore (ONT)
-15. DNA Sequencing Analysis: Quality Control with FastQC
-16. DNA Sequencing Analysis: Mapping (Part 1)
-17. DNA Sequencing Analysis: Mapping (Part 2)
-18. DNA Sequencing Analysis: Introduction to Linux
-19. Practice: Reading a Bad QC Report
-20. Practice: Reading a Good QC Report
-21. Practice: Sequencing Resources
-22. Practice: Introduction to Linux (Part 1)
-23. Practice: Introduction to Linux (Part 2)
-24. Practice: DNA Sequencing Analysis (Part 1)
-25. Practice: DNA Sequencing Analysis (Part 2)
-26. Sequencing Goals
-27. RNA Sequencing (Part 1)
-28. RNA Sequencing (Part 2)
-29. Differential Expression Analysis Methodology
-30. Practice: Exploring Important Databases
-31. Practice: Introduction to R (Part 1)
-32. Practice: Introduction to R (Part 2)
-33. Practice: Introduction to R (Part 3)
-34. Practice: Introduction to R (Part 4)
-35. Practice: Differential Expression Analysis (Part 1)
-36. Practice: Differential Expression Analysis (Part 2)
-37. Practice: Differential Expression Analysis (Part 3)
 
 ## FAQ
 
