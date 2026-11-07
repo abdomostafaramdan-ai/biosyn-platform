@@ -1,6 +1,6 @@
 {
- "built_at": "2026-11-07T19:42:15+00:00",
- "sitemap_urls": 59,
+ "built_at": "2026-11-07T19:43:52+00:00",
+ "sitemap_urls": 57,
  "indexable": [
   {
    "slug": "introduction-to-genetics",
@@ -116,16 +116,6 @@
    "courses": 6
   },
   {
-   "id": "computers",
-   "name": "كلية الحاسبات والمعلومات",
-   "courses": 5
-  },
-  {
-   "id": "engineering",
-   "name": "كلية الهندسة",
-   "courses": 4
-  },
-  {
    "id": "health_tech",
    "name": "كلية تكنولوجيا العلوم الصحية التطبيقية",
    "courses": 6
@@ -170,5 +160,5 @@
   }
  ],
  "ai_training": true,
- "changed": 6
+ "changed": 10
 }

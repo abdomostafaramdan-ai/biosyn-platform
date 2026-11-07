@@ -46,8 +46,6 @@
 - [كلية الطب](https://biosyneg.com/topic-medicine.html)
 - [كلية الطب البيطري](https://biosyneg.com/topic-veterinary.html)
 - [كلية طب الأسنان](https://biosyneg.com/topic-dentistry.html)
-- [كلية الحاسبات والمعلومات](https://biosyneg.com/topic-computers.html)
-- [كلية الهندسة](https://biosyneg.com/topic-engineering.html)
 - [كلية تكنولوجيا العلوم الصحية التطبيقية](https://biosyneg.com/topic-health_tech.html)
 
 ## Instructors

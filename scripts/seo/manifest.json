@@ -32,11 +32,11 @@
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog-python-for-bioinformatics-beginners.html": {
-  "h": "b2abd11d6b8f7db6",
+  "h": "242af958b1025d4f",
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog-r-programming-for-biologists.html": {
-  "h": "3b326efbfe92a188",
+  "h": "590cc6301844dd9d",
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog-study-designs-in-medical-research.html": {
@@ -44,7 +44,7 @@
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog-what-is-computational-neuroscience.html": {
-  "h": "4d8f4cd452b94d6c",
+  "h": "1102cf0da9a0e5e8",
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/blog.html": {
@@ -64,11 +64,11 @@
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-computational-biology.html": {
-  "h": "45092caceb001577",
+  "h": "89cfc75320fd3fee",
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-computational-neuroscience.html": {
-  "h": "e9e0e50baf1f47d3",
+  "h": "64393384438e107b",
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-how-to-read-a-research-paper.html": {
@@ -96,11 +96,11 @@
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-python-in-bioinformatics.html": {
-  "h": "6d43d5a193605325",
+  "h": "ae7fbb48477dfb83",
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-r-language-in-bioinformatics.html": {
-  "h": "5503f50fcad490ef",
+  "h": "50d78eae722bd7bb",
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-some-concepts-in-clinical-research.html": {
@@ -108,7 +108,7 @@
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html": {
-  "h": "515a9e5a7ae17404",
+  "h": "aa02dcb1b2c55abb",
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/course-study-design-in-clinical-research.html": {
@@ -199,16 +199,8 @@
   "h": "de46bde7ccd5e974",
   "lastmod": "2026-11-07"
  },
- "https://biosyneg.com/topic-computers.html": {
-  "h": "084d4c0cb242058d",
-  "lastmod": "2026-11-07"
- },
  "https://biosyneg.com/topic-dentistry.html": {
   "h": "659b585ce3b79bb3",
-  "lastmod": "2026-11-07"
- },
- "https://biosyneg.com/topic-engineering.html": {
-  "h": "3c7b2f317a89e9ff",
   "lastmod": "2026-11-07"
  },
  "https://biosyneg.com/topic-health_tech.html": {
