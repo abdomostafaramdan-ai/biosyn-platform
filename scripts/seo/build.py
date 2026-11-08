@@ -628,7 +628,17 @@ def robots():
 
 
 # ---------------------------------------------------------------- main
+# https + clean address bar on the live domain (GitHub Pages serves /pricing for pricing.html)
+URLFIX = '<script data-urlfix>(function(l){if(!/(^|\\.)biosyneg\\.com$/.test(l.hostname))return;if(l.protocol==="http:"){l.replace("https://"+l.host+l.pathname+l.search+l.hash);return}var p=l.pathname;if(/\\.html$/.test(p)&&history.replaceState)history.replaceState(history.state,"",p.replace(/(^|\\/)index\\.html$/,"$1").replace(/\\.html$/,"")+l.search+l.hash)})(location)</script>'
+CLEAN_RE = re.compile(r"""(https://biosyneg\.com/)(?:index\.html|([\w-]+)\.html)(?=[\s"'<>)\]#?,]|$)""")
+def clean(t):
+    """Public URLs without .html (GitHub Pages serves /pricing for pricing.html): canonical, og:url, JSON-LD, sitemap, llms."""
+    return CLEAN_RE.sub(lambda m: m.group(1) + (m.group(2) or ''), t)
+
+
 def write(path, text, changed, manifest, url=None):
+    if path.endswith(('.html', '.xml', '.txt')): text = clean(text)
+    if path.endswith('.html') and 'data-urlfix' not in text: text = re.sub(r'(<meta charset="utf-8">)', lambda m: m.group(1) + URLFIX, text, count=1, flags=re.I)
     full = os.path.join(DOCS, path)
     old = open(full, encoding='utf-8').read() if os.path.exists(full) else None
     if old != text:
@@ -815,7 +825,7 @@ def main():
               'ai_training': S.get('ai_training') is not False, 'changed': len(set(changed))}
     write('seo-status.json', json.dumps(status, ensure_ascii=False, indent=1) + '\n', [], {})
     if not a.fixture: json.dump({'fp': fp, 'built_at': status['built_at']}, open(spath, 'w'))
-    open(os.path.join(HERE, 'changed.txt'), 'w').write('\n'.join(sorted(set(changed))) + ('\n' if changed else ''))
+    open(os.path.join(HERE, 'changed.txt'), 'w').write('\n'.join(sorted(set(clean(u) for u in changed))) + ('\n' if changed else ''))
     print(f'courses {len(courses)} (indexable {len(ok_courses)}) · topics {len(topics)} · teachers {len(teachers)} · sitemap {len(sitemap)} · changed {len(set(changed))}')
     skipped = [c['title'] for c in courses if c not in ok_courses]
     if skipped: print('noindex (thin content):', ', '.join(skipped))

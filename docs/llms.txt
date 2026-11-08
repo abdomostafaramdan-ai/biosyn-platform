@@ -9,89 +9,89 @@
 - Audience: students, graduates and researchers of science, biotechnology, pharmacy, medicine, dentistry, veterinary, agriculture and applied health sciences faculties in Egypt and the Arab region
 - Recorded courses: all included in one subscription; the subscription does not renew automatically
 - Interactive courses: live online sessions with separate fees; refundable within 7 days of payment
-- Certificates: every completed course issues a Biosyn Eg certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify.html
+- Certificates: every completed course issues a Biosyn Eg certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify
 - Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available
 - Founded: 2020, by Abdo Mostafa (B.Sc. in Science)
 - Served: more than 20,011 students, researchers and university staff in 9 countries
-- About page: https://biosyneg.com/about.html
+- About page: https://biosyneg.com/about
 - Official profiles: https://www.tiktok.com/@biosyneg, https://www.facebook.com/share/19osCVbFXX/, https://www.linkedin.com/company/biosyneg/, https://www.instagram.com/biosyn_eg
 
 ## Subscription prices (EGP)
 - اشتراك شهري: 200 EGP (international: 20 in local currency)
 - اشتراك نصف سنوي: 800 EGP (international: 100 in local currency)
 - اشتراك سنوي: 2000 EGP (international: 200 in local currency)
-- Details: https://biosyneg.com/pricing.html
+- Details: https://biosyneg.com/pricing
 
 ## Courses
-- [Computational Neuroscience](https://biosyneg.com/course-computational-neuroscience.html): recorded course, 17 lectures, ~1.9 hours, الفيزياء الحيوية — مقدمة في علوم الأعصاب الحسابية: علم الدماغ والقياسات النفسية الفيزيائية، والنشاط الكهربي للخلايا العصبية، وإشارات EEG وMEG، ونمذجة العصبون LIF ببايثون.
-- [Introduction To Immunology](https://biosyneg.com/course-introduction-to-immunology.html): recorded course, 7 lectures, ~3.4 hours, المناعة — دورة مسجلة باللغة العربية في أساسيات علم المناعة: الجهاز المناعي، والمناعة الفطرية، والمستضدات وMHC، والمناعة الخلوية والخلطية، والمتمّمة.
-- [Some Concepts in Clinical Research](https://biosyneg.com/course-some-concepts-in-clinical-research.html): recorded course, 9 lectures, ~1.2 hours, البحث السريري — دورة مسجلة في المفاهيم الأساسية وأخلاقيات البحث السريري: تاريخه، وقانون نورمبرغ وإعلان هلسنكي، والمبادئ الأخلاقية، والموافقة المستنيرة ولجان الأخلاقيات.
-- [Introduction To Genetic Engineering](https://biosyneg.com/course-introduction-to-genetic-engineering.html): recorded course, 8 lectures, ~2.6 hours, الهندسة الوراثية — دورة مسجلة باللغة العربية في أساسيات الهندسة الوراثية: النواقل وإنزيمات القطع وعزل الجينات، والإشريكية القولونية كعائل، والتخمير، وتحرير الجينوم، والتصميم بالحاسوب.
-- [Introduction To Genetics](https://biosyneg.com/course-introduction-to-genetics.html): recorded course, 8 lectures, ~3.4 hours, الوراثة — دورة مسجلة باللغة العربية في أساسيات علم الوراثة: من قوانين مندل والانقسام الاختزالي إلى الارتباط والخرائط الجينية، والعقيدة المركزية، ووراثة العشائر.
-- [Bioinformatics Diploma](https://biosyneg.com/course-bioinformtics-diploma.html): live interactive course — ادخل عالم تحليل البيانات الجينية وابدأ مسارك في Bioinformatics إذا كنت طالبًا أو باحثًا في العلوم أو الطب وتبحث عن مهارة مطلوبة عالميًا وتفتح لك فرصًا في البحث والعمل الحر، فهذا…
-- [Molecular Biology](https://biosyneg.com/course-molecular-biology-course-614141.html): recorded course, 14 lectures, ~4.0 hours — يهدف كورس البيولوجيا الجزيئية (Molecular Biology) إلى تقديم أساس علمي قوي لفهم العمليات الجزيئية داخل الخلية، بدايةً من تركيب DNA وRNA، مرورًا بتضاعف DNA والتعبير الجيني، وصولًا…
-- [Intro To Basic Microbiology](https://biosyneg.com/course-microbiology-course-362803.html): recorded course, 10 lectures, ~3.8 hours, الأحياء الدقيقة الطبية — دورة مسجلة باللغة العربية في أساسيات الميكروبيولوجيا الطبية: تصنيف البكتيريا وتركيبها وأهميتها السريرية، من المكورات موجبة الجرام إلى الطفيليات.
-- [How to Read and Understand a Research Paper](https://biosyneg.com/course-how-to-read-a-research-paper.html): recorded course, 7 lectures, ~0.9 hours, مهارات البحث العلمي — دورة قصيرة تعلّمك قراءة البحث العلمي وفهمه وتقييمه بسرعة: من الصفحة الأولى والملخص إلى النص الكامل وسلاسل الحالات والتجارب العشوائية والتحليل التلوي.
-- [Python in Bioinformatics](https://biosyneg.com/course-python-in-bioinformatics.html): recorded course, 6 lectures, ~15.5 hours, المعلوماتية الحيوية — تعلّم بايثون من البداية وطبّقها في المعلوماتية الحيوية: أساسيات البرمجة، والتعامل مع الملفات والتسلسلات، وتحليل البيانات البيولوجية.
-- [R Language in Bioinformatics](https://biosyneg.com/course-r-language-in-bioinformatics.html): recorded course, 6 lectures, ~16.8 hours, المعلوماتية الحيوية — تعلّم لغة R من الصفر لتحليل البيانات البيولوجية: التعامل مع البيانات وتنظيفها وتحليلها إحصائيًا ورسمها، مع مشروع تطبيقي في المعلوماتية الحيوية.
-- [Study Design in Clinical Research](https://biosyneg.com/course-study-design-in-clinical-research.html): recorded course, 12 lectures, ~2.0 hours, البحث السريري — دورة مسجلة في تصميم الدراسات السريرية: تقارير الحالات والدراسات المقطعية ودراسات الحالات والشواهد والأتراب، والتجارب العشوائية المضبوطة ومراحلها.
-- [Basics of IVF Laboratories](https://biosyneg.com/course-basics-of-ivf-laboratories.html): recorded course, 11 lectures, ~7.3 hours, الطب التناسلي — دورة مسجلة باللغة العربية في أساسيات معامل الحقن المجهري وأطفال الأنابيب: تحليل السائل المنوي، وتجهيز البويضات، ونمو الأجنة حتى الكيسة الأريمية.
-- [Computational Biology](https://biosyneg.com/course-computational-biology.html): recorded course, 37 lectures, ~14.5 hours, المعلوماتية الحيوية — دورة عملية في البيولوجيا الحاسوبية: قواعد البيانات الحيوية، وتحليل التسلسلات وBLAST، وتقنيات التسلسل، وتحليل بيانات DNA وRNA-Seq، والتعبير الجيني التفاضلي بلغة R.
-- [Structural Bioinformatics, Molecular Docking and Drug Design](https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html): recorded course, 63 lectures, ~19.0 hours, المعلوماتية الحيوية — دورة عملية من 63 محاضرة في المعلوماتية الحيوية البنيوية وتصميم الأدوية بالحاسوب: اختيار الهدف، والتنبؤ ببنية البروتين، ومكتبات المركبات، والالتحام الجزيئي، وتحليل التداخلات وADMET.
+- [Computational Neuroscience](https://biosyneg.com/course-computational-neuroscience): recorded course, 17 lectures, ~1.9 hours, الفيزياء الحيوية — مقدمة في علوم الأعصاب الحسابية: علم الدماغ والقياسات النفسية الفيزيائية، والنشاط الكهربي للخلايا العصبية، وإشارات EEG وMEG، ونمذجة العصبون LIF ببايثون.
+- [Introduction To Immunology](https://biosyneg.com/course-introduction-to-immunology): recorded course, 7 lectures, ~3.4 hours, المناعة — دورة مسجلة باللغة العربية في أساسيات علم المناعة: الجهاز المناعي، والمناعة الفطرية، والمستضدات وMHC، والمناعة الخلوية والخلطية، والمتمّمة.
+- [Some Concepts in Clinical Research](https://biosyneg.com/course-some-concepts-in-clinical-research): recorded course, 9 lectures, ~1.2 hours, البحث السريري — دورة مسجلة في المفاهيم الأساسية وأخلاقيات البحث السريري: تاريخه، وقانون نورمبرغ وإعلان هلسنكي، والمبادئ الأخلاقية، والموافقة المستنيرة ولجان الأخلاقيات.
+- [Introduction To Genetic Engineering](https://biosyneg.com/course-introduction-to-genetic-engineering): recorded course, 8 lectures, ~2.6 hours, الهندسة الوراثية — دورة مسجلة باللغة العربية في أساسيات الهندسة الوراثية: النواقل وإنزيمات القطع وعزل الجينات، والإشريكية القولونية كعائل، والتخمير، وتحرير الجينوم، والتصميم بالحاسوب.
+- [Introduction To Genetics](https://biosyneg.com/course-introduction-to-genetics): recorded course, 8 lectures, ~3.4 hours, الوراثة — دورة مسجلة باللغة العربية في أساسيات علم الوراثة: من قوانين مندل والانقسام الاختزالي إلى الارتباط والخرائط الجينية، والعقيدة المركزية، ووراثة العشائر.
+- [Bioinformatics Diploma](https://biosyneg.com/course-bioinformtics-diploma): live interactive course — ادخل عالم تحليل البيانات الجينية وابدأ مسارك في Bioinformatics إذا كنت طالبًا أو باحثًا في العلوم أو الطب وتبحث عن مهارة مطلوبة عالميًا وتفتح لك فرصًا في البحث والعمل الحر، فهذا…
+- [Molecular Biology](https://biosyneg.com/course-molecular-biology-course-614141): recorded course, 14 lectures, ~4.0 hours — يهدف كورس البيولوجيا الجزيئية (Molecular Biology) إلى تقديم أساس علمي قوي لفهم العمليات الجزيئية داخل الخلية، بدايةً من تركيب DNA وRNA، مرورًا بتضاعف DNA والتعبير الجيني، وصولًا…
+- [Intro To Basic Microbiology](https://biosyneg.com/course-microbiology-course-362803): recorded course, 10 lectures, ~3.8 hours, الأحياء الدقيقة الطبية — دورة مسجلة باللغة العربية في أساسيات الميكروبيولوجيا الطبية: تصنيف البكتيريا وتركيبها وأهميتها السريرية، من المكورات موجبة الجرام إلى الطفيليات.
+- [How to Read and Understand a Research Paper](https://biosyneg.com/course-how-to-read-a-research-paper): recorded course, 7 lectures, ~0.9 hours, مهارات البحث العلمي — دورة قصيرة تعلّمك قراءة البحث العلمي وفهمه وتقييمه بسرعة: من الصفحة الأولى والملخص إلى النص الكامل وسلاسل الحالات والتجارب العشوائية والتحليل التلوي.
+- [Python in Bioinformatics](https://biosyneg.com/course-python-in-bioinformatics): recorded course, 6 lectures, ~15.5 hours, المعلوماتية الحيوية — تعلّم بايثون من البداية وطبّقها في المعلوماتية الحيوية: أساسيات البرمجة، والتعامل مع الملفات والتسلسلات، وتحليل البيانات البيولوجية.
+- [R Language in Bioinformatics](https://biosyneg.com/course-r-language-in-bioinformatics): recorded course, 6 lectures, ~16.8 hours, المعلوماتية الحيوية — تعلّم لغة R من الصفر لتحليل البيانات البيولوجية: التعامل مع البيانات وتنظيفها وتحليلها إحصائيًا ورسمها، مع مشروع تطبيقي في المعلوماتية الحيوية.
+- [Study Design in Clinical Research](https://biosyneg.com/course-study-design-in-clinical-research): recorded course, 12 lectures, ~2.0 hours, البحث السريري — دورة مسجلة في تصميم الدراسات السريرية: تقارير الحالات والدراسات المقطعية ودراسات الحالات والشواهد والأتراب، والتجارب العشوائية المضبوطة ومراحلها.
+- [Basics of IVF Laboratories](https://biosyneg.com/course-basics-of-ivf-laboratories): recorded course, 11 lectures, ~7.3 hours, الطب التناسلي — دورة مسجلة باللغة العربية في أساسيات معامل الحقن المجهري وأطفال الأنابيب: تحليل السائل المنوي، وتجهيز البويضات، ونمو الأجنة حتى الكيسة الأريمية.
+- [Computational Biology](https://biosyneg.com/course-computational-biology): recorded course, 37 lectures, ~14.5 hours, المعلوماتية الحيوية — دورة عملية في البيولوجيا الحاسوبية: قواعد البيانات الحيوية، وتحليل التسلسلات وBLAST، وتقنيات التسلسل، وتحليل بيانات DNA وRNA-Seq، والتعبير الجيني التفاضلي بلغة R.
+- [Structural Bioinformatics, Molecular Docking and Drug Design](https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design): recorded course, 63 lectures, ~19.0 hours, المعلوماتية الحيوية — دورة عملية من 63 محاضرة في المعلوماتية الحيوية البنيوية وتصميم الأدوية بالحاسوب: اختيار الهدف، والتنبؤ ببنية البروتين، ومكتبات المركبات، والالتحام الجزيئي، وتحليل التداخلات وADMET.
 
 ## Courses by faculty
-- [كلية العلوم](https://biosyneg.com/topic-science.html)
-- [كلية بايوتكنولوجي](https://biosyneg.com/topic-biotech.html)
-- [كلية الصيدلة](https://biosyneg.com/topic-pharmacy.html)
-- [كلية الزراعة](https://biosyneg.com/topic-agriculture.html)
-- [كلية الطب](https://biosyneg.com/topic-medicine.html)
-- [كلية الطب البيطري](https://biosyneg.com/topic-veterinary.html)
-- [كلية طب الأسنان](https://biosyneg.com/topic-dentistry.html)
-- [كلية تكنولوجيا العلوم الصحية التطبيقية](https://biosyneg.com/topic-health_tech.html)
+- [كلية العلوم](https://biosyneg.com/topic-science)
+- [كلية بايوتكنولوجي](https://biosyneg.com/topic-biotech)
+- [كلية الصيدلة](https://biosyneg.com/topic-pharmacy)
+- [كلية الزراعة](https://biosyneg.com/topic-agriculture)
+- [كلية الطب](https://biosyneg.com/topic-medicine)
+- [كلية الطب البيطري](https://biosyneg.com/topic-veterinary)
+- [كلية طب الأسنان](https://biosyneg.com/topic-dentistry)
+- [كلية تكنولوجيا العلوم الصحية التطبيقية](https://biosyneg.com/topic-health_tech)
 
 ## Instructors
-- [د. أحمد سيد](https://biosyneg.com/teacher-ahmed-said.html): محاضر علم الأجنة، كلية العلوم، جامعة الأزهر، أسيوط، مصر
-- [د. محمد إمام](https://biosyneg.com/teacher-mohamed-emam.html): طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
-- [د. شريف عرفه](https://biosyneg.com/teacher-sherif-arafa.html): طالب دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
-- [د. اسراء المليجي](https://biosyneg.com/teacher-esraa-elmeligy.html): إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics). تعمل كمساعدة تدريس، وتهتم بتبسيط…
-- [د. شيماء محمد](https://biosyneg.com/teacher-shaimaa-mohamed.html): مدرس الباثولوجيا الإكلينيكية، كلية الطب، جامعة عين شمس
-- [د. ناردين زريف](https://biosyneg.com/teacher-nardine-zarif.html): رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
-- [م. ندى صلاح](https://biosyneg.com/teacher-nada-salah.html): باحثة في علوم الأعصاب الحسابية
-- [سلمى صبحي](https://biosyneg.com/teacher-salma-sobhy.html): باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية
-- [د. محمود محمد](https://biosyneg.com/teacher-mahmoud-mohamed.html): دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
+- [د. أحمد سيد](https://biosyneg.com/teacher-ahmed-said): محاضر علم الأجنة، كلية العلوم، جامعة الأزهر، أسيوط، مصر
+- [د. محمد إمام](https://biosyneg.com/teacher-mohamed-emam): طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
+- [د. شريف عرفه](https://biosyneg.com/teacher-sherif-arafa): طالب دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
+- [د. اسراء المليجي](https://biosyneg.com/teacher-esraa-elmeligy): إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics). تعمل كمساعدة تدريس، وتهتم بتبسيط…
+- [د. شيماء محمد](https://biosyneg.com/teacher-shaimaa-mohamed): مدرس الباثولوجيا الإكلينيكية، كلية الطب، جامعة عين شمس
+- [د. ناردين زريف](https://biosyneg.com/teacher-nardine-zarif): رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
+- [م. ندى صلاح](https://biosyneg.com/teacher-nada-salah): باحثة في علوم الأعصاب الحسابية
+- [سلمى صبحي](https://biosyneg.com/teacher-salma-sobhy): باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية
+- [د. محمود محمد](https://biosyneg.com/teacher-mahmoud-mohamed): دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
 
 ## Articles
-- [البيولوجيا الحاسوبية: من قواعد البيانات الحيوية إلى تحليل التعبير الجيني](https://biosyneg.com/blog-computational-biology.html): مقال تعريفي يشرح كيف تُحوَّل البيانات البيولوجية الضخمة إلى معرفة، من البحث في قواعد البيانات ومحاذاة التسلسلات وBLAST، إلى تقنيات التسلسل وتحليل RNA-Seq بلغة…
-- [الهندسة الوراثية: كيف يعدّل العلماء الحمض النووي بشكل موجّه؟](https://biosyneg.com/blog-introduction-to-genetic-engineering.html): مقال تعريفي يشرح أدوات الهندسة الوراثية الأساسية، من النواقل وإنزيمات القطع وعزل الجينات، إلى الإشريكية القولونية كعائل والتخمير وتحرير الجينوم والتصميم…
-- [أساسيات علم الوراثة: من قوانين مندل إلى وراثة العشائر](https://biosyneg.com/blog-introduction-to-genetics.html): مقال تعريفي في أساسيات علم الوراثة يشرح كيف تنتقل الصفات عبر الأجيال، من تجارب مندل والانقسام الاختزالي والارتباط الجيني، حتى العقيدة المركزية ووراثة العشائر.…
-- [المعلوماتية الحيوية البنيوية والالتحام الجزيئي: كيف يساعد الحاسوب في تصميم الأدوية؟](https://biosyneg.com/blog-structural-bioinformatics-molecular-docking-drug-design.html): مقال تعريفي يشرح كيف تربط المعلوماتية الحيوية البنيوية بين شكل البروتين وتصميم الأدوية بالحاسوب، من التنبؤ ببنية البروتين حتى تحليل نتائج الالتحام الجزيئي.…
-- [البيولوجيا الجزيئية للمبتدئين: من DNA إلى البروتين وتقنيات PCR والتسلسل](https://biosyneg.com/blog-molecular-biology-central-dogma.html): شرح مبسط لأساسيات البيولوجيا الجزيئية: تركيب DNA وRNA، والعقيدة المركزية، والطفرات، وأهم التقنيات مثل PCR والرحلان الكهربائي وتسلسل سانجر وNGS.
-- [ما هي علوم الأعصاب الحسابية؟ ولماذا يحتاج باحث الأحياء إلى البرمجة؟](https://biosyneg.com/blog-what-is-computational-neuroscience.html): مقدمة مبسطة إلى علوم الأعصاب الحسابية: كيف يدرس العلماء الدماغ بالقياس والنمذجة، وما هي إشارات EEG وMEG، وما نموذج العصبون LIF ولماذا يُبنى بلغة بايثون.
-- [مدخل إلى علم المناعة: كيف يدافع جسمك عن نفسه؟](https://biosyneg.com/blog-introduction-to-immunology-basics.html): شرح مبسط لأساسيات علم المناعة: الفرق بين المناعة الفطرية والمكتسبة، ودور المستضدات وMHC، والمناعة الخلوية والخلطية، ونظام المتمّمة.
-- [أخلاقيات البحث السريري: من قانون نورمبرغ إلى الموافقة المستنيرة](https://biosyneg.com/blog-clinical-research-ethics-history.html): لماذا يحتاج كل بحث على البشر إلى موافقة لجنة أخلاقيات وموافقة مستنيرة من المشاركين؟ قصة تطور أخلاقيات البحث السريري ومبادئها الأساسية بشكل مبسط.
-- [كيف تقرأ بحثًا علميًا وتفهمه بسرعة؟ طريقة عملية خطوة بخطوة](https://biosyneg.com/blog-how-to-read-a-scientific-paper.html): لا تحتاج إلى قراءة البحث العلمي من أول سطر إلى آخره. تعرّف على طريقة عملية لقراءة الأبحاث بترتيب ذكي، وما الذي تبحث عنه في كل قسم، وكيف تقيّم جودة الدليل.
-- [أنواع تصاميم الدراسات في البحث الطبي: دليل مبسط بالأمثلة](https://biosyneg.com/blog-study-designs-in-medical-research.html): من تقرير الحالة إلى التجربة العشوائية المضبوطة والمراجعة المنهجية: شرح مبسط لأنواع تصاميم الدراسات الطبية، ومتى تستخدم كل نوع، وأين يقع في هرم الأدلة.
-- [بايثون للمعلوماتية الحيوية: من أين تبدأ إذا كنت طالب علوم أو صيدلة؟](https://biosyneg.com/blog-python-for-bioinformatics-beginners.html): دليل عملي لطلاب العلوم الحيوية الذين يريدون تعلم بايثون: لماذا هي مهمة في المعلوماتية الحيوية، وما الذي تتعلمه أولًا، وكيف تطبّقها على تسلسلات DNA والبروتين.
-- [لماذا يتعلم طلاب العلوم لغة R؟ دليل البداية لتحليل البيانات البيولوجية](https://biosyneg.com/blog-r-programming-for-biologists.html): لغة R من أكثر الأدوات استخدامًا في تحليل البيانات البيولوجية والطبية. تعرّف على ما يمكنك فعله بها، وخطة عملية للبدء حتى بدون أي خبرة برمجية.
-- [معمل أطفال الأنابيب (IVF): ماذا يحدث داخله وكيف تبدأ العمل فيه؟](https://biosyneg.com/blog-ivf-lab-embryologist-career.html): جولة مبسطة داخل معمل الحقن المجهري وأطفال الأنابيب: من تحليل السائل المنوي وتجهيز البويضات إلى نمو الأجنة وتجميدها، والمهارات التي يحتاجها من يريد العمل في…
-- [ما هي الميكروبيولوجيا الطبية؟ دليل مبسط لتصنيف البكتيريا الممرضة](https://biosyneg.com/blog-medical-microbiology-guide.html): تعرّف على علم الأحياء الدقيقة الطبية، وكيف تُصنَّف البكتيريا الممرضة حسب صبغة جرام والشكل والحاجة إلى الأكسجين، ولماذا يحتاجه طلاب الطب والصيدلة والمختبرات.
+- [البيولوجيا الحاسوبية: من قواعد البيانات الحيوية إلى تحليل التعبير الجيني](https://biosyneg.com/blog-computational-biology): مقال تعريفي يشرح كيف تُحوَّل البيانات البيولوجية الضخمة إلى معرفة، من البحث في قواعد البيانات ومحاذاة التسلسلات وBLAST، إلى تقنيات التسلسل وتحليل RNA-Seq بلغة…
+- [الهندسة الوراثية: كيف يعدّل العلماء الحمض النووي بشكل موجّه؟](https://biosyneg.com/blog-introduction-to-genetic-engineering): مقال تعريفي يشرح أدوات الهندسة الوراثية الأساسية، من النواقل وإنزيمات القطع وعزل الجينات، إلى الإشريكية القولونية كعائل والتخمير وتحرير الجينوم والتصميم…
+- [أساسيات علم الوراثة: من قوانين مندل إلى وراثة العشائر](https://biosyneg.com/blog-introduction-to-genetics): مقال تعريفي في أساسيات علم الوراثة يشرح كيف تنتقل الصفات عبر الأجيال، من تجارب مندل والانقسام الاختزالي والارتباط الجيني، حتى العقيدة المركزية ووراثة العشائر.…
+- [المعلوماتية الحيوية البنيوية والالتحام الجزيئي: كيف يساعد الحاسوب في تصميم الأدوية؟](https://biosyneg.com/blog-structural-bioinformatics-molecular-docking-drug-design): مقال تعريفي يشرح كيف تربط المعلوماتية الحيوية البنيوية بين شكل البروتين وتصميم الأدوية بالحاسوب، من التنبؤ ببنية البروتين حتى تحليل نتائج الالتحام الجزيئي.…
+- [البيولوجيا الجزيئية للمبتدئين: من DNA إلى البروتين وتقنيات PCR والتسلسل](https://biosyneg.com/blog-molecular-biology-central-dogma): شرح مبسط لأساسيات البيولوجيا الجزيئية: تركيب DNA وRNA، والعقيدة المركزية، والطفرات، وأهم التقنيات مثل PCR والرحلان الكهربائي وتسلسل سانجر وNGS.
+- [ما هي علوم الأعصاب الحسابية؟ ولماذا يحتاج باحث الأحياء إلى البرمجة؟](https://biosyneg.com/blog-what-is-computational-neuroscience): مقدمة مبسطة إلى علوم الأعصاب الحسابية: كيف يدرس العلماء الدماغ بالقياس والنمذجة، وما هي إشارات EEG وMEG، وما نموذج العصبون LIF ولماذا يُبنى بلغة بايثون.
+- [مدخل إلى علم المناعة: كيف يدافع جسمك عن نفسه؟](https://biosyneg.com/blog-introduction-to-immunology-basics): شرح مبسط لأساسيات علم المناعة: الفرق بين المناعة الفطرية والمكتسبة، ودور المستضدات وMHC، والمناعة الخلوية والخلطية، ونظام المتمّمة.
+- [أخلاقيات البحث السريري: من قانون نورمبرغ إلى الموافقة المستنيرة](https://biosyneg.com/blog-clinical-research-ethics-history): لماذا يحتاج كل بحث على البشر إلى موافقة لجنة أخلاقيات وموافقة مستنيرة من المشاركين؟ قصة تطور أخلاقيات البحث السريري ومبادئها الأساسية بشكل مبسط.
+- [كيف تقرأ بحثًا علميًا وتفهمه بسرعة؟ طريقة عملية خطوة بخطوة](https://biosyneg.com/blog-how-to-read-a-scientific-paper): لا تحتاج إلى قراءة البحث العلمي من أول سطر إلى آخره. تعرّف على طريقة عملية لقراءة الأبحاث بترتيب ذكي، وما الذي تبحث عنه في كل قسم، وكيف تقيّم جودة الدليل.
+- [أنواع تصاميم الدراسات في البحث الطبي: دليل مبسط بالأمثلة](https://biosyneg.com/blog-study-designs-in-medical-research): من تقرير الحالة إلى التجربة العشوائية المضبوطة والمراجعة المنهجية: شرح مبسط لأنواع تصاميم الدراسات الطبية، ومتى تستخدم كل نوع، وأين يقع في هرم الأدلة.
+- [بايثون للمعلوماتية الحيوية: من أين تبدأ إذا كنت طالب علوم أو صيدلة؟](https://biosyneg.com/blog-python-for-bioinformatics-beginners): دليل عملي لطلاب العلوم الحيوية الذين يريدون تعلم بايثون: لماذا هي مهمة في المعلوماتية الحيوية، وما الذي تتعلمه أولًا، وكيف تطبّقها على تسلسلات DNA والبروتين.
+- [لماذا يتعلم طلاب العلوم لغة R؟ دليل البداية لتحليل البيانات البيولوجية](https://biosyneg.com/blog-r-programming-for-biologists): لغة R من أكثر الأدوات استخدامًا في تحليل البيانات البيولوجية والطبية. تعرّف على ما يمكنك فعله بها، وخطة عملية للبدء حتى بدون أي خبرة برمجية.
+- [معمل أطفال الأنابيب (IVF): ماذا يحدث داخله وكيف تبدأ العمل فيه؟](https://biosyneg.com/blog-ivf-lab-embryologist-career): جولة مبسطة داخل معمل الحقن المجهري وأطفال الأنابيب: من تحليل السائل المنوي وتجهيز البويضات إلى نمو الأجنة وتجميدها، والمهارات التي يحتاجها من يريد العمل في…
+- [ما هي الميكروبيولوجيا الطبية؟ دليل مبسط لتصنيف البكتيريا الممرضة](https://biosyneg.com/blog-medical-microbiology-guide): تعرّف على علم الأحياء الدقيقة الطبية، وكيف تُصنَّف البكتيريا الممرضة حسب صبغة جرام والشكل والحاجة إلى الأكسجين، ولماذا يحتاجه طلاب الطب والصيدلة والمختبرات.
 
 ## Main pages
 - [الرئيسية](https://biosyneg.com/)
-- [الدورات المسجلة](https://biosyneg.com/courses.html)
-- [الدورات التفاعلية](https://biosyneg.com/interactive.html)
-- [الأسعار والاشتراكات](https://biosyneg.com/pricing.html)
-- [المحاضرون](https://biosyneg.com/instructors.html)
-- [الاستشارات والخدمات البحثية](https://biosyneg.com/consultations.html)
-- [حلول المؤسسات](https://biosyneg.com/institutions.html)
-- [انضم كمحاضر](https://biosyneg.com/teach.html)
-- [المدونة](https://biosyneg.com/blog.html)
-- [الأخبار والفعاليات](https://biosyneg.com/news.html)
-- [من نحن](https://biosyneg.com/about.html)
-- [التحقق من الشهادات](https://biosyneg.com/verify.html)
-- [الشروط والأحكام](https://biosyneg.com/terms.html)
-- [سياسة الخصوصية](https://biosyneg.com/privacy.html)
-- [سياسة الاسترداد](https://biosyneg.com/refund.html)
+- [الدورات المسجلة](https://biosyneg.com/courses)
+- [الدورات التفاعلية](https://biosyneg.com/interactive)
+- [الأسعار والاشتراكات](https://biosyneg.com/pricing)
+- [المحاضرون](https://biosyneg.com/instructors)
+- [الاستشارات والخدمات البحثية](https://biosyneg.com/consultations)
+- [حلول المؤسسات](https://biosyneg.com/institutions)
+- [انضم كمحاضر](https://biosyneg.com/teach)
+- [المدونة](https://biosyneg.com/blog)
+- [الأخبار والفعاليات](https://biosyneg.com/news)
+- [من نحن](https://biosyneg.com/about)
+- [التحقق من الشهادات](https://biosyneg.com/verify)
+- [الشروط والأحكام](https://biosyneg.com/terms)
+- [سياسة الخصوصية](https://biosyneg.com/privacy)
+- [سياسة الاسترداد](https://biosyneg.com/refund)
 
 ## Optional
 - [Full content for LLMs](https://biosyneg.com/llms-full.txt)

@@ -9,23 +9,23 @@
 - Audience: students, graduates and researchers of science, biotechnology, pharmacy, medicine, dentistry, veterinary, agriculture and applied health sciences faculties in Egypt and the Arab region
 - Recorded courses: all included in one subscription; the subscription does not renew automatically
 - Interactive courses: live online sessions with separate fees; refundable within 7 days of payment
-- Certificates: every completed course issues a Biosyn Eg certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify.html
+- Certificates: every completed course issues a Biosyn Eg certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify
 - Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available
 - Founded: 2020, by Abdo Mostafa (B.Sc. in Science)
 - Served: more than 20,011 students, researchers and university staff in 9 countries
-- About page: https://biosyneg.com/about.html
+- About page: https://biosyneg.com/about
 - Official profiles: https://www.tiktok.com/@biosyneg, https://www.facebook.com/share/19osCVbFXX/, https://www.linkedin.com/company/biosyneg/, https://www.instagram.com/biosyn_eg
 
 ## Subscription prices (EGP)
 - اشتراك شهري: 200 EGP (international: 20 in local currency)
 - اشتراك نصف سنوي: 800 EGP (international: 100 in local currency)
 - اشتراك سنوي: 2000 EGP (international: 200 in local currency)
-- Details: https://biosyneg.com/pricing.html
+- Details: https://biosyneg.com/pricing
 
 ## Course details
 
 ### Computational Neuroscience
-URL: https://biosyneg.com/course-computational-neuroscience.html
+URL: https://biosyneg.com/course-computational-neuroscience
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 Instructors: م. ندى صلاح — باحثة في علوم الأعصاب الحسابية
 
@@ -55,7 +55,7 @@ Lectures:
 17. LIF Neuron in Python (Part 6)
 
 ### Introduction To Immunology
-URL: https://biosyneg.com/course-introduction-to-immunology.html
+URL: https://biosyneg.com/course-introduction-to-immunology
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 Instructors: د. محمود محمد — دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
 
@@ -75,7 +75,7 @@ Lectures:
 7. The Complement System
 
 ### Some Concepts in Clinical Research
-URL: https://biosyneg.com/course-some-concepts-in-clinical-research.html
+URL: https://biosyneg.com/course-some-concepts-in-clinical-research
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 
@@ -97,7 +97,7 @@ Lectures:
 9. Recap & Quiz
 
 ### Introduction To Genetic Engineering
-URL: https://biosyneg.com/course-introduction-to-genetic-engineering.html
+URL: https://biosyneg.com/course-introduction-to-genetic-engineering
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 Instructors: سلمى صبحي — باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية
 
@@ -118,7 +118,7 @@ Lectures:
 8. In Silico Cloning Design (Practical)
 
 ### Introduction To Genetics
-URL: https://biosyneg.com/course-introduction-to-genetics.html
+URL: https://biosyneg.com/course-introduction-to-genetics
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 Instructors: سلمى صبحي — باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية
 
@@ -139,7 +139,7 @@ Lectures:
 8. Genes, Environment and Complex Traits
 
 ### Bioinformatics Diploma
-URL: https://biosyneg.com/course-bioinformtics-diploma.html
+URL: https://biosyneg.com/course-bioinformtics-diploma
 Type: Live interactive · Level: Beginner · Price: 15٬000 ج.م
 Starts: 2027-01-01
 Instructors: د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال; د. شريف عرفه — طالب دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
@@ -149,7 +149,7 @@ Instructors: د. محمد إمام — طالب دكتوراه، المعلوم�
 إذا كنت طالبًا أو باحثًا في العلوم أو الطب وتبحث عن مهارة مطلوبة عالميًا وتفتح لك فرصًا في البحث والعمل الحر، فهذا المسار صُمم لك: مسار تدريجي يجمع بين البيولوجيا والبرمجة والتحليل، مع تطبيق عملي على بيانات حقيقية ومشروع نهائي لبناء Portfolio قوي.
 
 ### Molecular Biology
-URL: https://biosyneg.com/course-molecular-biology-course-614141.html
+URL: https://biosyneg.com/course-molecular-biology-course-614141
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 Instructors: د. اسراء المليجي — إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics). تعمل كمساعدة تدريس، وتهتم بتبسيط…
 
@@ -174,7 +174,7 @@ Lectures:
 14. ONT
 
 ### Intro To Basic Microbiology
-URL: https://biosyneg.com/course-microbiology-course-362803.html
+URL: https://biosyneg.com/course-microbiology-course-362803
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 Instructors: د. شيماء محمد — مدرس الباثولوجيا الإكلينيكية، كلية الطب، جامعة عين شمس
 
@@ -197,7 +197,7 @@ Lectures:
 10. Introduction to Parasitology
 
 ### How to Read and Understand a Research Paper
-URL: https://biosyneg.com/course-how-to-read-a-research-paper.html
+URL: https://biosyneg.com/course-how-to-read-a-research-paper
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 
@@ -217,7 +217,7 @@ Lectures:
 7. Recap & Quiz
 
 ### Python in Bioinformatics
-URL: https://biosyneg.com/course-python-in-bioinformatics.html
+URL: https://biosyneg.com/course-python-in-bioinformatics
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 Instructors: د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
 
@@ -236,7 +236,7 @@ Lectures:
 6. Session 6
 
 ### R Language in Bioinformatics
-URL: https://biosyneg.com/course-r-language-in-bioinformatics.html
+URL: https://biosyneg.com/course-r-language-in-bioinformatics
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 Instructors: د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
 
@@ -255,7 +255,7 @@ Lectures:
 6. Final Project
 
 ### Study Design in Clinical Research
-URL: https://biosyneg.com/course-study-design-in-clinical-research.html
+URL: https://biosyneg.com/course-study-design-in-clinical-research
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 
@@ -280,7 +280,7 @@ Lectures:
 12. Recap & Quiz
 
 ### Basics of IVF Laboratories
-URL: https://biosyneg.com/course-basics-of-ivf-laboratories.html
+URL: https://biosyneg.com/course-basics-of-ivf-laboratories
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 Instructors: د. أحمد سيد — محاضر علم الأجنة، كلية العلوم، جامعة الأزهر، أسيوط، مصر
 
@@ -304,7 +304,7 @@ Lectures:
 11. Interpretations
 
 ### Computational Biology
-URL: https://biosyneg.com/course-computational-biology.html
+URL: https://biosyneg.com/course-computational-biology
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 Instructors: د. اسراء المليجي — إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics). تعمل كمساعدة تدريس، وتهتم بتبسيط…
 
@@ -354,7 +354,7 @@ Lectures:
 37. Practice: Differential Expression Analysis (Part 3)
 
 ### Structural Bioinformatics, Molecular Docking and Drug Design
-URL: https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html
+URL: https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
 Instructors: د. شريف عرفه — طالب دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
 

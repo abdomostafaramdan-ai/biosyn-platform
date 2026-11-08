@@ -5,7 +5,9 @@
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const EGP = (n) => Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
-  const here = () => location.pathname.split('/').pop() || 'index.html';
+  // the live site shows clean URLs (/pricing): map them back to the file name the rest of the code expects
+  const here = () => { const f = location.pathname.split('/').pop(); return !f ? 'index.html' : /\.\w+$/.test(f) ? f : f + '.html'; };
+  window.pageFile = here;
   const LEVEL = { beginner: 'مبتدئ', beginner_intermediate: 'مبتدئ ومتوسط', intermediate: 'متوسط', intermediate_advanced: 'متوسط ومتقدم', advanced: 'متقدم', all_levels: 'كل المستويات' };
   // which basic levels each course level covers (for the level filter)
   const LEVEL_SPAN = { beginner: ['beginner'], beginner_intermediate: ['beginner', 'intermediate'], intermediate: ['intermediate'], intermediate_advanced: ['intermediate', 'advanced'], advanced: ['advanced'], all_levels: ['beginner', 'intermediate', 'advanced'] };
@@ -62,7 +64,7 @@
       const sc = document.createElement('script'); sc.async = true; sc.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(ga); document.head.appendChild(sc);
       window.dataLayer = window.dataLayer || []; window.gtag = function () { dataLayer.push(arguments); }; gtag('js', new Date());
       // content groups make GA reports readable by page type (course pages, faculty pages, checkout, dashboard…)
-      const pg = document.body.dataset.page || '', fn = location.pathname.split('/').pop();
+      const pg = document.body.dataset.page || '', fn = here();
       const group = /^course-/.test(fn) || pg === 'course' ? 'course' : /^topic-/.test(fn) ? 'faculty' : /^teacher-/.test(fn) ? 'instructor' : pg || 'other';
       gtag('config', ga, Object.assign({ content_group: group }, sb.user ? { user_id: sb.user.id } : {}));
       // visits sent by AI assistants / answer engines (GEO): one event so they can be compared in GA
@@ -108,7 +110,7 @@
     put('name', 'description', desc); put('property', 'og:title', title); put('property', 'og:description', desc); put('property', 'og:image', image);
     // course.html?c=slug and course-slug.html are the same page: point search engines at the pre-rendered one
     const q = new URLSearchParams(location.search), slug = document.body.dataset.slug || (document.body.dataset.page === 'course' && q.get('c'));
-    const canon = slug ? `https://biosyneg.com/course-${encodeURIComponent(slug)}.html` : location.href.split('#')[0];
+    const canon = slug ? `https://biosyneg.com/course-${encodeURIComponent(slug)}` : location.href.split('#')[0].replace(/(\/)index\.html(?=$|\?)/, '$1').replace(/\.html(?=$|\?)/, '');
     put('property', 'og:url', canon);
     let ln = document.head.querySelector('link[rel=canonical]'); if (!ln) { ln = document.createElement('link'); ln.rel = 'canonical'; document.head.appendChild(ln); } ln.href = canon;
   };
@@ -138,7 +140,7 @@
   // ---------- theme + language switches ----------
   window.mountToggles = function () {
     const en = document.documentElement.getAttribute('data-lang') === 'en';
-    const shellOnly = /instructor\.html/.test(location.pathname);
+    const shellOnly = /^instructor\.html$/.test(here());
     $$('[data-toggles]').forEach((box) => {
       if (box.dataset.ready) return; box.dataset.ready = '1';
       box.innerHTML = '' +
@@ -190,7 +192,7 @@
     if (h) h.outerHTML = LAYOUT.header;
     if (f) f.outerHTML = LAYOUT.footer;
     const hd = $('.bs-header');
-    if (hd && LAYOUT.promo && !$('.bs-promo') && !/(admin|instructor)\.html/.test(location.pathname)) hd.insertAdjacentHTML('beforebegin', LAYOUT.promo);
+    if (hd && LAYOUT.promo && !$('.bs-promo') && !/^(admin|instructor)\.html$/.test(here())) hd.insertAdjacentHTML('beforebegin', LAYOUT.promo);
     const cur = here();
     $$('.bs-nav a').forEach((a) => { if (a.getAttribute('href') === cur) a.setAttribute('aria-current', 'page'); });
     // search box -> course list
@@ -740,7 +742,7 @@
     try {
       const ua = navigator.userAgent || '';
       if (navigator.webdriver || /bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit|whatsapp\/|telegrambot/i.test(ua)) return;
-      if (/(admin|instructor)\.html$/.test(location.pathname)) return;
+      if (/^(admin|instructor)\.html$/.test(here())) return;
       const rid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 12));
       let vid = localStorage.getItem('biosyn.vid'), isNew = false;
       if (!vid) { vid = rid(); isNew = true; localStorage.setItem('biosyn.vid', vid); }
@@ -758,7 +760,7 @@
       const dev = /iPad|Tablet|PlayBook|Silk|(Android(?!.*Mobi))/i.test(ua) ? 'tablet' : /Mobi|iPhone|Android/i.test(ua) ? 'mobile' : 'desktop';
       const br = /Edg\//.test(ua) ? 'Edge' : /OPR\/|Opera/.test(ua) ? 'Opera' : /SamsungBrowser/.test(ua) ? 'Samsung' : /Firefox\//.test(ua) ? 'Firefox' : /Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : 'Other';
       const os = /Android/.test(ua) ? 'Android' : /iPhone|iPad|iPod/.test(ua) ? 'iOS' : /Windows/.test(ua) ? 'Windows' : /Mac OS X/.test(ua) ? 'macOS' : /Linux/.test(ua) ? 'Linux' : 'Other';
-      const path = location.pathname.replace(/\/index\.html$/, '/') + (document.body.dataset.page === 'course' && q.get('c') ? '?c=' + q.get('c') : '');
+      const path = (here() === 'index.html' ? location.pathname.replace(/[^/]*$/, '') : location.pathname.replace(/[^/]*$/, '') + here()) + (document.body.dataset.page === 'course' && q.get('c') ? '?c=' + q.get('c') : '');
       const send = (cc) => sb.rpc('track_visit', { p: { vid, sid: ses.id, path, ref: ses.ref, src: ses.src, cc: cc || '', dev, br, os, lang: (document.documentElement.lang || 'ar').slice(0, 5), new: isNew } }).catch(() => {});
       Promise.race([REGION, new Promise((r) => setTimeout(() => r(null), 4500))]).then((R) => send(R && R.at ? R.country : ''));
     } catch {}
@@ -770,7 +772,7 @@
   async function boot() {
     sb.auth.consumeHash();
     // a reset-password link that landed on another page: send it to the new-password form
-    try { if (sessionStorage.getItem('biosyn.recovery') === '1' && !/login\.html$/.test(location.pathname) && sb.session) { await sb.auth.ready; location.replace('login.html?mode=reset'); return; } } catch {}
+    try { if (sessionStorage.getItem('biosyn.recovery') === '1' && here() !== 'login.html' && sb.session) { await sb.auth.ready; location.replace('login.html?mode=reset'); return; } } catch {}
     sb.auth.loadUser();
     try { const c = new URLSearchParams(location.search).get('code'); if (c && /^[\w-]{3,40}$/.test(c)) localStorage.setItem('biosyn.code', c.toUpperCase()); } catch {}
     mountLayout(); mountFooterExtras();

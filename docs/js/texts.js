@@ -103,7 +103,7 @@
           const ex = await sb.get('text_overrides', { select: 'id', scope: 'eq.site', original: 'eq.' + orig });
           if (!ar || (ar === orig && !en)) { if (ex[0]) await sb.remove('text_overrides', { id: 'eq.' + ex[0].id }); t.tn.nodeValue = t.tn.nodeValue.replace(t.tn.nodeValue.trim(), orig); }
           else {
-            const body = { scope: 'site', original: orig, replacement: ar, replacement_en: en || null, page: location.pathname.split('/').pop() || 'index.html', updated_at: new Date().toISOString() };
+            const body = { scope: 'site', original: orig, replacement: ar, replacement_en: en || null, page: window.pageFile ? window.pageFile() : (location.pathname.split('/').pop() || 'index.html'), updated_at: new Date().toISOString() };
             if (ex[0]) await sb.update('text_overrides', { id: 'eq.' + ex[0].id }, body); else await sb.insert('text_overrides', body);
             const v = t.tn.nodeValue.replace(t.tn.nodeValue.trim(), isEn() ? (en || t.tn.nodeValue.trim()) : ar); origOf.set(t.tn, orig); lastSet.set(t.tn, v); t.tn.nodeValue = v;
           }

@@ -467,7 +467,7 @@
     async forms(main) {
       const [forms, subs, reqs] = await Promise.all([sb.get('forms', { select: '*', order: 'created_at.desc' }).catch(() => []), sb.get('form_submissions', { select: 'id,form_id,status' }).catch(() => []), sb.get('requests', { select: 'id,type,status' }).catch(() => [])]);
       const cnt = {}; subs.forEach((x) => { const c = (cnt[x.form_id] = cnt[x.form_id] || { all: 0, new: 0 }); c.all++; if (x.status === 'new') c.new++; });
-      const base = location.href.replace(/admin\.html.*$/, '');
+      const base = location.href.replace(/admin(\.html)?([?#].*)?$/, '');
       const link = (f) => base + 'form.html?f=' + encodeURIComponent(f.slug);
       const rc = {}; reqs.forEach((r) => { const c = (rc[r.type] = rc[r.type] || { all: 0, new: 0 }); c.all++; if (r.status === 'new') c.new++; });
       const siteForms = SITE_FORMS.map((sf) => { const c = sf.types.reduce((a, t) => ({ all: a.all + ((rc[t] || {}).all || 0), new: a.new + ((rc[t] || {}).new || 0) }), { all: 0, new: 0 });

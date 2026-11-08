@@ -127,7 +127,7 @@
 
     async promo(main) {
       const rows = await sb.rpc('my_promo_stats').then((r) => (Array.isArray(r) ? r : [])).catch(() => []);
-      const share = (base) => `${location.origin}${location.pathname.replace(/[^/]*$/, '')}pricing.html?code=${encodeURIComponent(base)}`;
+      const share = (base) => `${location.origin}${location.pathname.replace(/[^/]*$/, '')}pricing?code=${encodeURIComponent(base)}`;
       main.innerHTML = `<div class="bx-stats">
           ${D.stat('اشتراكات بكودك هذا الشهر', rows.reduce((s, r) => s + Number(r.uses_month || 0), 0), rows.reduce((s, r) => s + Number(r.uses_total || 0), 0) + ' إجمالي')}
           ${D.stat('أرباحك من الكود هذا الشهر', D.money(rows.reduce((s, r) => s + Number(r.earned_month || 0), 0)), 'تُضاف إلى رصيدك في بداية الشهر القادم')}

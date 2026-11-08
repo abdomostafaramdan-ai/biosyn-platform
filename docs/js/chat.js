@@ -64,7 +64,7 @@
 
   // student: "ask the instructor" from a course / watch page
   async function askCourse(courseId) {
-    if (!sb.user) { location.href = 'login.html?next=' + encodeURIComponent(location.pathname.split('/').pop() + location.search); return; }
+    if (!sb.user) { location.href = 'login.html?next=' + encodeURIComponent((window.pageFile ? window.pageFile() : location.pathname.split('/').pop()) + location.search); return; }
     try { const id = await sb.rpc('ask_instructor', { p_course: courseId, p_body: null }); openThread(id); } catch (e) { ui.toast(err(e), 'err'); }
   }
 
