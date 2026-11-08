@@ -629,7 +629,7 @@ def robots():
 
 # ---------------------------------------------------------------- main
 # https + clean address bar on the live domain (GitHub Pages serves /pricing for pricing.html)
-URLFIX = '<script data-urlfix>(function(l){if(!/(^|\\.)biosyneg\\.com$/.test(l.hostname))return;if(l.protocol==="http:"){l.replace("https://"+l.host+l.pathname+l.search+l.hash);return}var p=l.pathname;if(/\\.html$/.test(p)&&history.replaceState)history.replaceState(history.state,"",p.replace(/(^|\\/)index\\.html$/,"$1").replace(/\\.html$/,"")+l.search+l.hash)})(location)</script>'
+URLFIX = '<script data-urlfix>(function(l){if(!/(^|\\.)biosyneg\\.com$/.test(l.hostname))return;if(top!==self){try{top.location.href=l.href}catch(e){document.documentElement.style.display="none"}return}if(l.protocol==="http:"){l.replace("https://"+l.host+l.pathname+l.search+l.hash);return}var p=l.pathname;if(/\\.html$/.test(p)&&history.replaceState)history.replaceState(history.state,"",p.replace(/(^|\\/)index\\.html$/,"$1").replace(/\\.html$/,"")+l.search+l.hash)})(location)</script>'
 CLEAN_RE = re.compile(r"""(https://biosyneg\.com/)(?:index\.html|([\w-]+)\.html)(?=[\s"'<>)\]#?,]|$)""")
 def clean(t):
     """Public URLs without .html (GitHub Pages serves /pricing for pricing.html): canonical, og:url, JSON-LD, sitemap, llms."""

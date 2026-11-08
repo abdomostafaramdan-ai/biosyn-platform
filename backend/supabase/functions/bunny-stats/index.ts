@@ -33,7 +33,9 @@ Deno.serve(async (req) => {
     const li = await fetch(`${CORE}/videolibrary/${lib}`, { headers: { AccessKey: acc, accept: 'application/json' } });
     if (!li.ok) { libInfo[lib] = { error: li.status }; continue; }
     const L = await li.json(); const key = String(L.ApiKey ?? '');
-    libInfo[lib] = { name: L.Name, created: L.DateCreated, videos: L.VideoCount };
+    libInfo[lib] = { name: L.Name, created: L.DateCreated, videos: L.VideoCount,
+      // security audit: only flags and allowed domains, never keys
+      security: Object.fromEntries(Object.entries(L).filter(([k, v]) => typeof v === 'boolean' || /Referrer|Domain/i.test(k)).map(([k, v]) => [k, typeof v === 'boolean' ? v : Array.isArray(v) ? v : String(v).slice(0, 200)])) };
     for (let page = 1; page < 50; page++) {
       const r = await fetch(`${STREAM}/library/${lib}/videos?page=${page}&itemsPerPage=100&orderBy=date`, { headers: { AccessKey: key, accept: 'application/json' } });
       if (!r.ok) break; const d = await r.json();
