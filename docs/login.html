@@ -19,9 +19,20 @@
   </form>
 
   <form class="bx-form" id="f-up" style="gap:16px" hidden novalidate>
+    <fieldset class="bx-acct"><legend>نوع الحساب</legend>
+      <label class="bx-acct-opt"><input type="radio" name="r-type" value="student" checked><span><b>طالب</b><small>أتعلّم وأشترك في الدورات</small></span></label>
+      <label class="bx-acct-opt"><input type="radio" name="r-type" value="instructor"><span><b>محاضر</b><small>أقدّم دورات على المنصة</small></span></label>
+    </fieldset>
+    <div class="bx-inst" id="r-inst" hidden>
+      <div class="bx-field"><label for="r-sp">تخصصك ومجال التدريس <span class="bx-req" aria-hidden="true">*</span></label><input id="r-sp" class="bx-input" type="text" maxlength="200" placeholder="مثال: المعلوماتية الحيوية، علم الأدوية، بايثون للعلوم"></div>
+      <div class="bx-field"><label for="r-tt">نوع الدورة التي تريد تقديمها</label><select id="r-tt" class="bx-select"><option value="recorded">دورة مسجلة</option><option value="interactive">دورة تفاعلية (مباشرة)</option></select></div>
+      <p class="bx-hint" style="margin:0">سيبدأ حسابك كحساب طالب، ويصل طلبك لفريق Biosyn للمراجعة. بعد الموافقة تُفتح لك لوحة المحاضر من نفس الحساب.</p>
+    </div>
     <div class="bx-field"><label for="r-n">الاسم الكامل</label><input id="r-n" class="bx-input" type="text" autocomplete="name" required></div>
     <div class="bx-field"><label for="r-e">البريد الإلكتروني</label><input id="r-e" class="bx-input" type="email" dir="ltr" placeholder="name@example.com" autocomplete="email" required></div>
-    <div class="bx-field"><label for="r-ph">رقم الهاتف المحمول (واتساب)</label><div class="bx-phone" dir="ltr"><select id="r-cc" class="bx-select" aria-label="كود الدولة"></select><input id="r-ph" class="bx-input" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="1012345678" required></div><small class="bx-hint">سنتواصل معك عليه بخصوص اشتراكك ودوراتك فقط.</small></div>
+    <div class="bx-field"><label for="r-ph">رقم الهاتف المحمول <span class="bx-req" aria-hidden="true">*</span></label><div class="bx-phone" dir="ltr"><select id="r-cc" class="bx-select" aria-label="كود الدولة"></select><input id="r-ph" class="bx-input" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="1012345678" required aria-required="true"></div><small class="bx-hint">إلزامي. سنتواصل معك عليه بخصوص اشتراكك ودوراتك فقط.</small></div>
+    <label class="bx-check"><input type="checkbox" id="r-wsame" checked><span>رقم الواتساب هو نفس رقم الهاتف</span></label>
+    <div class="bx-field" id="r-wa-box" hidden><label for="r-wa">رقم الواتساب <span class="bx-req" aria-hidden="true">*</span></label><div class="bx-phone" dir="ltr"><select id="r-wcc" class="bx-select" aria-label="كود دولة الواتساب"></select><input id="r-wa" class="bx-input" type="tel" inputmode="tel" placeholder="1012345678"></div></div>
     <div class="bx-field"><label for="r-p">كلمة المرور</label><input id="r-p" class="bx-input" type="password" dir="ltr" placeholder="8 أحرف على الأقل" autocomplete="new-password" minlength="8" required></div>
     <label class="bx-check"><input type="checkbox" id="r-c"><span>أوافق على <a class="bx-link" href="terms.html" target="_blank">الشروط والأحكام</a> و<a class="bx-link" href="privacy.html" target="_blank">سياسة الخصوصية</a>.</span></label>
     <div class="bx-formmsg" id="m-up" aria-live="polite"></div>
@@ -29,7 +40,18 @@
   </form>
   <form class="bx-form" id="f-ph" style="gap:16px" hidden novalidate>
     <p style="margin:0">خطوة أخيرة: اكتب رقم هاتفك المحمول لنتمكن من التواصل معك بخصوص اشتراكك ودوراتك.</p>
-    <div class="bx-field"><label for="c-ph">رقم الهاتف المحمول (واتساب)</label><div class="bx-phone" dir="ltr"><select id="c-cc" class="bx-select" aria-label="كود الدولة"></select><input id="c-ph" class="bx-input" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="1012345678" required></div></div>
+    <div class="bx-field"><label for="c-ph">رقم الهاتف المحمول <span class="bx-req" aria-hidden="true">*</span></label><div class="bx-phone" dir="ltr"><select id="c-cc" class="bx-select" aria-label="كود الدولة"></select><input id="c-ph" class="bx-input" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="1012345678" required aria-required="true"></div></div>
+    <label class="bx-check"><input type="checkbox" id="c-wsame" checked><span>رقم الواتساب هو نفس رقم الهاتف</span></label>
+    <div class="bx-field" id="c-wa-box" hidden><label for="c-wa">رقم الواتساب <span class="bx-req" aria-hidden="true">*</span></label><div class="bx-phone" dir="ltr"><select id="c-wcc" class="bx-select" aria-label="كود دولة الواتساب"></select><input id="c-wa" class="bx-input" type="tel" inputmode="tel" placeholder="1012345678"></div></div>
+    <fieldset class="bx-acct"><legend>نوع الحساب</legend>
+      <label class="bx-acct-opt"><input type="radio" name="c-type" value="student" checked><span><b>طالب</b><small>أتعلّم وأشترك في الدورات</small></span></label>
+      <label class="bx-acct-opt"><input type="radio" name="c-type" value="instructor"><span><b>محاضر</b><small>أقدّم دورات على المنصة</small></span></label>
+    </fieldset>
+    <div class="bx-inst" id="c-inst" hidden>
+      <div class="bx-field"><label for="c-sp">تخصصك ومجال التدريس <span class="bx-req" aria-hidden="true">*</span></label><input id="c-sp" class="bx-input" type="text" maxlength="200" placeholder="مثال: المعلوماتية الحيوية، علم الأدوية، بايثون للعلوم"></div>
+      <div class="bx-field"><label for="c-tt">نوع الدورة التي تريد تقديمها</label><select id="c-tt" class="bx-select"><option value="recorded">دورة مسجلة</option><option value="interactive">دورة تفاعلية (مباشرة)</option></select></div>
+      <p class="bx-hint" style="margin:0">يصل طلبك لفريق Biosyn للمراجعة، وبعد الموافقة تُفتح لك لوحة المحاضر من نفس الحساب.</p>
+    </div>
     <div class="bx-formmsg" id="m-ph" aria-live="polite"></div>
     <button type="submit" class="bs-btn bs-btn-primary bs-btn-lg">حفظ ومتابعة</button>
   </form>

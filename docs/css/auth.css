@@ -27,3 +27,17 @@
 .bx-authfoot a { color: var(--ink-subtle) !important; }
 @media (max-width: 1100px) { .bx-auth-wrap { grid-template-columns: 1fr; } }
 @media (max-width: 900px) { .bx-auth-wrap, .bx-authbar, .bx-authfoot { padding-inline: var(--space-4); } .bx-auth-card, .bx-auth-side { padding: var(--space-5, 20px); } }
+
+/* sign-up: account type (طالب / محاضر) */
+.bx-acct { border: 0; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-width: 0; }
+.bx-acct legend { padding: 0; margin-bottom: 8px; font: 600 14px/22px var(--font-sans); color: var(--ink); }
+.bx-acct-opt { position: relative; display: block; cursor: pointer; }
+.bx-acct-opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.bx-acct-opt span { display: grid; gap: 2px; padding: 12px 14px; min-height: 64px; border: 1px solid var(--border, rgba(255,255,255,.14)); border-radius: var(--radius-md); background: var(--surface-raised); transition: border-color .15s, box-shadow .15s; }
+.bx-acct-opt b { font: 600 15px/22px var(--font-sans); color: var(--ink); }
+.bx-acct-opt small { font: 400 13px/20px var(--font-sans); color: var(--ink-muted); }
+.bx-acct-opt input:checked + span { border-color: var(--brand-lime); box-shadow: 0 0 0 1px var(--brand-lime) inset; }
+.bx-acct-opt input:focus-visible + span { outline: 2px solid var(--brand-lime); outline-offset: 2px; }
+.bx-inst { display: grid; gap: 16px; padding: 14px; border-radius: var(--radius-md); border: 1px dashed var(--border, rgba(255,255,255,.18)); }
+.bx-inst[hidden], #r-wa-box[hidden], #c-wa-box[hidden] { display: none; }
+.bx-req { color: var(--danger-text, #f87171); }

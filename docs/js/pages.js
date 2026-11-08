@@ -27,8 +27,26 @@
     const $ = window.$;
     const R = await Promise.race([window.REGION, new Promise((r) => setTimeout(() => r({}), 2500))]).catch(() => ({}));
     const iso0 = (window.COUNTRIES || []).some((x) => x[0] === R.country) ? R.country : 'EG';
-    $('#r-cc').innerHTML = ccOptions(iso0); $('#c-cc').innerHTML = ccOptions(iso0);
+    ['#r-cc', '#c-cc', '#r-wcc', '#c-wcc'].forEach((q) => { $(q).innerHTML = ccOptions(iso0); });
     const phoneErr = (iso) => iso === 'EG' ? 'اكتب رقم هاتف محمول مصريًا صحيحًا (11 رقمًا يبدأ بـ 01).' : 'اكتب رقم هاتف محمول صحيحًا.';
+    const waErr = (iso) => iso === 'EG' ? 'اكتب رقم واتساب مصريًا صحيحًا (11 رقمًا يبدأ بـ 01).' : 'اكتب رقم واتساب صحيحًا.';
+    // r- (email sign-up) and c- (Google: complete your data) share the same extras: WhatsApp + account type
+    const wireExtras = (k) => {
+      const same = $('#' + k + '-wsame'), box = $('#' + k + '-wa-box'), inst = $('#' + k + '-inst');
+      same.onchange = () => { box.hidden = same.checked; if (!same.checked) $('#' + k + '-wa').focus(); };
+      document.querySelectorAll(`input[name="${k}-type"]`).forEach((r) => (r.onchange = () => { inst.hidden = !isInst(k); if (isInst(k)) $('#' + k + '-sp').focus(); }));
+      if (new URLSearchParams(location.search).get('as') === 'instructor') { const r = document.querySelector(`input[name="${k}-type"][value="instructor"]`); r.checked = true; inst.hidden = false; }
+    };
+    const isInst = (k) => (document.querySelector(`input[name="${k}-type"]:checked`) || {}).value === 'instructor';
+    // -> { wa } or { err, el }
+    const readExtras = (k, ph) => {
+      let wa = ph;
+      if (!$('#' + k + '-wsame').checked) { const wi = $('#' + k + '-wcc').value; wa = normPhone(wi, $('#' + k + '-wa').value); if (!wa) return { err: waErr(wi), el: '#' + k + '-wa' }; }
+      if (isInst(k) && $('#' + k + '-sp').value.trim().length < 3) return { err: 'اكتب تخصصك ومجال التدريس.', el: '#' + k + '-sp' };
+      return { wa, inst: isInst(k), sp: $('#' + k + '-sp').value.trim(), tt: $('#' + k + '-tt').value };
+    };
+    const INST_OK = 'تم إنشاء حسابك ووصل طلب الانضمام كمحاضر لفريق Biosyn. سنراجعه ونتواصل معك على الواتساب أو البريد، وبعد الموافقة تظهر لك «لوحة المحاضر» من نفس الحساب.';
+    wireExtras('r'); wireExtras('c');
     // signed in (email or just back from Google): make sure we have a phone, then continue
     if (sb.session) await sb.auth.ready;
     // back from the reset-password email: ask for the new password before anything else
@@ -65,10 +83,19 @@
       const f = $('#f-ph'); f.hidden = false;
       f.addEventListener('submit', async (ev) => {
         ev.preventDefault(); const m = $('#m-ph'), iso = $('#c-cc').value, ph = normPhone(iso, $('#c-ph').value);
-        if (!ph) { m.className = 'bx-formmsg err'; m.textContent = phoneErr(iso); return; }
+        if (!ph) { m.className = 'bx-formmsg err'; m.textContent = phoneErr(iso); $('#c-ph').focus(); return; }
+        const x = readExtras('c', ph);
+        if (x.err) { m.className = 'bx-formmsg err'; m.textContent = x.err; $(x.el).focus(); return; }
         const b = $('button[type=submit]', f); b.disabled = true;
-        try { await sb.update('profiles', { id: 'eq.' + sb.user.id }, { phone: ph, country: iso }); location.replace(nextUrl()); }
-        catch (e) { b.disabled = false; m.className = 'bx-formmsg err'; m.textContent = window.arErr(e); }
+        try {
+          await sb.update('profiles', { id: 'eq.' + sb.user.id }, { phone: ph, whatsapp: x.wa, country: iso });
+          if (x.inst) {
+            await sb.rpc('apply_as_instructor', { p_specialty: x.sp, p_teach: x.tt });
+            window.track && track('lead', { type: 'instructor_signup' });
+            m.className = 'bx-formmsg ok'; m.textContent = INST_OK; setTimeout(() => location.replace(nextUrl()), 4000); return;
+          }
+          location.replace(nextUrl());
+        } catch (e) { b.disabled = false; m.className = 'bx-formmsg err'; m.textContent = window.arErr(e); }
       });
       return;
     }
@@ -91,7 +118,7 @@
       $('#auth-sub').textContent = up ? 'أدخل بياناتك لبدء رحلتك التعليمية.' : 'سجّل دخولك للوصول إلى مساحتك التعليمية.';
     };
     $('#tab-in').onclick = () => show(false); $('#tab-up').onclick = () => show(true);
-    if (new URLSearchParams(location.search).get('mode') === 'signup') show(true);
+    { const qs = new URLSearchParams(location.search); if (qs.get('mode') === 'signup' || qs.get('as') === 'instructor') show(true); }
     { const pe = (new URLSearchParams(location.search).get('email') || '').trim(); if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(pe)) { $('#r-e').value = pe; $('#l-e').value = pe; } }
     const say = (id, t, k) => { const m = $(id); m.textContent = t; m.className = 'bx-formmsg' + (k ? ' ' + k : ''); };
     const authErr = (e) => /invalid login/i.test(e.message) ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة.' : /already registered/i.test(e.message) ? 'هذا البريد مسجّل بالفعل، سجّل الدخول.' : /email not confirmed/i.test(e.message) ? 'أكّد بريدك الإلكتروني أولًا من الرسالة التي وصلتك.' : /rate limit/i.test(e.message) ? 'محاولات كثيرة، انتظر قليلًا ثم أعد المحاولة.' : window.arErr(e);
@@ -106,16 +133,21 @@
       const n = $('#r-n').value.trim(), e = $('#r-e').value.trim(), p = $('#r-p').value, iso = $('#r-cc').value, ph = normPhone(iso, $('#r-ph').value);
       if (!n) return say('#m-up', 'اكتب اسمك الكامل.', 'err');
       if (!/^\S+@\S+\.\S+$/.test(e)) return say('#m-up', 'اكتب بريدًا إلكترونيًا صحيحًا.', 'err');
-      if (!ph) return say('#m-up', phoneErr(iso), 'err');
+      if (!ph) { $('#r-ph').focus(); return say('#m-up', phoneErr(iso), 'err'); }
+      const x = readExtras('r', ph);
+      if (x.err) { $(x.el).focus(); return say('#m-up', x.err, 'err'); }
       if (p.length < 8) return say('#m-up', 'كلمة المرور يجب ألا تقل عن 8 أحرف.', 'err');
       if (!$('#r-c').checked) return say('#m-up', 'يرجى الموافقة على الشروط للمتابعة.', 'err');
       b.disabled = true; say('#m-up', 'جارٍ إنشاء الحساب…');
       try {
         let ref = null; try { ref = localStorage.getItem('biosyn.ref'); } catch {}
-        const r = await sb.auth.signUp(e, p, n, { phone: ph, country: iso, ...(ref ? { ref } : {}) });
-        window.track && track('sign_up');
-        if (r.access_token) location.href = nextUrl();
-        else { say('#m-up', 'أرسلنا لك رسالة تأكيد على بريدك الإلكتروني. افتحها لتفعيل حسابك ثم سجّل الدخول.', 'ok'); b.disabled = false; }
+        const r = await sb.auth.signUp(e, p, n, { phone: ph, whatsapp: x.wa, country: iso, ...(ref ? { ref } : {}),
+          ...(x.inst ? { account_type: 'instructor', specialty: x.sp, teach: x.tt } : {}) });
+        window.track && track('sign_up', { account_type: x.inst ? 'instructor' : 'student' });
+        const confirmMsg = 'أرسلنا لك رسالة تأكيد على بريدك الإلكتروني. افتحها لتفعيل حسابك ثم سجّل الدخول.';
+        if (x.inst) { say('#m-up', INST_OK + (r.access_token ? '' : ' ' + confirmMsg), 'ok'); if (r.access_token) setTimeout(() => (location.href = nextUrl()), 4000); else b.disabled = false; }
+        else if (r.access_token) location.href = nextUrl();
+        else { say('#m-up', confirmMsg, 'ok'); b.disabled = false; }
       } catch (err) { say('#m-up', authErr(err), 'err'); b.disabled = false; }
     });
     $('#forgot').addEventListener('click', async (ev) => {
