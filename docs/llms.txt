@@ -12,12 +12,14 @@
 - Certificates: every completed course issues a Biosyn Eg certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify
 - Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available
 - Founded: 2020, by Abdo Mostafa (B.Sc. in Science)
-- Served: more than 20,012 students, researchers and university staff in 9 countries
+- Served: more than 20,013 students, researchers and university staff in 9 countries
 - About page: https://biosyneg.com/about
+
+- 20 ألف طالب
 - Official profiles: https://www.tiktok.com/@biosyneg, https://www.facebook.com/share/19osCVbFXX/, https://www.linkedin.com/company/biosyneg/, https://www.instagram.com/biosyn_eg
 
 ## Subscription prices (EGP)
-- اشتراك شهري: 200 EGP (international: 20 in local currency)
+- اشتراك شهري: 350 EGP (international: 20 in local currency)
 - اشتراك نصف سنوي: 800 EGP (international: 100 in local currency)
 - اشتراك سنوي: 2000 EGP (international: 200 in local currency)
 - Details: https://biosyneg.com/pricing

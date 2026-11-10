@@ -12,12 +12,14 @@
 - Certificates: every completed course issues a Biosyn Eg certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify
 - Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available
 - Founded: 2020, by Abdo Mostafa (B.Sc. in Science)
-- Served: more than 20,012 students, researchers and university staff in 9 countries
+- Served: more than 20,013 students, researchers and university staff in 9 countries
 - About page: https://biosyneg.com/about
+
+- 20 ألف طالب
 - Official profiles: https://www.tiktok.com/@biosyneg, https://www.facebook.com/share/19osCVbFXX/, https://www.linkedin.com/company/biosyneg/, https://www.instagram.com/biosyn_eg
 
 ## Subscription prices (EGP)
-- اشتراك شهري: 200 EGP (international: 20 in local currency)
+- اشتراك شهري: 350 EGP (international: 20 in local currency)
 - اشتراك نصف سنوي: 800 EGP (international: 100 in local currency)
 - اشتراك سنوي: 2000 EGP (international: 200 in local currency)
 - Details: https://biosyneg.com/pricing
@@ -26,7 +28,7 @@
 
 ### Computational Neuroscience
 URL: https://biosyneg.com/course-computational-neuroscience
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
 Instructors: م. ندى صلاح — باحثة في علوم الأعصاب الحسابية
 
 تقدّم هذه الدورة مدخلًا شاملًا إلى علوم الدماغ وعلوم الأعصاب الحسابية، وتجمع بين الأسس البيولوجية وطرق القياس والنمذجة الحاسوبية.
@@ -56,7 +58,7 @@ Lectures:
 
 ### Introduction To Immunology
 URL: https://biosyneg.com/course-introduction-to-immunology
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
 Instructors: د. محمود محمد — دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
 
 تقدّم هذه الدورة مدخلًا شاملًا إلى علم المناعة، فتشرح كيف يتعرّف الجسم على الميكروبات ويدافع عن نفسه، بلغة واضحة ومنظمة تناسب من يدرس المناعة لأول مرة.
@@ -76,7 +78,7 @@ Lectures:
 
 ### Some Concepts in Clinical Research
 URL: https://biosyneg.com/course-some-concepts-in-clinical-research
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
 Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 
 تقدّم هذه الدورة المفاهيم الأساسية للبحث السريري من زاوية تاريخية وأخلاقية، لتفهم لماذا وُضعت قواعد البحث على البشر بهذا الشكل.
@@ -98,7 +100,7 @@ Lectures:
 
 ### Introduction To Genetic Engineering
 URL: https://biosyneg.com/course-introduction-to-genetic-engineering
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
 Instructors: سلمى صبحي — باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية
 
 الهندسة الوراثية هي الأساس الذي تقوم عليه صناعة الإنسولين واللقاحات والإنزيمات والمحاصيل المحسّنة. تشرح هذه الدورة كيف نقرأ الحمض النووي ونقطعه وننقله ونعيد كتابته، خطوة بخطوة وباللغة العربية.
@@ -119,7 +121,7 @@ Lectures:
 
 ### Introduction To Genetics
 URL: https://biosyneg.com/course-introduction-to-genetics
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
 Instructors: سلمى صبحي — باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية
 
 تقدّم هذه الدورة مدخلًا منظمًا إلى علم الوراثة، يبدأ من الأسئلة الأولى: كيف تنتقل الصفات من الآباء إلى الأبناء؟ وكيف تحوّلت قوانين مندل المجردة إلى فهم مادي للكروموسومات والحمض النووي؟
@@ -150,7 +152,7 @@ Instructors: د. محمد إمام — طالب دكتوراه، المعلوم�
 
 ### Molecular Biology
 URL: https://biosyneg.com/course-molecular-biology-course-614141
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
 Instructors: د. اسراء المليجي — إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics). تعمل كمساعدة تدريس، وتهتم بتبسيط…
 
 يقدم كورس البيولوجيا الجزيئية (Molecular Biology) رحلة تعليمية متكاملة لفهم الأساس الجزيئي للحياة، والتعرف على كيفية تخزين المعلومات الوراثية ونقلها والتعبير عنها داخل الخلايا.
@@ -175,7 +177,7 @@ Lectures:
 
 ### Intro To Basic Microbiology
 URL: https://biosyneg.com/course-microbiology-course-362803
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
 Instructors: د. شيماء محمد — مدرس الباثولوجيا الإكلينيكية، كلية الطب، جامعة عين شمس
 
 تقدّم هذه الدورة أساسًا متينًا في علم الأحياء الدقيقة الطبية، مع التركيز على تصنيف الكائنات الدقيقة وتركيبها وأهميتها السريرية. تتعرّف خلالها على تنوع البكتيريا، ومنها المكورات موجبة الجرام والعصويات سالبة الجرام واللاهوائيات والملتويات والمتفطرات والمفطورات، ثم تختم بمقدمة في علم الطفيليات.
@@ -198,7 +200,7 @@ Lectures:
 
 ### How to Read and Understand a Research Paper
 URL: https://biosyneg.com/course-how-to-read-a-research-paper
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
 Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 
 الأبحاث العلمية هي أساس العمل الأكاديمي، لكن قراءتها وفهمها قد يكونان صعبين في البداية. تقدّم هذه الدورة طريقة عملية خطوة بخطوة لقراءة أي بحث علمي وفهمه في وقت قصير.
@@ -218,7 +220,7 @@ Lectures:
 
 ### Python in Bioinformatics
 URL: https://biosyneg.com/course-python-in-bioinformatics
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
 Instructors: د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
 
 بايثون من أهم لغات البرمجة في المعلوماتية الحيوية وتحليل البيانات. تقدّم هذه الدورة أساسيات البرمجة بلغة بايثون في سياق بيولوجي واضح، دون أن تفترض أي خبرة برمجية سابقة.
@@ -237,7 +239,7 @@ Lectures:
 
 ### R Language in Bioinformatics
 URL: https://biosyneg.com/course-r-language-in-bioinformatics
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
 Instructors: د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
 
 لغة R هي الأداة الأكثر استخدامًا في التحليل الإحصائي للبيانات البيولوجية والطبية. تبدأ هذه الدورة من الصفر، فتشرح أساسيات البرمجة بلغة R وبيئة RStudio، ثم تنتقل إلى التعامل مع البيانات واستيرادها وتنظيفها وإعادة تشكيلها (Data Manipulation).
@@ -256,7 +258,7 @@ Lectures:
 
 ### Study Design in Clinical Research
 URL: https://biosyneg.com/course-study-design-in-clinical-research
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
 Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 
 اختيار تصميم الدراسة هو أول قرار يحدد قيمة أي بحث سريري. تشرح هذه الدورة أنواع تصاميم الدراسات في البحث الطبي بطريقة منظمة، بدءًا من تقارير الحالات وسلاسلها، مرورًا بالدراسات المقطعية (Cross-sectional) ودراسات الحالات والشواهد (Case-control) ودراسات الأتراب (Cohort)، وصولًا إلى الدراسات التجريبية.
@@ -281,7 +283,7 @@ Lectures:
 
 ### Basics of IVF Laboratories
 URL: https://biosyneg.com/course-basics-of-ivf-laboratories
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
 Instructors: د. أحمد سيد — محاضر علم الأجنة، كلية العلوم، جامعة الأزهر، أسيوط، مصر
 
 تأخذك هذه الدورة في رحلة متكاملة داخل معمل أطفال الأنابيب (IVF)، بدءًا من دورة الخلية وتكوين الحيوانات المنوية والبويضات، وصولًا إلى نمو الجنين حتى مرحلة الكيسة الأريمية (Blastocyst).
@@ -305,7 +307,7 @@ Lectures:
 
 ### Computational Biology
 URL: https://biosyneg.com/course-computational-biology
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
 Instructors: د. اسراء المليجي — إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics). تعمل كمساعدة تدريس، وتهتم بتبسيط…
 
 البيولوجيا الحاسوبية هي الطريق لتحويل البيانات البيولوجية الضخمة إلى نتائج يمكن فهمها ونشرها. تجمع هذه الدورة بين الشرح النظري والتطبيق العملي في 37 محاضرة، لتأخذك من أول قاعدة بيانات إلى تحليل التعبير الجيني.
@@ -355,7 +357,7 @@ Lectures:
 
 ### Structural Bioinformatics, Molecular Docking and Drug Design
 URL: https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 200 ج.م شهريًا
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
 Instructors: د. شريف عرفه — طالب دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
 
 تصميم الأدوية بمساعدة الحاسوب أصبح خطوة أساسية في اكتشاف الأدوية الحديثة، لأنه يقلل عدد المركبات التي تحتاج إلى اختبار في المعمل. تأخذك هذه الدورة في مشروع متكامل خطوة بخطوة، من اختيار البروتين الهدف حتى تحليل نتائج الالتحام الجزيئي.
