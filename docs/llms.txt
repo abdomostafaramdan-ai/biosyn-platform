@@ -12,7 +12,7 @@
 - Certificates: every completed course issues a Biosyn Eg certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify
 - Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available
 - Founded: 2020, by Abdo Mostafa (B.Sc. in Science)
-- Served: more than 20,015 students, researchers and university staff in 9 countries
+- Served: more than 20,022 students, researchers and university staff in 10 countries
 - About page: https://biosyneg.com/about
 
 - 20 ألف طالب
@@ -25,16 +25,16 @@
 - Details: https://biosyneg.com/pricing
 
 ## Courses
-- [Computational Neuroscience](https://biosyneg.com/course-computational-neuroscience): recorded course, 17 lectures, ~1.9 hours, الفيزياء الحيوية — مقدمة في علوم الأعصاب الحسابية: علم الدماغ والقياسات النفسية الفيزيائية، والنشاط الكهربي للخلايا العصبية، وإشارات EEG وMEG، ونمذجة العصبون LIF ببايثون.
 - [Introduction To Immunology](https://biosyneg.com/course-introduction-to-immunology): recorded course, 7 lectures, ~3.4 hours, المناعة — دورة مسجلة باللغة العربية في أساسيات علم المناعة: الجهاز المناعي، والمناعة الفطرية، والمستضدات وMHC، والمناعة الخلوية والخلطية، والمتمّمة.
 - [Some Concepts in Clinical Research](https://biosyneg.com/course-some-concepts-in-clinical-research): recorded course, 9 lectures, ~1.2 hours, البحث السريري — دورة مسجلة في المفاهيم الأساسية وأخلاقيات البحث السريري: تاريخه، وقانون نورمبرغ وإعلان هلسنكي، والمبادئ الأخلاقية، والموافقة المستنيرة ولجان الأخلاقيات.
+- [Computational Neuroscience](https://biosyneg.com/course-computational-neuroscience): recorded course, 17 lectures, ~1.9 hours, الفيزياء الحيوية — مقدمة في علوم الأعصاب الحسابية: علم الدماغ والقياسات النفسية الفيزيائية، والنشاط الكهربي للخلايا العصبية، وإشارات EEG وMEG، ونمذجة العصبون LIF ببايثون.
 - [Introduction To Genetic Engineering](https://biosyneg.com/course-introduction-to-genetic-engineering): recorded course, 8 lectures, ~2.6 hours, الهندسة الوراثية — دورة مسجلة باللغة العربية في أساسيات الهندسة الوراثية: النواقل وإنزيمات القطع وعزل الجينات، والإشريكية القولونية كعائل، والتخمير، وتحرير الجينوم، والتصميم بالحاسوب.
 - [Introduction To Genetics](https://biosyneg.com/course-introduction-to-genetics): recorded course, 8 lectures, ~3.4 hours, الوراثة — دورة مسجلة باللغة العربية في أساسيات علم الوراثة: من قوانين مندل والانقسام الاختزالي إلى الارتباط والخرائط الجينية، والعقيدة المركزية، ووراثة العشائر.
 - [Bioinformatics Diploma](https://biosyneg.com/course-bioinformtics-diploma): live interactive course — ادخل عالم تحليل البيانات الجينية وابدأ مسارك في Bioinformatics إذا كنت طالبًا أو باحثًا في العلوم أو الطب وتبحث عن مهارة مطلوبة عالميًا وتفتح لك فرصًا في البحث والعمل الحر، فهذا…
 - [Molecular Biology](https://biosyneg.com/course-molecular-biology-course-614141): recorded course, 14 lectures, ~4.0 hours — يهدف كورس البيولوجيا الجزيئية (Molecular Biology) إلى تقديم أساس علمي قوي لفهم العمليات الجزيئية داخل الخلية، بدايةً من تركيب DNA وRNA، مرورًا بتضاعف DNA والتعبير الجيني، وصولًا…
 - [Intro To Basic Microbiology](https://biosyneg.com/course-microbiology-course-362803): recorded course, 10 lectures, ~3.8 hours, الأحياء الدقيقة الطبية — دورة مسجلة باللغة العربية في أساسيات الميكروبيولوجيا الطبية: تصنيف البكتيريا وتركيبها وأهميتها السريرية، من المكورات موجبة الجرام إلى الطفيليات.
-- [How to Read and Understand a Research Paper](https://biosyneg.com/course-how-to-read-a-research-paper): recorded course, 7 lectures, ~0.9 hours, مهارات البحث العلمي — دورة قصيرة تعلّمك قراءة البحث العلمي وفهمه وتقييمه بسرعة: من الصفحة الأولى والملخص إلى النص الكامل وسلاسل الحالات والتجارب العشوائية والتحليل التلوي.
 - [Python in Bioinformatics](https://biosyneg.com/course-python-in-bioinformatics): recorded course, 6 lectures, ~15.5 hours, المعلوماتية الحيوية — تعلّم بايثون من البداية وطبّقها في المعلوماتية الحيوية: أساسيات البرمجة، والتعامل مع الملفات والتسلسلات، وتحليل البيانات البيولوجية.
+- [How to Read and Understand a Research Paper](https://biosyneg.com/course-how-to-read-a-research-paper): recorded course, 7 lectures, ~0.9 hours, مهارات البحث العلمي — دورة قصيرة تعلّمك قراءة البحث العلمي وفهمه وتقييمه بسرعة: من الصفحة الأولى والملخص إلى النص الكامل وسلاسل الحالات والتجارب العشوائية والتحليل التلوي.
 - [R Language in Bioinformatics](https://biosyneg.com/course-r-language-in-bioinformatics): recorded course, 6 lectures, ~16.8 hours, المعلوماتية الحيوية — تعلّم لغة R من الصفر لتحليل البيانات البيولوجية: التعامل مع البيانات وتنظيفها وتحليلها إحصائيًا ورسمها، مع مشروع تطبيقي في المعلوماتية الحيوية.
 - [Study Design in Clinical Research](https://biosyneg.com/course-study-design-in-clinical-research): recorded course, 12 lectures, ~2.0 hours, البحث السريري — دورة مسجلة في تصميم الدراسات السريرية: تقارير الحالات والدراسات المقطعية ودراسات الحالات والشواهد والأتراب، والتجارب العشوائية المضبوطة ومراحلها.
 - [Basics of IVF Laboratories](https://biosyneg.com/course-basics-of-ivf-laboratories): recorded course, 11 lectures, ~7.3 hours, الطب التناسلي — دورة مسجلة باللغة العربية في أساسيات معامل الحقن المجهري وأطفال الأنابيب: تحليل السائل المنوي، وتجهيز البويضات، ونمو الأجنة حتى الكيسة الأريمية.
@@ -55,7 +55,7 @@
 - [د. أحمد سيد](https://biosyneg.com/teacher-ahmed-said): محاضر علم الأجنة، كلية العلوم، جامعة الأزهر، أسيوط، مصر
 - [د. محمد إمام](https://biosyneg.com/teacher-mohamed-emam): طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
 - [د. شريف عرفه](https://biosyneg.com/teacher-sherif-arafa): طالب دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
-- [د. اسراء المليجي](https://biosyneg.com/teacher-esraa-elmeligy): إسراء الملقي، أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics). تعمل كمساعدة تدريس، وتهتم بتبسيط…
+- [د. اسراء المليجي](https://biosyneg.com/teacher-esraa-elmeligy): أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics).
 - [د. شيماء محمد](https://biosyneg.com/teacher-shaimaa-mohamed): مدرس الباثولوجيا الإكلينيكية، كلية الطب، جامعة عين شمس
 - [د. ناردين زريف](https://biosyneg.com/teacher-nardine-zarif): رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 - [م. ندى صلاح](https://biosyneg.com/teacher-nada-salah): باحثة في علوم الأعصاب الحسابية

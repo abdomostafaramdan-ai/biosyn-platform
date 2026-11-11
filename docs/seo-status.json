@@ -1,12 +1,7 @@
 {
- "built_at": "2026-11-11T02:28:46+00:00",
+ "built_at": "2026-11-11T16:02:33+00:00",
  "sitemap_urls": 61,
  "indexable": [
-  {
-   "slug": "computational-neuroscience",
-   "title": "Computational Neuroscience",
-   "url": "https://biosyneg.com/course-computational-neuroscience.html"
-  },
   {
    "slug": "introduction-to-immunology",
    "title": "Introduction To Immunology",
@@ -16,6 +11,11 @@
    "slug": "some-concepts-in-clinical-research",
    "title": "Some Concepts in Clinical Research",
    "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
+  },
+  {
+   "slug": "computational-neuroscience",
+   "title": "Computational Neuroscience",
+   "url": "https://biosyneg.com/course-computational-neuroscience.html"
   },
   {
    "slug": "introduction-to-genetic-engineering",
@@ -43,14 +43,14 @@
    "url": "https://biosyneg.com/course-microbiology-course-362803.html"
   },
   {
-   "slug": "how-to-read-a-research-paper",
-   "title": "How to Read and Understand a Research Paper",
-   "url": "https://biosyneg.com/course-how-to-read-a-research-paper.html"
-  },
-  {
    "slug": "python-in-bioinformatics",
    "title": "Python in Bioinformatics",
    "url": "https://biosyneg.com/course-python-in-bioinformatics.html"
+  },
+  {
+   "slug": "how-to-read-a-research-paper",
+   "title": "How to Read and Understand a Research Paper",
+   "url": "https://biosyneg.com/course-how-to-read-a-research-paper.html"
   },
   {
    "slug": "r-language-in-bioinformatics",
@@ -160,5 +160,5 @@
   }
  ],
  "ai_training": true,
- "changed": 0
+ "changed": 13
 }
