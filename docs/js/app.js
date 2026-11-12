@@ -419,6 +419,17 @@
       const m = p.duration_months, price = itemPrice(p.price_egp, p.intl_price, R), perMonth = Math.floor(price / m);
       const full = basePrice * m, ratio = basePrice ? price / basePrice : 0, paidFor = Math.abs(ratio - Math.round(ratio)) < 0.06 ? Math.round(ratio) : 0;  // 'N months for the price of K' only when it is (almost) exact
       $('.bs-plan-name', card).textContent = p.name;
+      card.dataset.plan = p.code; card.dataset.months = m;
+      const ctaX = $('.bs-plan-cta', card);
+      if (ctaX) ctaX.addEventListener('click', () => checkout({ plan_code: p.code, title: p.name, price: p.price_egp, intl: p.intl_price, note: (card.dataset.upnote || '') + 'الاشتراك لا يتجدد تلقائيًا ولا يمكن استرداده.' }));
+      // outside Egypt: the previous presentation (full price per plan, no promo strike or savings)
+      if (R.currency !== 'EGP') {
+        $('.bs-plan-price b', card).textContent = EGP(price);
+        const cu0 = $('.bs-plan-price span', card); if (cu0) cu0.textContent = cur;
+        $('.bs-plan-period', card).textContent = periodAr(m);
+        const bd = $('.bs-badge', card); if (bd) bd.remove();
+        return;
+      }
       // like almentor: the per-month price is the headline, with the monthly price struck through and the total under it
       const pr = $('.bs-plan-price', card);
       $('b', pr).textContent = EGP(perMonth);
@@ -444,9 +455,6 @@
       if (!isBest && rb) rb.remove();
       { const c = $('.bs-plan-cta', card); if (c) { if (isBest) c.classList.replace('bs-btn-secondary', 'bs-btn-primary'); else c.classList.replace('bs-btn-primary', 'bs-btn-secondary'); } }
       const wm = $('.bs-wm', card); if (wm && !isBest) wm.remove();
-      const cta = $('.bs-plan-cta', card);
-      card.dataset.plan = p.code; card.dataset.months = m;
-      if (cta) cta.addEventListener('click', () => checkout({ plan_code: p.code, title: p.name, price: p.price_egp, intl: p.intl_price, note: (card.dataset.upnote || '') + 'الاشتراك لا يتجدد تلقائيًا ولا يمكن استرداده.' }));
     });
     // payment methods under the plans (text chips, no third-party logos)
     $$('.bs-plans').forEach((w) => {
