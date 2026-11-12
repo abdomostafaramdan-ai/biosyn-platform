@@ -510,6 +510,8 @@ html[dir="rtl"] .in-tip{transform:translateX(50%)}
 .bx-promo-tag{display:inline-block;font-size:28px;font-weight:900;letter-spacing:2px;line-height:1.2;text-transform:uppercase;color:#fff;margin-bottom:6px;text-shadow:0 2px 12px rgba(220,38,38,.5)}
 .bx-promo-sub{font-size:18px;font-weight:700;color:#e8eef9;margin:6px 0 14px}
 .bx-promo-disc{font-size:26px;font-weight:900;color:#ff4444;line-height:1.4;margin-bottom:8px;text-shadow:0 0 24px rgba(255,68,68,.4)}
+.bx-promo-code{display:inline-flex;align-items:center;gap:8px;margin:10px 0 14px;padding:8px 20px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.07);font-size:16px;color:#e8eef9}
+.bx-promo-code b{font-size:22px;font-weight:900;letter-spacing:3px;color:#ffd700;direction:ltr;unicode-bidi:bidi-override}
 .bx-promo-exp{font-size:16px;font-weight:600;color:#ffd700;margin-bottom:22px}
 .bx-promo-cta{display:inline-block;padding:14px 44px;border:none;border-radius:14px;background:linear-gradient(135deg,#e63600,#ff4d1a);color:#fff;font-size:18px;font-weight:800;cursor:pointer;transition:transform .15s,box-shadow .2s;box-shadow:0 8px 28px rgba(230,54,0,.45)}
 .bx-promo-cta:hover{transform:scale(1.04);box-shadow:0 12px 36px rgba(230,54,0,.6)}

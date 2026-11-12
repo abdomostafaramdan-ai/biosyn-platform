@@ -183,12 +183,16 @@
     // build DOM
     overlay = document.createElement('div');
     overlay.className = 'bx-promo-overlay';
-    overlay.innerHTML = `<div class="bx-promo"><div class="bx-promo-glow"></div><button class="bx-promo-x" aria-label="إغلاق">✕</button><div class="bx-promo-body"><img class="bx-promo-logo" src="img/biosyn-logo.png" alt="Biosyn Eg"><div class="bx-promo-tag">${esc(d.title || 'WHITE FRIDAY')}</div><div class="bx-promo-sub">${esc(d.subtitle || '')}</div><div class="bx-promo-disc">${esc(d.discount || '')}</div><div class="bx-promo-exp">${esc(d.expires || '')}</div><a class="bx-promo-cta" href="${esc(d.cta_url || '/pricing')}">${esc(d.cta || 'اشترك دلوقتي')}</a></div></div>`;
+    const codeHtml = d.promo_code ? `<div class="bx-promo-code"><span>كود الخصم:</span> <b>${esc(d.promo_code)}</b></div>` : '';
+    overlay.innerHTML = `<div class="bx-promo"><div class="bx-promo-glow"></div><button class="bx-promo-x" aria-label="إغلاق">✕</button><div class="bx-promo-body"><img class="bx-promo-logo" src="img/biosyn-logo.png" alt="Biosyn Eg"><div class="bx-promo-tag">${esc(d.title || 'WHITE FRIDAY')}</div><div class="bx-promo-sub">${esc(d.subtitle || '')}</div><div class="bx-promo-disc">${esc(d.discount || '')}</div>${codeHtml}<div class="bx-promo-exp">${esc(d.expires || '')}</div><a class="bx-promo-cta" href="${esc(d.cta_url || '/pricing')}">${esc(d.cta || 'اشترك دلوقتي')}</a></div></div>`;
     document.body.appendChild(overlay);
     // close on X, on overlay click, and on CTA click
     overlay.querySelector('.bx-promo-x').onclick = close;
     overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
-    overlay.querySelector('.bx-promo-cta').addEventListener('click', () => { close(); });
+    overlay.querySelector('.bx-promo-cta').addEventListener('click', () => {
+      if (d.promo_code) try { sessionStorage.setItem('biosyn.promo', d.promo_code); } catch {}
+      close();
+    });
     // show after delay
     timer = setTimeout(open, (d.delay_sec || 10) * 1000);
     function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }

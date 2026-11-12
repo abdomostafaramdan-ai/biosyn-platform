@@ -342,8 +342,8 @@
         drawManual();
       });
       const cm = $('[data-cpnmsg]', m), priceEl = $('p b', m).parentElement;
-      let saved = ''; try { saved = localStorage.getItem('biosyn.code') || ''; } catch {}
-      if (saved) setTimeout(() => { $('#cpn', m).value = saved; $('[data-cpn]', m).click(); }, 0);
+      let saved = ''; try { saved = localStorage.getItem('biosyn.code') || sessionStorage.getItem('biosyn.promo') || ''; } catch {}
+      if (saved) setTimeout(() => { $('#cpn', m).value = saved; $('[data-cpn]', m).click(); try { sessionStorage.removeItem('biosyn.promo'); } catch {} }, 0);
       $('[data-cpn]', m).onclick = async (ev) => {
         const cbtn = ev.currentTarget, code = $('#cpn', m).value.trim(); coupon = ''; cm.className = 'bx-formmsg';
         if (!code) { cm.textContent = ''; priceEl.innerHTML = `<b>${esc(target.title)}</b> · ${priceTxt(target.price, R, target.intl)}`; return; }
