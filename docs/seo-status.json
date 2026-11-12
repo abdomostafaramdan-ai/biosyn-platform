@@ -1,5 +1,5 @@
 {
- "built_at": "2026-11-12T11:27:14+00:00",
+ "built_at": "2026-11-12T12:41:09+00:00",
  "sitemap_urls": 61,
  "indexable": [
   {
@@ -13,9 +13,9 @@
    "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
   },
   {
-   "slug": "computational-neuroscience",
-   "title": "Computational Neuroscience",
-   "url": "https://biosyneg.com/course-computational-neuroscience.html"
+   "slug": "introduction-to-genetics",
+   "title": "Introduction To Genetics",
+   "url": "https://biosyneg.com/course-introduction-to-genetics.html"
   },
   {
    "slug": "introduction-to-genetic-engineering",
@@ -23,9 +23,9 @@
    "url": "https://biosyneg.com/course-introduction-to-genetic-engineering.html"
   },
   {
-   "slug": "introduction-to-genetics",
-   "title": "Introduction To Genetics",
-   "url": "https://biosyneg.com/course-introduction-to-genetics.html"
+   "slug": "computational-neuroscience",
+   "title": "Computational Neuroscience",
+   "url": "https://biosyneg.com/course-computational-neuroscience.html"
   },
   {
    "slug": "bioinformtics-diploma",
@@ -68,14 +68,14 @@
    "url": "https://biosyneg.com/course-basics-of-ivf-laboratories.html"
   },
   {
-   "slug": "computational-biology",
-   "title": "Computational Biology",
-   "url": "https://biosyneg.com/course-computational-biology.html"
-  },
-  {
    "slug": "structural-bioinformatics-molecular-docking-drug-design",
    "title": "Structural Bioinformatics, Molecular Docking and Drug Design",
    "url": "https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html"
+  },
+  {
+   "slug": "computational-biology",
+   "title": "Computational Biology",
+   "url": "https://biosyneg.com/course-computational-biology.html"
   }
  ],
  "noindex": [],
@@ -127,28 +127,12 @@
    "url": "https://biosyneg.com/teacher-ahmed-said.html"
   },
   {
-   "name": "د. محمد إمام",
-   "url": "https://biosyneg.com/teacher-mohamed-emam.html"
-  },
-  {
    "name": "د. شريف عرفه",
    "url": "https://biosyneg.com/teacher-sherif-arafa.html"
   },
   {
-   "name": "د. اسراء المليجي",
-   "url": "https://biosyneg.com/teacher-esraa-elmeligy.html"
-  },
-  {
    "name": "د. شيماء محمد",
    "url": "https://biosyneg.com/teacher-shaimaa-mohamed.html"
-  },
-  {
-   "name": "د. ناردين زريف",
-   "url": "https://biosyneg.com/teacher-nardine-zarif.html"
-  },
-  {
-   "name": "م. ندى صلاح",
-   "url": "https://biosyneg.com/teacher-nada-salah.html"
   },
   {
    "name": "سلمى صبحي",
@@ -157,8 +141,24 @@
   {
    "name": "د. محمود محمد",
    "url": "https://biosyneg.com/teacher-mahmoud-mohamed.html"
+  },
+  {
+   "name": "د. محمد إمام",
+   "url": "https://biosyneg.com/teacher-mohamed-emam.html"
+  },
+  {
+   "name": "د. اسراء المليجي",
+   "url": "https://biosyneg.com/teacher-esraa-elmeligy.html"
+  },
+  {
+   "name": "د. ناردين زريف",
+   "url": "https://biosyneg.com/teacher-nardine-zarif.html"
+  },
+  {
+   "name": "م. ندى صلاح",
+   "url": "https://biosyneg.com/teacher-nada-salah.html"
   }
  ],
  "ai_training": true,
- "changed": 14
+ "changed": 13
 }
