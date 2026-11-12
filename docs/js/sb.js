@@ -150,18 +150,23 @@
   })();
 })();
 
-/* Promo popup — site_content.promo_popup = { on, title, subtitle, discount, expires, cta, cta_url, delay_sec, reshow_sec, egypt_only }.
+/* Promo popup — site_content.promo_popup = { on, title, subtitle, discount, expires, cta, cta_url, delay_sec, reshow_sec, egypt_only, max_shows }.
    Shows for Egyptians only (when egypt_only is true), non-subscribed visitors, after delay_sec seconds.
-   Reappears reshow_sec seconds after the user closes it. Admin/support never see it. */
+   Reappears reshow_sec seconds after the user closes it, up to max_shows times total (default 2).
+   Admin/support never see it. */
 (() => {
   const page = (location.pathname.split('/').pop() || 'index').replace(/\.html$/, '') || 'index';
   if (/^(login|admin|unsubscribe)$/.test(page) || !window.sb) return;
   let overlay, timer, reshowTimer;
-  const open = () => { if (overlay) overlay.classList.add('is-open'); };
+  const PK = 'biosyn.promo_shown';
+  const getShown = () => { try { return Number(localStorage.getItem(PK)) || 0; } catch { return 0; } };
+  const incShown = () => { try { localStorage.setItem(PK, String(getShown() + 1)); } catch {} };
+  let maxShows = 2;
+  const open = () => { if (!overlay || getShown() >= maxShows) return; overlay.classList.add('is-open'); incShown(); };
   const close = () => {
     if (overlay) overlay.classList.remove('is-open');
     if (reshowTimer) clearTimeout(reshowTimer);
-    reshowTimer = setTimeout(open, (window._promoReshowSec || 60) * 1000);
+    if (getShown() < maxShows) reshowTimer = setTimeout(open, (window._promoReshowSec || 60) * 1000);
   };
   (async () => {
     let d; try { const r = await sb.get('site_content', { select: 'data', key: 'eq.promo_popup' }); d = r && r[0] && r[0].data; } catch {} if (!d || !d.on) return;
@@ -180,6 +185,8 @@
       }
     } catch {}
     window._promoReshowSec = d.reshow_sec || 60;
+    maxShows = Math.max(1, Number(d.max_shows) || 2);
+    if (getShown() >= maxShows) return;
     // build DOM
     overlay = document.createElement('div');
     overlay.className = 'bx-promo-overlay';
