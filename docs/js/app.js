@@ -121,7 +121,7 @@
     const st = await window.SITE_SETTINGS;
     if (!BIOSYN.SUPPORT_CHAT && !st.support_chat) return;
     const w = document.createElement('div'); w.className = 'bx-chat';
-    w.innerHTML = `<button type="button" class="bx-chat-fab" aria-expanded="false" aria-label="المساعدة">؟ مساعدة</button><section class="bx-chat-panel" hidden aria-label="مساعد Biosyn"><header><b>مساعد Biosyn</b><button type="button" data-cx aria-label="إغلاق">×</button></header><div class="bx-chat-log" aria-live="polite"><div class="bx-chat-m a">أهلاً! اسألني عن الباقات، الدفع، الشهادات أو الدورات. لأي مشكلة في حسابك راسلنا على contact@biosynegypt.com</div></div><form><input class="bx-input" maxlength="1000" placeholder="اكتب سؤالك…" aria-label="سؤالك"><button class="bs-btn bs-btn-primary bs-btn-sm" type="submit">إرسال</button></form></section>`;
+    w.innerHTML = `<button type="button" class="bx-chat-fab" aria-expanded="false" aria-label="المساعدة">؟ مساعدة</button><section class="bx-chat-panel" hidden aria-label="مساعد Biosyn"><header><b>مساعد Biosyn</b><button type="button" data-cx aria-label="إغلاق">×</button></header><div class="bx-chat-log" aria-live="polite"><div class="bx-chat-m a">أهلاً! اسألني عن الباقات، الدفع، الشهادات أو الدورات. لأي مشكلة في حسابك راسلنا على contact@biosyneg.com</div></div><form><input class="bx-input" maxlength="1000" placeholder="اكتب سؤالك…" aria-label="سؤالك"><button class="bs-btn bs-btn-primary bs-btn-sm" type="submit">إرسال</button></form></section>`;
     document.body.appendChild(w);
     const fab = $('.bx-chat-fab', w), panel = $('.bx-chat-panel', w), log = $('.bx-chat-log', w), form = $('form', w), inp = $('input', form);
     const hist = [];
@@ -132,7 +132,7 @@
       e.preventDefault(); const q = inp.value.trim(); if (!q) return; inp.value = '';
       add('u', q); hist.push({ role: 'user', content: q }); const wait = add('a', '…');
       try { const r = await sb.fn('support-chat', { messages: hist.slice(-10) }); wait.textContent = r.reply; hist.push({ role: 'assistant', content: r.reply }); }
-      catch { wait.textContent = 'المساعد غير متاح الآن. راسلنا على contact@biosynegypt.com'; hist.pop(); }
+      catch { wait.textContent = 'المساعد غير متاح الآن. راسلنا على contact@biosyneg.com'; hist.pop(); }
     };
   }
 
@@ -336,7 +336,7 @@
         const fwLogos = (loc ? [['visa-mastercard', 'Visa / Mastercard']] : [['visa-mastercard', 'Visa / Mastercard'], ['wallets', 'المحافظ الإلكترونية'], ['fawry', 'فوري'], ['aman', 'أمان']])
           .map(([f, a]) => `<img src="${LOGO(f)}" alt="${a}" title="${a}" loading="lazy" onerror="this.remove()">`).join('');
         rg.innerHTML = opts.length ? opts.map(([k, n, s], i) => `<label class="bx-opt"><input type="radio" name="gw" value="${k}" ${i === 0 ? 'checked' : ''}><b>${n}</b><small>${s}</small>${k === 'fawaterk' ? `<span class="bx-paylogos" aria-hidden="true">${fwLogos}</span>` : ''}</label>`).join('')
-          : `<div class="bx-formmsg err">${loc ? `الدفع من بلدك غير متاح بعد. تواصل معنا على contact@biosynegypt.com وسنفعّل اشتراكك يدويًا.` : 'الدفع غير متاح حاليًا. تواصل معنا على contact@biosynegypt.com'}</div>`;
+          : `<div class="bx-formmsg err">${loc ? `الدفع من بلدك غير متاح بعد. تواصل معنا على contact@biosyneg.com وسنفعّل اشتراكك يدويًا.` : 'الدفع غير متاح حاليًا. تواصل معنا على contact@biosyneg.com'}</div>`;
         $('[data-go]', m).disabled = !opts.length;
         $$('input[name=gw]', m).forEach((r) => (r.onchange = drawManual));
         drawManual();

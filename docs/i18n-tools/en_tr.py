@@ -233,7 +233,7 @@ IDX = {
 706: "Invite a friend, get a free month", 707: "Share your link. When your friend buys their first paid plan, we'll add", 708: "a free month",
 709: "to your account automatically.", 710: "Copy link", 711: "Signed up with your link:", 712: "· Earned:", 713: "free month(s)", 714: "Payment receipt",
 715: "Receipt no.", 717: "Customer", 719: "Price", 721: "Discount", 723: "Payment gateway fee", 725: "Total paid",
-726: "This is an electronic receipt issued by the platform · contact@biosynegypt.com", 727: "Print / save as PDF", 728: "Close", 729: "Certificate of completion",
+726: "This is an electronic receipt issued by the platform · contact@biosyneg.com", 727: "Print / save as PDF", 728: "Close", 729: "Certificate of completion",
 730: "The platform certifies that", 731: "has successfully completed the course", 733: "To verify this certificate, scan the code or open:", 734: "Copy verification link",
 735: "Checkout", 737: "Secure online payment", 738: "InstaPay", 739: "Manual transfer · no fees", 740: "Vodafone Cash", 741: "Have a discount code?", 742: "Apply",
 744: "terms", 745: "Continue to payment", 746: "Cancel", 747: "Payment method",
@@ -250,9 +250,9 @@ EXTRA = {
 "هذه الباقة غير متاحة حاليًا.": "This plan isn't available right now.", "هذه الدورة غير متاح حاليًا.": "This course isn't available right now.",
 "حدث خطأ غير متوقع، حاول مرة أخرى.": "Something went wrong — please try again.", "جهاز": "Device",
 "؟ مساعدة": "? Help", "مساعد Biosyn": "Biosyn assistant",
-"أهلاً! اسألني عن الباقات، الدفع، الشهادات أو الدورات. لأي مشكلة في حسابك راسلنا على contact@biosynegypt.com": "Hi! Ask me about plans, payment, certificates or courses. For account issues, email contact@biosynegypt.com",
+"أهلاً! اسألني عن الباقات، الدفع، الشهادات أو الدورات. لأي مشكلة في حسابك راسلنا على contact@biosyneg.com": "Hi! Ask me about plans, payment, certificates or courses. For account issues, email contact@biosyneg.com",
 "إرسال": "Send", "اكتب سؤالك…": "Type your question…", "سؤالك": "Your question", "إغلاق": "Close", "المساعدة": "Help",
-"المساعد غير متاح الآن. راسلنا على contact@biosynegypt.com": "The assistant is unavailable right now. Email us at contact@biosynegypt.com",
+"المساعد غير متاح الآن. راسلنا على contact@biosyneg.com": "The assistant is unavailable right now. Email us at contact@biosyneg.com",
 "لوحة الإدارة": "Admin dashboard", "(مجاني بالكامل)": "(completely free)", "جارٍ تجهيز صفحة الدفع…": "Preparing the payment page…", "تم التفعيل!": "Activated!",
 "استلمنا طلبك. سنراجع التحويل ونفعّل اشتراكك، وسيصلك بريد بالتأكيد.": "Request received. We'll review the transfer, activate your subscription and email you a confirmation.",
 "انتهت جلستك، سجّل الدخول من جديد.": "Your session expired — please sign in again.", "مدة شهر واحد": "1 month", "صلاحية 12 شهرًا": "Valid for 12 months",
@@ -290,7 +290,7 @@ EXTRA = {
 "كود الخصم غير صحيح": "Invalid discount code", "كود الخصم لم يبدأ بعد": "This discount code isn't active yet", "كود الخصم منتهي": "This discount code has expired",
 "الكود لا ينطبق على هذا المنتج": "This code doesn't apply to this item", "الكود لا ينطبق على هذه الباقة": "This code doesn't apply to this plan", "الكود لا ينطبق على هذه الدورة": "This code doesn't apply to this course",
 "انتهت مرات استخدام الكود": "This code has reached its usage limit", "استخدمت هذا الكود من قبل": "You've already used this code",
-"وصلت للحد اليومي للأسئلة. للمساعدة راسلنا على contact@biosynegypt.com": "You've reached today's question limit. For help, email contact@biosynegypt.com",
+"وصلت للحد اليومي للأسئلة. للمساعدة راسلنا على contact@biosyneg.com": "You've reached today's question limit. For help, email contact@biosyneg.com",
 # roles, statuses, misc labels
 "طالب": "Student", "محاضر": "Instructor", "مدير": "Admin", "دعم": "Support", "منشورة": "Published", "مسودة": "Draft", "قيد المراجعة": "Under review",
 "بانتظار الدفع": "Awaiting payment", "جديد": "New", "مقبول": "Accepted", "مرفوض": "Rejected",
@@ -324,7 +324,7 @@ EXTRA.update({
 EXTRA.update({
 "جارٍ تحميل طرق الدفع…": "Loading payment methods…",
 "دفع إلكتروني آمن · بطاقة أو محفظة": "Secure online payment · card or wallet",
-"الدفع غير متاح حاليًا. تواصل معنا على contact@biosynegypt.com": "Payment isn't available right now. Contact us at contact@biosynegypt.com",
+"الدفع غير متاح حاليًا. تواصل معنا على contact@biosyneg.com": "Payment isn't available right now. Contact us at contact@biosyneg.com",
 "اختر طريقة الدفع.": "Choose a payment method.",
 "Paymob": "Paymob", "Stripe": "Stripe", "Fawaterk": "Fawaterk",
 })

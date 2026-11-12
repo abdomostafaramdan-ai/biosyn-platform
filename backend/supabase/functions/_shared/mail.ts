@@ -26,7 +26,7 @@ export async function sendPending(sb: Sb, max = 20): Promise<{ sent: number; fai
   await loadSecrets(sb);
   const key = sec('RESEND_API_KEY'), from = sec('MAIL_FROM');
   if (!key || !from) return { sent: 0, failed: 0, skipped: 'RESEND_API_KEY / MAIL_FROM not set' };
-  const replyTo = sec('MAIL_REPLY_TO') || 'contact@biosynegypt.com';
+  const replyTo = sec('MAIL_REPLY_TO') || 'contact@biosyneg.com';
   const { data: rows, error } = await sb.rpc('claim_emails', { p_n: max });
   if (error || !rows) return { sent: 0, failed: 0, skipped: error?.message };
   let sent = 0, failed = 0;

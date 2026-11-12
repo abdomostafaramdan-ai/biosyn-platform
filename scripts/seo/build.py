@@ -22,7 +22,7 @@ BRAND = 'Biosyn Eg'
 TODAY = datetime.date.today().isoformat()
 OG_IMAGE = SITE + '/img/og.png'
 LOGO = SITE + '/img/biosyn-mark.png'
-CONTACT = 'contact@biosynegypt.com'
+CONTACT = 'contact@biosyneg.com'
 
 LEVEL = {'beginner': 'مبتدئ', 'beginner_intermediate': 'مبتدئ ومتوسط', 'intermediate': 'متوسط', 'intermediate_advanced': 'متوسط ومتقدم', 'advanced': 'متقدم', 'all_levels': 'كل المستويات'}
 LEVEL_EN = {'beginner': 'Beginner', 'beginner_intermediate': 'Beginner', 'intermediate': 'Intermediate', 'intermediate_advanced': 'Intermediate', 'advanced': 'Advanced', 'all_levels': 'Beginner'}

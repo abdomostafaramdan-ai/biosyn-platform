@@ -19,7 +19,7 @@
     ],
     founder_name: 'Abdo Mostafa', founder_title: 'مؤسس Biosyn Eg · B.Sc. in Science',
     founder_bio: 'أسّس Abdo Mostafa منصة Biosyn Eg عام 2020، وهو حاصل على بكالوريوس العلوم (B.Sc. in Science)، ويعمل على بناء المنصة وفريق المحاضرين ليصبح المحتوى العلمي المتخصص متاحًا باللغة العربية وبشكل عملي لكل طالب وباحث.',
-    email: 'contact@biosynegypt.com', whatsapp: '01069151456',
+    email: 'contact@biosyneg.com', whatsapp: '01069151456',
     founded: 2020, base_students: 20000, base_countries: 7, known_countries: ['EG'],
   };
 

@@ -40,7 +40,7 @@
       ${row('البند', esc(item))}${row('السعر', M(list))}${disc ? row('الخصم', '− ' + M(disc)) : ''}${fee ? row('رسوم بوابة الدفع', M(fee)) : ''}
       <tr><td style="padding:10px 0;border-top:1px solid currentColor"><b>الإجمالي المدفوع</b></td><td style="padding:10px 0;border-top:1px solid currentColor;text-align:left"><b>${M(total)}</b></td></tr>
       ${row('طريقة الدفع', esc(GWN[p.gateway] || p.gateway))}${row('الحالة', p.status === 'refunded' ? 'مُسترد' : 'مدفوع')}</table>
-      <small style="display:block;margin-top:12px;text-align:center">هذا إيصال إلكتروني صادر من المنصة · contact@biosynegypt.com</small></div>
+      <small style="display:block;margin-top:12px;text-align:center">هذا إيصال إلكتروني صادر من المنصة · contact@biosyneg.com</small></div>
       <div class="bx-modal-actions"><button type="button" class="bs-btn bs-btn-primary" data-print>طباعة / حفظ PDF</button><button type="button" class="bs-btn bs-btn-ghost" data-x>إغلاق</button></div>`,
     (m, close) => { $('[data-print]', m).onclick = () => window.print(); $('[data-x]', m).onclick = close; });
   }

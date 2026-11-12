@@ -44,7 +44,7 @@ def layout(preheader, heading, body):
 </td></tr>
 <tr><td style="padding:22px 30px 26px;text-align:right"><hr style="border:none;border-top:1px solid #e5e7f2;margin:0 0 16px">
 <p style="margin:0 0 6px;font-size:13px;line-height:21px;color:{NAVY};font-weight:700">Biosyn Eg · تعليم علمي وطبي بمحتوى مهني</p>
-<p style="margin:0;font-size:12px;line-height:20px;color:{MUTED}"><a href="{SITE}" style="color:{MUTED};text-decoration:underline">biosyneg.com</a> · <a href="mailto:contact@biosynegypt.com" style="color:{MUTED};text-decoration:underline">contact@biosynegypt.com</a><br>وصلك الإيميل ده لأن عندك حساب على منصة Biosyn Eg.</p>
+<p style="margin:0;font-size:12px;line-height:20px;color:{MUTED}"><a href="{SITE}" style="color:{MUTED};text-decoration:underline">biosyneg.com</a> · <a href="mailto:contact@biosyneg.com" style="color:{MUTED};text-decoration:underline">contact@biosyneg.com</a><br>وصلك الإيميل ده لأن عندك حساب على منصة Biosyn Eg.</p>
 </td></tr></table>
 </td></tr></table></body></html>'''
 

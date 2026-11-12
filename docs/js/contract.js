@@ -17,7 +17,7 @@
     <header class="kc-head"><img src="img/biosyn-logo-light.png" alt="Biosyn Eg" onerror="this.src='img/biosyn-logo.png'"><div><b>${esc(c.title)}</b><small>الإصدار ${esc(c.version)}${c.id ? ' · رقم الاتفاقية ' + esc(String(c.id).slice(0, 8).toUpperCase()) : ''}</small></div></header>
     <div class="kc-body">${bodyHTML(c.body)}</div>
     <section class="kc-sign">
-      <div><span>الطرف الأول</span><b>Biosyn Eg</b><small>biosyneg.com · contact@biosynegypt.com</small><div class="kc-stamp">Biosyn Eg<br><small>معتمد إلكترونيًا</small></div></div>
+      <div><span>الطرف الأول</span><b>Biosyn Eg</b><small>biosyneg.com · contact@biosyneg.com</small><div class="kc-stamp">Biosyn Eg<br><small>معتمد إلكترونيًا</small></div></div>
       <div><span>الطرف الثاني (المحاضر)</span><b>${esc(c.signer_name || '—')}</b>${c.signature_png ? `<img class="kc-sig" src="${esc(c.signature_png)}" alt="توقيع المحاضر">` : '<div class="kc-sig kc-sig-empty">التوقيع</div>'}<small>${c.signed_at ? 'وقّع في ' + esc(fmt(c.signed_at)) : ''}</small></div>
     </section>
     ${c.signed_at ? `<footer class="kc-audit"><b>سجل التوقيع الإلكتروني</b>
