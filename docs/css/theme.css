@@ -495,3 +495,4 @@ html[dir="rtl"] .in-tip{transform:translateX(50%)}
 .bx-paymethods small{flex-basis:100%;font-size:12px}
 
 .bx-paymethods img{height:36px;width:auto;max-width:96px;object-fit:contain;padding:5px 9px;border-radius:10px;background:#fff;border:1px solid var(--line,rgba(255,255,255,.14))}
+.bx-paymethods img.bx-paysq{width:36px;max-width:36px;padding:3px;object-fit:contain}

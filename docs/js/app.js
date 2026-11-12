@@ -459,12 +459,6 @@
     // payment methods under the plans (text chips, no third-party logos)
     $$('.bs-plans').forEach((w) => {
       if (w.nextElementSibling && w.nextElementSibling.classList.contains('bx-paymethods')) return;
-      const I = {
-        card: '<path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h15A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/><path d="M3 10h18M7 15h4"/>',
-        wallet: '<path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3"/><path d="M4 7.5v10A1.5 1.5 0 0 0 5.5 19H20V8H6.5A2.5 2.5 0 0 1 4 5.5"/><circle cx="16.5" cy="13.5" r="1.2"/>',
-        phone: '<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/>',
-        bolt: '<path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/>',
-      };
       // official method logos from the payment gateway (same files as the checkout); manual transfers keep an icon chip
       const LOGO = (f) => `${BIOSYN.SUPABASE_URL}/storage/v1/object/public/site-assets/pay/${f}.png`;
       const eg = R.currency === 'EGP';
@@ -472,8 +466,9 @@
         .map(([f, t]) => `<img src="${LOGO(f)}" alt="${t}" title="${t}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('b'),{textContent:this.alt}))">`).join('')
         // outside Egypt PayPal is offered too: PayPal's own logo, served from PayPal's CDN as PayPal provides it for merchants
         + (eg ? '' : `<img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-200px.png" alt="PayPal" title="PayPal" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('b'),{textContent:'PayPal'}))">`);
-      const manual = eg ? [['phone', 'فودافون كاش'], ['bolt', 'إنستاباي']] : [];
-      w.insertAdjacentHTML('afterend', `<div class="bx-paymethods"><span>ادفع بالطريقة التي تناسبك:</span>${logos}${manual.map(([ic, t]) => `<b><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[ic]}</svg>${t}</b>`).join('')}<small>الدفع مرة واحدة، ولا يتجدد الاشتراك تلقائيًا.</small></div>`);
+      const MEDIA = (f) => `${BIOSYN.SUPABASE_URL}/storage/v1/object/public/site-media/pay/${f}.png`;
+      const manual = eg ? [['vodafone-cash', 'فودافون كاش'], ['instapay', 'إنستاباي']] : [];
+      w.insertAdjacentHTML('afterend', `<div class="bx-paymethods"><span>ادفع بالطريقة التي تناسبك:</span>${logos}${manual.map(([f, t]) => `<img class="bx-paysq" src="${MEDIA(f)}" alt="${t}" title="${t}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('b'),{textContent:this.alt}))">`).join('')}<small>الدفع مرة واحدة، ولا يتجدد الاشتراك تلقائيًا.</small></div>`);
     });
     planState(cards);
   }
