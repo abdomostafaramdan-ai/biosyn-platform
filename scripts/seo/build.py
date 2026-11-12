@@ -374,7 +374,7 @@ def course_page(tpl, c, d, related):
             (f'<section class="bs-block-sec" style="margin-top:48px"><h2>عن الدورة</h2>' + ''.join(f'<p>{e(p)}</p>' for p in paras(c.get('description'))) + '</section>' if c.get('description') else '') +
             (f'<section class="bs-block-sec"><h2>ماذا ستتعلم في هذه الدورة؟</h2><div class="bs-learn"><ul class="bs-checks">' + ''.join(f'<li><span>{e(x)}</span></li>' for x in outs) + '</ul></div></section>' if outs else '') +
             fit_html + inst_html +
-            (f'<section class="bs-block-sec"><h2>محتوى الدورة</h2><div class="bs-curr"><div class="bs-curr-head"><b>محتوى الدورة</b><span>{n} محاضرة{" · " + e(hours_ar(total)) if total else ""}</span></div><ol class="bs-curr-list">{lec}</ol></div></section>' if n else '') +
+            (f'<section class="bs-block-sec"><h2>محتوى الدورة</h2><details class="bs-curr"><summary class="bs-curr-head"><b>محتوى الدورة</b><span>{n} محاضرة{" · " + e(hours_ar(total)) if total else ""}</span><i class="bs-curr-chev" aria-hidden="true"></i></summary><ol class="bs-curr-list">{lec}</ol></details></section>' if n else '') +
             f'</div><aside class="bs-enroll"><div class="bs-enroll-body"><div class="bs-enroll-access"><b>{e(price)}</b></div>'
             f'<a class="bs-btn bs-btn-primary bs-btn-lg bs-block" href="{"pricing.html" if rec else "course-" + e(c["slug"]) + ".html"}">{"اشترك لمشاهدة الدورة" if rec else "سجّل الآن"}</a>'
             '<ul class="bs-checks bs-checks-sm"><li><span>شهادة إتمام قابلة للتحقق</span></li><li><span>بالعربية مع المصطلحات بالإنجليزي</span></li></ul></div></aside></div>')
