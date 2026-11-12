@@ -472,3 +472,8 @@ html[dir="rtl"] .in-tip{transform:translateX(50%)}
 .cx-stage { max-width: 100%; border-radius: 10px; overflow: hidden; touch-action: none; cursor: grab; margin: 8px auto; }
 .cx-stage canvas { display: block; }
 @media (max-width: 600px) { .cx-frow { grid-template-columns: 1fr 1fr; } }
+
+/* button loading spinner (auth forms) */
+.bx-btnspin{display:inline-block;width:16px;height:16px;border:2px solid currentColor;border-inline-end-color:transparent;border-radius:50%;animation:bxspin .7s linear infinite;vertical-align:-3px;margin-inline-end:8px}
+@keyframes bxspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.bx-btnspin{animation-duration:1.6s}}

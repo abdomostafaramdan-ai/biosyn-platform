@@ -121,12 +121,44 @@
     { const qs = new URLSearchParams(location.search); if (qs.get('mode') === 'signup' || qs.get('as') === 'instructor') show(true); }
     { const pe = (new URLSearchParams(location.search).get('email') || '').trim(); if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(pe)) { $('#r-e').value = pe; $('#l-e').value = pe; } }
     const say = (id, t, k) => { const m = $(id); m.textContent = t; m.className = 'bx-formmsg' + (k ? ' ' + k : ''); };
+    // button loading state: busy(btn, label) shows a spinner; busy(btn) restores it
+    const busy = (b, label) => {
+      if (label) { if (!b.dataset.label) b.dataset.label = b.innerHTML; b.disabled = true; b.setAttribute('aria-busy', 'true'); b.innerHTML = '<span class="bx-btnspin" aria-hidden="true"></span>' + esc(label); }
+      else { if (b.dataset.label) b.innerHTML = b.dataset.label; delete b.dataset.label; b.disabled = false; b.removeAttribute('aria-busy'); }
+    };
+    // after sign-up without an active session: replace the form with a "check your email" screen
+    const sentView = (email, inst) => {
+      const card = $('.bx-auth-card'), kids = [...card.children], prev = kids.map((c) => c.hidden);
+      kids.forEach((c) => (c.hidden = true));
+      card.insertAdjacentHTML('beforeend', `<div id="auth-sent" role="status" style="text-align:center;padding:6px 0">
+        <div style="font-size:54px;line-height:1;margin-bottom:14px" aria-hidden="true">📧</div>
+        <h1 style="margin:0 0 10px" tabindex="-1" id="sent-h">تحقّق من بريدك الإلكتروني</h1>
+        <p class="bx-muted" style="margin:0 0 4px">أرسلنا رسالة تأكيد إلى</p>
+        <p dir="ltr" style="font-weight:700;margin:0 0 14px;word-break:break-all">${esc(email)}</p>
+        <p class="bx-muted" style="margin:0">افتح الرسالة واضغط زر «تأكيد الحساب»، ثم سجّل دخولك. إذا لم تجدها خلال دقائق فراجع مجلد الرسائل غير المرغوب فيها (Spam).</p>
+        ${inst ? `<p class="bx-formmsg ok" style="margin-top:14px">${esc(INST_OK)}</p>` : ''}
+        <div class="bx-btnrow" style="justify-content:center;flex-wrap:wrap;gap:10px;margin-top:18px"><a class="bs-btn bs-btn-primary" href="#" id="sent-in">الذهاب لتسجيل الدخول</a><button type="button" class="bs-btn bs-btn-secondary" id="sent-re">إعادة إرسال الرسالة</button></div>
+        <div class="bx-formmsg" id="m-sent" aria-live="polite"></div>
+        <p class="bx-hint" style="margin-top:14px"><a href="#" id="sent-edit" class="bx-link">البريد غير صحيح؟ عدّل البيانات</a></p></div>`);
+      window.scrollTo({ top: 0, behavior: 'smooth' }); $('#sent-h').focus({ preventScroll: true });
+      const back = (signup) => { $('#auth-sent').remove(); kids.forEach((c, i) => (c.hidden = prev[i])); show(signup); };
+      $('#sent-in').onclick = (ev) => { ev.preventDefault(); back(false); $('#l-e').value = email; $('#l-p').focus(); };
+      $('#sent-edit').onclick = (ev) => { ev.preventDefault(); back(true); $('#r-e').focus(); };
+      const re = $('#sent-re');
+      const cool = (n) => { re.disabled = true; const t = setInterval(() => { n--; re.textContent = n > 0 ? `إعادة الإرسال بعد ${n} ث` : 'إعادة إرسال الرسالة'; if (n <= 0) { clearInterval(t); re.disabled = false; } }, 1000); re.textContent = `إعادة الإرسال بعد ${n} ث`; };
+      cool(60);
+      re.onclick = async () => {
+        busy(re, 'جارٍ الإرسال…');
+        try { await sb.auth.resend(email); busy(re); say('#m-sent', 'تم إرسال الرسالة مرة أخرى.', 'ok'); cool(60); }
+        catch (err) { busy(re); say('#m-sent', authErr(err), 'err'); }
+      };
+    };
     const authErr = (e) => /invalid login/i.test(e.message) ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة.' : /already registered/i.test(e.message) ? 'هذا البريد مسجّل بالفعل، سجّل الدخول.' : /email not confirmed/i.test(e.message) ? 'أكّد بريدك الإلكتروني أولًا من الرسالة التي وصلتك.' : /rate limit/i.test(e.message) ? 'محاولات كثيرة، انتظر قليلًا ثم أعد المحاولة.' : window.arErr(e);
 
     $('#f-in').addEventListener('submit', async (ev) => {
-      ev.preventDefault(); const b = $('button[type=submit]', ev.target); b.disabled = true; say('#m-in', 'جارٍ تسجيل الدخول…');
+      ev.preventDefault(); const b = $('button[type=submit]', ev.target); busy(b, 'جارٍ تسجيل الدخول…'); say('#m-in', '');
       try { await sb.auth.signIn($('#l-e').value.trim(), $('#l-p').value); window.track && track('login', { method: 'email' }); location.href = nextUrl(); }
-      catch (e) { say('#m-in', authErr(e), 'err'); b.disabled = false; }
+      catch (e) { say('#m-in', authErr(e), 'err'); busy(b); }
     });
     $('#f-up').addEventListener('submit', async (ev) => {
       ev.preventDefault(); const b = $('button[type=submit]', ev.target);
@@ -138,17 +170,16 @@
       if (x.err) { $(x.el).focus(); return say('#m-up', x.err, 'err'); }
       if (p.length < 8) return say('#m-up', 'كلمة المرور يجب ألا تقل عن 8 أحرف.', 'err');
       if (!$('#r-c').checked) return say('#m-up', 'يرجى الموافقة على الشروط للمتابعة.', 'err');
-      b.disabled = true; say('#m-up', 'جارٍ إنشاء الحساب…');
+      busy(b, 'جارٍ إنشاء الحساب…'); say('#m-up', '');
       try {
         let ref = null; try { ref = localStorage.getItem('biosyn.ref'); } catch {}
         const r = await sb.auth.signUp(e, p, n, { phone: ph, whatsapp: x.wa, country: iso, ...(ref ? { ref } : {}),
           ...(x.inst ? { account_type: 'instructor', specialty: x.sp, teach: x.tt } : {}) });
         window.track && track('sign_up', { account_type: x.inst ? 'instructor' : 'student' });
-        const confirmMsg = 'أرسلنا لك رسالة تأكيد على بريدك الإلكتروني. افتحها لتفعيل حسابك ثم سجّل الدخول.';
-        if (x.inst) { say('#m-up', INST_OK + (r.access_token ? '' : ' ' + confirmMsg), 'ok'); if (r.access_token) setTimeout(() => (location.href = nextUrl()), 4000); else b.disabled = false; }
-        else if (r.access_token) location.href = nextUrl();
-        else { say('#m-up', confirmMsg, 'ok'); b.disabled = false; }
-      } catch (err) { say('#m-up', authErr(err), 'err'); b.disabled = false; }
+        if (!r.access_token) { busy(b); return sentView(e, x.inst); }
+        if (x.inst) { say('#m-up', INST_OK, 'ok'); setTimeout(() => (location.href = nextUrl()), 4000); }
+        else location.href = nextUrl();
+      } catch (err) { say('#m-up', authErr(err), 'err'); busy(b); }
     });
     $('#forgot').addEventListener('click', async (ev) => {
       ev.preventDefault(); const e = $('#l-e').value.trim();

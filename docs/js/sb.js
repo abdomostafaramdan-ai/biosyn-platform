@@ -60,6 +60,7 @@
         setSession(await raw('/auth/v1/token?grant_type=password', { method: 'POST', body: { email, password }, auth: false }));
       },
       // the reset link lands on login.html, which then asks for the new password
+      resend: (email) => raw('/auth/v1/resend', { method: 'POST', body: { type: 'signup', email }, auth: false }),
       async recover(email) { await raw('/auth/v1/recover?redirect_to=' + encodeURIComponent(new URL('login.html?mode=reset', location.href).href), { method: 'POST', body: { email }, auth: false }); },
       updatePassword: (password) => raw('/auth/v1/user', { method: 'PUT', body: { password } }),
       lastType: null,
