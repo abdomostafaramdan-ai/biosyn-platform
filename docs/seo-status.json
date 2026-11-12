@@ -1,5 +1,5 @@
 {
- "built_at": "2026-11-12T12:41:09+00:00",
+ "built_at": "2026-11-12T13:57:29+00:00",
  "sitemap_urls": 61,
  "indexable": [
   {
@@ -68,17 +68,26 @@
    "url": "https://biosyneg.com/course-basics-of-ivf-laboratories.html"
   },
   {
-   "slug": "structural-bioinformatics-molecular-docking-drug-design",
-   "title": "Structural Bioinformatics, Molecular Docking and Drug Design",
-   "url": "https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html"
-  },
-  {
    "slug": "computational-biology",
    "title": "Computational Biology",
    "url": "https://biosyneg.com/course-computational-biology.html"
+  },
+  {
+   "slug": "structural-bioinformatics-molecular-docking-drug-design",
+   "title": "Structural Bioinformatics, Molecular Docking and Drug Design",
+   "url": "https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html"
   }
  ],
- "noindex": [],
+ "noindex": [
+  {
+   "slug": "research-e5369c",
+   "title": "Research",
+   "why": [
+    "الوصف أقل من 200 حرفًا",
+    "أقل من 5 محاضرات"
+   ]
+  }
+ ],
  "topics": [
   {
    "id": "science",
@@ -160,5 +169,5 @@
   }
  ],
  "ai_training": true,
- "changed": 13
+ "changed": 8
 }

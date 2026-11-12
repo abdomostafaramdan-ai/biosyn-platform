@@ -305,6 +305,56 @@ Lectures:
 10. PGT and Implantation
 11. Interpretations
 
+### Computational Biology
+URL: https://biosyneg.com/course-computational-biology
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
+Instructors: د. اسراء المليجي — أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics).
+
+البيولوجيا الحاسوبية هي الطريق لتحويل البيانات البيولوجية الضخمة إلى نتائج يمكن فهمها ونشرها. تجمع هذه الدورة بين الشرح النظري والتطبيق العملي في 37 محاضرة، لتأخذك من أول قاعدة بيانات إلى تحليل التعبير الجيني.
+
+تبدأ الدورة بصيغ التسلسلات وقواعد البيانات الأساسية مع تطبيق عملي على NCBI وUniProt وRCSB PDB، ثم تحليل التسلسلات والمحاذاة وBLAST. بعدها تشرح مفاهيم تقنيات التسلسل: سانجر والجيل التالي (NGS) وأكسفورد نانوبور (ONT)، ثم تحليل بيانات تسلسل الحمض النووي: فحص الجودة بأداة FastQC وقراءة التقارير الجيدة والسيئة، والمحاذاة على الجينوم المرجعي (Mapping)، والعمل على سطر أوامر لينكس.
+
+ويُختتم المسار بتسلسل الحمض النووي الريبي (RNA-Seq) ومنهجية تحليل التعبير الجيني التفاضلي، مع مقدمة عملية في لغة R وتطبيق كامل لتحليل التعبير التفاضلي. الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والطب، وللباحثين الذين يريدون تحليل بيانات التسلسل بأنفسهم.
+
+Lectures:
+1. Introduction to Computational Biology
+2. Sequence Formats and Databases (Part 1)
+3. Sequence Formats and Databases (Part 2)
+4. Practice: Navigating NCBI (Part 1)
+5. Practice: Navigating NCBI (Part 2)
+6. Practice: Navigating UniProt
+7. Practice: Navigating the RCSB PDB
+8. Sequence Analysis (Part 1)
+9. Sequence Analysis (Part 2)
+10. Practice: Sequence Alignment
+11. Practice: BLAST
+12. Sequencing Concepts: Sanger Sequencing
+13. Sequencing Concepts: NGS
+14. Sequencing Concepts: Oxford Nanopore (ONT)
+15. DNA Sequencing Analysis: Quality Control with FastQC
+16. DNA Sequencing Analysis: Mapping (Part 1)
+17. DNA Sequencing Analysis: Mapping (Part 2)
+18. DNA Sequencing Analysis: Introduction to Linux
+19. Practice: Reading a Bad QC Report
+20. Practice: Reading a Good QC Report
+21. Practice: Sequencing Resources
+22. Practice: Introduction to Linux (Part 1)
+23. Practice: Introduction to Linux (Part 2)
+24. Practice: DNA Sequencing Analysis (Part 1)
+25. Practice: DNA Sequencing Analysis (Part 2)
+26. Sequencing Goals
+27. RNA Sequencing (Part 1)
+28. RNA Sequencing (Part 2)
+29. Differential Expression Analysis Methodology
+30. Practice: Exploring Important Databases
+31. Practice: Introduction to R (Part 1)
+32. Practice: Introduction to R (Part 2)
+33. Practice: Introduction to R (Part 3)
+34. Practice: Introduction to R (Part 4)
+35. Practice: Differential Expression Analysis (Part 1)
+36. Practice: Differential Expression Analysis (Part 2)
+37. Practice: Differential Expression Analysis (Part 3)
+
 ### Structural Bioinformatics, Molecular Docking and Drug Design
 URL: https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
@@ -380,56 +430,6 @@ Lectures:
 61. Protein–Ligand Interactions and ADMET (Part 6)
 62. Protein–Ligand Interactions and ADMET (Part 7)
 63. Protein–Ligand Interactions and ADMET (Part 8)
-
-### Computational Biology
-URL: https://biosyneg.com/course-computational-biology
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 350 ج.م شهريًا
-Instructors: د. اسراء المليجي — أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics).
-
-البيولوجيا الحاسوبية هي الطريق لتحويل البيانات البيولوجية الضخمة إلى نتائج يمكن فهمها ونشرها. تجمع هذه الدورة بين الشرح النظري والتطبيق العملي في 37 محاضرة، لتأخذك من أول قاعدة بيانات إلى تحليل التعبير الجيني.
-
-تبدأ الدورة بصيغ التسلسلات وقواعد البيانات الأساسية مع تطبيق عملي على NCBI وUniProt وRCSB PDB، ثم تحليل التسلسلات والمحاذاة وBLAST. بعدها تشرح مفاهيم تقنيات التسلسل: سانجر والجيل التالي (NGS) وأكسفورد نانوبور (ONT)، ثم تحليل بيانات تسلسل الحمض النووي: فحص الجودة بأداة FastQC وقراءة التقارير الجيدة والسيئة، والمحاذاة على الجينوم المرجعي (Mapping)، والعمل على سطر أوامر لينكس.
-
-ويُختتم المسار بتسلسل الحمض النووي الريبي (RNA-Seq) ومنهجية تحليل التعبير الجيني التفاضلي، مع مقدمة عملية في لغة R وتطبيق كامل لتحليل التعبير التفاضلي. الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والطب، وللباحثين الذين يريدون تحليل بيانات التسلسل بأنفسهم.
-
-Lectures:
-1. Introduction to Computational Biology
-2. Sequence Formats and Databases (Part 1)
-3. Sequence Formats and Databases (Part 2)
-4. Practice: Navigating NCBI (Part 1)
-5. Practice: Navigating NCBI (Part 2)
-6. Practice: Navigating UniProt
-7. Practice: Navigating the RCSB PDB
-8. Sequence Analysis (Part 1)
-9. Sequence Analysis (Part 2)
-10. Practice: Sequence Alignment
-11. Practice: BLAST
-12. Sequencing Concepts: Sanger Sequencing
-13. Sequencing Concepts: NGS
-14. Sequencing Concepts: Oxford Nanopore (ONT)
-15. DNA Sequencing Analysis: Quality Control with FastQC
-16. DNA Sequencing Analysis: Mapping (Part 1)
-17. DNA Sequencing Analysis: Mapping (Part 2)
-18. DNA Sequencing Analysis: Introduction to Linux
-19. Practice: Reading a Bad QC Report
-20. Practice: Reading a Good QC Report
-21. Practice: Sequencing Resources
-22. Practice: Introduction to Linux (Part 1)
-23. Practice: Introduction to Linux (Part 2)
-24. Practice: DNA Sequencing Analysis (Part 1)
-25. Practice: DNA Sequencing Analysis (Part 2)
-26. Sequencing Goals
-27. RNA Sequencing (Part 1)
-28. RNA Sequencing (Part 2)
-29. Differential Expression Analysis Methodology
-30. Practice: Exploring Important Databases
-31. Practice: Introduction to R (Part 1)
-32. Practice: Introduction to R (Part 2)
-33. Practice: Introduction to R (Part 3)
-34. Practice: Introduction to R (Part 4)
-35. Practice: Differential Expression Analysis (Part 1)
-36. Practice: Differential Expression Analysis (Part 2)
-37. Practice: Differential Expression Analysis (Part 3)
 
 ## FAQ
 
