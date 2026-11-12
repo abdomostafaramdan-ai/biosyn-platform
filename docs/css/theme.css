@@ -484,5 +484,6 @@ html[dir="rtl"] .in-tip{transform:translateX(50%)}
 .bx-plan-total{font-size:13px;color:var(--muted,#8a90b4);margin:-4px 0 14px}
 .bx-plan-ribbon{display:block;width:fit-content;margin:0 0 10px;font-size:12px;font-weight:800;padding:4px 12px;border-radius:999px;background:#010232;color:#c6f84a}
 .bx-paymethods{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;margin:22px auto 0;font-size:14px;color:var(--muted,#8a90b4);text-align:center}
-.bx-paymethods b{font-weight:600;padding:5px 12px;border:1px solid var(--line,rgba(255,255,255,.14));border-radius:999px;color:inherit}
+.bx-paymethods b{display:inline-flex;align-items:center;gap:7px;font-weight:600;padding:7px 14px;border:1px solid var(--line,rgba(255,255,255,.14));border-radius:12px;color:var(--ink,#fff);background:rgba(255,255,255,.04)}
+.bx-paymethods b svg{color:var(--brand,#c6f84a);flex:none}
 .bx-paymethods small{flex-basis:100%;font-size:12px}

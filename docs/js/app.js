@@ -444,8 +444,16 @@
     // payment methods under the plans (text chips, no third-party logos)
     $$('.bs-plans').forEach((w) => {
       if (w.nextElementSibling && w.nextElementSibling.classList.contains('bx-paymethods')) return;
-      const list = R.currency === 'EGP' ? ['بطاقات Visa / Mastercard', 'المحافظ الإلكترونية', 'فودافون كاش', 'إنستاباي'] : ['بطاقات Visa / Mastercard'];
-      w.insertAdjacentHTML('afterend', `<div class="bx-paymethods"><span>ادفع بالطريقة التي تناسبك:</span>${list.map((x) => `<b>${x}</b>`).join('')}<small>الدفع مرة واحدة، ولا يتجدد الاشتراك تلقائيًا.</small></div>`);
+      const I = {
+        card: '<path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h15A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/><path d="M3 10h18M7 15h4"/>',
+        wallet: '<path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3"/><path d="M4 7.5v10A1.5 1.5 0 0 0 5.5 19H20V8H6.5A2.5 2.5 0 0 1 4 5.5"/><circle cx="16.5" cy="13.5" r="1.2"/>',
+        phone: '<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/>',
+        bolt: '<path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/>',
+      };
+      const list = R.currency === 'EGP'
+        ? [['card', 'Visa / Mastercard'], ['wallet', 'المحافظ الإلكترونية'], ['phone', 'فودافون كاش'], ['bolt', 'إنستاباي']]
+        : [['card', 'Visa / Mastercard']];
+      w.insertAdjacentHTML('afterend', `<div class="bx-paymethods"><span>ادفع بالطريقة التي تناسبك:</span>${list.map(([ic, t]) => `<b><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[ic]}</svg>${t}</b>`).join('')}<small>الدفع مرة واحدة، ولا يتجدد الاشتراك تلقائيًا.</small></div>`);
     });
     planState(cards);
   }
