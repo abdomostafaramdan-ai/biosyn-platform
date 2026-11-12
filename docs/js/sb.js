@@ -149,3 +149,48 @@
     root.classList.remove('bx-mpre');
   })();
 })();
+
+/* Promo popup — site_content.promo_popup = { on, title, subtitle, discount, expires, cta, cta_url, delay_sec, reshow_sec, egypt_only }.
+   Shows for Egyptians only (when egypt_only is true), non-subscribed visitors, after delay_sec seconds.
+   Reappears reshow_sec seconds after the user closes it. Admin/support never see it. */
+(() => {
+  const page = (location.pathname.split('/').pop() || 'index').replace(/\.html$/, '') || 'index';
+  if (/^(login|admin|unsubscribe)$/.test(page) || !window.sb) return;
+  let overlay, timer, reshowTimer;
+  const open = () => { if (overlay) overlay.classList.add('is-open'); };
+  const close = () => {
+    if (overlay) overlay.classList.remove('is-open');
+    if (reshowTimer) clearTimeout(reshowTimer);
+    reshowTimer = setTimeout(open, (window._promoReshowSec || 60) * 1000);
+  };
+  (async () => {
+    let d; try { const r = await sb.get('site_content', { select: 'data', key: 'eq.promo_popup' }); d = r && r[0] && r[0].data; } catch {} if (!d || !d.on) return;
+    // Egypt-only check
+    if (d.egypt_only) {
+      const R = window.REGION ? await window.REGION : null;
+      if (R && R.currency && R.currency !== 'EGP') return;
+    }
+    // skip for subscribed users
+    try {
+      await (sb.auth && sb.auth.ready);
+      if (sb.user) {
+        const p = await sb.get('profiles', { select: 'role', id: 'eq.' + sb.user.id });
+        if (p && p[0] && /^(admin|support)$/.test(p[0].role)) return;
+        try { const st = await sb.rpc('my_plan_state'); if (st && st.plan_code) return; } catch {}
+      }
+    } catch {}
+    window._promoReshowSec = d.reshow_sec || 60;
+    // build DOM
+    overlay = document.createElement('div');
+    overlay.className = 'bx-promo-overlay';
+    overlay.innerHTML = `<div class="bx-promo"><div class="bx-promo-glow"></div><button class="bx-promo-x" aria-label="إغلاق">✕</button><div class="bx-promo-body"><img class="bx-promo-logo" src="img/biosyn-logo.png" alt="Biosyn Eg"><div class="bx-promo-tag">${esc(d.title || 'WHITE FRIDAY')}</div><div class="bx-promo-sub">${esc(d.subtitle || '')}</div><div class="bx-promo-disc">${esc(d.discount || '')}</div><div class="bx-promo-exp">${esc(d.expires || '')}</div><a class="bx-promo-cta" href="${esc(d.cta_url || '/pricing')}">${esc(d.cta || 'اشترك دلوقتي')}</a></div></div>`;
+    document.body.appendChild(overlay);
+    // close on X, on overlay click, and on CTA click
+    overlay.querySelector('.bx-promo-x').onclick = close;
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    overlay.querySelector('.bx-promo-cta').addEventListener('click', () => { close(); });
+    // show after delay
+    timer = setTimeout(open, (d.delay_sec || 10) * 1000);
+    function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  })();
+})();
