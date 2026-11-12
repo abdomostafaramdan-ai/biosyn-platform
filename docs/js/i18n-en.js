@@ -1037,7 +1037,7 @@ window.I18N_EN = {
 "مهنيون فقط": "Professionals only",
 "طلاب وباحثون وأعضاء هيئة تدريس ومهنيون": "Students, researchers, university staff & professionals",
 "داخل مصر: الدفع إلكتروني عبر بوابات دفع آمنة (بطاقة بنكية - محافظ إلكترونية مثل فودافون كاش - فوري - أمان) أو تحويل إنستاباي، وتظهر لك وسائل الدفع المتاحة عند إتمام الطلب.": "Inside Egypt: pay online through secure gateways (bank card, e-wallets like Vodafone Cash, Fawry, Aman) or an InstaPay transfer; the available methods appear at checkout.",
-"من خارج مصر (حتى لو كنت مصريًا مقيمًا في الخارج): تظهر الأسعار بعملة بلدك، وتدفع ببطاقة بنكية (فيزا / ماستركارد) عن طريق فواتيرك، إلى جانب طرق الدفع الأخرى التي تظهر لك هناك، أو من حسابك على PayPal.": "Outside Egypt (including Egyptians living abroad): prices show in your local currency and you pay by bank card (Visa / Mastercard) through Fawaterk, plus the other methods shown there, or with your PayPal account.",
+"من خارج مصر: تدفع ببطاقة بنكية (فيزا / ماستركارد) أو من حسابك على PayPal.": "Outside Egypt: pay by bank card (Visa / Mastercard) or with your PayPal account.",
 "رسوم الاستشارة": "Consultation fee",
 "جلسة استشارة فردية · الدفع إلكترونيًا، ثم نتواصل معك لتحديد الموعد": "One-to-one consultation session · pay online, then we contact you to book the time",
 "احجز وادفع رسوم الاستشارة": "Book and pay the consultation fee",
