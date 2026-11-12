@@ -12,7 +12,7 @@
 - Certificates: every completed course issues a Biosyn Eg certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify
 - Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available
 - Founded: 2020, by Abdo Mostafa (B.Sc. in Science)
-- Served: more than 20,020 students, researchers and university staff in 10 countries
+- Served: more than 20,021 students, researchers and university staff in 10 countries
 - About page: https://biosyneg.com/about
 
 - 20 ألف طالب
@@ -26,25 +26,26 @@
 
 ## Course details
 
-### Introduction To Immunology
-URL: https://biosyneg.com/course-introduction-to-immunology
+### Introduction To Genetic Engineering
+URL: https://biosyneg.com/course-introduction-to-genetic-engineering
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
-Instructors: د. محمود محمد — دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
+Instructors: سلمى صبحي — باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية
 
-تقدّم هذه الدورة مدخلًا شاملًا إلى علم المناعة، فتشرح كيف يتعرّف الجسم على الميكروبات ويدافع عن نفسه، بلغة واضحة ومنظمة تناسب من يدرس المناعة لأول مرة.
+الهندسة الوراثية هي الأساس الذي تقوم عليه صناعة الإنسولين واللقاحات والإنزيمات والمحاصيل المحسّنة. تشرح هذه الدورة كيف نقرأ الحمض النووي ونقطعه وننقله ونعيد كتابته، خطوة بخطوة وباللغة العربية.
 
-تبدأ بنظرة عامة على الجهاز المناعي ومكوناته، ثم المناعة الفطرية، والمستضدات ومعقد التوافق النسيجي (MHC)، ثم المناعة الخلوية (CMI) والاستجابة المناعية الخلطية والأجسام المضادة، وتُختتم بنظام المتمّمة (Complement).
+تبدأ الدورة بالحمض النووي بوصفه شفرة الحياة، ثم تشريح الناقل الوظيفي (Vector) ومكوناته، وإنزيمات القطع وتسلسلات التعرف، ومراحل عزل الجين ومضاعفته بتقنية PCR، ثم استخدام الإشريكية القولونية (E. coli) عائلًا للإنتاج، والانتقال من المعمل إلى التخمير والمفاعلات الحيوية. وتتناول بعد ذلك تقنيات تحرير الجينوم مثل إيقاف الجين وإدخاله والاستبدال الدقيق، وتُختتم بجلسة تطبيقية لتصميم تجربة استنساخ على الحاسوب.
 
-الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم والتكنولوجيا الحيوية، ولكل من يحتاج إلى أساس قوي في المناعة قبل دراسة الأمراض المناعية أو اللقاحات.
+الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والزراعة، ولكل من يريد فهمًا عمليًا للهندسة الوراثية قبل العمل في معامل البيولوجيا الجزيئية أو الصناعات الحيوية.
 
 Lectures:
-1. Overview of the Immune System
-2. Basics of Immunology
-3. Innate Immunity
-4. Antigens and MHC
-5. Cell-Mediated Immunity (CMI)
-6. Humoral Immune Response
-7. The Complement System
+1. DNA: The Code of Life
+2. The Anatomy of a Functional Vector
+3. Restriction Enzymes and Recognition Sequences
+4. Gene Isolation and PCR Amplification
+5. E. coli: The Biotech Workhorse
+6. Scaling Up: Fermentation and Bioreactors
+7. Genome Editing: Knockout, Insertion and Replacement
+8. In Silico Cloning Design (Practical)
 
 ### Some Concepts in Clinical Research
 URL: https://biosyneg.com/course-some-concepts-in-clinical-research
@@ -89,27 +90,6 @@ Lectures:
 7. Population Genetics and Hardy–Weinberg Equilibrium
 8. Genes, Environment and Complex Traits
 
-### Introduction To Genetic Engineering
-URL: https://biosyneg.com/course-introduction-to-genetic-engineering
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
-Instructors: سلمى صبحي — باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية
-
-الهندسة الوراثية هي الأساس الذي تقوم عليه صناعة الإنسولين واللقاحات والإنزيمات والمحاصيل المحسّنة. تشرح هذه الدورة كيف نقرأ الحمض النووي ونقطعه وننقله ونعيد كتابته، خطوة بخطوة وباللغة العربية.
-
-تبدأ الدورة بالحمض النووي بوصفه شفرة الحياة، ثم تشريح الناقل الوظيفي (Vector) ومكوناته، وإنزيمات القطع وتسلسلات التعرف، ومراحل عزل الجين ومضاعفته بتقنية PCR، ثم استخدام الإشريكية القولونية (E. coli) عائلًا للإنتاج، والانتقال من المعمل إلى التخمير والمفاعلات الحيوية. وتتناول بعد ذلك تقنيات تحرير الجينوم مثل إيقاف الجين وإدخاله والاستبدال الدقيق، وتُختتم بجلسة تطبيقية لتصميم تجربة استنساخ على الحاسوب.
-
-الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والزراعة، ولكل من يريد فهمًا عمليًا للهندسة الوراثية قبل العمل في معامل البيولوجيا الجزيئية أو الصناعات الحيوية.
-
-Lectures:
-1. DNA: The Code of Life
-2. The Anatomy of a Functional Vector
-3. Restriction Enzymes and Recognition Sequences
-4. Gene Isolation and PCR Amplification
-5. E. coli: The Biotech Workhorse
-6. Scaling Up: Fermentation and Bioreactors
-7. Genome Editing: Knockout, Insertion and Replacement
-8. In Silico Cloning Design (Practical)
-
 ### Computational Neuroscience
 URL: https://biosyneg.com/course-computational-neuroscience
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
@@ -140,15 +120,25 @@ Lectures:
 16. LIF Neuron in Python (Part 5)
 17. LIF Neuron in Python (Part 6)
 
-### Bioinformatics Diploma
-URL: https://biosyneg.com/course-bioinformtics-diploma
-Type: Live interactive · Level: Beginner · Price: 15٬000 ج.م
-Starts: 2027-01-01
-Instructors: د. محمد إمام — طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال; د. شريف عرفه — دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
+### Introduction To Immunology
+URL: https://biosyneg.com/course-introduction-to-immunology
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
+Instructors: د. محمود محمد — دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
 
-ادخل عالم تحليل البيانات الجينية وابدأ مسارك في Bioinformatics
+تقدّم هذه الدورة مدخلًا شاملًا إلى علم المناعة، فتشرح كيف يتعرّف الجسم على الميكروبات ويدافع عن نفسه، بلغة واضحة ومنظمة تناسب من يدرس المناعة لأول مرة.
 
-إذا كنت طالبًا أو باحثًا في العلوم أو الطب وتبحث عن مهارة مطلوبة عالميًا وتفتح لك فرصًا في البحث والعمل الحر، فهذا المسار صُمم لك: مسار تدريجي يجمع بين البيولوجيا والبرمجة والتحليل، مع تطبيق عملي على بيانات حقيقية ومشروع نهائي لبناء Portfolio قوي.
+تبدأ بنظرة عامة على الجهاز المناعي ومكوناته، ثم المناعة الفطرية، والمستضدات ومعقد التوافق النسيجي (MHC)، ثم المناعة الخلوية (CMI) والاستجابة المناعية الخلطية والأجسام المضادة، وتُختتم بنظام المتمّمة (Complement).
+
+الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم والتكنولوجيا الحيوية، ولكل من يحتاج إلى أساس قوي في المناعة قبل دراسة الأمراض المناعية أو اللقاحات.
+
+Lectures:
+1. Overview of the Immune System
+2. Basics of Immunology
+3. Innate Immunity
+4. Antigens and MHC
+5. Cell-Mediated Immunity (CMI)
+6. Humoral Immune Response
+7. The Complement System
 
 ### Molecular Biology
 URL: https://biosyneg.com/course-molecular-biology-course-614141

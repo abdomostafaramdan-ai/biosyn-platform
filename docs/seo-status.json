@@ -1,11 +1,11 @@
 {
- "built_at": "2026-11-12T15:54:03+00:00",
- "sitemap_urls": 61,
+ "built_at": "2026-11-12T16:55:32+00:00",
+ "sitemap_urls": 60,
  "indexable": [
   {
-   "slug": "introduction-to-immunology",
-   "title": "Introduction To Immunology",
-   "url": "https://biosyneg.com/course-introduction-to-immunology.html"
+   "slug": "introduction-to-genetic-engineering",
+   "title": "Introduction To Genetic Engineering",
+   "url": "https://biosyneg.com/course-introduction-to-genetic-engineering.html"
   },
   {
    "slug": "some-concepts-in-clinical-research",
@@ -18,19 +18,14 @@
    "url": "https://biosyneg.com/course-introduction-to-genetics.html"
   },
   {
-   "slug": "introduction-to-genetic-engineering",
-   "title": "Introduction To Genetic Engineering",
-   "url": "https://biosyneg.com/course-introduction-to-genetic-engineering.html"
-  },
-  {
    "slug": "computational-neuroscience",
    "title": "Computational Neuroscience",
    "url": "https://biosyneg.com/course-computational-neuroscience.html"
   },
   {
-   "slug": "bioinformtics-diploma",
-   "title": "Bioinformatics Diploma",
-   "url": "https://biosyneg.com/course-bioinformtics-diploma.html"
+   "slug": "introduction-to-immunology",
+   "title": "Introduction To Immunology",
+   "url": "https://biosyneg.com/course-introduction-to-immunology.html"
   },
   {
    "slug": "molecular-biology-course-614141",
@@ -92,42 +87,42 @@
   {
    "id": "science",
    "name": "كلية العلوم",
-   "courses": 16
+   "courses": 14
   },
   {
    "id": "biotech",
    "name": "كلية بايوتكنولوجي",
-   "courses": 14
+   "courses": 12
   },
   {
    "id": "pharmacy",
    "name": "كلية الصيدلة",
-   "courses": 11
+   "courses": 10
   },
   {
    "id": "agriculture",
    "name": "كلية الزراعة",
-   "courses": 5
+   "courses": 4
   },
   {
    "id": "medicine",
    "name": "كلية الطب",
-   "courses": 12
+   "courses": 11
   },
   {
    "id": "veterinary",
    "name": "كلية الطب البيطري",
-   "courses": 4
+   "courses": 3
   },
   {
    "id": "dentistry",
    "name": "كلية طب الأسنان",
-   "courses": 6
+   "courses": 5
   },
   {
    "id": "health_tech",
    "name": "كلية تكنولوجيا العلوم الصحية التطبيقية",
-   "courses": 6
+   "courses": 5
   }
  ],
  "teachers": [
@@ -169,5 +164,5 @@
   }
  ],
  "ai_training": true,
- "changed": 23
+ "changed": 29
 }
