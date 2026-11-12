@@ -1,0 +1,5 @@
+-- Promo code = higher rate on VIEWS (not a cut of the subscription). Applied via Supabase MCP.
+-- * promo_view_pct(user, instructor, month): coupon instructor_pct if the student's active subscription used that instructor's code.
+-- * close_month: every subscription feeds the pool; earnings = rate * sum(per-view pct) where per-view pct = promo pct or the default 30.
+-- * my_promo_stats, instructor_calc, course_stats and the decision email updated to match.
+-- See the live DB for the function bodies.
