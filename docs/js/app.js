@@ -469,7 +469,9 @@
       const LOGO = (f) => `${BIOSYN.SUPABASE_URL}/storage/v1/object/public/site-assets/pay/${f}.png`;
       const eg = R.currency === 'EGP';
       const logos = (eg ? [['visa-mastercard', 'Visa / Mastercard'], ['wallets', 'المحافظ الإلكترونية'], ['fawry', 'فوري'], ['aman', 'أمان']] : [['visa-mastercard', 'Visa / Mastercard']])
-        .map(([f, t]) => `<img src="${LOGO(f)}" alt="${t}" title="${t}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('b'),{textContent:this.alt}))">`).join('');
+        .map(([f, t]) => `<img src="${LOGO(f)}" alt="${t}" title="${t}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('b'),{textContent:this.alt}))">`).join('')
+        // outside Egypt PayPal is offered too: PayPal's own logo, served from PayPal's CDN as PayPal provides it for merchants
+        + (eg ? '' : `<img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-200px.png" alt="PayPal" title="PayPal" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('b'),{textContent:'PayPal'}))">`);
       const manual = eg ? [['phone', 'فودافون كاش'], ['bolt', 'إنستاباي']] : [];
       w.insertAdjacentHTML('afterend', `<div class="bx-paymethods"><span>ادفع بالطريقة التي تناسبك:</span>${logos}${manual.map(([ic, t]) => `<b><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[ic]}</svg>${t}</b>`).join('')}<small>الدفع مرة واحدة، ولا يتجدد الاشتراك تلقائيًا.</small></div>`);
     });
