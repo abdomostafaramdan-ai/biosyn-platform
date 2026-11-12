@@ -477,3 +477,12 @@ html[dir="rtl"] .in-tip{transform:translateX(50%)}
 .bx-btnspin{display:inline-block;width:16px;height:16px;border:2px solid currentColor;border-inline-end-color:transparent;border-radius:50%;animation:bxspin .7s linear infinite;vertical-align:-3px;margin-inline-end:8px}
 @keyframes bxspin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.bx-btnspin{animation-duration:1.6s}}
+
+/* pricing cards: per-month headline, struck monthly price, total line, "most popular" ribbon, payment chips */
+.bs-plan{position:relative}
+.bs-plan-price .bx-plan-was{font-size:17px;font-weight:600;color:var(--muted,#8a90b4);margin-inline-end:8px;text-decoration-thickness:2px}
+.bx-plan-total{font-size:13px;color:var(--muted,#8a90b4);margin:-4px 0 14px}
+.bx-plan-ribbon{display:block;width:fit-content;margin:0 0 10px;font-size:12px;font-weight:800;padding:4px 12px;border-radius:999px;background:#010232;color:#c6f84a}
+.bx-paymethods{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;margin:22px auto 0;font-size:14px;color:var(--muted,#8a90b4);text-align:center}
+.bx-paymethods b{font-weight:600;padding:5px 12px;border:1px solid var(--line,rgba(255,255,255,.14));border-radius:999px;color:inherit}
+.bx-paymethods small{flex-basis:100%;font-size:12px}

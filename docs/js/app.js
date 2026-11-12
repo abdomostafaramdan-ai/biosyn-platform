@@ -406,20 +406,46 @@
     if (!cards.length) return;
     let plans; try { plans = await sb.get('plans', { select: '*', active: 'eq.true', order: 'duration_months' }); } catch { return; }
     const R = await REGION;
+    const cur = curOf(R), base = plans.find((x) => x.duration_months === 1);
+    const basePrice = base ? itemPrice(base.price_egp, base.intl_price, R) : 0;
+    const longest = Math.max(...plans.map((x) => x.duration_months));
+    const moTxt = (n) => (n === 1 ? 'شهر' : n === 2 ? 'شهرين' : n <= 10 ? `${n} أشهر` : `${n} شهرًا`);
     cards.forEach((card, i) => {
       const p = plans[i];
       if (!p) { card.remove(); return; }
+      const m = p.duration_months, price = itemPrice(p.price_egp, p.intl_price, R), perMonth = Math.floor(price / m);
+      const full = basePrice * m, paidFor = basePrice ? Math.round(price / basePrice) : 0;
       $('.bs-plan-name', card).textContent = p.name;
-      const abroad = R.currency !== 'EGP';
-      $('.bs-plan-price b', card).textContent = EGP(itemPrice(p.price_egp, p.intl_price, R));
-      const cu = $('.bs-plan-price span', card); if (cu) cu.textContent = curOf(R);
-      const old = abroad ? 0 : Number(p.old_price_egp);   // the "was" price is an Egypt-only promotion
-      $('.bs-plan-period', card).textContent = (old > p.price_egp ? `السعر السابق ${EGP(old)} · ` : '') + periodAr(p.duration_months);
+      // like almentor: the per-month price is the headline, with the monthly price struck through and the total under it
+      const pr = $('.bs-plan-price', card);
+      $('b', pr).textContent = EGP(perMonth);
+      const cu = $('span', pr); if (cu) cu.textContent = cur + ' / شهر';
+      let was = $('.bx-plan-was', pr);
+      if (m > 1 && basePrice > perMonth) { if (!was) { was = document.createElement('s'); was.className = 'bx-plan-was'; pr.prepend(was); } was.textContent = EGP(basePrice); }
+      else if (was) was.remove();
+      let tot = $('.bx-plan-total', card);
+      if (!tot) { tot = document.createElement('div'); tot.className = 'bx-plan-total'; pr.after(tot); }
+      tot.textContent = m === 1 ? `${EGP(price)} ${cur} للشهر الواحد` : `${EGP(price)} ${cur} تُدفع مرة واحدة لمدة ${moTxt(m)}`;
+      $('.bs-plan-period', card).textContent = m > 1 && paidFor && paidFor < m ? `احصل على ${moTxt(m)} بسعر ${moTxt(paidFor)}` : periodAr(m);
       const badge = $('.bs-badge', card);
-      if (badge) { if (old > p.price_egp) badge.textContent = `وفر ${Math.round((1 - p.price_egp / old) * 100)}٪`; else badge.remove(); }
+      if (badge) { if (m > 1 && full > price) badge.textContent = `وفر ${Math.round((1 - price / full) * 100)}٪`; else badge.remove(); }
+      if (m === longest && plans.length > 1) {
+        card.classList.add('bs-plan-featured');
+        if (!$('.bx-plan-ribbon', card)) $('.bs-plan-top', card).insertAdjacentHTML('beforebegin', '<span class="bx-plan-ribbon">⭐ الأكثر شهرة</span>');
+        const c = $('.bs-plan-cta', card); if (c) c.classList.replace('bs-btn-secondary', 'bs-btn-primary');
+      } else {
+        card.classList.remove('bs-plan-featured'); const rb = $('.bx-plan-ribbon', card); if (rb) rb.remove();
+        const c = $('.bs-plan-cta', card); if (c) c.classList.replace('bs-btn-primary', 'bs-btn-secondary');
+      }
       const cta = $('.bs-plan-cta', card);
-      card.dataset.plan = p.code; card.dataset.months = p.duration_months;
+      card.dataset.plan = p.code; card.dataset.months = m;
       if (cta) cta.addEventListener('click', () => checkout({ plan_code: p.code, title: p.name, price: p.price_egp, intl: p.intl_price, note: (card.dataset.upnote || '') + 'الاشتراك لا يتجدد تلقائيًا ولا يمكن استرداده.' }));
+    });
+    // payment methods under the plans (text chips, no third-party logos)
+    $$('.bs-plans').forEach((w) => {
+      if (w.nextElementSibling && w.nextElementSibling.classList.contains('bx-paymethods')) return;
+      const list = R.currency === 'EGP' ? ['بطاقات Visa / Mastercard', 'المحافظ الإلكترونية', 'فودافون كاش', 'إنستاباي'] : ['بطاقات Visa / Mastercard'];
+      w.insertAdjacentHTML('afterend', `<div class="bx-paymethods"><span>ادفع بالطريقة التي تناسبك:</span>${list.map((x) => `<b>${x}</b>`).join('')}<small>الدفع مرة واحدة، ولا يتجدد الاشتراك تلقائيًا.</small></div>`);
     });
     planState(cards);
   }
