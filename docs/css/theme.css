@@ -498,12 +498,12 @@ html[dir="rtl"] .in-tip{transform:translateX(50%)}
 .bx-paymethods img.bx-paysq{width:36px;max-width:36px;padding:3px;object-fit:contain}
 
 /* ---- promo popup ---- */
-.bx-promo-overlay{position:fixed;inset:0;z-index:2147482000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .35s ease;pointer-events:none}
-.bx-promo-overlay.is-open{opacity:1;pointer-events:auto}
-.bx-promo{position:relative;width:100%;max-width:440px;border-radius:20px;overflow:hidden;background:linear-gradient(160deg,#0a0e2a 0%,#111640 50%,#1a0a0a 100%);color:#fff;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.55);transform:scale(.92) translateY(20px);transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s ease;opacity:0}
-.bx-promo-overlay.is-open .bx-promo{transform:scale(1) translateY(0);opacity:1}
+.bx-promo-overlay{position:fixed;inset:0;z-index:2147482000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.bx-promo-overlay.is-open{display:flex}
+.bx-promo{position:relative;width:100%;max-width:440px;border-radius:20px;overflow:hidden;background:linear-gradient(160deg,#0a0e2a 0%,#111640 50%,#1a0a0a 100%);color:#fff;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.55);animation:bxPromoIn .35s cubic-bezier(.2,.8,.2,1) both}
+@keyframes bxPromoIn{from{transform:scale(.92) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
 .bx-promo-glow{position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:340px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(220,38,38,.45),transparent 70%);pointer-events:none;filter:blur(30px)}
-.bx-promo-x{position:absolute;top:12px;inset-inline-start:12px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:none;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;font-size:20px;cursor:pointer;transition:background .2s}
+.bx-promo-x{position:absolute;top:12px;inset-inline-start:12px;z-index:2;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:none;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;font-size:20px;cursor:pointer;transition:background .2s}
 .bx-promo-x:hover{background:rgba(255,255,255,.25)}
 .bx-promo-body{position:relative;padding:36px 28px 32px}
 .bx-promo-logo{height:38px;margin-bottom:14px}
