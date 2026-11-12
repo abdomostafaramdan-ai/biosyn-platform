@@ -35,7 +35,7 @@
     course: { draft: ['مسودة', 'mute'], review: ['قيد المراجعة', 'warn'], published: ['منشور', 'ok'], archived: ['مؤرشف', 'mute'] },
   };
   D.badge = (kind, v) => { const [t, c] = (ST[kind] && ST[kind][v]) || [v, 'mute']; return `<span class="bx-st bx-st-${c}">${esc(t)}</span>`; };
-  D.reqType = { instructor_recorded: 'محاضر · دورة مسجلة', instructor_interactive: 'محاضر · دورة تفاعلية', instructor_recording_help: 'محاضر · لم يسجّل دورته بعد', institution: 'مؤسسة', consultation: 'استشارة', refund: 'طلب استرداد' };
+  D.reqType = { promo_request: 'طلب كود خصم', instructor_recorded: 'محاضر · دورة مسجلة', instructor_interactive: 'محاضر · دورة تفاعلية', instructor_recording_help: 'محاضر · لم يسجّل دورته بعد', institution: 'مؤسسة', consultation: 'استشارة', refund: 'طلب استرداد' };
   D.roleAr = { student: 'طالب', instructor: 'محاضر', support: 'دعم', admin: 'مدير' };
   D.gw = { stripe: 'Stripe', paymob: 'Paymob', fawaterk: 'Fawaterk', manual: 'تحويل يدوي' };
   D.money = (n) => EGP(n) + ' ج.م';

@@ -1,0 +1,4 @@
+-- Applied via Supabase MCP: trg_crm_request skips promo_request; RPCs request_promo_code(p_code,p_note),
+-- my_promo_requests(), decide_promo_request(p_request,p_approve,p_percent_off,p_instructor_pct,p_note) (admin only;
+-- approve creates the coupon with instructor_id/instructor_pct, marks the request accepted, emails the instructor).
+-- See the live DB for the full function bodies.

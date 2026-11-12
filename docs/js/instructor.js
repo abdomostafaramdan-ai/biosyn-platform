@@ -69,7 +69,7 @@
     },
 
     async promo(main) {
-      const rows = await sb.rpc('my_promo_stats').then((r) => (Array.isArray(r) ? r : [])).catch(() => []);
+      const [rows, reqs] = await Promise.all([sb.rpc('my_promo_stats').then((r) => (Array.isArray(r) ? r : [])).catch(() => []), sb.rpc('my_promo_requests').then((r) => (Array.isArray(r) ? r : [])).catch(() => [])]);
       const share = (base) => `${location.origin}${location.pathname.replace(/[^/]*$/, '')}pricing?code=${encodeURIComponent(base)}`;
       main.innerHTML = `<div class="bx-stats">
           ${D.stat('اشتراكات بكودك هذا الشهر', rows.reduce((s, r) => s + Number(r.uses_month || 0), 0), rows.reduce((s, r) => s + Number(r.uses_total || 0), 0) + ' إجمالي')}
@@ -77,9 +77,20 @@
         </div>` + D.panel('كود الخصم الخاص بك', rows.length ? D.table(['الكود', 'خصم للطالب', 'نسبتك', 'الاستخدام', 'رابط المشاركة', 'الحالة'], rows.map((r) => [
           `<b class="bs-latin" style="font-size:18px">${esc(r.code)}</b>`, r.percent_off ? r.percent_off + '٪' : '—', Number(r.instructor_pct) + '٪ من قيمة الاشتراك',
           `${r.uses_month} هذا الشهر · ${r.uses_total} إجمالي`, `<button class="bx-linkbtn" data-copy="${esc(share(r.code))}">انسخ الرابط</button>`, r.active ? '<span class="bx-st bx-st-ok">يعمل</span>' : '<span class="bx-st bx-st-mute">متوقف</span>']))
-          : '<div class="bx-empty-big"><b>لا يوجد لديك كود بعد</b>اطلب من فريق Biosyn يعملّك كود خصم باسمك.</div>')
+          : '<div class="bx-empty-big"><b>لا يوجد لديك كود بعد</b>اطلب كودًا باسمك من النموذج أدناه وسيراجعه فريق Biosyn.</div>')
+        + D.panel('اطلب كود خصم جديد', `<form class="bx-form2" id="prf" novalidate><div class="row2"><div class="bx-field"><label for="prc">الكود المطلوب</label><input id="prc" class="bx-input" dir="ltr" maxlength="30" placeholder="DRAHMED"></div><div class="bx-field"><label for="prn">ملاحظة للفريق (اختياري)</label><input id="prn" class="bx-input" maxlength="300"></div></div><p class="bx-hint" style="margin:0">حروف إنجليزية وأرقام فقط (من 3 إلى 30). الفريق هو من يحدد نسبة الخصم للطالب ونسبتك، وسيصلك إشعار بالقرار.</p><div class="bx-formmsg" id="prm" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">إرسال الطلب</button></div></form>`)
+        + (reqs.length ? D.panel('طلباتي', D.table(['الكود', 'التاريخ', 'الحالة', 'ملاحظة الفريق'], reqs.map((q) => [`<b class="bs-latin">${esc(q.code)}</b>`, D.date(q.created_at), q.status === 'accepted' ? '<span class="bx-st bx-st-ok">تم الاعتماد</span>' : q.status === 'rejected' ? '<span class="bx-st bx-st-mute">مرفوض</span>' : '<span class="bx-st bx-st-info">قيد المراجعة</span>', esc(q.note || '—')]))) : '')
         + '<p class="bx-hint">أي طالب يشترك في باقة بكودك تحصل عنه على نسبتك (50٪ افتراضيًا) من قيمة الاشتراك بدلًا من نسبة الـ 30٪ المعتادة من المشاهدات، ويُضاف المبلغ إلى رصيدك مع الإقفال الشهري. انشر الكود أو الرابط لجمهورك.</p>';
       $$('[data-copy]', main).forEach((b) => (b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.copy); ui.toast('تم نسخ الرابط.'); } catch { prompt('انسخ الرابط:', b.dataset.copy); } }));
+      const pf = $('#prf', main);
+      if (pf) pf.onsubmit = async (e) => {
+        e.preventDefault(); const m = $('#prm', main), code = $('#prc', pf).value.trim().toUpperCase(), btn = $('button[type=submit]', pf);
+        const say = (t, k) => { m.className = 'bx-formmsg' + (k ? ' ' + k : ''); m.textContent = t; };
+        if (!/^[A-Z0-9_-]{3,30}$/.test(code)) return say('الكود: حروف إنجليزية وأرقام فقط (من 3 إلى 30).', 'err');
+        btn.disabled = true;
+        try { await sb.rpc('request_promo_code', { p_code: code, p_note: $('#prn', pf).value.trim() || null }); ui.toast('تم إرسال طلبك للفريق.'); views.promo(main); }
+        catch (x) { btn.disabled = false; say(/code taken/.test(x.message) ? 'هذا الكود مستخدم أو مطلوب بالفعل، جرّب اسمًا آخر.' : /too many/.test(x.message) ? 'لديك 3 طلبات قيد المراجعة، انتظر القرار فيها أولًا.' : arErr(x), 'err'); }
+      };
     },
 
     async courses(main) {
