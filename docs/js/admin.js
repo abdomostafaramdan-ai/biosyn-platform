@@ -608,6 +608,11 @@
           const r = await sb.update('site_content', { key: 'eq.promo_popup' }, { data, updated_at: new Date().toISOString() });
           if (!r.length) await sb.insert('site_content', { key: 'promo_popup', data });
           pp.on = data.on; $('#ppst', main).innerHTML = data.on ? '<span class="bx-st bx-st-warn">مفعّل: الزوار يرون العرض</span>' : '<span class="bx-st bx-st-ok">متوقف</span>';
+          // auto-create coupon if promo_code is set and doesn't exist yet
+          if (data.promo_code) {
+            const ex = await sb.get('coupons', { select: 'id', code: 'eq.' + data.promo_code, limit: 1 }).catch(() => []);
+            if (!ex.length) { try { await sb.insert('coupons', { code: data.promo_code, percent_off: 50, applies_to: 'subscription', active: true, note: 'تم إنشاؤه تلقائيًا من إعدادات العرض الترويجي' }); } catch {} }
+          }
           ui.toast('تم حفظ إعدادات العرض الترويجي.');
         } catch (err) { say($('#ppmsg', main), arErr(err), 'err'); }
       };
