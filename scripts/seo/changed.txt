@@ -1,9 +1,0 @@
-https://biosyneg.com/about
-https://biosyneg.com/course-introduction-to-genetic-engineering
-https://biosyneg.com/course-python-in-bioinformatics
-https://biosyneg.com/course-r-language-in-bioinformatics
-https://biosyneg.com/course-research-e5369c
-https://biosyneg.com/courses
-https://biosyneg.com/topic-biotech
-https://biosyneg.com/topic-pharmacy
-https://biosyneg.com/topic-science
