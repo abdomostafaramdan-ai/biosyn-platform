@@ -292,6 +292,8 @@ html[data-theme="light"] { --danger-text: #b4232b; }
 .bx-shield small { color: rgba(255, 255, 255, .7); }
 .bx-fsbtn { position: absolute; z-index: 4; top: 10px; inset-inline-end: 10px; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; border: 0; background: rgba(0, 0, 0, .45); color: #fff; cursor: pointer; opacity: .75; }
 .bx-fsbtn:hover { opacity: 1; }
+.bx-rwbtn { inset-inline-end: 54px; }
+.bx-rwbtn:focus-visible, .bx-fsbtn:focus-visible { outline: 2px solid var(--brand-lime); outline-offset: 2px; opacity: 1; }
 
 /* ---------- messages: chat modal + inbox list ---------- */
 .bx-modal:has(.bx-conv) { width: min(680px, calc(100vw - 32px)); }

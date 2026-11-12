@@ -366,11 +366,12 @@
       const stamp = [sb.user.email, wmId, sb.user.id.slice(0, 8)].filter(Boolean).join(' · ');
       stage.insertAdjacentHTML('beforeend', `<div class="bx-wm-layer" aria-hidden="true"><span class="bx-wm-tag">${esc(stamp)}</span><span class="bx-wm-tile">${esc(stamp)}</span></div>
         <div class="bx-shield" hidden><b>التسجيل والتصوير ممنوعين</b><small>المحتوى محمي ومربوط بحسابك: ${esc(sb.user.email)}</small></div>
-        <button type="button" class="bx-fsbtn" aria-label="ملء الشاشة" title="ملء الشاشة"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>`);
+        <button type="button" class="bx-fsbtn bx-rwbtn" aria-label="رجوع 10 ثوانٍ" title="رجوع 10 ثوانٍ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><text x="12" y="15.5" text-anchor="middle" font-size="7.5" font-weight="700" fill="currentColor" stroke="none">10</text></svg></button><button type="button" class="bx-fsbtn" aria-label="ملء الشاشة" title="ملء الشاشة"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>`);
       const tag = $('.bx-wm-tag', stage), shield = $('.bx-shield', stage);
       const move = () => { tag.style.insetInlineStart = (5 + Math.random() * 55) + '%'; tag.style.top = (6 + Math.random() * 78) + '%'; };
       move(); const t = setInterval(() => { if (!stage.isConnected) return clearInterval(t); move(); }, 3500);
-      $('.bx-fsbtn', stage).onclick = () => (document.fullscreenElement ? document.exitFullscreen() : (stage.requestFullscreen || stage.webkitRequestFullscreen || (() => {})).call(stage));
+      $('.bx-rwbtn', stage).onclick = () => { if (stage._rewind) stage._rewind(); };
+      $('.bx-fsbtn:not(.bx-rwbtn)', stage).onclick = () => (document.fullscreenElement ? document.exitFullscreen() : (stage.requestFullscreen || stage.webkitRequestFullscreen || (() => {})).call(stage));
       stage.addEventListener('contextmenu', (e) => e.preventDefault());
       const blackout = (ms) => { shield.hidden = false; clearTimeout(blackout.t); blackout.t = setTimeout(() => (shield.hidden = true), ms || 2500); };
       const keys = (e) => {
@@ -392,14 +393,17 @@
         // no native fullscreen on the iframe: our own fullscreen keeps the watermark on top of the video
         box.style.display = 'block'; box.innerHTML = `<iframe id="bunny" src="${esc(r.url)}" style="width:100%;height:100%;border:0" allow="accelerometer; gyroscope; autoplay; encrypted-media" title="${esc(cur.title)}"></iframe>`;
         guardPlayer(box.closest('.bx-video'));
+        let curT = 0; const stageEl = box.closest('.bx-video');
         const f = $('#bunny'); const post = (o) => f.contentWindow && f.contentWindow.postMessage(JSON.stringify({ context: 'player.js', version: '0.0.11', ...o }), '*');
         f.addEventListener('load', () => post({ method: 'addEventListener', value: 'ready' }));
+        stageEl._rewind = () => post({ method: 'setCurrentTime', value: Math.max(0, curT - 10) });   // back 10 s (going back is always allowed)
         window.onmessage = (e) => {
           if (e.source !== f.contentWindow) return; let d = e.data; if (typeof d === 'string') { try { d = JSON.parse(d); } catch { return; } }
           if (!d || d.context !== 'player.js') return;
           if (d.event === 'ready') ['timeupdate', 'ended'].forEach((ev) => post({ method: 'addEventListener', value: ev }));
           else if (d.event === 'timeupdate' && d.value && d.value.duration) {
             const D = d.value.duration, t = d.value.seconds;
+            curT = t;
             if (furthest < 0) furthest = (seen(cur) / 100) * D;
             if (seen(cur) < 95 && t > furthest + 3) {           // jumped ahead: send them back to where they were
               post({ method: 'setCurrentTime', value: Math.max(0, furthest - 1) });
