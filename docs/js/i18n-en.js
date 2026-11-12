@@ -1747,6 +1747,8 @@ window.I18N_EN = {
   "نسبة المحاضر من الاشتراك": "Instructor share of the subscription",
   "⭐ الأكثر شهرة": "⭐ Most popular",
   "الأكثر توفيرًا": "Best value",
+  "فوري": "Fawry",
+  "أمان": "Aman",
   "بطاقات Visa / Mastercard": "Visa / Mastercard cards",
   "ادفع بالطريقة التي تناسبك:": "Pay the way that suits you:",
   "الدفع مرة واحدة، ولا يتجدد الاشتراك تلقائيًا.": "One-time payment; the subscription doesn't renew automatically.",
