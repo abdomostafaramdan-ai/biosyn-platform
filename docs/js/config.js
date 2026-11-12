@@ -31,13 +31,22 @@ window.FACULTIES = [
 window.FAC_ALL = { id: 'all', name: 'لكل الكليات', icon: '<path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/><path d="M22 10v6"/>', specs: [] };
 window.facultiesOf = (c) => { const ids = new Set([window.facultyOf(c)].filter(Boolean)); (c.course_faculties || []).forEach((r) => ids.add(r.faculty)); return ids; };
 window.facultyOf = (c) => c.faculty || ((window.FACULTIES.find((f) => f.specs.includes(c.specialty)) || {}).id) || '';
-// phone country codes for the signup form (Egypt first, then the region, then the rest alphabetically)
-window.COUNTRIES = [
-  ['EG', 'مصر', '20'], ['SA', 'السعودية', '966'], ['AE', 'الإمارات', '971'], ['KW', 'الكويت', '965'], ['QA', 'قطر', '974'],
-  ['BH', 'البحرين', '973'], ['OM', 'عُمان', '968'], ['JO', 'الأردن', '962'], ['LB', 'لبنان', '961'], ['PS', 'فلسطين', '970'],
-  ['SY', 'سوريا', '963'], ['IQ', 'العراق', '964'], ['YE', 'اليمن', '967'], ['LY', 'ليبيا', '218'], ['SD', 'السودان', '249'],
-  ['TN', 'تونس', '216'], ['DZ', 'الجزائر', '213'], ['MA', 'المغرب', '212'], ['MR', 'موريتانيا', '222'], ['SO', 'الصومال', '252'],
-  ['TR', 'تركيا', '90'], ['GB', 'المملكة المتحدة', '44'], ['DE', 'ألمانيا', '49'], ['FR', 'فرنسا', '33'], ['IT', 'إيطاليا', '39'],
-  ['NL', 'هولندا', '31'], ['SE', 'السويد', '46'], ['US', 'الولايات المتحدة', '1'], ['CA', 'كندا', '1'], ['AU', 'أستراليا', '61'],
-  ['MY', 'ماليزيا', '60'], ['IN', 'الهند', '91'], ['PK', 'باكستان', '92'], ['NG', 'نيجيريا', '234'], ['KE', 'كينيا', '254'],
-];
+// phone country codes for the sign-up forms: Egypt first, then the other Arab countries, then every other country alphabetically.
+// Arab names are fixed; the rest are named by the browser (Intl.DisplayNames) in the page language.
+window.COUNTRIES = (function () {
+  const ARAB = [
+    ['EG', 'مصر', '20'], ['SA', 'السعودية', '966'], ['AE', 'الإمارات', '971'], ['KW', 'الكويت', '965'], ['QA', 'قطر', '974'],
+    ['BH', 'البحرين', '973'], ['OM', 'عُمان', '968'], ['JO', 'الأردن', '962'], ['LB', 'لبنان', '961'], ['PS', 'فلسطين', '970'],
+    ['SY', 'سوريا', '963'], ['IQ', 'العراق', '964'], ['YE', 'اليمن', '967'], ['LY', 'ليبيا', '218'], ['SD', 'السودان', '249'],
+    ['TN', 'تونس', '216'], ['DZ', 'الجزائر', '213'], ['MA', 'المغرب', '212'], ['MR', 'موريتانيا', '222'], ['SO', 'الصومال', '252'],
+    ['DJ', 'جيبوتي', '253'], ['KM', 'جزر القمر', '269'],
+  ];
+  const OTHER = ('AF93 AL355 AD376 AO244 AG1 AR54 AM374 AU61 AT43 AZ994 BS1 BD880 BB1 BY375 BE32 BZ501 BJ229 BT975 BO591 BA387 BW267 BR55 BN673 BG359 BF226 BI257 KH855 CM237 CA1 CV238 CF236 TD235 CL56 CN86 CO57 CG242 CD243 CR506 CI225 HR385 CU53 CY357 CZ420 DK45 DM1 DO1 EC593 SV503 GQ240 ER291 EE372 SZ268 ET251 FJ679 FI358 FR33 GA241 GM220 GE995 DE49 GH233 GR30 GD1 GT502 GN224 GW245 GY592 HT509 HN504 HK852 HU36 IS354 IN91 ID62 IR98 IE353 IT39 JM1 JP81 KZ7 KE254 KI686 XK383 KG996 LA856 LV371 LS266 LR231 LI423 LT370 LU352 MO853 MG261 MW265 MY60 MV960 ML223 MT356 MH692 MU230 MX52 FM691 MD373 MC377 MN976 ME382 MZ258 MM95 NA264 NR674 NP977 NL31 NZ64 NI505 NE227 NG234 KP850 MK389 NO47 PK92 PW680 PA507 PG675 PY595 PE51 PH63 PL48 PT351 PR1 RO40 RU7 RW250 KN1 LC1 VC1 WS685 SM378 ST239 SN221 RS381 SC248 SL232 SG65 SK421 SI386 SB677 ZA27 KR82 SS211 ES34 LK94 SR597 SE46 CH41 TW886 TJ992 TZ255 TH66 TL670 TG228 TO676 TT1 TR90 TM993 TV688 UG256 UA380 GB44 US1 UY598 UZ998 VU678 VA379 VE58 VN84 ZM260 ZW263').split(' ');
+  let dn = null;
+  try { dn = new Intl.DisplayNames([document.documentElement.lang || 'ar'], { type: 'region' }); } catch (e) {}
+  const name = (c) => { try { return (dn && dn.of(c)) || c; } catch (e) { return c; } };
+  const rest = OTHER.map((x) => [x.slice(0, 2), name(x.slice(0, 2)), x.slice(2)])
+    .sort((a, b) => String(a[1]).localeCompare(String(b[1]), document.documentElement.lang || 'ar'));
+  const en = (document.documentElement.lang || 'ar') !== 'ar';
+  return ARAB.map((x) => (en ? [x[0], name(x[0]), x[2]] : x)).concat(rest);
+})();
