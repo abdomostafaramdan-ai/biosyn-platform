@@ -272,19 +272,13 @@ def course_facts(c, plans):
     return total, n, (f"ضمن اشتراك Biosyn، يبدأ من {int(float(p['price_egp']))} ج.م شهريًا" if p else 'ضمن باقات الاشتراك')
 
 
-# courses whose page should not carry the generated «كم سعر دورة …؟» question
-NO_PRICE_FAQ = {'computational-biology'}
-
-
 def course_faq(c, plans, insts, fac):
     total, n, price = course_facts(c, plans)
     qa = []
     if c['kind'] == 'recorded':
-        if c['slug'] not in NO_PRICE_FAQ: qa.append((f'كم سعر دورة {c["title"]}؟', f'الدورة متاحة ضمن اشتراك Biosyn Eg الذي يتيح لك جميع الدورات المسجلة. الباقات: ' + '، '.join(f"{p['name']} بـ {int(float(p['price_egp']))} ج.م" for p in plans) + '. الاشتراك لا يتجدد تلقائيًا.'))
         if n: qa.append((f'ما مدة دورة {c["title"]}؟', f'تتضمن الدورة {n} محاضرة مسجلة' + (f' بإجمالي حوالي {hours_ar(total)}' if total else '') + '، ويمكنك مشاهدتها في أي وقت وبالسرعة التي تناسبك.'))
         qa.append(('هل تمنح الدورة شهادة؟', 'نعم. بعد إتمام جميع محاضرات الدورة تصدر لك شهادة إتمام من Biosyn Eg تلقائيًا، عليها اسمك ورقم ورمز QR للتحقق من صحتها، ويمكنك تحميلها بصيغة PDF أو إضافتها إلى LinkedIn.'))
     else:
-        qa.append((f'كم سعر {c["title"]}؟', f'رسوم البرنامج {price}، وهي منفصلة عن باقات الاشتراك. ويمكن استرداد الرسوم خلال 7 أيام من تاريخ الدفع.'))
         when = []
         if c.get('starts_at'): when.append('يبدأ يوم ' + c['starts_at'][:10])
         if c.get('ends_at'): when.append('وينتهي يوم ' + c['ends_at'][:10])
