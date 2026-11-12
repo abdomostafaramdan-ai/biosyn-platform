@@ -106,3 +106,45 @@
     fn: (name, body) => raw(`/functions/v1/${name}`, { method: 'POST', body: body || {} }),
   };
 })();
+
+/* Maintenance mode — site_content.maintenance = { on, msg }. Visitors see a full-screen notice;
+   admin/support see the site with a small banner. Login and admin pages always stay open. */
+(() => {
+  const K = 'biosyn.maint', root = document.documentElement;
+  const page = (location.pathname.split('/').pop() || 'index').replace(/\.html$/, '') || 'index';
+  if (/^(login|admin|unsubscribe)$/.test(page) || !window.sb) return;
+  const st = document.createElement('style');
+  st.textContent = 'html.bx-mpre body{visibility:hidden}.bx-maint{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:24px;background:#0b1220;color:#e8eef9;font-family:inherit;text-align:center}.bx-maint-in{max-width:520px}.bx-maint img{height:44px;margin-bottom:22px}.bx-maint h1{font-size:28px;margin:0 0 12px;color:#fff}.bx-maint p{font-size:17px;line-height:1.9;margin:0 0 8px;color:#b9c6dc;white-space:pre-line}.bx-maint a{color:#7fb3ff;font-size:14px}.bx-maint-ic{font-size:46px;margin-bottom:10px}.bx-maint-bar{position:fixed;bottom:12px;inset-inline-start:12px;z-index:2147483000;background:#b45309;color:#fff;padding:8px 14px;border-radius:10px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.3)}.bx-maint-bar a{color:#fff;text-decoration:underline}';
+  document.head.appendChild(st);
+  try { if (localStorage.getItem(K) === '1') root.classList.add('bx-mpre'); } catch {}
+  const show = (msg) => {
+    const d = document.createElement('div'); d.className = 'bx-maint'; d.setAttribute('role', 'alert');
+    d.innerHTML = '<div class="bx-maint-in"><img src="img/biosyn-logo.png" alt="Biosyn Eg"><div class="bx-maint-ic" aria-hidden="true">🛠️</div><h1>المنصة تحت الصيانة</h1><p></p><a href="login.html">دخول فريق العمل</a></div>';
+    d.querySelector('p').textContent = msg || 'نعمل حاليًا على تحسينات وإضافات جديدة، وسنعود خلال وقت قصير. شكرًا لصبرك.';
+    document.body.appendChild(d); document.body.style.overflow = 'hidden';
+    document.querySelectorAll('video,audio').forEach((v) => { try { v.pause(); } catch {} });
+    document.querySelectorAll('iframe').forEach((f) => { f.src = 'about:blank'; });
+  };
+  (async () => {
+    let d = null;
+    try { const r = await sb.get('site_content', { select: 'data', key: 'eq.maintenance' }); d = r && r[0] && r[0].data; } catch {}
+    let on = !!(d && d.on);
+    try { localStorage.setItem(K, on ? '1' : '0'); } catch {}
+    if (on) {
+      try { await (sb.auth && sb.auth.ready); } catch {}
+      if (sb.user) {
+        try {
+          const p = await sb.get('profiles', { select: 'role', id: 'eq.' + sb.user.id });
+          if (p && p[0] && /^(admin|support)$/.test(p[0].role)) {
+            on = false;
+            const b = document.createElement('div'); b.className = 'bx-maint-bar';
+            b.innerHTML = 'وضع الصيانة مفعّل — الزوار لا يرون الموقع. <a href="admin.html#settings">إيقافه</a>';
+            document.body.appendChild(b);
+          }
+        } catch {}
+      }
+      if (on) show(d.msg);
+    }
+    root.classList.remove('bx-mpre');
+  })();
+})();
