@@ -465,10 +465,13 @@
         phone: '<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/>',
         bolt: '<path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/>',
       };
-      const list = R.currency === 'EGP'
-        ? [['card', 'Visa / Mastercard'], ['wallet', 'المحافظ الإلكترونية'], ['phone', 'فودافون كاش'], ['bolt', 'إنستاباي']]
-        : [['card', 'Visa / Mastercard']];
-      w.insertAdjacentHTML('afterend', `<div class="bx-paymethods"><span>ادفع بالطريقة التي تناسبك:</span>${list.map(([ic, t]) => `<b><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[ic]}</svg>${t}</b>`).join('')}<small>الدفع مرة واحدة، ولا يتجدد الاشتراك تلقائيًا.</small></div>`);
+      // official method logos from the payment gateway (same files as the checkout); manual transfers keep an icon chip
+      const LOGO = (f) => `${BIOSYN.SUPABASE_URL}/storage/v1/object/public/site-assets/pay/${f}.png`;
+      const eg = R.currency === 'EGP';
+      const logos = (eg ? [['visa-mastercard', 'Visa / Mastercard'], ['wallets', 'المحافظ الإلكترونية'], ['fawry', 'فوري'], ['aman', 'أمان']] : [['visa-mastercard', 'Visa / Mastercard']])
+        .map(([f, t]) => `<img src="${LOGO(f)}" alt="${t}" title="${t}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('b'),{textContent:this.alt}))">`).join('');
+      const manual = eg ? [['phone', 'فودافون كاش'], ['bolt', 'إنستاباي']] : [];
+      w.insertAdjacentHTML('afterend', `<div class="bx-paymethods"><span>ادفع بالطريقة التي تناسبك:</span>${logos}${manual.map(([ic, t]) => `<b><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[ic]}</svg>${t}</b>`).join('')}<small>الدفع مرة واحدة، ولا يتجدد الاشتراك تلقائيًا.</small></div>`);
     });
     planState(cards);
   }

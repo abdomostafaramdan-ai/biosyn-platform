@@ -493,3 +493,5 @@ html[dir="rtl"] .in-tip{transform:translateX(50%)}
 .bx-paymethods b{display:inline-flex;align-items:center;gap:7px;font-weight:600;padding:7px 14px;border:1px solid var(--line,rgba(255,255,255,.14));border-radius:12px;color:var(--ink,#fff);background:rgba(255,255,255,.04)}
 .bx-paymethods b svg{color:var(--brand,#c6f84a);flex:none}
 .bx-paymethods small{flex-basis:100%;font-size:12px}
+
+.bx-paymethods img{height:36px;width:auto;max-width:96px;object-fit:contain;padding:5px 9px;border-radius:10px;background:#fff;border:1px solid var(--line,rgba(255,255,255,.14))}
