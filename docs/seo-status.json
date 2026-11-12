@@ -1,5 +1,5 @@
 {
- "built_at": "2026-11-12T18:46:58+00:00",
+ "built_at": "2026-11-12T22:27:11+00:00",
  "sitemap_urls": 60,
  "indexable": [
   {
@@ -155,5 +155,5 @@
   }
  ],
  "ai_training": true,
- "changed": 0
+ "changed": 1
 }
