@@ -235,7 +235,7 @@
     const first = lects[0];
     const cta = subscribed
       ? `<a class="bs-btn bs-btn-primary bs-btn-lg bs-block" href="watch.html?c=${esc(c.slug)}">${lects.length ? 'ابدأ المشاهدة' : 'المحاضرات قريبًا'}</a><button type="button" class="bs-btn bs-btn-secondary bs-block bx-askbtn" data-ask="${c.id}">💬 اسأل المحاضر</button>`
-      : `<a class="bs-btn bs-btn-primary bs-btn-lg bs-block" href="#plans" id="cta-sub">اشترك لمشاهدة الدورة</a>`;
+      : `<a class="bs-btn bs-btn-primary bs-btn-lg bs-block" href="#plans" id="cta-sub">اشترك لمشاهدة الدورة</a>${(() => { const pv = lects.find((l) => l.is_preview); if (!pv) return ''; const w = `watch.html?c=${esc(c.slug)}&l=${pv.id}`; return sb.user ? `<a class="bs-btn bs-btn-secondary bs-block" href="${w}" id="cta-free">▶ شاهد أول محاضرة مجانًا</a>` : `<a class="bs-btn bs-btn-secondary bs-block" href="login.html?mode=signup&next=${encodeURIComponent(w)}" id="cta-free">▶ سجّل مجانًا وشاهد أول محاضرة</a>`; })()}`;
     root.innerHTML = `<section class="bs-course-hero"><span class="bs-wm" aria-hidden="true"></span><div class="bs-course-hero-in"><div>
       <nav class="bs-crumbs" aria-label="مسار التنقل"><a href="index.html">الرئيسية</a><span>/</span><a href="courses.html">دورات مسجلة</a><span>/</span><span class="bs-latin">${esc(c.title)}</span></nav>
       <div style="display:flex;gap:8px"><span class="bs-badge bs-badge-neutral">${LEVEL[c.level] || 'مبتدئ'}</span><span class="bs-badge bs-badge-info">دورة مسجلة</span></div>
@@ -265,7 +265,8 @@
 
   // ---------- watch ----------
   P.watch = async () => {
-    if (!requireLogin()) return;
+    await sb.auth.ready;
+    if (!sb.user) { location.href = 'login.html?mode=signup&next=' + encodeURIComponent('watch.html' + location.search); return; }   // visitors go to sign-up, then come straight back to the video
     const root = $('#watch-root'), q = new URLSearchParams(location.search), slug = q.get('c');
     const fail = (t, d, link) => { root.innerHTML = `<div class="bx-empty-big" style="margin:80px auto;max-width:560px"><b>${t}</b>${d}${link || ''}</div>`; };
     if (!slug) return fail('لم يتم اختيار دورة', '', ' <a class="bx-link" href="courses.html">تصفح الدورات</a>');
