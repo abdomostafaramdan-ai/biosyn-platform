@@ -1,2 +1,14 @@
-https://biosyneg.com/about
-https://biosyneg.com/course-computational-biology
+https://biosyneg.com/course-basics-of-ivf-laboratories
+https://biosyneg.com/course-bioinformtics-diploma
+https://biosyneg.com/course-computational-neuroscience
+https://biosyneg.com/course-how-to-read-a-research-paper
+https://biosyneg.com/course-introduction-to-genetic-engineering
+https://biosyneg.com/course-introduction-to-genetics
+https://biosyneg.com/course-introduction-to-immunology
+https://biosyneg.com/course-microbiology-course-362803
+https://biosyneg.com/course-molecular-biology-course-614141
+https://biosyneg.com/course-python-in-bioinformatics
+https://biosyneg.com/course-r-language-in-bioinformatics
+https://biosyneg.com/course-some-concepts-in-clinical-research
+https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design
+https://biosyneg.com/course-study-design-in-clinical-research
