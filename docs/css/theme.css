@@ -482,7 +482,13 @@ html[dir="rtl"] .in-tip{transform:translateX(50%)}
 .bs-plan{position:relative}
 .bs-plan-price .bx-plan-was{font-size:17px;font-weight:600;color:var(--muted,#8a90b4);margin-inline-end:8px;text-decoration-thickness:2px}
 .bx-plan-total{font-size:13px;color:var(--muted,#8a90b4);margin:-4px 0 14px}
-.bx-plan-ribbon{display:block;width:fit-content;margin:0 0 10px;font-size:12px;font-weight:800;padding:4px 12px;border-radius:999px;background:#010232;color:#c6f84a}
+.bx-plan-ribbon{display:block;width:fit-content;margin:0 0 12px;font-size:12.5px;font-weight:800;padding:5px 14px;border-radius:999px;background:#010232;color:#c6f84a;box-shadow:0 0 0 3px rgba(198,248,74,.25)}
+.bx-plan-save{display:inline-block;font-size:13px;font-weight:700;color:#14700f;background:#e7fbd0;padding:4px 10px;border-radius:8px;margin:0 0 10px}
+.bx-plan-meter{height:6px;border-radius:99px;background:rgba(1,2,50,.08);overflow:hidden;margin:2px 0 18px}
+.bx-plan-meter i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#7be04a,#c6f84a);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bs-plan.bx-plan-best{box-shadow:0 0 0 2px #c6f84a,0 24px 60px -18px rgba(198,248,74,.45);transform:translateY(-10px)}
+@media (max-width:860px){.bs-plan.bx-plan-best{transform:none;order:-1}}
+@media (prefers-reduced-motion:reduce){.bx-plan-meter i{transition:none}}
 .bx-paymethods{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;margin:22px auto 0;font-size:14px;color:var(--muted,#8a90b4);text-align:center}
 .bx-paymethods b{display:inline-flex;align-items:center;gap:7px;font-weight:600;padding:7px 14px;border:1px solid var(--line,rgba(255,255,255,.14));border-radius:12px;color:var(--ink,#fff);background:rgba(255,255,255,.04)}
 .bx-paymethods b svg{color:var(--brand,#c6f84a);flex:none}

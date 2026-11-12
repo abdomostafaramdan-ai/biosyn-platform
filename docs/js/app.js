@@ -408,13 +408,16 @@
     const R = await REGION;
     const cur = curOf(R), base = plans.find((x) => x.duration_months === 1);
     const basePrice = base ? itemPrice(base.price_egp, base.intl_price, R) : 0;
-    const longest = Math.max(...plans.map((x) => x.duration_months));
+    // the featured card is the best value (lowest price per month; ties go to the longer plan), not simply the longest
+    const pm = plans.map((x) => itemPrice(x.price_egp, x.intl_price, R) / x.duration_months);
+    const bestIdx = pm.reduce((b, v, i) => (v < pm[b] - 0.5 || (Math.abs(v - pm[b]) <= 0.5 && plans[i].duration_months > plans[b].duration_months) ? i : b), 0);
+    const bestIsReal = basePrice && pm[bestIdx] < basePrice - 0.5;
     const moTxt = (n) => (n === 1 ? 'شهر' : n === 2 ? 'شهرين' : n <= 10 ? `${n} أشهر` : `${n} شهرًا`);
     cards.forEach((card, i) => {
       const p = plans[i];
       if (!p) { card.remove(); return; }
       const m = p.duration_months, price = itemPrice(p.price_egp, p.intl_price, R), perMonth = Math.floor(price / m);
-      const full = basePrice * m, paidFor = basePrice ? Math.round(price / basePrice) : 0;
+      const full = basePrice * m, ratio = basePrice ? price / basePrice : 0, paidFor = Math.abs(ratio - Math.round(ratio)) < 0.06 ? Math.round(ratio) : 0;  // 'N months for the price of K' only when it is (almost) exact
       $('.bs-plan-name', card).textContent = p.name;
       // like almentor: the per-month price is the headline, with the monthly price struck through and the total under it
       const pr = $('.bs-plan-price', card);
@@ -429,14 +432,18 @@
       $('.bs-plan-period', card).textContent = m > 1 && paidFor && paidFor < m ? `احصل على ${moTxt(m)} بسعر ${moTxt(paidFor)}` : periodAr(m);
       const badge = $('.bs-badge', card);
       if (badge) { if (m > 1 && full > price) badge.textContent = `وفر ${Math.round((1 - price / full) * 100)}٪`; else badge.remove(); }
-      if (m === longest && plans.length > 1) {
-        card.classList.add('bs-plan-featured');
-        if (!$('.bx-plan-ribbon', card)) $('.bs-plan-top', card).insertAdjacentHTML('beforebegin', '<span class="bx-plan-ribbon">⭐ الأكثر شهرة</span>');
-        const c = $('.bs-plan-cta', card); if (c) c.classList.replace('bs-btn-secondary', 'bs-btn-primary');
-      } else {
-        card.classList.remove('bs-plan-featured'); const rb = $('.bx-plan-ribbon', card); if (rb) rb.remove();
-        const c = $('.bs-plan-cta', card); if (c) c.classList.replace('bs-btn-primary', 'bs-btn-secondary');
-      }
+      // saving vs paying monthly
+      let sv = $('.bx-plan-save', card);
+      const saved = Math.round(full - price);
+      if (m > 1 && saved > 0) { if (!sv) { sv = document.createElement('div'); sv.className = 'bx-plan-save'; tot.after(sv); } sv.textContent = `توفّر ${EGP(saved)} ${cur} مقارنة بالدفع الشهري`; }
+      else if (sv) sv.remove();
+      const isBest = bestIsReal && i === bestIdx && plans.length > 1;
+      card.classList.toggle('bs-plan-featured', isBest); card.classList.toggle('bx-plan-best', isBest);
+      const rb = $('.bx-plan-ribbon', card);
+      if (isBest && !rb) $('.bs-plan-top', card).insertAdjacentHTML('beforebegin', '<span class="bx-plan-ribbon">الأكثر توفيرًا</span>');
+      if (!isBest && rb) rb.remove();
+      { const c = $('.bs-plan-cta', card); if (c) { if (isBest) c.classList.replace('bs-btn-secondary', 'bs-btn-primary'); else c.classList.replace('bs-btn-primary', 'bs-btn-secondary'); } }
+      const wm = $('.bs-wm', card); if (wm && !isBest) wm.remove();
       const cta = $('.bs-plan-cta', card);
       card.dataset.plan = p.code; card.dataset.months = m;
       if (cta) cta.addEventListener('click', () => checkout({ plan_code: p.code, title: p.name, price: p.price_egp, intl: p.intl_price, note: (card.dataset.upnote || '') + 'الاشتراك لا يتجدد تلقائيًا ولا يمكن استرداده.' }));
