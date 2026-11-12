@@ -12,7 +12,7 @@
 - Certificates: every completed course issues a Biosyn Eg certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify
 - Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available
 - Founded: 2020, by Abdo Mostafa (B.Sc. in Science)
-- Served: more than 20,026 students, researchers and university staff in 10 countries
+- Served: more than 20,025 students, researchers and university staff in 10 countries
 - About page: https://biosyneg.com/about
 
 - 20 ألف طالب
