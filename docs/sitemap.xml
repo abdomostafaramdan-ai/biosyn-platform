@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://biosyneg.com/</loc><lastmod>2026-11-12</lastmod><priority>1.0</priority></url>
-  <url><loc>https://biosyneg.com/courses</loc><lastmod>2026-11-12</lastmod><priority>0.9</priority></url>
+  <url><loc>https://biosyneg.com/courses</loc><lastmod>2026-11-14</lastmod><priority>0.9</priority></url>
   <url><loc>https://biosyneg.com/interactive</loc><lastmod>2026-11-12</lastmod><priority>0.9</priority></url>
   <url><loc>https://biosyneg.com/pricing</loc><lastmod>2026-11-12</lastmod><priority>0.9</priority></url>
   <url><loc>https://biosyneg.com/instructors</loc><lastmod>2026-11-12</lastmod><priority>0.7</priority></url>
@@ -15,27 +15,28 @@
   <url><loc>https://biosyneg.com/terms</loc><lastmod>2026-11-12</lastmod><priority>0.2</priority></url>
   <url><loc>https://biosyneg.com/privacy</loc><lastmod>2026-11-12</lastmod><priority>0.2</priority></url>
   <url><loc>https://biosyneg.com/refund</loc><lastmod>2026-11-12</lastmod><priority>0.2</priority></url>
-  <url><loc>https://biosyneg.com/course-introduction-to-genetic-engineering</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
-  <url><loc>https://biosyneg.com/course-some-concepts-in-clinical-research</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
-  <url><loc>https://biosyneg.com/course-introduction-to-genetics</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
-  <url><loc>https://biosyneg.com/course-computational-neuroscience</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://biosyneg.com/course-introduction-to-genetic-engineering</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://biosyneg.com/course-introduction-to-immunology</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://biosyneg.com/course-introduction-to-genetics</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://biosyneg.com/course-some-concepts-in-clinical-research</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://biosyneg.com/course-computational-neuroscience</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
   <url><loc>https://biosyneg.com/course-molecular-biology-course-614141</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
-  <url><loc>https://biosyneg.com/course-microbiology-course-362803</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
-  <url><loc>https://biosyneg.com/course-python-in-bioinformatics</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://biosyneg.com/course-microbiology-course-362803</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://biosyneg.com/course-python-in-bioinformatics</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://biosyneg.com/course-how-to-read-a-research-paper</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
-  <url><loc>https://biosyneg.com/course-r-language-in-bioinformatics</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
-  <url><loc>https://biosyneg.com/course-study-design-in-clinical-research</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
-  <url><loc>https://biosyneg.com/course-basics-of-ivf-laboratories</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
-  <url><loc>https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://biosyneg.com/course-r-language-in-bioinformatics</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://biosyneg.com/course-study-design-in-clinical-research</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://biosyneg.com/course-basics-of-ivf-laboratories</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://biosyneg.com/course-computational-biology</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
-  <url><loc>https://biosyneg.com/topic-science</loc><lastmod>2026-11-12</lastmod><priority>0.7</priority></url>
-  <url><loc>https://biosyneg.com/topic-biotech</loc><lastmod>2026-11-12</lastmod><priority>0.7</priority></url>
-  <url><loc>https://biosyneg.com/topic-pharmacy</loc><lastmod>2026-11-12</lastmod><priority>0.7</priority></url>
+  <url><loc>https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://biosyneg.com/course-research-methodology-in-clinical-research</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://biosyneg.com/topic-science</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
+  <url><loc>https://biosyneg.com/topic-biotech</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
+  <url><loc>https://biosyneg.com/topic-pharmacy</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
   <url><loc>https://biosyneg.com/topic-agriculture</loc><lastmod>2026-11-12</lastmod><priority>0.7</priority></url>
-  <url><loc>https://biosyneg.com/topic-medicine</loc><lastmod>2026-11-12</lastmod><priority>0.7</priority></url>
+  <url><loc>https://biosyneg.com/topic-medicine</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
   <url><loc>https://biosyneg.com/topic-veterinary</loc><lastmod>2026-11-12</lastmod><priority>0.7</priority></url>
-  <url><loc>https://biosyneg.com/topic-dentistry</loc><lastmod>2026-11-12</lastmod><priority>0.7</priority></url>
+  <url><loc>https://biosyneg.com/topic-dentistry</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
   <url><loc>https://biosyneg.com/topic-health_tech</loc><lastmod>2026-11-12</lastmod><priority>0.7</priority></url>
   <url><loc>https://biosyneg.com/blog-computational-biology</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
   <url><loc>https://biosyneg.com/blog-introduction-to-genetic-engineering</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
@@ -55,9 +56,9 @@
   <url><loc>https://biosyneg.com/teacher-sherif-arafa</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
   <url><loc>https://biosyneg.com/teacher-shaimaa-mohamed</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
   <url><loc>https://biosyneg.com/teacher-salma-sobhy</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
-  <url><loc>https://biosyneg.com/teacher-mahmoud-mohamed</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
   <url><loc>https://biosyneg.com/teacher-mohamed-emam</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
   <url><loc>https://biosyneg.com/teacher-esraa-elmeligy</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
-  <url><loc>https://biosyneg.com/teacher-nardine-zarif</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
+  <url><loc>https://biosyneg.com/teacher-mahmoud-mohamed</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
+  <url><loc>https://biosyneg.com/teacher-nardine-zarif</loc><lastmod>2026-11-14</lastmod><priority>0.6</priority></url>
   <url><loc>https://biosyneg.com/teacher-nada-salah</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
 </urlset>

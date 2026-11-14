@@ -12,7 +12,7 @@
 - Certificates: every completed course issues a Biosyn Eg certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify
 - Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available
 - Founded: 2020, by Abdo Mostafa (B.Sc. in Science)
-- Served: more than 20,024 students, researchers and university staff in 10 countries
+- Served: more than 20,023 students, researchers and university staff in 10 countries
 - About page: https://biosyneg.com/about
 
 - 20 ألف طالب
@@ -47,27 +47,25 @@ Lectures:
 7. Genome Editing: Knockout, Insertion and Replacement
 8. In Silico Cloning Design (Practical)
 
-### Some Concepts in Clinical Research
-URL: https://biosyneg.com/course-some-concepts-in-clinical-research
+### Introduction To Immunology
+URL: https://biosyneg.com/course-introduction-to-immunology
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
-Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
+Instructors: د. محمود محمد — دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
 
-تقدّم هذه الدورة المفاهيم الأساسية للبحث السريري من زاوية تاريخية وأخلاقية، لتفهم لماذا وُضعت قواعد البحث على البشر بهذا الشكل.
+تقدّم هذه الدورة مدخلًا شاملًا إلى علم المناعة، فتشرح كيف يتعرّف الجسم على الميكروبات ويدافع عن نفسه، بلغة واضحة ومنظمة تناسب من يدرس المناعة لأول مرة.
 
-تبدأ الدورة بتاريخ البحث السريري، ثم تعرض التجارب غير الأخلاقية التي غيّرت القواعد، وقانون نورمبرغ، وإعلان هلسنكي وتجارب الأدوية، وتشرح المبادئ الأخلاقية الأساسية، والموافقة المستنيرة (Informed Consent) ودور لجان الأخلاقيات (IRB)، ثم تُختتم بمراجعة واختبار قصير.
+تبدأ بنظرة عامة على الجهاز المناعي ومكوناته، ثم المناعة الفطرية، والمستضدات ومعقد التوافق النسيجي (MHC)، ثم المناعة الخلوية (CMI) والاستجابة المناعية الخلطية والأجسام المضادة، وتُختتم بنظام المتمّمة (Complement).
 
-الدورة مناسبة لطلاب الطب والصيدلة والعلوم الصحية، وللباحثين الذين يستعدون لتقديم بروتوكول بحثي إلى لجنة أخلاقيات.
+الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم والتكنولوجيا الحيوية، ولكل من يحتاج إلى أساس قوي في المناعة قبل دراسة الأمراض المناعية أو اللقاحات.
 
 Lectures:
-1. History of Clinical Research
-2. Nazi Experiments (Part 1)
-3. Nazi Experiments (Part 2)
-4. Other Unethical Experiments
-5. The Nuremberg Code
-6. Declaration of Helsinki & Drug Trials
-7. Ethical Principles
-8. Informed Consent & IRB
-9. Recap & Quiz
+1. Overview of the Immune System
+2. Basics of Immunology
+3. Innate Immunity
+4. Antigens and MHC
+5. Cell-Mediated Immunity (CMI)
+6. Humoral Immune Response
+7. The Complement System
 
 ### Introduction To Genetics
 URL: https://biosyneg.com/course-introduction-to-genetics
@@ -89,6 +87,28 @@ Lectures:
 6. Gene Regulation Beyond Transcription
 7. Population Genetics and Hardy–Weinberg Equilibrium
 8. Genes, Environment and Complex Traits
+
+### Some Concepts in Clinical Research
+URL: https://biosyneg.com/course-some-concepts-in-clinical-research
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
+Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
+
+تقدّم هذه الدورة المفاهيم الأساسية للبحث السريري من زاوية تاريخية وأخلاقية، لتفهم لماذا وُضعت قواعد البحث على البشر بهذا الشكل.
+
+تبدأ الدورة بتاريخ البحث السريري، ثم تعرض التجارب غير الأخلاقية التي غيّرت القواعد، وقانون نورمبرغ، وإعلان هلسنكي وتجارب الأدوية، وتشرح المبادئ الأخلاقية الأساسية، والموافقة المستنيرة (Informed Consent) ودور لجان الأخلاقيات (IRB)، ثم تُختتم بمراجعة واختبار قصير.
+
+الدورة مناسبة لطلاب الطب والصيدلة والعلوم الصحية، وللباحثين الذين يستعدون لتقديم بروتوكول بحثي إلى لجنة أخلاقيات.
+
+Lectures:
+1. History of Clinical Research
+2. Nazi Experiments (Part 1)
+3. Nazi Experiments (Part 2)
+4. Other Unethical Experiments
+5. The Nuremberg Code
+6. Declaration of Helsinki & Drug Trials
+7. Ethical Principles
+8. Informed Consent & IRB
+9. Recap & Quiz
 
 ### Computational Neuroscience
 URL: https://biosyneg.com/course-computational-neuroscience
@@ -119,26 +139,6 @@ Lectures:
 15. LIF Neuron in Python (Part 4)
 16. LIF Neuron in Python (Part 5)
 17. LIF Neuron in Python (Part 6)
-
-### Introduction To Immunology
-URL: https://biosyneg.com/course-introduction-to-immunology
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
-Instructors: د. محمود محمد — دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
-
-تقدّم هذه الدورة مدخلًا شاملًا إلى علم المناعة، فتشرح كيف يتعرّف الجسم على الميكروبات ويدافع عن نفسه، بلغة واضحة ومنظمة تناسب من يدرس المناعة لأول مرة.
-
-تبدأ بنظرة عامة على الجهاز المناعي ومكوناته، ثم المناعة الفطرية، والمستضدات ومعقد التوافق النسيجي (MHC)، ثم المناعة الخلوية (CMI) والاستجابة المناعية الخلطية والأجسام المضادة، وتُختتم بنظام المتمّمة (Complement).
-
-الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم والتكنولوجيا الحيوية، ولكل من يحتاج إلى أساس قوي في المناعة قبل دراسة الأمراض المناعية أو اللقاحات.
-
-Lectures:
-1. Overview of the Immune System
-2. Basics of Immunology
-3. Innate Immunity
-4. Antigens and MHC
-5. Cell-Mediated Immunity (CMI)
-6. Humoral Immune Response
-7. The Complement System
 
 ### Molecular Biology
 URL: https://biosyneg.com/course-molecular-biology-course-614141
@@ -295,6 +295,56 @@ Lectures:
 10. PGT and Implantation
 11. Interpretations
 
+### Computational Biology
+URL: https://biosyneg.com/course-computational-biology
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
+Instructors: د. اسراء المليجي — أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics).
+
+البيولوجيا الحاسوبية هي الطريق لتحويل البيانات البيولوجية الضخمة إلى نتائج يمكن فهمها ونشرها. تجمع هذه الدورة بين الشرح النظري والتطبيق العملي في 37 محاضرة، لتأخذك من أول قاعدة بيانات إلى تحليل التعبير الجيني.
+
+تبدأ الدورة بصيغ التسلسلات وقواعد البيانات الأساسية مع تطبيق عملي على NCBI وUniProt وRCSB PDB، ثم تحليل التسلسلات والمحاذاة وBLAST. بعدها تشرح مفاهيم تقنيات التسلسل: سانجر والجيل التالي (NGS) وأكسفورد نانوبور (ONT)، ثم تحليل بيانات تسلسل الحمض النووي: فحص الجودة بأداة FastQC وقراءة التقارير الجيدة والسيئة، والمحاذاة على الجينوم المرجعي (Mapping)، والعمل على سطر أوامر لينكس.
+
+ويُختتم المسار بتسلسل الحمض النووي الريبي (RNA-Seq) ومنهجية تحليل التعبير الجيني التفاضلي، مع مقدمة عملية في لغة R وتطبيق كامل لتحليل التعبير التفاضلي. الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والطب، وللباحثين الذين يريدون تحليل بيانات التسلسل بأنفسهم.
+
+Lectures:
+1. Introduction to Computational Biology
+2. Sequence Formats and Databases (Part 1)
+3. Sequence Formats and Databases (Part 2)
+4. Practice: Navigating NCBI (Part 1)
+5. Practice: Navigating NCBI (Part 2)
+6. Practice: Navigating UniProt
+7. Practice: Navigating the RCSB PDB
+8. Sequence Analysis (Part 1)
+9. Sequence Analysis (Part 2)
+10. Practice: Sequence Alignment
+11. Practice: BLAST
+12. Sequencing Concepts: Sanger Sequencing
+13. Sequencing Concepts: NGS
+14. Sequencing Concepts: Oxford Nanopore (ONT)
+15. DNA Sequencing Analysis: Quality Control with FastQC
+16. DNA Sequencing Analysis: Mapping (Part 1)
+17. DNA Sequencing Analysis: Mapping (Part 2)
+18. DNA Sequencing Analysis: Introduction to Linux
+19. Practice: Reading a Bad QC Report
+20. Practice: Reading a Good QC Report
+21. Practice: Sequencing Resources
+22. Practice: Introduction to Linux (Part 1)
+23. Practice: Introduction to Linux (Part 2)
+24. Practice: DNA Sequencing Analysis (Part 1)
+25. Practice: DNA Sequencing Analysis (Part 2)
+26. Sequencing Goals
+27. RNA Sequencing (Part 1)
+28. RNA Sequencing (Part 2)
+29. Differential Expression Analysis Methodology
+30. Practice: Exploring Important Databases
+31. Practice: Introduction to R (Part 1)
+32. Practice: Introduction to R (Part 2)
+33. Practice: Introduction to R (Part 3)
+34. Practice: Introduction to R (Part 4)
+35. Practice: Differential Expression Analysis (Part 1)
+36. Practice: Differential Expression Analysis (Part 2)
+37. Practice: Differential Expression Analysis (Part 3)
+
 ### Structural Bioinformatics, Molecular Docking and Drug Design
 URL: https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
@@ -371,55 +421,31 @@ Lectures:
 62. Protein–Ligand Interactions and ADMET (Part 7)
 63. Protein–Ligand Interactions and ADMET (Part 8)
 
-### Computational Biology
-URL: https://biosyneg.com/course-computational-biology
+### Research Methodology in Clinical Research
+URL: https://biosyneg.com/course-research-methodology-in-clinical-research
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
-Instructors: د. اسراء المليجي — أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics).
+Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 
-البيولوجيا الحاسوبية هي الطريق لتحويل البيانات البيولوجية الضخمة إلى نتائج يمكن فهمها ونشرها. تجمع هذه الدورة بين الشرح النظري والتطبيق العملي في 37 محاضرة، لتأخذك من أول قاعدة بيانات إلى تحليل التعبير الجيني.
+قيمة أي بحث سريري تبدأ من منهجيته؛ فسؤال بحثي غير واضح، أو عينة غير ممثلة، أو عامل مربك لم يُضبط، يكفي لإضعاف نتائج دراسة كاملة. تشرح هذه الدورة أسس منهجية البحث السريري خطوة بخطوة، بالترتيب الذي تحتاجه عند تصميم بحثك أو تقييم بحث منشور.
 
-تبدأ الدورة بصيغ التسلسلات وقواعد البيانات الأساسية مع تطبيق عملي على NCBI وUniProt وRCSB PDB، ثم تحليل التسلسلات والمحاذاة وBLAST. بعدها تشرح مفاهيم تقنيات التسلسل: سانجر والجيل التالي (NGS) وأكسفورد نانوبور (ONT)، ثم تحليل بيانات تسلسل الحمض النووي: فحص الجودة بأداة FastQC وقراءة التقارير الجيدة والسيئة، والمحاذاة على الجينوم المرجعي (Mapping)، والعمل على سطر أوامر لينكس.
+تبدأ الدورة بمراحل عملية البحث وصياغة السؤال البحثي باستخدام إطار PICO وخصائص السؤال البحثي الجيد، ثم تنتقل إلى تأثير الدواء الوهمي (Placebo)، وطرق أخذ العينات (Sampling)، والتوزيع العشوائي (Randomization)، والتعمية (Blinding).
 
-ويُختتم المسار بتسلسل الحمض النووي الريبي (RNA-Seq) ومنهجية تحليل التعبير الجيني التفاضلي، مع مقدمة عملية في لغة R وتطبيق كامل لتحليل التعبير التفاضلي. الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والطب، وللباحثين الذين يريدون تحليل بيانات التسلسل بأنفسهم.
+بعد ذلك تتناول الفرق بين الارتباط والسببية (Correlation vs. Causation)، والسببية العكسية والعوامل المربكة (Confounders) وطرق التعامل معها، وأنواع التحيز (Bias) في الدراسات، وتُختتم بمراجعة واختبار قصير.
+
+الدورة مناسبة لطلاب الطب والصيدلة وطب الأسنان والعلوم الصحية، ولكل من يستعد لأول بحث سريري أو يريد قراءة الأبحاث الطبية بعين ناقدة، وتكمّل دورتي «Study Design in Clinical Research» و«Some Concepts in Clinical Research» للمحاضرة نفسها.
 
 Lectures:
-1. Introduction to Computational Biology
-2. Sequence Formats and Databases (Part 1)
-3. Sequence Formats and Databases (Part 2)
-4. Practice: Navigating NCBI (Part 1)
-5. Practice: Navigating NCBI (Part 2)
-6. Practice: Navigating UniProt
-7. Practice: Navigating the RCSB PDB
-8. Sequence Analysis (Part 1)
-9. Sequence Analysis (Part 2)
-10. Practice: Sequence Alignment
-11. Practice: BLAST
-12. Sequencing Concepts: Sanger Sequencing
-13. Sequencing Concepts: NGS
-14. Sequencing Concepts: Oxford Nanopore (ONT)
-15. DNA Sequencing Analysis: Quality Control with FastQC
-16. DNA Sequencing Analysis: Mapping (Part 1)
-17. DNA Sequencing Analysis: Mapping (Part 2)
-18. DNA Sequencing Analysis: Introduction to Linux
-19. Practice: Reading a Bad QC Report
-20. Practice: Reading a Good QC Report
-21. Practice: Sequencing Resources
-22. Practice: Introduction to Linux (Part 1)
-23. Practice: Introduction to Linux (Part 2)
-24. Practice: DNA Sequencing Analysis (Part 1)
-25. Practice: DNA Sequencing Analysis (Part 2)
-26. Sequencing Goals
-27. RNA Sequencing (Part 1)
-28. RNA Sequencing (Part 2)
-29. Differential Expression Analysis Methodology
-30. Practice: Exploring Important Databases
-31. Practice: Introduction to R (Part 1)
-32. Practice: Introduction to R (Part 2)
-33. Practice: Introduction to R (Part 3)
-34. Practice: Introduction to R (Part 4)
-35. Practice: Differential Expression Analysis (Part 1)
-36. Practice: Differential Expression Analysis (Part 2)
-37. Practice: Differential Expression Analysis (Part 3)
+1. Research Process & PICO Framework
+2. Characteristics of the Research Question
+3. Placebo Effect
+4. Sampling
+5. Randomization
+6. Blinding
+7. Correlation vs. Causation
+8. Reverse Causation & Confounders
+9. How to Treat Confounding
+10. Bias
+11. Recap & Quiz
 
 ## FAQ
 

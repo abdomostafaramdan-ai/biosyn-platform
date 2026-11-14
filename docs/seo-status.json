@@ -1,6 +1,6 @@
 {
- "built_at": "2026-11-14T02:45:17+00:00",
- "sitemap_urls": 60,
+ "built_at": "2026-11-14T17:51:49+00:00",
+ "sitemap_urls": 61,
  "indexable": [
   {
    "slug": "introduction-to-genetic-engineering",
@@ -8,9 +8,9 @@
    "url": "https://biosyneg.com/course-introduction-to-genetic-engineering.html"
   },
   {
-   "slug": "some-concepts-in-clinical-research",
-   "title": "Some Concepts in Clinical Research",
-   "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
+   "slug": "introduction-to-immunology",
+   "title": "Introduction To Immunology",
+   "url": "https://biosyneg.com/course-introduction-to-immunology.html"
   },
   {
    "slug": "introduction-to-genetics",
@@ -18,14 +18,14 @@
    "url": "https://biosyneg.com/course-introduction-to-genetics.html"
   },
   {
+   "slug": "some-concepts-in-clinical-research",
+   "title": "Some Concepts in Clinical Research",
+   "url": "https://biosyneg.com/course-some-concepts-in-clinical-research.html"
+  },
+  {
    "slug": "computational-neuroscience",
    "title": "Computational Neuroscience",
    "url": "https://biosyneg.com/course-computational-neuroscience.html"
-  },
-  {
-   "slug": "introduction-to-immunology",
-   "title": "Introduction To Immunology",
-   "url": "https://biosyneg.com/course-introduction-to-immunology.html"
   },
   {
    "slug": "molecular-biology-course-614141",
@@ -63,14 +63,19 @@
    "url": "https://biosyneg.com/course-basics-of-ivf-laboratories.html"
   },
   {
+   "slug": "computational-biology",
+   "title": "Computational Biology",
+   "url": "https://biosyneg.com/course-computational-biology.html"
+  },
+  {
    "slug": "structural-bioinformatics-molecular-docking-drug-design",
    "title": "Structural Bioinformatics, Molecular Docking and Drug Design",
    "url": "https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html"
   },
   {
-   "slug": "computational-biology",
-   "title": "Computational Biology",
-   "url": "https://biosyneg.com/course-computational-biology.html"
+   "slug": "research-methodology-in-clinical-research",
+   "title": "Research Methodology in Clinical Research",
+   "url": "https://biosyneg.com/course-research-methodology-in-clinical-research.html"
   }
  ],
  "noindex": [],
@@ -88,7 +93,7 @@
   {
    "id": "pharmacy",
    "name": "كلية الصيدلة",
-   "courses": 10
+   "courses": 11
   },
   {
    "id": "agriculture",
@@ -98,7 +103,7 @@
   {
    "id": "medicine",
    "name": "كلية الطب",
-   "courses": 11
+   "courses": 12
   },
   {
    "id": "veterinary",
@@ -108,7 +113,7 @@
   {
    "id": "dentistry",
    "name": "كلية طب الأسنان",
-   "courses": 5
+   "courses": 6
   },
   {
    "id": "health_tech",
@@ -134,16 +139,16 @@
    "url": "https://biosyneg.com/teacher-salma-sobhy.html"
   },
   {
-   "name": "د. محمود محمد",
-   "url": "https://biosyneg.com/teacher-mahmoud-mohamed.html"
-  },
-  {
    "name": "د. محمد إمام",
    "url": "https://biosyneg.com/teacher-mohamed-emam.html"
   },
   {
    "name": "د. اسراء المليجي",
    "url": "https://biosyneg.com/teacher-esraa-elmeligy.html"
+  },
+  {
+   "name": "د. محمود محمد",
+   "url": "https://biosyneg.com/teacher-mahmoud-mohamed.html"
   },
   {
    "name": "د. ناردين زريف",
@@ -155,5 +160,5 @@
   }
  ],
  "ai_training": true,
- "changed": 0
+ "changed": 15
 }

@@ -12,7 +12,7 @@
 - Certificates: every completed course issues a Biosyn Eg certificate of completion with an ID and QR code, verifiable at https://biosyneg.com/verify
 - Payment in Egypt: cards, mobile wallets (e.g. Vodafone Cash), Fawry, InstaPay; international payments available
 - Founded: 2020, by Abdo Mostafa (B.Sc. in Science)
-- Served: more than 20,024 students, researchers and university staff in 10 countries
+- Served: more than 20,023 students, researchers and university staff in 10 countries
 - About page: https://biosyneg.com/about
 
 - 20 ألف طالب
@@ -26,10 +26,10 @@
 
 ## Courses
 - [Introduction To Genetic Engineering](https://biosyneg.com/course-introduction-to-genetic-engineering): recorded course, 8 lectures, ~2.6 hours, الهندسة الوراثية — دورة مسجلة باللغة العربية في أساسيات الهندسة الوراثية: النواقل وإنزيمات القطع وعزل الجينات، والإشريكية القولونية كعائل، والتخمير، وتحرير الجينوم، والتصميم بالحاسوب.
-- [Some Concepts in Clinical Research](https://biosyneg.com/course-some-concepts-in-clinical-research): recorded course, 9 lectures, ~1.2 hours, البحث السريري — دورة مسجلة في المفاهيم الأساسية وأخلاقيات البحث السريري: تاريخه، وقانون نورمبرغ وإعلان هلسنكي، والمبادئ الأخلاقية، والموافقة المستنيرة ولجان الأخلاقيات.
-- [Introduction To Genetics](https://biosyneg.com/course-introduction-to-genetics): recorded course, 8 lectures, ~3.4 hours, الوراثة — دورة مسجلة باللغة العربية في أساسيات علم الوراثة: من قوانين مندل والانقسام الاختزالي إلى الارتباط والخرائط الجينية، والعقيدة المركزية، ووراثة العشائر.
-- [Computational Neuroscience](https://biosyneg.com/course-computational-neuroscience): recorded course, 17 lectures, ~1.9 hours, الفيزياء الحيوية — مقدمة في علوم الأعصاب الحسابية: علم الدماغ والقياسات النفسية الفيزيائية، والنشاط الكهربي للخلايا العصبية، وإشارات EEG وMEG، ونمذجة العصبون LIF ببايثون.
 - [Introduction To Immunology](https://biosyneg.com/course-introduction-to-immunology): recorded course, 7 lectures, ~3.4 hours, المناعة — دورة مسجلة باللغة العربية في أساسيات علم المناعة: الجهاز المناعي، والمناعة الفطرية، والمستضدات وMHC، والمناعة الخلوية والخلطية، والمتمّمة.
+- [Introduction To Genetics](https://biosyneg.com/course-introduction-to-genetics): recorded course, 8 lectures, ~3.4 hours, الوراثة — دورة مسجلة باللغة العربية في أساسيات علم الوراثة: من قوانين مندل والانقسام الاختزالي إلى الارتباط والخرائط الجينية، والعقيدة المركزية، ووراثة العشائر.
+- [Some Concepts in Clinical Research](https://biosyneg.com/course-some-concepts-in-clinical-research): recorded course, 9 lectures, ~1.2 hours, البحث السريري — دورة مسجلة في المفاهيم الأساسية وأخلاقيات البحث السريري: تاريخه، وقانون نورمبرغ وإعلان هلسنكي، والمبادئ الأخلاقية، والموافقة المستنيرة ولجان الأخلاقيات.
+- [Computational Neuroscience](https://biosyneg.com/course-computational-neuroscience): recorded course, 17 lectures, ~1.9 hours, الفيزياء الحيوية — مقدمة في علوم الأعصاب الحسابية: علم الدماغ والقياسات النفسية الفيزيائية، والنشاط الكهربي للخلايا العصبية، وإشارات EEG وMEG، ونمذجة العصبون LIF ببايثون.
 - [Molecular Biology](https://biosyneg.com/course-molecular-biology-course-614141): recorded course, 14 lectures, ~4.0 hours — يهدف كورس البيولوجيا الجزيئية (Molecular Biology) إلى تقديم أساس علمي قوي لفهم العمليات الجزيئية داخل الخلية، بدايةً من تركيب DNA وRNA، مرورًا بتضاعف DNA والتعبير الجيني، وصولًا…
 - [Intro To Basic Microbiology](https://biosyneg.com/course-microbiology-course-362803): recorded course, 10 lectures, ~3.8 hours, الأحياء الدقيقة الطبية — دورة مسجلة باللغة العربية في أساسيات الميكروبيولوجيا الطبية: تصنيف البكتيريا وتركيبها وأهميتها السريرية، من المكورات موجبة الجرام إلى الطفيليات.
 - [Python in Bioinformatics](https://biosyneg.com/course-python-in-bioinformatics): recorded course, 6 lectures, ~15.5 hours, المعلوماتية الحيوية — تعلّم بايثون من البداية وطبّقها في المعلوماتية الحيوية: أساسيات البرمجة، والتعامل مع الملفات والتسلسلات، وتحليل البيانات البيولوجية.
@@ -37,8 +37,9 @@
 - [R Language in Bioinformatics](https://biosyneg.com/course-r-language-in-bioinformatics): recorded course, 6 lectures, ~16.8 hours, المعلوماتية الحيوية — تعلّم لغة R من الصفر لتحليل البيانات البيولوجية: التعامل مع البيانات وتنظيفها وتحليلها إحصائيًا ورسمها، مع مشروع تطبيقي في المعلوماتية الحيوية.
 - [Study Design in Clinical Research](https://biosyneg.com/course-study-design-in-clinical-research): recorded course, 12 lectures, ~2.0 hours, البحث السريري — دورة مسجلة في تصميم الدراسات السريرية: تقارير الحالات والدراسات المقطعية ودراسات الحالات والشواهد والأتراب، والتجارب العشوائية المضبوطة ومراحلها.
 - [Basics of IVF Laboratories](https://biosyneg.com/course-basics-of-ivf-laboratories): recorded course, 11 lectures, ~7.3 hours, الطب التناسلي — دورة مسجلة باللغة العربية في أساسيات معامل الحقن المجهري وأطفال الأنابيب: تحليل السائل المنوي، وتجهيز البويضات، ونمو الأجنة حتى الكيسة الأريمية.
-- [Structural Bioinformatics, Molecular Docking and Drug Design](https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design): recorded course, 63 lectures, ~19.0 hours, المعلوماتية الحيوية — دورة عملية من 63 محاضرة في المعلوماتية الحيوية البنيوية وتصميم الأدوية بالحاسوب: اختيار الهدف، والتنبؤ ببنية البروتين، ومكتبات المركبات، والالتحام الجزيئي، وتحليل التداخلات وADMET.
 - [Computational Biology](https://biosyneg.com/course-computational-biology): recorded course, 37 lectures, ~14.5 hours, المعلوماتية الحيوية — دورة عملية في البيولوجيا الحاسوبية: قواعد البيانات الحيوية، وتحليل التسلسلات وBLAST، وتقنيات التسلسل، وتحليل بيانات DNA وRNA-Seq، والتعبير الجيني التفاضلي بلغة R.
+- [Structural Bioinformatics, Molecular Docking and Drug Design](https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design): recorded course, 63 lectures, ~19.0 hours, المعلوماتية الحيوية — دورة عملية من 63 محاضرة في المعلوماتية الحيوية البنيوية وتصميم الأدوية بالحاسوب: اختيار الهدف، والتنبؤ ببنية البروتين، ومكتبات المركبات، والالتحام الجزيئي، وتحليل التداخلات وADMET.
+- [Research Methodology in Clinical Research](https://biosyneg.com/course-research-methodology-in-clinical-research): recorded course, 11 lectures, ~1.7 hours, البحث السريري — دورة مسجلة في منهجية البحث السريري: من صياغة السؤال البحثي بإطار PICO، إلى أخذ العينات والتوزيع العشوائي والتعمية، والتمييز بين الارتباط والسببية، والتعامل مع العوامل المربكة…
 
 ## Courses by faculty
 - [كلية العلوم](https://biosyneg.com/topic-science)
@@ -55,9 +56,9 @@
 - [د. شريف عرفه](https://biosyneg.com/teacher-sherif-arafa): دكتوراه في قسم الكيمياء الحيوية، جامعة توبنغن، ألمانيا
 - [د. شيماء محمد](https://biosyneg.com/teacher-shaimaa-mohamed): مدرس الباثولوجيا الإكلينيكية، كلية الطب، جامعة عين شمس
 - [سلمى صبحي](https://biosyneg.com/teacher-salma-sobhy): باحثة في التكنولوجيا الحيوية، تطوير المستشعرات الحيوية والبيولوجيا الجزيئية
-- [د. محمود محمد](https://biosyneg.com/teacher-mahmoud-mohamed): دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
 - [د. محمد إمام](https://biosyneg.com/teacher-mohamed-emam): طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
 - [د. اسراء المليجي](https://biosyneg.com/teacher-esraa-elmeligy): أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics).
+- [د. محمود محمد](https://biosyneg.com/teacher-mahmoud-mohamed): دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
 - [د. ناردين زريف](https://biosyneg.com/teacher-nardine-zarif): رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 - [م. ندى صلاح](https://biosyneg.com/teacher-nada-salah): باحثة في علوم الأعصاب الحسابية
 
