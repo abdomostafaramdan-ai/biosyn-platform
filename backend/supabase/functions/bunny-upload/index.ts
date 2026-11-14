@@ -61,6 +61,8 @@ Deno.serve(async (req) => {
   const user = await currentUser(req);
   if (!user) return json({ error: 'unauthorized' }, 401);
   const isRole = async (fn: string) => (await asUser(req).rpc(fn)).data === true;
+  // per-user daily cap (chat_hit returns false once the limit is exceeded)
+  const allow = async (key: string, limit: number) => (await sb.rpc('chat_hit', { p_key: key + ':' + user.id, p_limit: limit })).data !== false;
 
   try {
     if (body.action === 'libraries' || body.action === 'library_videos') {
@@ -81,6 +83,7 @@ Deno.serve(async (req) => {
       if (p.status !== 'draft') return json({ error: 'already submitted' }, 409);
       const { count } = await sb.from('proposal_lessons').select('id', { count: 'exact', head: true }).eq('proposal_id', (l as any).proposal_id).not('bunny_video_id', 'is', null);
       if ((count ?? 0) > 120) return json({ error: 'too many videos' }, 429);
+      if (!(await allow('bunny-create', 60))) return json({ error: 'daily upload limit reached' }, 429);
       const guid = await createVideo(lib, `${p.title || 'Proposal'} — ${(l as any).title}`);
       await sb.from('proposal_lessons').update({ bunny_video_id: guid, bunny_library_id: lib, uploaded: false }).eq('id', (l as any).id);
       return json(await tusAuth(lib, guid));
@@ -97,6 +100,7 @@ Deno.serve(async (req) => {
         if (!staff && (p.user_id !== user.id || p.status !== 'draft')) { out[l.id] = { error: 'forbidden' }; continue; }
         if (!l.video_url) { out[l.id] = { error: 'no link' }; continue; }
         if (l.bunny_video_id) { out[l.id] = { video_id: l.bunny_video_id }; continue; }
+        if (!staff && !(await allow('bunny-import', 60))) { out[l.id] = { error: 'daily import limit reached' }; continue; }
         out[l.id] = await importFromUrl(sb, l, p.title);
       }
       return json({ results: out });
