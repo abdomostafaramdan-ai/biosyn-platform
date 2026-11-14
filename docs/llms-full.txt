@@ -295,56 +295,6 @@ Lectures:
 10. PGT and Implantation
 11. Interpretations
 
-### Computational Biology
-URL: https://biosyneg.com/course-computational-biology
-Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
-Instructors: د. اسراء المليجي — أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics).
-
-البيولوجيا الحاسوبية هي الطريق لتحويل البيانات البيولوجية الضخمة إلى نتائج يمكن فهمها ونشرها. تجمع هذه الدورة بين الشرح النظري والتطبيق العملي في 37 محاضرة، لتأخذك من أول قاعدة بيانات إلى تحليل التعبير الجيني.
-
-تبدأ الدورة بصيغ التسلسلات وقواعد البيانات الأساسية مع تطبيق عملي على NCBI وUniProt وRCSB PDB، ثم تحليل التسلسلات والمحاذاة وBLAST. بعدها تشرح مفاهيم تقنيات التسلسل: سانجر والجيل التالي (NGS) وأكسفورد نانوبور (ONT)، ثم تحليل بيانات تسلسل الحمض النووي: فحص الجودة بأداة FastQC وقراءة التقارير الجيدة والسيئة، والمحاذاة على الجينوم المرجعي (Mapping)، والعمل على سطر أوامر لينكس.
-
-ويُختتم المسار بتسلسل الحمض النووي الريبي (RNA-Seq) ومنهجية تحليل التعبير الجيني التفاضلي، مع مقدمة عملية في لغة R وتطبيق كامل لتحليل التعبير التفاضلي. الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والطب، وللباحثين الذين يريدون تحليل بيانات التسلسل بأنفسهم.
-
-Lectures:
-1. Introduction to Computational Biology
-2. Sequence Formats and Databases (Part 1)
-3. Sequence Formats and Databases (Part 2)
-4. Practice: Navigating NCBI (Part 1)
-5. Practice: Navigating NCBI (Part 2)
-6. Practice: Navigating UniProt
-7. Practice: Navigating the RCSB PDB
-8. Sequence Analysis (Part 1)
-9. Sequence Analysis (Part 2)
-10. Practice: Sequence Alignment
-11. Practice: BLAST
-12. Sequencing Concepts: Sanger Sequencing
-13. Sequencing Concepts: NGS
-14. Sequencing Concepts: Oxford Nanopore (ONT)
-15. DNA Sequencing Analysis: Quality Control with FastQC
-16. DNA Sequencing Analysis: Mapping (Part 1)
-17. DNA Sequencing Analysis: Mapping (Part 2)
-18. DNA Sequencing Analysis: Introduction to Linux
-19. Practice: Reading a Bad QC Report
-20. Practice: Reading a Good QC Report
-21. Practice: Sequencing Resources
-22. Practice: Introduction to Linux (Part 1)
-23. Practice: Introduction to Linux (Part 2)
-24. Practice: DNA Sequencing Analysis (Part 1)
-25. Practice: DNA Sequencing Analysis (Part 2)
-26. Sequencing Goals
-27. RNA Sequencing (Part 1)
-28. RNA Sequencing (Part 2)
-29. Differential Expression Analysis Methodology
-30. Practice: Exploring Important Databases
-31. Practice: Introduction to R (Part 1)
-32. Practice: Introduction to R (Part 2)
-33. Practice: Introduction to R (Part 3)
-34. Practice: Introduction to R (Part 4)
-35. Practice: Differential Expression Analysis (Part 1)
-36. Practice: Differential Expression Analysis (Part 2)
-37. Practice: Differential Expression Analysis (Part 3)
-
 ### Structural Bioinformatics, Molecular Docking and Drug Design
 URL: https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
@@ -421,6 +371,56 @@ Lectures:
 62. Protein–Ligand Interactions and ADMET (Part 7)
 63. Protein–Ligand Interactions and ADMET (Part 8)
 
+### Computational Biology
+URL: https://biosyneg.com/course-computational-biology
+Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
+Instructors: د. اسراء المليجي — أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics).
+
+البيولوجيا الحاسوبية هي الطريق لتحويل البيانات البيولوجية الضخمة إلى نتائج يمكن فهمها ونشرها. تجمع هذه الدورة بين الشرح النظري والتطبيق العملي في 37 محاضرة، لتأخذك من أول قاعدة بيانات إلى تحليل التعبير الجيني.
+
+تبدأ الدورة بصيغ التسلسلات وقواعد البيانات الأساسية مع تطبيق عملي على NCBI وUniProt وRCSB PDB، ثم تحليل التسلسلات والمحاذاة وBLAST. بعدها تشرح مفاهيم تقنيات التسلسل: سانجر والجيل التالي (NGS) وأكسفورد نانوبور (ONT)، ثم تحليل بيانات تسلسل الحمض النووي: فحص الجودة بأداة FastQC وقراءة التقارير الجيدة والسيئة، والمحاذاة على الجينوم المرجعي (Mapping)، والعمل على سطر أوامر لينكس.
+
+ويُختتم المسار بتسلسل الحمض النووي الريبي (RNA-Seq) ومنهجية تحليل التعبير الجيني التفاضلي، مع مقدمة عملية في لغة R وتطبيق كامل لتحليل التعبير التفاضلي. الدورة مناسبة لطلاب التكنولوجيا الحيوية والعلوم والصيدلة والطب، وللباحثين الذين يريدون تحليل بيانات التسلسل بأنفسهم.
+
+Lectures:
+1. Introduction to Computational Biology
+2. Sequence Formats and Databases (Part 1)
+3. Sequence Formats and Databases (Part 2)
+4. Practice: Navigating NCBI (Part 1)
+5. Practice: Navigating NCBI (Part 2)
+6. Practice: Navigating UniProt
+7. Practice: Navigating the RCSB PDB
+8. Sequence Analysis (Part 1)
+9. Sequence Analysis (Part 2)
+10. Practice: Sequence Alignment
+11. Practice: BLAST
+12. Sequencing Concepts: Sanger Sequencing
+13. Sequencing Concepts: NGS
+14. Sequencing Concepts: Oxford Nanopore (ONT)
+15. DNA Sequencing Analysis: Quality Control with FastQC
+16. DNA Sequencing Analysis: Mapping (Part 1)
+17. DNA Sequencing Analysis: Mapping (Part 2)
+18. DNA Sequencing Analysis: Introduction to Linux
+19. Practice: Reading a Bad QC Report
+20. Practice: Reading a Good QC Report
+21. Practice: Sequencing Resources
+22. Practice: Introduction to Linux (Part 1)
+23. Practice: Introduction to Linux (Part 2)
+24. Practice: DNA Sequencing Analysis (Part 1)
+25. Practice: DNA Sequencing Analysis (Part 2)
+26. Sequencing Goals
+27. RNA Sequencing (Part 1)
+28. RNA Sequencing (Part 2)
+29. Differential Expression Analysis Methodology
+30. Practice: Exploring Important Databases
+31. Practice: Introduction to R (Part 1)
+32. Practice: Introduction to R (Part 2)
+33. Practice: Introduction to R (Part 3)
+34. Practice: Introduction to R (Part 4)
+35. Practice: Differential Expression Analysis (Part 1)
+36. Practice: Differential Expression Analysis (Part 2)
+37. Practice: Differential Expression Analysis (Part 3)
+
 ### Research Methodology in Clinical Research
 URL: https://biosyneg.com/course-research-methodology-in-clinical-research
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
@@ -446,6 +446,39 @@ Lectures:
 9. How to Treat Confounding
 10. Bias
 11. Recap & Quiz
+
+### دبلومة التركيبات التجميلية (Cosmetic Formulation Diploma)
+URL: https://biosyneg.com/course-cosmetic-formulation-diploma
+Type: Live interactive · Level: Beginner · Price: 7٬500 ج.م
+Instructors: د. زينب رياض — مديرة البحث والتطوير في مجال مستحضرات التجميل
+
+لو عاوز تدخل مجال R&D في الكوزمتكس، أو تصنع منتج تجميلي وفق المعايير المصرية والأوروبية وتجهز الورق وتسجله، وعاوز تشتغل بشكل عملي وتصنع أول منتج بنفسك وتنزل المعمل تتدرب بإيدك، فالدبلومة دي مناسبة ليك.
+
+مدة الدبلومة 14 أسبوعًا (حوالي 50 ساعة) من الجلسات الأونلاين، بالإضافة إلى 12 ساعة تدريب عملي على مدار يومين. الجزء النظري جلسات أونلاين أسبوعية، والجزء العملي يتم في معمل Nano Gate: 9254 شارع هدى شعراوي، متفرع من شارع 9، المقطم.
+
+الجزء النظري (14 أسبوعًا):
+الأسبوع 1: مدخل إلى البحث والتطوير في مستحضرات التجميل وطبيعة المهنة
+الأسبوع 2: الكيمياء التطبيقية لمستحضرات التجميل (الكيمياء العضوية، pH وpKa والذوبانية، النشاط المائي وأنظمة الحفظ)
+الأسبوع 3: اختيار المواد الخام ووظائفها (1): المطرّيات، المرطبات، المنظفات السطحية، وقراءة TDS وSDS
+الأسبوع 4: اختيار المواد الخام ووظائفها (2): المواد الفعالة، معدلات القوام، المواد الحافظة، العطور والملونات
+الأسبوع 5: تركيب المستحلبات وثباتها (O/W وW/O)، واختبارات الثبات المعجلة
+الأسبوع 6: السيروم والجل والتركيبات اللامائية، وطرق إذابة وتشتيت المكونات الصعبة
+الأسبوع 7: تركيبات العناية بالشعر: الشامبو والبلسم ومنتجات التصفيف والعلاج
+الأسبوع 8: منتجات الحماية من الشمس وتركيبات العناية المتخصصة (مضاد للتقدم في السن، حب الشباب، البشرة الحساسة)
+الأسبوع 9: تقنية النانو في توصيل المكونات التجميلية
+الأسبوع 10: اللوائح العالمية وتسجيل المنتجات (FDA، لائحة الاتحاد الأوروبي EC 1223/2009، ASEAN)، وملف المنتج PIF، وإثبات الادعاءات
+الأسبوع 11: الجودة وGMP (ISO 22716) واختبارات الجودة وتوثيق الدفعات وشهادات التحليل COA
+الأسبوع 12: سلامة المنتج وفعاليته: التقييم السمي، ودراسات الفعالية، وآراء المستهلكين
+الأسبوع 13: الابتكار واتجاهات السوق وإدارة مشاريع البحث والتطوير وبرامج التركيبات
+الأسبوع 14: الذكاء الاصطناعي في البحث والتطوير التجميلي: التطبيقات والحدود
+
+الجزء العملي (يومان، 12 ساعة، في معمل Nano Gate):
+اليوم الأول: تصنيع منتجات أساسية بمكونات طبيعية وبسيطة: كريم مرطب طبيعي، سيروم زيتي، وباور شفاه أو كريم لليدين. يصنع كل متدرب المنتجات الثلاثة بنفسه من البداية للنهاية.
+اليوم الثاني: تصنيع منتجات احترافية بمكونات تجميلية: كريم احترافي بمستحلب ومادة حافظة مع ضبط الـ pH، سيروم حمض الهيالورونيك، وسيروم فيتامين C أو النياسيناميد، مع حساب النسب بدقة وتعبئة ورقة التركيب وفحص الثبات والجودة لكل منتج.
+
+فرصة تدريب لمدة شهر مجانًا في أحد المصانع للمتميزين في الدبلومة، وعددهم من 3 إلى 5 أشخاص.
+
+التكلفة 7500 جنيه بدلًا من 10000 جنيه.
 
 ## FAQ
 

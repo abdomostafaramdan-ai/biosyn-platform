@@ -1,6 +1,6 @@
 {
- "built_at": "2026-11-14T18:03:54+00:00",
- "sitemap_urls": 61,
+ "built_at": "2026-11-14T18:33:12+00:00",
+ "sitemap_urls": 63,
  "indexable": [
   {
    "slug": "introduction-to-genetic-engineering",
@@ -63,19 +63,24 @@
    "url": "https://biosyneg.com/course-basics-of-ivf-laboratories.html"
   },
   {
-   "slug": "computational-biology",
-   "title": "Computational Biology",
-   "url": "https://biosyneg.com/course-computational-biology.html"
-  },
-  {
    "slug": "structural-bioinformatics-molecular-docking-drug-design",
    "title": "Structural Bioinformatics, Molecular Docking and Drug Design",
    "url": "https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design.html"
   },
   {
+   "slug": "computational-biology",
+   "title": "Computational Biology",
+   "url": "https://biosyneg.com/course-computational-biology.html"
+  },
+  {
    "slug": "research-methodology-in-clinical-research",
    "title": "Research Methodology in Clinical Research",
    "url": "https://biosyneg.com/course-research-methodology-in-clinical-research.html"
+  },
+  {
+   "slug": "cosmetic-formulation-diploma",
+   "title": "دبلومة التركيبات التجميلية (Cosmetic Formulation Diploma)",
+   "url": "https://biosyneg.com/course-cosmetic-formulation-diploma.html"
   }
  ],
  "noindex": [],
@@ -83,7 +88,7 @@
   {
    "id": "science",
    "name": "كلية العلوم",
-   "courses": 14
+   "courses": 15
   },
   {
    "id": "biotech",
@@ -93,7 +98,7 @@
   {
    "id": "pharmacy",
    "name": "كلية الصيدلة",
-   "courses": 11
+   "courses": 12
   },
   {
    "id": "agriculture",
@@ -157,8 +162,12 @@
   {
    "name": "د. ناردين زريف",
    "url": "https://biosyneg.com/teacher-nardine-zarif.html"
+  },
+  {
+   "name": "د. زينب رياض",
+   "url": "https://biosyneg.com/teacher-zienab-ryad.html"
   }
  ],
  "ai_training": true,
- "changed": 8
+ "changed": 11
 }
