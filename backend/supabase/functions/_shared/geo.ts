@@ -3,7 +3,7 @@
 const ISO2 = /^[A-Z]{2}$/;
 export async function countryOf(req: Request): Promise<string> {
   const h = req.headers;
-  for (const k of ['cf-ipcountry', 'x-country-code', 'x-vercel-ip-country']) {
+  for (const k of ['cf-ipcountry']  /* only the header Cloudflare sets; x-country-code / x-vercel-ip-country are client-spoofable */) {
     const v = (h.get(k) || '').toUpperCase();
     if (ISO2.test(v) && v !== 'XX') return v;
   }

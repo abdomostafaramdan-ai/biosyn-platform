@@ -35,10 +35,12 @@ export const markProcessed = (sb: ReturnType<typeof admin>, gateway: string, eve
 
 // Confirms the amount the gateway says it collected matches what we asked for, then grants access.
 // paidMinor is in minor units with `decimals` digits (Stripe KWD/BHD/OMR/JOD = 3, everything else 2).
-export async function settle(sb: ReturnType<typeof admin>, paymentId: string, paidMinor: number | null, gatewayRef: string | null, decimals = 2) {
-  const { data: p, error } = await sb.from('payments').select('id,status,amount_egp,fee_egp,currency,amount_local,fee_local').eq('id', paymentId).single();
+export async function settle(sb: ReturnType<typeof admin>, paymentId: string, paidMinor: number | null, gatewayRef: string | null, decimals = 2, gateway: string | null = null) {
+  const { data: p, error } = await sb.from('payments').select('id,status,gateway,amount_egp,fee_egp,currency,amount_local,fee_local').eq('id', paymentId).single();
   if (error || !p) return { ok: false, reason: 'payment not found' };
   if (p.status === 'paid') return { ok: true, reason: 'already paid' };
+  // a webhook may only settle payments that were created for its own gateway (e.g. never a manual/free-path payment)
+  if (gateway && String(p.gateway) !== gateway) return { ok: false, reason: `gateway mismatch: payment is ${p.gateway}` };
   const local = p.currency && p.currency !== 'EGP';
   const total = local ? Number(p.amount_local) + Number(p.fee_local) : Number(p.amount_egp) + Number(p.fee_egp);
   const expected = Math.round(total * 10 ** decimals), paidCents = paidMinor;

@@ -1,4 +1,4 @@
--- 0075: PENDING on live DB (apply_migration was cancelled by client; needs owner approval)
+-- 0075: applied to live DB (lectures, lecture_videos, course_proposals policies)
 
 -- Instructors may only edit lectures / lecture videos of DRAFT courses; published or archived
 -- courses are changed by admins only (stops swapping Bunny video ids on live courses).

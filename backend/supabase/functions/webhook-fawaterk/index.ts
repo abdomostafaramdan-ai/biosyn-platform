@@ -28,7 +28,7 @@ async function confirm(sb: Sb, paymentId: string) {
   const expected = local ? Number(p.amount_local) + Number(p.fee_local) : Number(p.amount_egp) + Number(p.fee_egp);
   // Fawaterk may add its own commission on top when the vendor passes fees to the customer: never accept less
   if (Number(inv.total) + 0.01 < expected) return { ok: false, reason: `amount too low: ${inv.total} < ${expected}`, status: 'pending' };
-  const s = await settle(sb, p.id, null, String(inv.id ?? inv.invoice_id ?? p.gateway_ref));
+  const s = await settle(sb, p.id, null, String(inv.id ?? inv.invoice_id ?? p.gateway_ref), 2, 'fawaterk');
   return { ...s, status: s.ok ? 'paid' : 'pending' };
 }
 
