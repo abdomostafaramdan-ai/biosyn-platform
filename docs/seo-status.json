@@ -1,5 +1,5 @@
 {
- "built_at": "2026-11-14T17:55:25+00:00",
+ "built_at": "2026-11-14T18:03:54+00:00",
  "sitemap_urls": 61,
  "indexable": [
   {
@@ -151,14 +151,14 @@
    "url": "https://biosyneg.com/teacher-mahmoud-mohamed.html"
   },
   {
-   "name": "د. ناردين زريف",
-   "url": "https://biosyneg.com/teacher-nardine-zarif.html"
-  },
-  {
    "name": "م. ندى صلاح",
    "url": "https://biosyneg.com/teacher-nada-salah.html"
+  },
+  {
+   "name": "د. ناردين زريف",
+   "url": "https://biosyneg.com/teacher-nardine-zarif.html"
   }
  ],
  "ai_training": true,
- "changed": 5
+ "changed": 8
 }

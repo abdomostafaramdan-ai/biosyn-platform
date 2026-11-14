@@ -59,8 +59,8 @@
 - [د. محمد إمام](https://biosyneg.com/teacher-mohamed-emam): طالب دكتوراه، المعلوماتية الحيوية، كلية العلوم، جامعة بورتو، البرتغال
 - [د. اسراء المليجي](https://biosyneg.com/teacher-esraa-elmeligy): أخصائية معلوماتية حيوية، حاصلة على بكالوريوس العلوم، وتدرس حاليًا الماجستير في علم النسخ (Transcriptomics).
 - [د. محمود محمد](https://biosyneg.com/teacher-mahmoud-mohamed): دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
-- [د. ناردين زريف](https://biosyneg.com/teacher-nardine-zarif): رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
 - [م. ندى صلاح](https://biosyneg.com/teacher-nada-salah): باحثة في علوم الأعصاب الحسابية
+- [د. ناردين زريف](https://biosyneg.com/teacher-nardine-zarif): 
 
 ## Articles
 - [البيولوجيا الحاسوبية: من قواعد البيانات الحيوية إلى تحليل التعبير الجيني](https://biosyneg.com/blog-computational-biology): مقال تعريفي يشرح كيف تُحوَّل البيانات البيولوجية الضخمة إلى معرفة، من البحث في قواعد البيانات ومحاذاة التسلسلات وBLAST، إلى تقنيات التسلسل وتحليل RNA-Seq بلغة…

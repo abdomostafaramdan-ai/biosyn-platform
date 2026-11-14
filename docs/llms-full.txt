@@ -91,7 +91,7 @@ Lectures:
 ### Some Concepts in Clinical Research
 URL: https://biosyneg.com/course-some-concepts-in-clinical-research
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
-Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
+Instructors: د. ناردين زريف
 
 تقدّم هذه الدورة المفاهيم الأساسية للبحث السريري من زاوية تاريخية وأخلاقية، لتفهم لماذا وُضعت قواعد البحث على البشر بهذا الشكل.
 
@@ -210,7 +210,7 @@ Lectures:
 ### How to Read and Understand a Research Paper
 URL: https://biosyneg.com/course-how-to-read-a-research-paper
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
-Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
+Instructors: د. ناردين زريف
 
 الأبحاث العلمية هي أساس العمل الأكاديمي، لكن قراءتها وفهمها قد يكونان صعبين في البداية. تقدّم هذه الدورة طريقة عملية خطوة بخطوة لقراءة أي بحث علمي وفهمه في وقت قصير.
 
@@ -249,7 +249,7 @@ Lectures:
 ### Study Design in Clinical Research
 URL: https://biosyneg.com/course-study-design-in-clinical-research
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
-Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
+Instructors: د. ناردين زريف
 
 اختيار تصميم الدراسة هو أول قرار يحدد قيمة أي بحث سريري. تشرح هذه الدورة أنواع تصاميم الدراسات في البحث الطبي بطريقة منظمة، بدءًا من تقارير الحالات وسلاسلها، مرورًا بالدراسات المقطعية (Cross-sectional) ودراسات الحالات والشواهد (Case-control) ودراسات الأتراب (Cohort)، وصولًا إلى الدراسات التجريبية.
 
@@ -424,7 +424,7 @@ Lectures:
 ### Research Methodology in Clinical Research
 URL: https://biosyneg.com/course-research-methodology-in-clinical-research
 Type: Recorded (subscription) · Level: Beginner · Price: ضمن اشتراك Biosyn، يبدأ من 349 ج.م شهريًا
-Instructors: د. ناردين زريف — رئيس قسم البحث السريري، مستشفى الأنفوشي، الإسكندرية
+Instructors: د. ناردين زريف
 
 قيمة أي بحث سريري تبدأ من منهجيته؛ فسؤال بحثي غير واضح، أو عينة غير ممثلة، أو عامل مربك لم يُضبط، يكفي لإضعاف نتائج دراسة كاملة. تشرح هذه الدورة أسس منهجية البحث السريري خطوة بخطوة، بالترتيب الذي تحتاجه عند تصميم بحثك أو تقييم بحث منشور.
 
