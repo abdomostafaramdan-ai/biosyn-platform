@@ -39,10 +39,10 @@ async function findByTag(lib: string, tag: string) {
 }
 async function importFromUrl(sb: any, lesson: any, courseTitle: string) {
   if (isYouTube(lesson.video_url)) return { error: 'youtube' };
-  const lib = defaultLib(), tag = `[bp-${String(lesson.id).slice(0, 8)}]`;
+  const lib = defaultLib(), tag = `[bp-${String(lesson.id)}]`;
   let guid = await findByTag(lib, tag);
   if (!guid) {
-    const r = await fetch(`${STREAM}/library/${lib}/videos/fetch`, { method: 'POST', headers: { AccessKey: await libKey(lib), 'Content-Type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ url: directUrl(lesson.video_url), title: `${courseTitle || 'Course'} — ${lesson.title} ${tag}`.slice(0, 200) }) });
+    const r = await fetch(`${STREAM}/library/${lib}/videos/fetch`, { method: 'POST', headers: { AccessKey: await libKey(lib), 'Content-Type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ url: directUrl(lesson.video_url), title: `${`${courseTitle || 'Course'} — ${lesson.title}`.slice(0, 200 - tag.length - 1)} ${tag}` }) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok || d.success === false) return { error: 'fetch failed: ' + (d.message || r.status) };
     for (let i = 0; i < 6 && !guid; i++) { await new Promise((ok) => setTimeout(ok, 1500)); guid = await findByTag(lib, tag); }

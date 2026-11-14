@@ -585,8 +585,8 @@
       <h1>${esc(f.title)}</h1>${f.description ? `<p class="bx-hint" style="margin:0 0 24px;white-space:pre-line">${esc(f.description)}</p>` : ''}`;
     const done = (title, text, extra) => (root.innerHTML = head.replace(/<p class="bx-hint"[\s\S]*<\/p>$/, '') + `<div class="bx-formcard" style="text-align:center;display:grid;gap:12px;justify-items:center"><span class="bx-cat-ic" style="width:56px;height:56px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span><h2 style="margin:0">${title}</h2>${text ? `<p class="bx-hint" style="margin:0">${text}</p>` : ''}${extra || ''}<a class="bs-btn bs-btn-secondary" href="index.html">العودة إلى الرئيسية</a></div>`);
     const readField = (form, x) => {
-      if (x.type === 'radio' || x.type === 'checkbox') return $$(`[data-k="${x.id}"] input:checked`, form).map((i) => i.value).join('، ');
-      const el = $(`[data-k="${x.id}"]`, form); return el ? el.value.trim() : '';
+      if (x.type === 'radio' || x.type === 'checkbox') return $$(`[data-k="${CSS.escape(String(x.id))}"] input:checked`, form).map((i) => i.value).join('، ');
+      const el = $(`[data-k="${CSS.escape(String(x.id))}"]`, form); return el ? el.value.trim() : '';
     };
     const send = (data) => sb.rpc('submit_form_graded', { p_slug: f.slug, p_data: data });
     const result = (r) => {
