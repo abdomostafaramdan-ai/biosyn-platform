@@ -570,13 +570,13 @@
     if (!f) return fail('النموذج غير متاح', 'قد يكون مغلقًا أو الرابط غير صحيح.');
     document.title = f.title + ' | Biosyn Eg'; window.setMeta && setMeta(f.title + ' | Biosyn Eg', (f.description || '').slice(0, 160));
     const fld = (x) => {
-      const id = 'ff-' + x.id, req = x.required ? ' required' : '', star = x.required ? ' *' : '', opts = (x.options || []).filter(Boolean);
+      const kid = esc(x.id), id = 'ff-' + kid, req = x.required ? ' required' : '', star = x.required ? ' *' : '', opts = (x.options || []).filter(Boolean);
       const lab = `<label for="${id}">${esc(x.label)}${star}</label>`;
-      if (x.type === 'textarea') return `<div class="bx-field">${lab}<textarea id="${id}" class="bx-textarea" rows="4" data-k="${x.id}"${req}></textarea></div>`;
-      if (x.type === 'select') return `<div class="bx-field">${lab}<select id="${id}" class="bx-select" data-k="${x.id}"${req}><option value="">اختر…</option>${opts.map((o) => `<option>${esc(o)}</option>`).join('')}</select></div>`;
-      if (x.type === 'radio' || x.type === 'checkbox') return `<fieldset class="bx-field bx-fchoices" data-k="${x.id}" data-type="${x.type}"${x.required ? ' data-req="1"' : ''}><legend>${esc(x.label)}${star}</legend>${opts.map((o, i) => `<label class="bx-check"><input type="${x.type}" name="${id}" value="${esc(o)}"> ${esc(o)}</label>`).join('')}</fieldset>`;
+      if (x.type === 'textarea') return `<div class="bx-field">${lab}<textarea id="${id}" class="bx-textarea" rows="4" data-k="${kid}"${req}></textarea></div>`;
+      if (x.type === 'select') return `<div class="bx-field">${lab}<select id="${id}" class="bx-select" data-k="${kid}"${req}><option value="">اختر…</option>${opts.map((o) => `<option>${esc(o)}</option>`).join('')}</select></div>`;
+      if (x.type === 'radio' || x.type === 'checkbox') return `<fieldset class="bx-field bx-fchoices" data-k="${kid}" data-type="${x.type}"${x.required ? ' data-req="1"' : ''}><legend>${esc(x.label)}${star}</legend>${opts.map((o, i) => `<label class="bx-check"><input type="${x.type}" name="${id}" value="${esc(o)}"> ${esc(o)}</label>`).join('')}</fieldset>`;
       const type = { email: 'email', phone: 'tel', number: 'number', date: 'date' }[x.type] || 'text';
-      return `<div class="bx-field">${lab}<input id="${id}" class="bx-input" type="${type}" data-k="${x.id}"${type === 'email' || type === 'tel' || type === 'number' ? ' dir="ltr"' : ''}${req}></div>`;
+      return `<div class="bx-field">${lab}<input id="${id}" class="bx-input" type="${type}" data-k="${kid}"${type === 'email' || type === 'tel' || type === 'number' ? ' dir="ltr"' : ''}${req}></div>`;
     };
     const ST = f.settings || {}, FL = f.fields || [];
     const timed = !!(ST.lock_on_leave || ST.total_minutes || FL.some((x) => x.time_limit));
