@@ -37,10 +37,9 @@
 - [R Language in Bioinformatics](https://biosyneg.com/course-r-language-in-bioinformatics): recorded course, 6 lectures, ~16.8 hours, المعلوماتية الحيوية — تعلّم لغة R من الصفر لتحليل البيانات البيولوجية: التعامل مع البيانات وتنظيفها وتحليلها إحصائيًا ورسمها، مع مشروع تطبيقي في المعلوماتية الحيوية.
 - [Study Design in Clinical Research](https://biosyneg.com/course-study-design-in-clinical-research): recorded course, 12 lectures, ~2.0 hours, البحث السريري — دورة مسجلة في تصميم الدراسات السريرية: تقارير الحالات والدراسات المقطعية ودراسات الحالات والشواهد والأتراب، والتجارب العشوائية المضبوطة ومراحلها.
 - [Basics of IVF Laboratories](https://biosyneg.com/course-basics-of-ivf-laboratories): recorded course, 11 lectures, ~7.3 hours, الطب التناسلي — دورة مسجلة باللغة العربية في أساسيات معامل الحقن المجهري وأطفال الأنابيب: تحليل السائل المنوي، وتجهيز البويضات، ونمو الأجنة حتى الكيسة الأريمية.
-- [Structural Bioinformatics, Molecular Docking and Drug Design](https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design): recorded course, 63 lectures, ~19.0 hours, المعلوماتية الحيوية — دورة عملية من 63 محاضرة في المعلوماتية الحيوية البنيوية وتصميم الأدوية بالحاسوب: اختيار الهدف، والتنبؤ ببنية البروتين، ومكتبات المركبات، والالتحام الجزيئي، وتحليل التداخلات وADMET.
 - [Computational Biology](https://biosyneg.com/course-computational-biology): recorded course, 37 lectures, ~14.5 hours, المعلوماتية الحيوية — دورة عملية في البيولوجيا الحاسوبية: قواعد البيانات الحيوية، وتحليل التسلسلات وBLAST، وتقنيات التسلسل، وتحليل بيانات DNA وRNA-Seq، والتعبير الجيني التفاضلي بلغة R.
+- [Structural Bioinformatics, Molecular Docking and Drug Design](https://biosyneg.com/course-structural-bioinformatics-molecular-docking-drug-design): recorded course, 63 lectures, ~19.0 hours, المعلوماتية الحيوية — دورة عملية من 63 محاضرة في المعلوماتية الحيوية البنيوية وتصميم الأدوية بالحاسوب: اختيار الهدف، والتنبؤ ببنية البروتين، ومكتبات المركبات، والالتحام الجزيئي، وتحليل التداخلات وADMET.
 - [Research Methodology in Clinical Research](https://biosyneg.com/course-research-methodology-in-clinical-research): recorded course, 11 lectures, ~1.7 hours, البحث السريري — دورة مسجلة في منهجية البحث السريري: من صياغة السؤال البحثي بإطار PICO، إلى أخذ العينات والتوزيع العشوائي والتعمية، والتمييز بين الارتباط والسببية، والتعامل مع العوامل المربكة…
-- [دبلومة التركيبات التجميلية (Cosmetic Formulation Diploma)](https://biosyneg.com/course-cosmetic-formulation-diploma): live interactive course, التركيبات التجميلية — ادخل مجال البحث والتطوير في مستحضرات التجميل: 14 أسبوعًا أونلاين مع تدريب عملي مكثف على تصنيع أول منتجاتك، وتحضير ملف التسجيل وفق المعايير المصرية والأوروبية.
 
 ## Courses by faculty
 - [كلية العلوم](https://biosyneg.com/topic-science)
@@ -62,7 +61,6 @@
 - [د. محمود محمد](https://biosyneg.com/teacher-mahmoud-mohamed): دكتوراه العلوم الصيدلانية في الميكروبيولوجيا والمناعة، كلية الصيدلة، جامعة الأزهر
 - [م. ندى صلاح](https://biosyneg.com/teacher-nada-salah): باحثة في علوم الأعصاب الحسابية
 - [د. ناردين زريف](https://biosyneg.com/teacher-nardine-zarif): 
-- [د. زينب رياض](https://biosyneg.com/teacher-zienab-ryad): مديرة البحث والتطوير في مجال مستحضرات التجميل
 
 ## Articles
 - [البيولوجيا الحاسوبية: من قواعد البيانات الحيوية إلى تحليل التعبير الجيني](https://biosyneg.com/blog-computational-biology): مقال تعريفي يشرح كيف تُحوَّل البيانات البيولوجية الضخمة إلى معرفة، من البحث في قواعد البيانات ومحاذاة التسلسلات وBLAST، إلى تقنيات التسلسل وتحليل RNA-Seq بلغة…
