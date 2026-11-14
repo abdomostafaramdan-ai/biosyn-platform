@@ -16,6 +16,20 @@
     store.set(session); emit();
   }
 
+  // Leaked-password check (HaveIBeenPwned k-anonymity: only the first 5 chars of the SHA-1 leave the browser).
+  // Fails open if the service is unreachable, so sign-up never breaks because of it.
+  async function assertNotPwned(password) {
+    try {
+      const buf = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(password));
+      const h = [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+      const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 3000);
+      const r = await fetch('https://api.pwnedpasswords.com/range/' + h.slice(0, 5), { signal: ctl.signal, headers: { 'Add-Padding': 'true' } });
+      clearTimeout(t);
+      if (!r.ok) return;
+      const hit = (await r.text()).split('\n').some((l) => { const [suf, n] = l.trim().split(':'); return suf === h.slice(5) && Number(n) > 0; });
+      if (hit) throw Object.assign(new Error('كلمة المرور هذه ظهرت في تسريبات بيانات معروفة. اختر كلمة مرور أخرى أقوى.'), { pwned: true });
+    } catch (e) { if (e && e.pwned) throw e; }
+  }
   async function raw(path, { method = 'GET', body, headers = {}, auth = true, prefer } = {}) {
     const h = { apikey: C.SUPABASE_KEY, ...headers };
     if (body !== undefined) h['Content-Type'] = 'application/json';
@@ -52,6 +66,7 @@
     get user() { return session && session.user; },
     auth: {
       async signUp(email, password, fullName, extra) {
+        await assertNotPwned(password);
         const r = await raw('/auth/v1/signup', { method: 'POST', body: { email, password, data: { full_name: fullName, ...(extra || {}) } }, auth: false });
         if (r.access_token) setSession(r);
         return r; // no access_token => the project requires email confirmation
@@ -62,7 +77,7 @@
       // the reset link lands on login.html, which then asks for the new password
       resend: (email) => raw('/auth/v1/resend', { method: 'POST', body: { type: 'signup', email }, auth: false }),
       async recover(email) { await raw('/auth/v1/recover?redirect_to=' + encodeURIComponent(new URL('login.html?mode=reset', location.href).href), { method: 'POST', body: { email }, auth: false }); },
-      updatePassword: (password) => raw('/auth/v1/user', { method: 'PUT', body: { password } }),
+      async updatePassword(password) { await assertNotPwned(password); return raw('/auth/v1/user', { method: 'PUT', body: { password } }); },
       lastType: null,
       async signOut() { try { await raw('/auth/v1/logout', { method: 'POST' }); } catch {} setSession(null); },
       // handle the #access_token=... redirect after email confirmation / recovery
