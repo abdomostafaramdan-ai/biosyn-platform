@@ -34,7 +34,7 @@
           ${D.stat('مشاهدات هذا الشهر', n(sum('views_month', rec)), 'مشاهدة واحدة لكل طالب في كل دورة')}
           ${D.stat('يشاهدون الآن', `<span class="bx-live bx-live-lg"><i></i>${n(sum('watching_now'))}</span>`, 'آخر دقيقتين')}
           ${D.stat('نشطين آخر 24 ساعة', n(sum('active_today')), n(sum('viewers_total', rec)) + ' طالب شاهدوا إجمالًا')}
-          ${D.stat(opt.admin ? 'أرباح المحاضرين المتوقعة' : 'أرباحك المتوقعة هذا الشهر', D.money(sum('est_earnings_month', rec)), '30٪ من قيمة المشاهدات · تُعتمد في بداية الشهر')}
+          ${opt.admin ? D.stat('أرباح المحاضرين المتوقعة', D.money(sum('est_earnings_month', rec)), '30٪ من قيمة المشاهدات · تُعتمد في بداية الشهر') : ''}
         </div>
         ${opt.admin && unlinked ? `<div class="bx-warnnote" style="margin-top:16px">توجد ${unlinked} دورة عليها مشاهدات وغير مرتبطة بحساب محاضر، لذا لن تُحتسب أرباحها لأحد. افتح الدورة من «الدورات» واختر المحاضر من حساباته.</div>` : ''}
         <div class="bx-payfilters" style="margin-top:20px">
