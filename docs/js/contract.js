@@ -29,7 +29,7 @@
     <header class="kc-head"><img src="img/biosyn-logo-light.png" alt="Biosyn Eg" onerror="this.src='img/biosyn-logo.png'"><div><b>${esc(c.title)}</b><small>الإصدار ${esc(c.version)}${c.id ? ' · رقم الاتفاقية ' + esc(String(c.id).slice(0, 8).toUpperCase()) : ''}</small></div></header>
     <div class="kc-body">${bodyHTML(c.body)}</div>
     <section class="kc-sign">
-      <div><span>الطرف الأول</span><b>Biosyn Eg</b><small>يمثلها: ${esc(window.FOUNDER.name)} (${esc(window.FOUNDER.role)}) · biosyneg.com</small>${window.__founderSig ? `<img class="kc-sig" src="${window.__founderSig}" alt="توقيع ${esc(window.FOUNDER.name)}">` : ''}<div class="kc-stamp">Biosyn Eg<br><small>معتمد إلكترونيًا</small></div></div>
+      <div><span>الطرف الأول</span><b>Biosyn Eg</b><small>يمثلها: ${esc(window.FOUNDER.name)} (${esc(window.FOUNDER.role)}) · biosyneg.com</small>${window.__founderSig ? `<img class="kc-sig" src="${window.__founderSig}" alt="توقيع ${esc(window.FOUNDER.name)}">` : ''}</div>
       <div><span>الطرف الثاني (المحاضر)</span><b>${esc(c.signer_name || '—')}</b>${c.signature_png ? `<img class="kc-sig" src="${esc(c.signature_png)}" alt="توقيع المحاضر">` : '<div class="kc-sig kc-sig-empty">التوقيع</div>'}<small>${c.signed_at ? 'وقّع في ' + esc(fmt(c.signed_at)) : ''}</small></div>
     </section>
     ${c.signed_at ? `<footer class="kc-audit"><b>سجل التوقيع الإلكتروني</b>
@@ -89,13 +89,7 @@
     ctx.fillStyle = '#5d6088'; ctx.font = `400 ${11 * K}px ${FONT}`; ctx.fillText('الطرف الأول', colR, y); ctx.fillText('الطرف الثاني (المحاضر)', colL, y);
     y += 22 * K; ctx.fillStyle = '#010232'; ctx.font = `700 ${14 * K}px ${FONT}`; ctx.fillText('Biosyn Eg', colR, y); ctx.fillText(c.signer_name || '—', colL, y);
     ctx.fillStyle = '#5d6088'; ctx.font = `400 ${11 * K}px ${FONT}`; ctx.fillText(`يمثلها: ${window.FOUNDER.name} (${window.FOUNDER.role})`, colR, y + 20 * K);
-    if (fsig) { const fh = 62 * K, fw = Math.min(190 * K, fsig.width * fh / fsig.height); ctx.drawImage(fsig, colR - 132 * K - fw, y + 40 * K, fw, fh); ctx.fillStyle = '#1a1d3a'; ctx.fillRect(colR - 132 * K - 190 * K, y + 106 * K, 190 * K, 1.5 * K); }
-    // stamp
-    const sx = colR - 70 * K, sy = y + 72 * K, r = 52 * K;
-    ctx.save(); ctx.translate(sx, sy); ctx.rotate(-0.14); ctx.strokeStyle = '#3a2a8c'; ctx.lineWidth = 2.5 * K;
-    ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.stroke(); ctx.beginPath(); ctx.arc(0, 0, r - 7 * K, 0, Math.PI * 2); ctx.lineWidth = 1 * K; ctx.stroke();
-    ctx.fillStyle = '#3a2a8c'; ctx.textAlign = 'center'; ctx.font = `800 ${13 * K}px ${FONT}`; ctx.fillText('Biosyn Eg', 0, -2 * K);
-    ctx.font = `600 ${10 * K}px ${FONT}`; ctx.fillText('معتمد إلكترونيًا', 0, 16 * K); ctx.restore(); ctx.textAlign = 'right';
+    if (fsig) { const fh = 62 * K, fw = Math.min(190 * K, fsig.width * fh / fsig.height); ctx.drawImage(fsig, colR - fw, y + 34 * K, fw, fh); ctx.fillStyle = '#1a1d3a'; ctx.fillRect(colR - 240 * K, y + 100 * K, 240 * K, 1.5 * K); }
     if (sig) { const sh = 70 * K, sw = Math.min(240 * K, sig.width * sh / sig.height); ctx.drawImage(sig, colL - sw, y + 12 * K, sw, sh); }
     ctx.fillStyle = '#1a1d3a'; ctx.fillRect(colL - 240 * K, y + 88 * K, 240 * K, 1.5 * K);
     if (c.signed_at) { ctx.fillStyle = '#5d6088'; ctx.font = `400 ${11 * K}px ${FONT}`; ctx.fillText('وقّع في ' + fmt(c.signed_at), colL, y + 108 * K); }
