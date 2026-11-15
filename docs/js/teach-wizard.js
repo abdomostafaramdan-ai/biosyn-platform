@@ -194,9 +194,12 @@
     const n = L.length, withVid = L.filter((l) => l.uploaded || l.video_url).length;
     root.innerHTML = '<div class="bx-loading">جارٍ تجهيز الاتفاقية…</div>';
     let K = null, signed = null;
+    // identity document (contract v3+): type, number, two prepared photos and the OCR verdict
+    const ID = { type: 'national_id', num: '', front: null, back: null, check: null, tries: 0, busy: null };
+    const renderK = () => sb.rpc('render_contract_id', { p_kind: 'instructor_recorded', p_proposal: P.id, p_id_type: ID.type, p_id_number: ID.num || null }).then((r) => { r.__num = ID.num; r.__type = ID.type; return r; });
     try {
-      [K, signed] = await Promise.all([sb.rpc('render_contract', { p_kind: 'instructor_recorded', p_proposal: P.id }),
-        sb.get('contracts', { select: 'id,signed_at,pdf_path', proposal_id: 'eq.' + P.id, status: 'eq.signed', limit: 1 }).then((r) => r[0] || null)]);
+      [K, signed] = await Promise.all([renderK(),
+        sb.get('contracts', { select: 'id,signed_at,pdf_path', proposal_id: 'eq.' + P.id, status: 'eq.signed', limit: 1 }).then((r) => r[0] || null), window.loadFounderSig ? window.loadFounderSig() : null]);
     } catch (x) { root.innerHTML = `<div class="bx-empty-big"><b>تعذّر تحميل الاتفاقية</b>${esc(err(x))}</div>`; return; }
     root.innerHTML = `<form class="bx-form" id="wz4" novalidate style="gap:16px">
       <h4 class="bx-stephead"><span>المراجعة والتوقيع والإرسال<small>راجع البيانات، واقرأ اتفاقية النشر ووقّع عليها، ثم أرسل. بعد الإرسال لن تتمكن من التعديل حتى يراجع الفريق طلبك.</small></span></h4>
@@ -205,6 +208,17 @@
       <h4 class="bx-stephead" style="margin-top:8px"><span>اتفاقية نشر الدورة<small>اتفاقية واحدة لكل دورة، تُحفظ منها نسخة PDF في حسابك ولدينا، ويصلك بريد إلكتروني بها.</small></span></h4>
       ${signed ? `<div class="kc-ok"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>وقّعت الاتفاقية ✓ · رقم <b dir="ltr">${esc(signed.id.slice(0, 8).toUpperCase())}</b> · <a class="bx-link" href="contract.html?id=${signed.id}" target="_blank">عرض الاتفاقية</a></span></div>`
         : `<div class="kc-box" tabindex="0" aria-label="نص الاتفاقية">${window.contractDoc(K)}</div>
+${K.needs_id ? `<div class="kc-idbox" id="k-id">
+        <b>إثبات الشخصية *</b>
+        <div class="kc-idtype" role="radiogroup" aria-label="نوع المستند"><label class="bx-check"><input type="radio" name="k-idt" value="national_id" checked> بطاقة رقم قومي مصرية</label><label class="bx-check"><input type="radio" name="k-idt" value="passport"> جواز سفر (لغير المصريين)</label></div>
+        <div class="bx-field"><label for="k-idn" id="k-idn-l">الرقم القومي (14 رقم كما في البطاقة)</label><input id="k-idn" class="bx-input" dir="ltr" inputmode="numeric" maxlength="20" autocomplete="off" placeholder="29901011234567"><small class="bx-hint" id="k-idn-h"></small></div>
+        <div class="kc-idfiles">
+          <label class="kc-idfile"><input type="file" accept="image/*" id="k-idf" hidden><span data-ph>صورة <b data-side>وجه البطاقة</b><small>اضغط للرفع أو التصوير</small></span><img alt="" hidden></label>
+          <label class="kc-idfile"><input type="file" accept="image/*" id="k-idb" hidden><span data-ph>صورة <b data-side>ظهر البطاقة</b><small>اضغط للرفع أو التصوير</small></span><img alt="" hidden></label>
+        </div>
+        <div class="bx-formmsg" id="k-idmsg" aria-live="polite"></div>
+        <small class="bx-hint">صوّر المستند كاملًا على سطح غامق في إضاءة جيدة ومن غير انعكاس. بيتفحص تلقائيًا على جهازك، وبيتحفظ بشكل سري ومحدش يشوفه غير فريق المراجعة.</small>
+      </div>` : ''}
       <div class="kc-signform">
         <div class="bx-field"><label for="k-name">اكتب اسمك الكامل كما في البطاقة *</label><input id="k-name" class="bx-input" autocomplete="name" maxlength="80" placeholder="الاسم ثلاثي على الأقل"></div>
         <div class="bx-field"><label>توقيعك *</label><div class="kc-pad"><canvas id="k-pad" aria-label="مساحة التوقيع"></canvas><span>وقّع هنا بالفأرة أو بإصبعك</span><button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" id="k-clear">مسح</button></div></div>
@@ -213,6 +227,65 @@
       ${foot(back(), `<button type="submit" class="bs-btn bs-btn-primary bs-btn-lg">${signed ? 'إرسال للمراجعة' : 'توقيع الاتفاقية وإرسال الدورة'}</button>`)}</form>`;
     const pad = signed ? null : window.signaturePad($('#k-pad', root));
     if (pad) $('#k-clear', root).onclick = () => pad.clear();
+    const idOK = () => ID.type === 'passport' ? /^[A-Z0-9]{6,15}$/.test(ID.num) : !!window.IdScan.nidInfo(ID.num);
+    const idSay = (t, k) => { const e = $('#k-idmsg', root); if (e) { e.className = 'bx-formmsg' + (k ? ' ' + k : ''); e.textContent = t; } };
+    const VERDICT = {
+      match: ['✓ اتأكدنا إن ده مستند إثبات شخصية والرقم مطابق.', 'ok'],
+      card: ['المستند اتعرف، بس الرقم مش واضح كفاية في الصورة. هيراجعه الفريق، أو صوّره تاني بوضوح أكبر.', ''],
+      unclear: ['مش واضح إن الصورة دي للمستند المطلوب. صوّره تاني كامل وفي إضاءة أحسن.', 'err'],
+      not_card: ['الصورة دي مش شكلها بطاقة رقم قومي أو جواز سفر. ارفع صورة المستند نفسه (الوجه والظهر).', 'err'],
+      too_small: ['الصورة صغيرة جدًا. ارفع صورة أوضح بدقة أعلى.', 'err'],
+      ocr_failed: ['ما قدرناش نفحص الصورة تلقائيًا على جهازك، وهيراجعها الفريق يدويًا.', ''],
+    };
+    const scan = async () => {
+      if (!ID.front || !ID.back || !idOK()) return;
+      ID.check = null;
+      ID.busy = (async () => {
+        idSay('جارٍ فحص المستند… أول مرة بتاخد دقيقة لتحميل أداة القراءة.');
+        try { ID.check = await window.IdScan.check({ type: ID.type, number: ID.num, front: ID.front, back: ID.back, onStep: (s) => idSay(`جارٍ قراءة ${s === 'front' ? 'الوجه' : 'الظهر'}…`) }); }
+        catch (x) { console.warn('id scan', x); ID.check = { verdict: 'ocr_failed', engine: 'tesseract.js-5', at: new Date().toISOString() }; }
+        if (['not_card', 'unclear', 'too_small'].includes(ID.check.verdict)) ID.tries++;
+        const [t, k] = VERDICT[ID.check.verdict] || VERDICT.unclear; idSay(t, k);
+      })();
+      await ID.busy; ID.busy = null;
+    };
+    let rk = null;
+    const rerender = () => { clearTimeout(rk); rk = setTimeout(async () => { try { K = await renderK(); const box = $('.kc-box', root); if (box) box.innerHTML = window.contractDoc(K); } catch (x) { console.warn(x); } }, 450); };
+    if ($('#k-id', root)) {
+      const side = (t) => $$('[data-side]', root).forEach((b, i) => (b.textContent = (i ? 'ظهر ' : 'وجه ') + t));
+      $$('input[name="k-idt"]', root).forEach((r) => (r.onchange = () => {
+        ID.type = r.value; ID.check = null;
+        $('#k-idn-l', root).textContent = ID.type === 'passport' ? 'رقم جواز السفر' : 'الرقم القومي (14 رقم كما في البطاقة)';
+        $('#k-idn', root).inputMode = ID.type === 'passport' ? 'text' : 'numeric';
+        $('#k-idn', root).placeholder = ID.type === 'passport' ? 'A12345678' : '29901011234567';
+        side(ID.type === 'passport' ? 'جواز السفر (صفحة البيانات)' : 'البطاقة');
+        if (ID.type === 'passport') { $$('[data-side]', root)[0].textContent = 'صفحة بيانات الجواز'; $$('[data-side]', root)[1].textContent = 'الصفحة المقابلة'; }
+        $('#k-idn', root).dispatchEvent(new Event('input'));
+      }));
+      $('#k-idn', root).oninput = (e) => {
+        const v = window.IdScan.toLatin(e.target.value).toUpperCase().replace(ID.type === 'passport' ? /[^A-Z0-9]/g : /\D/g, '');
+        if (v !== e.target.value) e.target.value = v;
+        const changed = v !== ID.num; ID.num = v; const h = $('#k-idn-h', root);
+        if (ID.type === 'national_id') {
+          const info = window.IdScan.nidInfo(v);
+          h.textContent = !v ? '' : info ? `✓ رقم صحيح · تاريخ الميلاد ${info.birth}` : v.length < 14 ? `${v.length} من 14 رقم` : 'الرقم ده مش رقم قومي صحيح، راجعه.';
+          h.style.color = info ? 'var(--ok-text,#16a34a)' : v.length >= 14 ? 'var(--danger-text)' : '';
+        } else { h.textContent = v && !idOK() ? 'من 6 إلى 15 حرف ورقم.' : ''; h.style.color = ''; }
+        if (changed) { ID.check = null; if (idOK()) { rerender(); scan(); } }
+      };
+      [['#k-idf', 'front'], ['#k-idb', 'back']].forEach(([sel, k]) => {
+        const inp = $(sel, root), lab = inp.closest('.kc-idfile');
+        inp.onchange = async () => {
+          const f = inp.files && inp.files[0]; if (!f) return;
+          try {
+            idSay('جارٍ تجهيز الصورة…');
+            ID[k] = await window.IdScan.prepare(f); ID.check = null;
+            const img = $('img', lab); img.src = ID[k].preview; img.hidden = false; $('[data-ph]', lab).hidden = true;
+            idSay(''); scan();
+          } catch (x) { ID[k] = null; idSay('الملف ده مش صورة صالحة. ارفع صورة JPG أو PNG.', 'err'); }
+        };
+      });
+    }
     $('[data-back]', root).onclick = () => setStep(3);
     $('#wz4', root).onsubmit = async (e) => {
       e.preventDefault();
@@ -221,10 +294,25 @@
         const nm = $('#k-name', root).value.trim().replace(/\s+/g, ' ');
         if (nm.split(' ').length < 3) return say('اكتب اسمك الكامل (ثلاثي على الأقل).', 'err');
         if (pad.isEmpty()) return say('ارسم توقيعك في المساحة البيضاء.', 'err');
+        let idArgs = {};
+        if (K.needs_id) {
+          if (!idOK()) return say(ID.type === 'passport' ? 'اكتب رقم جواز السفر.' : 'اكتب الرقم القومي الصحيح (14 رقم).', 'err');
+          if (!ID.front || !ID.back) return say('ارفع صورتي المستند (الوجه والظهر).', 'err');
+          if (ID.busy) { say('استنى لحد ما فحص المستند يخلص…'); await ID.busy; }
+          if (!ID.check) await scan();
+          if (['not_card', 'too_small', 'unclear'].includes(ID.check && ID.check.verdict) && ID.tries < 2) return say('صورة المستند مش واضحة. صوّره تاني (لو المشكلة استمرت، هتقدر ترسله للمراجعة اليدوية في المحاولة التالية).', 'err');
+        }
         if (!$('#k-ok', root).checked) return say('يجب الموافقة على الاتفاقية لإتمام الإرسال.', 'err');
-        b.disabled = true; say('جارٍ توقيع الاتفاقية…');
+        b.disabled = true;
         try {
-          const id = await sb.rpc('sign_contract', { p_kind: 'instructor_recorded', p_proposal: P.id, p_sha256: K.sha256, p_name: nm, p_signature: pad.toDataURL() });
+          if (K.needs_id) {
+            if (K.__num !== ID.num || K.__type !== ID.type) K = await renderK();
+            say('جارٍ رفع صور المستند…');
+            const stamp = Date.now(), up = async (k) => { const path = `${sb.user.id}/${P.id}-${k}-${stamp}.jpg`; await sb.storage.upload('id-cards', path, new File([ID[k].blob], k + '.jpg', { type: 'image/jpeg' })); return path; };
+            idArgs = { p_id_type: ID.type, p_id_number: ID.num, p_id_front: await up('front'), p_id_back: await up('back'), p_id_check: ID.check };
+          }
+          say('جارٍ توقيع الاتفاقية…');
+          const id = await sb.rpc(K.needs_id ? 'sign_contract_id' : 'sign_contract', { p_kind: 'instructor_recorded', p_proposal: P.id, p_sha256: K.sha256, p_name: nm, p_signature: pad.toDataURL(), ...idArgs });
           signed = { id };
           // PDF copy (best effort: the signed record is already saved even if this fails)
           say('جارٍ حفظ نسخة PDF…');
@@ -237,7 +325,7 @@
           } catch (pe) { console.warn('contract pdf', pe); }
         } catch (x) {
           b.disabled = false;
-          return say(/changed/.test(x.message) ? 'تم تحديث نص الاتفاقية. حدّث الصفحة ووقّع مرة أخرى.' : /full name/.test(x.message) ? 'اكتب اسمك الكامل.' : /signature/.test(x.message) ? 'ارسم توقيعك بشكل أوضح.' : err(x), 'err');
+          return say(/changed/.test(x.message) ? 'تم تحديث نص الاتفاقية. حدّث الصفحة ووقّع مرة أخرى.' : /full name/.test(x.message) ? 'اكتب اسمك الكامل.' : /signature/.test(x.message) ? 'ارسم توقيعك بشكل أوضح.' : /national id/.test(x.message) ? 'الرقم القومي غير صحيح.' : /passport/.test(x.message) ? 'رقم جواز السفر غير صحيح.' : /id card/.test(x.message) ? 'ارفع صورتي المستند مرة تانية.' : err(x), 'err');
         }
       }
       b.disabled = true; say('جارٍ الإرسال…');

@@ -6,18 +6,30 @@
   const iso = (t) => String(t).replace(/(\d{4}-\d{2}-\d{2}(?:[T ][\d:.]+Z?)?|[\w.+-]+@[\w-]+\.[\w.]+|[0-9a-f]{8}-[0-9a-f-]{27}|[0-9a-f]{12,}|\d+\.\d+\.\d+\.\d+)/gi, '\u2066$1\u2069');
   const fmt = (d) => new Date(d).toLocaleString('ar-EG-u-nu-latn', { timeZone: 'Africa/Cairo', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
+  const HEAD = (l) => /^\d+\)\s/.test(l) || /^التمهيد$/.test(l);
   // body text → paragraphs; "1) …" lines become clause headings
   function bodyHTML(text) {
     return String(text || '').trim().split(/\n/).map((l) => l.trim()).filter(Boolean).map((l, i) =>
-      i === 0 ? `<h1>${esc(iso(l))}</h1>` : /^\d+\)\s/.test(l) ? `<h3>${esc(iso(l))}</h3>` : /^(الطرف|الكورس|الدورة|تاريخ)/.test(l) ? `<p class="kc-party">${esc(iso(l))}</p>` : `<p>${esc(iso(l))}</p>`).join('');
+      i === 0 ? `<h1>${esc(iso(l))}</h1>` : HEAD(l) ? `<h3>${esc(iso(l))}</h3>` : /^(الطرف|الكورس|الدورة|تاريخ)/.test(l) ? `<p class="kc-party">${esc(iso(l))}</p>` : `<p>${esc(iso(l))}</p>`).join('');
   }
+
+  window.FOUNDER = { name: 'عبده مصطفى', role: 'المؤسس' };
+  window.loadFounderSig = async () => {
+    if (window.__founderSig !== undefined) return window.__founderSig;
+    try {
+      const u = await sb.storage.signedUrl('contracts', 'brand/founder-signature.png', 600);
+      const b = await (await fetch(u)).blob();
+      window.__founderSig = await new Promise((res) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => res(null); r.readAsDataURL(b); });
+    } catch (e) { window.__founderSig = null; }
+    return window.__founderSig;
+  };
 
   // c: { id?, title, body, version, signer_name?, signature_png?, signed_at?, ip?, body_sha256|sha256, course_title? }
   window.contractDoc = (c) => `<article class="kc-doc" dir="rtl" lang="ar">
     <header class="kc-head"><img src="img/biosyn-logo-light.png" alt="Biosyn Eg" onerror="this.src='img/biosyn-logo.png'"><div><b>${esc(c.title)}</b><small>الإصدار ${esc(c.version)}${c.id ? ' · رقم الاتفاقية ' + esc(String(c.id).slice(0, 8).toUpperCase()) : ''}</small></div></header>
     <div class="kc-body">${bodyHTML(c.body)}</div>
     <section class="kc-sign">
-      <div><span>الطرف الأول</span><b>Biosyn Eg</b><small>biosyneg.com · contact@biosyneg.com</small><div class="kc-stamp">Biosyn Eg<br><small>معتمد إلكترونيًا</small></div></div>
+      <div><span>الطرف الأول</span><b>Biosyn Eg</b><small>يمثلها: ${esc(window.FOUNDER.name)} (${esc(window.FOUNDER.role)}) · biosyneg.com</small>${window.__founderSig ? `<img class="kc-sig" src="${window.__founderSig}" alt="توقيع ${esc(window.FOUNDER.name)}">` : ''}<div class="kc-stamp">Biosyn Eg<br><small>معتمد إلكترونيًا</small></div></div>
       <div><span>الطرف الثاني (المحاضر)</span><b>${esc(c.signer_name || '—')}</b>${c.signature_png ? `<img class="kc-sig" src="${esc(c.signature_png)}" alt="توقيع المحاضر">` : '<div class="kc-sig kc-sig-empty">التوقيع</div>'}<small>${c.signed_at ? 'وقّع في ' + esc(fmt(c.signed_at)) : ''}</small></div>
     </section>
     ${c.signed_at ? `<footer class="kc-audit"><b>سجل التوقيع الإلكتروني</b>
@@ -35,7 +47,8 @@
     if (document.fonts && document.fonts.ready) await document.fonts.ready;
     const K = 2, W = 794 * K, H = 1123 * K, M = 56 * K, CW = W - M * 2;   // A4 at 96dpi ×2
     const FONT = "'IBM Plex Sans Arabic','Readex Pro',Tahoma,Arial,sans-serif";
-    const [logo, sig] = await Promise.all([loadImg('img/biosyn-logo-light.png'), c.signature_png ? loadImg(c.signature_png) : null]);
+    const fsrc = await window.loadFounderSig();
+    const [logo, sig, fsig] = await Promise.all([loadImg('img/biosyn-logo-light.png'), c.signature_png ? loadImg(c.signature_png) : null, fsrc ? loadImg(fsrc) : null]);
     const pages = []; let cv, ctx, y;
     const newPage = () => {
       cv = document.createElement('canvas'); cv.width = W; cv.height = H; ctx = cv.getContext('2d');
@@ -66,7 +79,7 @@
     newPage();
     String(c.body || '').trim().split(/\n/).map((l) => l.trim()).filter(Boolean).forEach((l, i) => {
       if (i === 0) para(l, { size: 17, weight: 700, color: '#010232', gap: 4 });
-      else if (/^\d+\)\s/.test(l)) { y += 8 * K; para(l, { size: 14, weight: 700, color: '#010232', gap: 2, indent: 12, bar: true }); }
+      else if (HEAD(l)) { y += 8 * K; para(l, { size: 14, weight: 700, color: '#010232', gap: 2, indent: 12, bar: true }); }
       else if (/^(الطرف|الكورس|الدورة|تاريخ)/.test(l)) para(l, { size: 13, weight: 600, color: '#010232', gap: 2 });
       else para(l, { size: 12.5, gap: 4 });
     });
@@ -75,6 +88,8 @@
     const colR = W - M, colL = M + CW / 2 - 20 * K, top = y;
     ctx.fillStyle = '#5d6088'; ctx.font = `400 ${11 * K}px ${FONT}`; ctx.fillText('الطرف الأول', colR, y); ctx.fillText('الطرف الثاني (المحاضر)', colL, y);
     y += 22 * K; ctx.fillStyle = '#010232'; ctx.font = `700 ${14 * K}px ${FONT}`; ctx.fillText('Biosyn Eg', colR, y); ctx.fillText(c.signer_name || '—', colL, y);
+    ctx.fillStyle = '#5d6088'; ctx.font = `400 ${11 * K}px ${FONT}`; ctx.fillText(`يمثلها: ${window.FOUNDER.name} (${window.FOUNDER.role})`, colR, y + 20 * K);
+    if (fsig) { const fh = 62 * K, fw = Math.min(190 * K, fsig.width * fh / fsig.height); ctx.drawImage(fsig, colR - 132 * K - fw, y + 40 * K, fw, fh); ctx.fillStyle = '#1a1d3a'; ctx.fillRect(colR - 132 * K - 190 * K, y + 106 * K, 190 * K, 1.5 * K); }
     // stamp
     const sx = colR - 70 * K, sy = y + 72 * K, r = 52 * K;
     ctx.save(); ctx.translate(sx, sy); ctx.rotate(-0.14); ctx.strokeStyle = '#3a2a8c'; ctx.lineWidth = 2.5 * K;

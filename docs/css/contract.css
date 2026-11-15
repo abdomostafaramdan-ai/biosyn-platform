@@ -40,3 +40,13 @@ bdi{unicode-bidi:isolate}
   .kc-doc{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 @media (max-width:640px){.kc-doc{padding:22px 18px}.kc-sign{grid-template-columns:1fr}}
+/* identity document at signing */
+.kc-idbox{display:grid;gap:12px;padding:16px;border:1px solid var(--line,#e3e5f1);border-radius:14px;background:rgba(198,248,74,.05)}
+.kc-idtype{display:flex;flex-wrap:wrap;gap:8px 20px}
+.kc-idfiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.kc-idfile{position:relative;display:grid;place-items:center;min-height:130px;border:1.5px dashed var(--line,#c9cce0);border-radius:12px;cursor:pointer;overflow:hidden;text-align:center;padding:10px}
+.kc-idfile:hover,.kc-idfile:focus-within{border-color:#c6f84a}
+.kc-idfile span{display:grid;gap:4px;font-size:13px}
+.kc-idfile small{opacity:.7;font-size:12px}
+.kc-idfile img{width:100%;max-height:180px;object-fit:contain;border-radius:8px}
+@media (max-width:560px){.kc-idfiles{grid-template-columns:1fr}}
