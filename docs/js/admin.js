@@ -470,6 +470,83 @@
       }));
     },
 
+    // ---------- instructor monitoring: one row per instructor account, with signals that need follow-up ----------
+    async imonitor(main) {
+      const all = await sb.rpc('admin_instructor_overview').then((r) => (Array.isArray(r) ? r : []));
+      const F = { q: '', sort: 'views_month', need: false, empty: false };
+      const N = (v) => Number(v || 0);
+      const days = (d) => (d ? Math.floor((Date.now() - new Date(d)) / 86400000) : null);
+      const ago = (d) => { const n = days(d); return n === null ? '—' : n <= 0 ? 'اليوم' : n === 1 ? 'أمس' : n < 30 ? `منذ ${n} يوم` : D.date(d); };
+      const wa = (p) => { const x = String(p || '').replace(/\D/g, ''); return x ? (x.startsWith('0') ? '2' + x : x) : ''; };
+      const alerts = (r) => {
+        const a = [], od = days(r.oldest_open_at), ls = days(r.last_sign_in_at);
+        if (N(r.questions_open)) a.push([od !== null && od >= 2 ? 'danger' : 'warn', `${N(r.questions_open)} سؤال بلا رد${od !== null && od >= 1 ? ` منذ ${od} يوم` : ''}`]);
+        if (!r.last_sign_in_at) a.push(['danger', 'لم يسجّل دخول أبدًا']);
+        else if (ls >= 30) a.push(['warn', `آخر دخول منذ ${ls} يوم`]);
+        if (N(r.payouts_pending)) a.push(['info', `طلب سحب ينتظر (${D.money(r.payouts_pending_egp)})`]);
+        if (N(r.published) && !N(r.views_total)) a.push(['warn', 'دوراته بلا مشاهدات']);
+        if (N(r.courses) && !N(r.contracts_signed)) a.push(['warn', 'بدون عقد موقّع']);
+        if (N(r.drafts)) a.push(['mute', `${N(r.drafts)} دورة مسودة`]);
+        if (!r.featured_id && N(r.published)) a.push(['mute', 'غير مربوط بصفحة محاضر']);
+        return a;
+      };
+      const needs = (r) => alerts(r).some(([k]) => k === 'danger' || k === 'warn' || k === 'info');
+      const base = () => all.filter((r) => F.empty || N(r.courses) > 0);
+      const list = () => base().filter((r) => (!F.need || needs(r)) && (!F.q || `${r.full_name || ''} ${r.email || ''} ${r.phone || ''}`.toLowerCase().includes(F.q.toLowerCase())))
+        .sort((a, b) => F.sort === 'name' ? String(a.full_name || '').localeCompare(String(b.full_name || ''), 'ar')
+          : F.sort === 'last_sign_in_at' ? (new Date(a.last_sign_in_at || 0) - new Date(b.last_sign_in_at || 0))
+          : N(b[F.sort]) - N(a[F.sort]) || N(b.views_total) - N(a.views_total));
+      const trend = (r) => { const d = N(r.views_month) - N(r.views_prev_month); return d > 0 ? `<small style="color:var(--ok-text,#4ade80)">▲ ${d}</small>` : d < 0 ? `<small style="color:var(--danger-text)">▼ ${-d}</small>` : ''; };
+      const draw = () => {
+        const B = base(), L = list(), sum = (k) => B.reduce((s, r) => s + N(r[k]), 0);
+        const vm = sum('views_month'), vp = sum('views_prev_month');
+        const stale = B.filter((r) => !r.last_sign_in_at || days(r.last_sign_in_at) >= 30).length;
+        $('[data-istats]', main).innerHTML = `<div class="bx-stats">
+            ${D.stat('محاضرين لهم دورات', B.filter((r) => N(r.courses)).length, `${B.filter((r) => N(r.published)).length} لهم دورات منشورة · ${B.filter(needs).length} يحتاجون متابعة`)}
+            ${D.stat('مشاهدات هذا الشهر', vm, `الشهر الماضي ${vp} · ${sum('watching_now')} يشاهدون الآن`)}
+            ${D.stat('أسئلة طلاب بلا رد', sum('questions_open'), sum('questions_open') ? 'افتح لوحة المحاضر أو «أسئلة الطلاب» للمتابعة' : 'كل الأسئلة عليها رد')}
+            ${D.stat('مستحقات غير مسحوبة', D.money(sum('balance')), `${sum('payouts_pending')} طلب سحب ينتظر · متوقع هذا الشهر ${D.money(sum('est_earnings_month'))}`)}
+            ${D.stat('لم يدخلوا من 30 يوم', stale, 'أو لم يسجّلوا دخول أبدًا')}
+          </div>`;
+        $('[data-ilist]', main).innerHTML = D.table(['المحاضر', 'الدورات', 'المشاهدات', 'النشاط', 'الأسئلة', 'المال', 'آخر دخول', 'يحتاج متابعة', ''], L.map((r) => {
+          const w = wa(r.whatsapp || r.phone);
+          return [
+            `<b>${esc(r.full_name || '—')}</b><br><small class="bx-hint" dir="ltr">${esc(r.email || '')}</small>${r.phone ? `<br><small class="bx-hint" dir="ltr">${esc(r.phone)}</small>` : ''}`,
+            `${N(r.published)} منشور / ${N(r.courses)}<br><small class="bx-hint">${N(r.lectures)} محاضرة · ${N(r.certificates)} شهادة</small>`,
+            `<b>${N(r.views_month)}</b> هذا الشهر ${trend(r)}<br><small class="bx-hint">${N(r.views_total)} إجمالي · ${N(r.students)} طالب</small>`,
+            `${N(r.watching_now) ? `<span class="bx-live"><i></i>${N(r.watching_now)}</span> الآن · ` : ''}${N(r.active_today)} اليوم<br><small class="bx-hint">آخر مشاهدة: ${ago(r.last_view_at)}</small>`,
+            `${N(r.questions_open) ? `<span class="bx-st bx-st-warn">${N(r.questions_open)} بلا رد</span>` : '<span class="bx-hint">0 بلا رد</span>'}<br><small class="bx-hint">${N(r.questions_total)} إجمالي · آخر رد: ${ago(r.last_reply_at)}</small>`,
+            `${D.money(r.balance)} <small class="bx-hint">رصيد</small><br><small class="bx-hint">متوقع الشهر: ${D.money(r.est_earnings_month)} · مسحوب: ${D.money(r.paid_total)}</small>`,
+            ago(r.last_sign_in_at),
+            alerts(r).map(([k, t]) => `<span class="bx-st bx-st-${k}" style="display:inline-block;margin:2px 0">${esc(t)}</span>`).join('<br>') || '<span class="bx-st bx-st-ok">تمام</span>',
+            `<a class="bs-btn bs-btn-secondary bs-btn-sm" style="white-space:nowrap" href="instructor.html?as=${r.id}" target="_blank" rel="noopener">فتح لوحته ↗</a>${w ? `<br><a class="bx-link" href="https://wa.me/${w}" target="_blank" rel="noopener" style="font-size:13px">واتساب</a>` : ''}${r.featured_slug ? ` · <a class="bx-link" href="teacher-${esc(r.featured_slug)}.html" target="_blank" rel="noopener" style="font-size:13px">صفحته</a>` : ''}`,
+          ];
+        }), F.q || F.need ? 'لا يوجد محاضرين بهذه التصفية' : 'لا يوجد محاضرين بعد');
+      };
+      main.innerHTML = D.panel('متابعة المحاضرين', `<p class="bx-hint" style="margin-top:0">كل حساب محاضر ونشاطه في مكان واحد: المشاهدات، الأسئلة اللي مستنية رد، المستحقات وطلبات السحب، وآخر دخول. زرار «فتح لوحته» يعرض لوحة المحاضر زي ما هو شايفها بالظبط، للقراءة فقط.</p>
+        <div data-istats></div>
+        <div class="bx-filters" style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin:16px 0">
+          <div class="bx-field" style="flex:1;min-width:200px"><label for="imq" class="bx-hint">بحث</label><input id="imq" class="bx-input" placeholder="الاسم أو البريد أو الموبايل"></div>
+          <div class="bx-field"><label for="ims" class="bx-hint">ترتيب حسب</label><select id="ims" class="bx-select"><option value="views_month">مشاهدات هذا الشهر</option><option value="questions_open">الأسئلة بلا رد</option><option value="balance">الرصيد المستحق</option><option value="students">عدد الطلاب</option><option value="last_sign_in_at">الأقدم دخولًا</option><option value="name">الاسم</option></select></div>
+          <label class="bx-check" style="align-self:center"><input type="checkbox" id="imn"> يحتاج متابعة فقط</label>
+          <label class="bx-check" style="align-self:center"><input type="checkbox" id="ime"> إظهار الحسابات بدون دورات</label>
+          <button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" id="imcsv">تصدير CSV</button>
+        </div><div data-ilist></div>`);
+      $('#imq', main).oninput = (e) => { F.q = e.target.value.trim(); draw(); };
+      $('#ims', main).onchange = (e) => { F.sort = e.target.value; draw(); };
+      $('#imn', main).onchange = (e) => { F.need = e.target.checked; draw(); };
+      $('#ime', main).onchange = (e) => { F.empty = e.target.checked; draw(); };
+      $('#imcsv', main).onclick = () => {
+        const cell = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+        const head = ['الاسم', 'البريد', 'الموبايل', 'دورات منشورة', 'كل الدورات', 'محاضرات', 'مشاهدات الشهر', 'مشاهدات الشهر الماضي', 'إجمالي المشاهدات', 'الطلاب', 'أسئلة بلا رد', 'الرصيد', 'متوقع الشهر', 'طلبات سحب معلقة', 'آخر دخول', 'تنبيهات'];
+        const rows = list().map((r) => [r.full_name, r.email, r.phone, N(r.published), N(r.courses), N(r.lectures), N(r.views_month), N(r.views_prev_month), N(r.views_total), N(r.students), N(r.questions_open), N(r.balance), N(r.est_earnings_month), N(r.payouts_pending), r.last_sign_in_at ? r.last_sign_in_at.slice(0, 10) : '', alerts(r).map((x) => x[1]).join(' | ')]);
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob(['﻿' + [head, ...rows].map((r) => r.map(cell).join(',')).join('\n')], { type: 'text/csv;charset=utf-8' }));
+        a.download = `instructors-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+      };
+      draw();
+    },
+
     async instructors(main) {
       const rows = await sb.get('featured_instructors', { select: '*', order: 'sort.asc,created_at.asc' }).catch(() => []);
       const FAC = window.FACULTIES || [], fname = (id) => (FAC.find((f) => f.id === id) || {}).name || '—';
@@ -1082,7 +1159,7 @@
 
   window.BiosynPages.admin = async () => {
     me = await D.guard(['admin', 'support']); if (!me) return;
-    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'insights', label: 'مركز التحليلات', icon: 'chart' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'faculties', label: 'الكليات والتخصصات', icon: 'list' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'social', label: 'السوشيال والنشرة البريدية', icon: 'users' }, { id: 'texts', label: 'نصوص الموقع', icon: 'book' }, { id: 'news', label: 'الأخبار والفعاليات', icon: 'book' }, { id: 'testimonials', label: 'آراء الطلاب', icon: 'chat' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'mailcampaigns', label: 'حملات البريد', icon: 'inbox' }, { id: 'emails', label: 'رسائل البريد', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
+    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'insights', label: 'مركز التحليلات', icon: 'chart' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'imonitor', label: 'متابعة المحاضرين', icon: 'users' }, { id: 'faculties', label: 'الكليات والتخصصات', icon: 'list' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'social', label: 'السوشيال والنشرة البريدية', icon: 'users' }, { id: 'texts', label: 'نصوص الموقع', icon: 'book' }, { id: 'news', label: 'الأخبار والفعاليات', icon: 'book' }, { id: 'testimonials', label: 'آراء الطلاب', icon: 'chat' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'mailcampaigns', label: 'حملات البريد', icon: 'inbox' }, { id: 'emails', label: 'رسائل البريد', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
     // live counters: new requests + open refund requests (refreshes every minute and when the tab regains focus)
     let lastRef = -1;

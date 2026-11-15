@@ -11,7 +11,7 @@
     opt = opt || {};
     const F = { q: '', kind: opt.admin ? '' : 'recorded', status: '', sort: 'views_month', unlinked: false };
     let rows = [], at = null, timer = null;
-    const load = async () => { const r = await sb.rpc('course_stats'); rows = Array.isArray(r) ? r : []; at = new Date(); };
+    const load = async () => { const r = await sb.rpc('course_stats'); rows = Array.isArray(r) ? r : []; if (opt.instructorId) rows = rows.filter((x) => x.instructor_id === opt.instructorId); at = new Date(); };
     await load();
 
     const sum = (k, list) => (list || rows).reduce((s, r) => s + Number(r[k] || 0), 0);

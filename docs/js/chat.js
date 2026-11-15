@@ -47,7 +47,7 @@
         const [th, ms] = await Promise.all([sb.one('threads', { select: '*', id: 'eq.' + id }), sb.get('thread_messages', { select: '*', thread_id: 'eq.' + id, order: 'created_at.asc', limit: 500 })]);
         const changed = !t || ms.length !== msgs.length || (th && th.status !== t.status);
         t = th; msgs = ms; if (changed) paint();
-        sb.rpc('mark_thread_read', { p_thread: id }).catch(() => {});
+        if (!opt.noRead) sb.rpc('mark_thread_read', { p_thread: id }).catch(() => {});
       };
       load().catch((e) => (log.innerHTML = `<div class="bx-formmsg err">${esc(err(e))}</div>`));
       timer = setInterval(() => { if (!m.isConnected) return clearInterval(timer); if (!document.hidden) load().catch(() => {}); }, 8000);
@@ -93,7 +93,7 @@
     const q = { select: '*', order: 'last_message_at.desc', limit: 300 };
     if (opt.kind) q.kind = 'eq.' + opt.kind;
     if (mode === 'student') q.student_id = 'eq.' + sb.user.id;
-    if (mode === 'instructor') q.instructor_id = 'eq.' + sb.user.id;
+    if (mode === 'instructor') q.instructor_id = 'eq.' + (opt.instructorId || sb.user.id);
     let rows = [];
     const load = async () => { rows = await sb.get('threads', q); };
     const draw = () => {
@@ -104,7 +104,7 @@
           <span class="bx-thread-main"><b>${esc(t.kind === 'ticket' ? t.subject : t.subject)}</b><small class="bx-hint">${t.kind === 'ticket' ? 'تذكرة · ' + (CAT[t.category] || '') : 'سؤال في دورة'}${mode !== 'student' && t.student_name ? ' · ' + esc(t.student_name) : ''}${mode === 'staff' && t.kind === 'course' && !t.instructor_id ? ' · <span class="bx-st bx-st-warn">لا يوجد محاضر مرتبط</span>' : ''}</small></span>
           <span class="bx-thread-side">${badge(t.status)}<small class="bx-hint">${when(t.last_message_at)}</small>${unread(t, me) ? '<i class="bx-dot" aria-label="غير مقروءة"></i>' : ''}</span></button>`).join('')
         : `<div class="bx-empty-big"><b>${opt.empty || 'لا توجد رسائل'}</b></div>`;
-      $$('[data-t]', box).forEach((b) => (b.onclick = () => openThread(b.dataset.t, { onChange: () => load().then(draw) })));
+      $$('[data-t]', box).forEach((b) => (b.onclick = () => openThread(b.dataset.t, { noRead: !!opt.instructorId, onChange: () => load().then(draw) })));
     };
     box.innerHTML = `<div class="bx-btnrow" style="margin-bottom:12px;align-items:end">
         ${opt.newTicket ? '<button type="button" class="bs-btn bs-btn-primary bs-btn-sm" data-new>+ تذكرة جديدة</button>' : ''}

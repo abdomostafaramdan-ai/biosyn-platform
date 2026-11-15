@@ -2,16 +2,18 @@
 (() => {
   'use strict';
   const D = window.Dash;
-  let me;
+  // uid = the instructor whose data is shown. Staff can open any instructor's dashboard read-only with ?as=<profile id>.
+  let me, uid, viewing = null;
+  const RO = 'لوحة المحاضر معروضة للإدارة للقراءة فقط.';
 
   const load = async () => {
-    const courses = await sb.get('courses', { select: '*,lectures(id)', instructor_id: 'eq.' + sb.user.id, order: 'created_at.desc' });
+    const courses = await sb.get('courses', { select: '*,lectures(id)', instructor_id: 'eq.' + uid, order: 'created_at.desc' });
     const ids = courses.map((c) => c.id);
     const [views, earnings, payouts, stats] = await Promise.all([
       ids.length ? sb.get('course_views', { select: 'month,course_id', course_id: 'in.(' + ids.join(',') + ')' }) : [],
-      sb.get('earnings', { select: '*', instructor_id: 'eq.' + sb.user.id, order: 'month.desc' }),
-      sb.get('payouts', { select: '*', instructor_id: 'eq.' + sb.user.id, order: 'requested_at.desc' }),
-      sb.rpc('course_stats').then((r) => (Array.isArray(r) ? r : [])).catch(() => []),
+      sb.get('earnings', { select: '*', instructor_id: 'eq.' + uid, order: 'month.desc' }),
+      sb.get('payouts', { select: '*', instructor_id: 'eq.' + uid, order: 'requested_at.desc' }),
+      sb.rpc('course_stats').then((r) => (Array.isArray(r) ? r : []).filter((x) => x.instructor_id === uid)).catch(() => []),
     ]);
     const available = earnings.filter((e) => !e.payout_id).reduce((s, e) => s + Number(e.amount_egp), 0);
     const live = payouts.filter((p) => p.status !== 'rejected');
@@ -52,7 +54,7 @@
         <div class="bx-dgrid2">
           <section class="bx-balance" aria-labelledby="bal"><span class="bx-eyebrow" style="color:#c6f84a">رصيد متراكم</span><h3 id="bal">المستحقات</h3><b class="bx-balance-n">${EGP(d.available)} <small>ج.م</small></b>
             <p style="margin:0;font:400 13px/20px var(--font-sans)">تُضاف الأرباح إلى رصيدك شهريًا، ويمكنك طلب السحب كل 3 أشهر.${d.nextOK && !d.canWithdraw && d.available > 0 ? ' موعد السحب القادم: ' + D.date(d.nextOK) + '.' : ''}</p>
-            <button class="bs-btn bs-btn-primary bs-btn-lg" id="wd" ${d.canWithdraw ? '' : 'disabled'}>اطلب سحب المستحقات</button></section>
+            ${viewing ? `<p class="bx-hint" style="margin:0">${RO}</p>` : `<button class="bs-btn bs-btn-primary bs-btn-lg" id="wd" ${d.canWithdraw ? '' : 'disabled'}>اطلب سحب المستحقات</button>`}</section>
           <section class="bx-panel"><div class="bx-panel-head"><div><span class="bx-eyebrow">آخر 6 أشهر</span><h3>مشاهدات دوراتي</h3></div></div>
             <div class="bx-bars" role="img" aria-label="رسم أعمدة لمشاهدات آخر ستة أشهر">${months.map((m) => `<div class="bx-barcol"><div class="bx-barpair"><i style="height:${Math.max(3, Math.round((m.n / max) * 100))}%"></i></div><span>${m.label} · ${m.n}</span></div>`).join('')}</div></section>
         </div>
@@ -60,16 +62,16 @@
       const w = $('#wd', main); if (w) w.onclick = () => requestPayout(d);
     },
 
-    async live(main) { await window.courseAnalytics(main, { admin: false }); },
-    async contracts(main) { await window.myContracts(main); },
+    async live(main) { await window.courseAnalytics(main, { admin: false, instructorId: viewing ? uid : null }); },
+    async contracts(main) { await window.myContracts(main, uid); },
 
     async messages(main) {
       main.innerHTML = D.panel('أسئلة الطلاب', `<p class="bx-hint" style="margin-top:0">يسألك الطلاب المشتركون هنا من صفحة الدورة. يصلك بريد إلكتروني مع كل سؤال جديد، ويصل الطالب بريد عند ردّك.</p><div data-ib></div>`);
-      await Chat.inbox($('[data-ib]', main), { mode: 'instructor', kind: 'course', empty: 'لا توجد أسئلة بعد.' });
+      await Chat.inbox($('[data-ib]', main), { mode: 'instructor', kind: 'course', instructorId: uid, empty: 'لا توجد أسئلة بعد.' });
     },
 
     async promo(main) {
-      const [rows, reqs] = await Promise.all([sb.rpc('my_promo_stats').then((r) => (Array.isArray(r) ? r : [])).catch(() => []), sb.rpc('my_promo_requests').then((r) => (Array.isArray(r) ? r : [])).catch(() => [])]);
+      const [rows, reqs] = await Promise.all([sb.rpc('my_promo_stats', viewing ? { p_user: uid } : {}).then((r) => (Array.isArray(r) ? r : [])).catch(() => []), sb.rpc('my_promo_requests', viewing ? { p_user: uid } : {}).then((r) => (Array.isArray(r) ? r : [])).catch(() => [])]);
       const share = (base) => `${location.origin}${location.pathname.replace(/[^/]*$/, '')}pricing?code=${encodeURIComponent(base)}`;
       main.innerHTML = `<div class="bx-stats">
           ${D.stat('اشتراكات بكودك هذا الشهر', rows.reduce((s, r) => s + Number(r.uses_month || 0), 0), rows.reduce((s, r) => s + Number(r.uses_total || 0), 0) + ' إجمالي')}
@@ -78,7 +80,7 @@
           `<b class="bs-latin" style="font-size:18px">${esc(r.code)}</b>`, r.percent_off ? r.percent_off + '٪' : '—', Number(r.instructor_pct) + '٪ من قيمة المشاهدة (بدل 30٪)',
           `${r.uses_month} هذا الشهر · ${r.uses_total} إجمالي`, `<button class="bx-linkbtn" data-copy="${esc(share(r.code))}">انسخ الرابط</button>`, r.active ? '<span class="bx-st bx-st-ok">يعمل</span>' : '<span class="bx-st bx-st-mute">متوقف</span>']))
           : '<div class="bx-empty-big"><b>لا يوجد لديك كود بعد</b>اطلب كودًا باسمك من النموذج أدناه وسيراجعه فريق Biosyn.</div>')
-        + D.panel('اطلب كود خصم جديد', `<form class="bx-form2" id="prf" novalidate><div class="row2"><div class="bx-field"><label for="prc">الكود المطلوب</label><input id="prc" class="bx-input" dir="ltr" maxlength="30" placeholder="DRAHMED"></div><div class="bx-field"><label for="prn">ملاحظة للفريق (اختياري)</label><input id="prn" class="bx-input" maxlength="300"></div></div><p class="bx-hint" style="margin:0">حروف إنجليزية وأرقام فقط (من 3 إلى 30). الفريق هو من يحدد نسبة الخصم للطالب ونسبتك، وسيصلك إشعار بالقرار.</p><div class="bx-formmsg" id="prm" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">إرسال الطلب</button></div></form>`)
+        + (viewing ? '' : D.panel('اطلب كود خصم جديد', `<form class="bx-form2" id="prf" novalidate><div class="row2"><div class="bx-field"><label for="prc">الكود المطلوب</label><input id="prc" class="bx-input" dir="ltr" maxlength="30" placeholder="DRAHMED"></div><div class="bx-field"><label for="prn">ملاحظة للفريق (اختياري)</label><input id="prn" class="bx-input" maxlength="300"></div></div><p class="bx-hint" style="margin:0">حروف إنجليزية وأرقام فقط (من 3 إلى 30). الفريق هو من يحدد نسبة الخصم للطالب ونسبتك، وسيصلك إشعار بالقرار.</p><div class="bx-formmsg" id="prm" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">إرسال الطلب</button></div></form>`))
         + (reqs.length ? D.panel('طلباتي', D.table(['الكود', 'التاريخ', 'الحالة', 'ملاحظة الفريق'], reqs.map((q) => [`<b class="bs-latin">${esc(q.code)}</b>`, D.date(q.created_at), q.status === 'accepted' ? '<span class="bx-st bx-st-ok">تم الاعتماد</span>' : q.status === 'rejected' ? '<span class="bx-st bx-st-mute">مرفوض</span>' : '<span class="bx-st bx-st-info">قيد المراجعة</span>', esc(q.note || '—')]))) : '')
         + '<p class="bx-hint">في الوضع العادي تحصل على 30٪ من قيمة المشاهدات. أما مشاهدات الطلاب الذين اشتركوا في باقة بكودك فتحصل عليها بنسبة 50٪ (افتراضيًا) من قيمة المشاهدة بدلًا من الـ 30٪. اشتراك الطالب يدخل في حساب المشاهدات كالمعتاد، ويُضاف المبلغ إلى رصيدك مع الإقفال الشهري. انشر الكود أو الرابط لجمهورك.</p>';
       $$('[data-copy]', main).forEach((b) => (b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.copy); ui.toast('تم نسخ الرابط.'); } catch { prompt('انسخ الرابط:', b.dataset.copy); } }));
@@ -107,12 +109,29 @@
   };
 
   window.BiosynPages.instructor = async () => {
-    me = await D.guard(['instructor', 'admin']); if (!me) return;
+    me = await D.guard(['instructor', 'admin', 'support']); if (!me) return;
+    uid = sb.user.id;
+    const as = new URLSearchParams(location.search).get('as');
+    if (as && /^[0-9a-f-]{36}$/i.test(as) && (me.role === 'admin' || me.role === 'support') && as !== sb.user.id) {
+      const list = await sb.rpc('admin_users').catch(() => []);
+      viewing = (Array.isArray(list) ? list : []).find((u) => u.id === as) || null;
+      if (!viewing) { D.denied('لم نجد حساب المحاضر المطلوب.'); return; }
+      uid = viewing.id;
+    } else if (me.role === 'support') { D.denied('هذه الصفحة غير متاحة لحسابك.'); return; }
+    const items = [{ id: 'home', label: 'نظرة عامة', icon: 'home' }, { id: 'live', label: 'المشاهدات لايف', icon: 'chart' }, { id: 'messages', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'promo', label: viewing ? 'كود الخصم' : 'كود الخصم الخاص بي', icon: 'tag' }, { id: 'courses', label: viewing ? 'الدورات' : 'دوراتي', icon: 'book' }, { id: 'earnings', label: 'الأرباح والسحب', icon: 'coin' }, { id: 'contracts', label: viewing ? 'الاتفاقيات' : 'اتفاقياتي', icon: 'list' }];
+    if (viewing) document.title = `لوحة ${viewing.full_name || viewing.email} | Biosyn Eg`;
     await D.shell({
-      title: 'لوحة المحاضر', who: me.full_name || sb.user.email, sub: D.roleAr[me.role],
-      items: [{ id: 'home', label: 'نظرة عامة', icon: 'home' }, { id: 'live', label: 'المشاهدات لايف', icon: 'chart' }, { id: 'messages', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'promo', label: 'كود الخصم الخاص بي', icon: 'tag' }, { id: 'courses', label: 'دوراتي', icon: 'book' }, { id: 'earnings', label: 'الأرباح والسحب', icon: 'coin' }, { id: 'contracts', label: 'اتفاقياتي', icon: 'list' }],
-      views, topLink: '<a href="account.html" class="bs-btn bs-btn-secondary bs-btn-sm">حسابي</a>',
+      title: 'لوحة المحاضر', who: viewing ? (viewing.full_name || viewing.email) : (me.full_name || sb.user.email), sub: viewing ? 'عرض الإدارة · قراءة فقط' : D.roleAr[me.role],
+      items, views, topLink: viewing ? '<a href="admin.html#imonitor" class="bs-btn bs-btn-secondary bs-btn-sm">رجوع لمتابعة المحاضرين</a>' : '<a href="account.html" class="bs-btn bs-btn-secondary bs-btn-sm">حسابي</a>',
     });
+    if (viewing) {
+      const bar = document.createElement('div');
+      bar.className = 'bx-warnnote bx-viewas'; bar.setAttribute('role', 'status');
+      bar.style.cssText = 'margin:12px 24px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap';
+      bar.innerHTML = `<span>تشاهد لوحة <b>${esc(viewing.full_name || viewing.email)}</b> كما يراها بالضبط. للقراءة فقط: طلبات السحب وطلب الأكواد متوقفة هنا، وأي رد على سؤال طالب سيظهر باسم فريق Biosyn.</span><a class="bx-link" href="admin.html#imonitor">رجوع للإدارة</a>`;
+      const content = $('.bx-content'); if (content) content.insertBefore(bar, content.children[1] || null);
+      return;
+    }
     const pulse = () => Chat.unreadCounts().then((u) => D.setBadge('messages', (u && u.instructor) || 0));
     pulse(); setInterval(() => { if (!document.hidden) pulse(); }, 60000);
   };

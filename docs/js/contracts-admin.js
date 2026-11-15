@@ -49,8 +49,8 @@
     }
   };
 
-  window.myContracts = async function (main) {
-    const list = await sb.get('contracts', { select: 'id,course_title,version,signed_at,pdf_path', user_id: 'eq.' + sb.user.id, order: 'signed_at.desc' }).catch(() => []);
+  window.myContracts = async function (main, uid) {
+    const list = await sb.get('contracts', { select: 'id,course_title,version,signed_at,pdf_path', user_id: 'eq.' + (uid || sb.user.id), order: 'signed_at.desc' }).catch(() => []);
     main.innerHTML = D.panel('اتفاقياتي', `<p class="bx-hint" style="margin-top:0">نسخة من كل اتفاقية نشر وقّعت عليها مع Biosyn. يمكنك فتحها أو تحميلها بصيغة PDF في أي وقت.</p><div>${rows(list, false)}</div>`);
     $$('[data-pdf]', main).forEach((b) => (b.onclick = () => openPdf(list.find((c) => c.id === b.dataset.pdf))));
   };
