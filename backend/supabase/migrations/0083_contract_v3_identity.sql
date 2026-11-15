@@ -234,3 +234,7 @@ do $do$ begin
       with check (bucket_id = 'contracts' and (storage.foldername(name))[1] = 'brand' and public.is_admin());
   end if;
 end $do$;
+
+-- the contracts bucket also holds the founder signature PNG (brand/founder-signature.png, uploaded once on 2026-11-15)
+update storage.buckets set allowed_mime_types = array_append(coalesce(allowed_mime_types, array['application/pdf']), 'image/png')
+ where id = 'contracts' and not ('image/png' = any(coalesce(allowed_mime_types, array[]::text[])));
