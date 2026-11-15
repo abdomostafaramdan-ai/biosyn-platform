@@ -41,7 +41,7 @@
     async home(main) {
       const d = await load();
       const now = new Date(), months = [];
-      for (let i = 5; i >= 0; i--) { const m = new Date(now.getFullYear(), now.getMonth() - i, 1); months.push({ key: m.toISOString().slice(0, 7), label: m.toLocaleDateString('ar-EG-u-nu-latn', { month: 'short' }), n: 0 }); }
+      for (let i = 5; i >= 0; i--) { const m = new Date(now.getFullYear(), now.getMonth() - i, 1); months.push({ key: `${m.getFullYear()}-${String(m.getMonth() + 1).padStart(2, '0')}`, label: m.toLocaleDateString('ar-EG-u-nu-latn', { month: 'short' }), n: 0 }); }
       d.views.forEach((v) => { const m = months.find((x) => x.key === String(v.month).slice(0, 7)); if (m) m.n++; });
       const max = Math.max(1, ...months.map((m) => m.n));
       const thisMonth = months[months.length - 1].n;
