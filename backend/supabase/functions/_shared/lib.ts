@@ -2,7 +2,8 @@
 
 // Browsers may call these functions only from the origins in ALLOWED_ORIGINS (comma-separated, set as a function secret).
 // The app sends its token in the Authorization header (no cookies), so no credentials are allowed.
-const ALLOWED = (Deno.env.get('ALLOWED_ORIGINS') ?? 'https://biosyneg.com,https://www.biosyneg.com')
+const ALLOWED = ((globalThis as any).Deno?.env.get('ALLOWED_ORIGINS') ??  // optional chaining: the unit tests import this file in Node
+  'https://biosyneg.com,https://www.biosyneg.com')
   .split(',').map((s) => s.trim()).filter(Boolean);
 export const cors = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
