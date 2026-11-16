@@ -1,5 +1,5 @@
 import { admin, asUser, currentUser } from './_shared/db.ts';
-import { cors, json } from './_shared/lib.ts';
+import { cors, withCors, json } from './_shared/lib.ts';
 import { loadSecrets, secSource } from './_shared/secrets.ts';
 
 const KEYS = ['PAYMOB_SECRET_KEY', 'PAYMOB_PUBLIC_KEY', 'PAYMOB_HMAC_SECRET', 'PAYMOB_INTEGRATION_IDS', 'FEE_PAYMOB_PCT', 'FEE_PAYMOB_FIXED',
@@ -9,7 +9,7 @@ const KEYS = ['PAYMOB_SECRET_KEY', 'PAYMOB_PUBLIC_KEY', 'PAYMOB_HMAC_SECRET', 'P
   'ANTHROPIC_API_KEY', 'CRM_URL', 'CRM_WOO_SECRET', 'SITE_URL'];
 
 // Admin only: which integration keys are configured (never their values) + CRM queue health.
-Deno.serve(async (req) => {
+Deno.serve(withCors(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   const user = await currentUser(req);
   if (!user) return json({ error: 'unauthorized' }, 401);
@@ -23,4 +23,4 @@ Deno.serve(async (req) => {
   for (const r of q ?? []) crm[r.status] = (crm[r.status] ?? 0) + 1;
   const { data: last } = await sb.from('crm_outbox').select('sent_at,last_error,status').order('created_at', { ascending: false }).limit(1);
   return json({ status, crm, crm_last: last?.[0] ?? null, functions_base: `${Deno.env.get('SUPABASE_URL')}/functions/v1` });
-});
+}));

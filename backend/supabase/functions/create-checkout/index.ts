@@ -1,11 +1,11 @@
 import { admin, currentUser, afterPaid } from './_shared/db.ts';
-import { cors, json, grossUp, type Gateway } from './_shared/lib.ts';
+import { cors, withCors, json, grossUp, type Gateway } from './_shared/lib.ts';
 import { createCheckout, enabledGateways, feeRates } from './_shared/gateways.ts';
 import { loadSecrets, sec } from './_shared/secrets.ts';
 import { countryOf, fawaterkCode, gatewaysForCurrency, localPrice, regionFor } from './_shared/geo.ts';
 
 // POST { gateway, plan_code } | { gateway, course_id } | { gateway, consultation: <request id> }, plus { return_url }
-Deno.serve(async (req) => {
+Deno.serve(withCors(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   try {
     const user = await currentUser(req);
@@ -108,4 +108,4 @@ Deno.serve(async (req) => {
   } catch (e) {
     return json({ error: String(e) }, 500);
   }
-});
+}));

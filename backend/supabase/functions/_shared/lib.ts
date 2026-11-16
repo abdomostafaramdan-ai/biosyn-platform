@@ -1,9 +1,20 @@
 // Shared helpers. Pure functions are unit-tested in tests/lib.test.mjs.
 
+// Browsers may call these functions only from the origins in ALLOWED_ORIGINS (comma-separated, set as a function secret).
+// The app sends its token in the Authorization header (no cookies), so no credentials are allowed.
+const ALLOWED = (Deno.env.get('ALLOWED_ORIGINS') ?? 'https://biosyneg.com,https://www.biosyneg.com')
+  .split(',').map((s) => s.trim()).filter(Boolean);
 export const cors = {
-  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Vary': 'Origin',
+};
+// Adds Access-Control-Allow-Origin only when the caller's Origin is on the allow-list.
+export const withCors = (h: (req: Request) => Response | Promise<Response>) => async (req: Request) => {
+  const res = await h(req);
+  const o = req.headers.get('origin');
+  if (o && ALLOWED.includes(o)) { try { res.headers.set('Access-Control-Allow-Origin', o); } catch { const r = new Response(res.body, res); r.headers.set('Access-Control-Allow-Origin', o); return r; } }
+  return res;
 };
 export const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...cors, 'Content-Type': 'application/json' } });

@@ -1,11 +1,11 @@
 import { admin, asUser, currentUser } from './_shared/db.ts';
-import { cors, json, type Gateway } from './_shared/lib.ts';
+import { cors, withCors, json, type Gateway } from './_shared/lib.ts';
 import { refundAtGateway } from './_shared/gateways.ts';
 import { loadSecrets } from './_shared/secrets.ts';
 
 // Admin only. POST { payment_id, manual_confirmed? }
 // Interactive courses only, within 7 days of payment. Subscriptions are never refundable.
-Deno.serve(async (req) => {
+Deno.serve(withCors(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   const user = await currentUser(req);
   if (!user) return json({ error: 'unauthorized' }, 401);
@@ -31,4 +31,4 @@ Deno.serve(async (req) => {
   const { error } = await sb.rpc('refund_payment', { p_payment: payment_id, p_dry: false });
   if (error) return json({ error: error.message }, 400);
   return json({ ok: true });
-});
+}));

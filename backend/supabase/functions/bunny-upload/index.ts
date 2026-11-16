@@ -1,5 +1,5 @@
 import { admin, asUser, currentUser } from './_shared/db.ts';
-import { bunnyEmbedUrl, cors, json, sha256Hex } from './_shared/lib.ts';
+import { bunnyEmbedUrl, cors, withCors, json, sha256Hex } from './_shared/lib.ts';
 import { loadSecrets, sec } from './_shared/secrets.ts';
 import { STREAM, accountKey, defaultLib, ensureReferrers, libKey, listLibraries, listVideos, uploadsReady } from './_shared/bunny.ts';
 
@@ -51,7 +51,7 @@ async function importFromUrl(sb: any, lesson: any, courseTitle: string) {
   return { video_id: guid, queued: !guid };
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withCors(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   const body = await req.json().catch(() => ({}));
   const sb = admin();
@@ -126,4 +126,4 @@ Deno.serve(async (req) => {
     const m = String((e as Error).message || e);
     return json({ error: m }, /not configured|account key/.test(m) ? 503 : 502);
   }
-});
+}));

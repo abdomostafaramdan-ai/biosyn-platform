@@ -1,11 +1,13 @@
 // Admin: lifetime view counts per course from Bunny Stream.
 // For every Bunny library used by our lectures it reads each video's lifetime `views` and `totalWatchTime`,
 // plus the library's daily statistics since the library was created. Keys never leave the server.
-const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' };
+const ALLOWED = (Deno.env.get('ALLOWED_ORIGINS') ?? 'https://biosyneg.com,https://www.biosyneg.com').split(',').map((s) => s.trim()).filter(Boolean);
+// Access-Control-Allow-Origin is added per response, only for an allow-listed Origin (no credentials; the app uses the Authorization header)
+const cors = { 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Vary': 'Origin' };
 const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...cors, 'Content-Type': 'application/json' } });
 const STREAM = 'https://video.bunnycdn.com', CORE = 'https://api.bunny.net';
 
-Deno.serve(async (req) => {
+const handle = async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   const URL_ = Deno.env.get('SUPABASE_URL')!, ANON = Deno.env.get('SUPABASE_ANON_KEY')!, SRV = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const ok = await fetch(`${URL_}/rest/v1/rpc/is_admin`, { method: 'POST', headers: { apikey: ANON, Authorization: req.headers.get('Authorization') || '', 'Content-Type': 'application/json' }, body: '{}' }).then((r) => r.json()).catch(() => false);
@@ -68,4 +70,10 @@ Deno.serve(async (req) => {
   }
   for (const o of Object.values(courses)) { o.top.sort((a: any, b: any) => b.views - a.views); o.top = o.top.slice(0, 3); }
   return json({ courses: Object.values(courses).sort((a: any, b: any) => b.views - a.views), libraries: libInfo, total_views: totalViews, watch_minutes: Math.round(watchTotal / 60) });
+};
+
+Deno.serve(async (req) => {
+  const res = await handle(req), o = req.headers.get('origin');
+  if (o && ALLOWED.includes(o)) res.headers.set('Access-Control-Allow-Origin', o);
+  return res;
 });

@@ -2,7 +2,9 @@
 // Self-contained (no _shared imports) so it can be redeployed on its own.
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
-const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' };
+const ALLOWED = (Deno.env.get('ALLOWED_ORIGINS') ?? 'https://biosyneg.com,https://www.biosyneg.com').split(',').map((s) => s.trim()).filter(Boolean);
+// Access-Control-Allow-Origin is added per response, only for an allow-listed Origin (no credentials; the app uses the Authorization header)
+const cors = { 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Vary': 'Origin' };
 const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...cors, 'Content-Type': 'application/json' } });
 const sha256Hex = async (s: string) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)))].map((b) => b.toString(16).padStart(2, '0')).join('');
 async function embedUrl(lib: string, vid: string, key: string, ttl = 4 * 3600) {
@@ -10,7 +12,7 @@ async function embedUrl(lib: string, vid: string, key: string, ttl = 4 * 3600) {
   return `https://iframe.mediadelivery.net/embed/${lib}/${vid}?token=${await sha256Hex(key + vid + expires)}&expires=${expires}`;
 }
 
-Deno.serve(async (req) => {
+const handle = async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   const URL_ = Deno.env.get('SUPABASE_URL')!;
   const asUser = createClient(URL_, Deno.env.get('SUPABASE_ANON_KEY')!, { global: { headers: { Authorization: req.headers.get('Authorization') ?? '' } }, auth: { persistSession: false } });
@@ -46,4 +48,10 @@ Deno.serve(async (req) => {
   const keys = new Map(String(sec('BUNNY_TOKEN_KEYS')).split(/[\n,;]+/).map((x) => x.split('=').map((y) => y.trim())).filter((x) => x.length === 2 && x[0] && x[1]) as [string, string][]);
   const key = keys.get(lib) || (lib === def ? sec('BUNNY_TOKEN_KEY') : '');
   return json({ url: key ? await embedUrl(lib, v.bunny_video_id, key) : `https://iframe.mediadelivery.net/embed/${lib}/${v.bunny_video_id}` });
+};
+
+Deno.serve(async (req) => {
+  const res = await handle(req), o = req.headers.get('origin');
+  if (o && ALLOWED.includes(o)) res.headers.set('Access-Control-Allow-Origin', o);
+  return res;
 });

@@ -1,5 +1,5 @@
 import { admin } from './_shared/db.ts';
-import { cors, json } from './_shared/lib.ts';
+import { cors, withCors, json } from './_shared/lib.ts';
 import { loadSecrets, sec } from './_shared/secrets.ts';
 
 // Public support assistant. POST { messages: [{role:'user'|'assistant', content}] } -> { reply }
@@ -35,7 +35,7 @@ async function catalog() {
 
 const sha = async (s: string) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)))].map((b) => b.toString(16).padStart(2, '0')).join('').slice(0, 32);
 
-Deno.serve(async (req) => {
+Deno.serve(withCors(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   await loadSecrets(admin());
   const key = sec('ANTHROPIC_API_KEY');
@@ -68,4 +68,4 @@ ${await catalog()}`;
   const d = await r.json();
   const reply = (d.content ?? []).filter((b: any) => b.type === 'text').map((b: any) => b.text).join('\n').trim();
   return json({ reply: reply || 'عذرًا، لم أفهم السؤال. ممكن توضّح أكتر؟' });
-});
+}));
