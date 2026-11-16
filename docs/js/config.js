@@ -5,7 +5,7 @@ window.BIOSYN = {
   SUPABASE_URL: 'https://qdlvvwwlsofcngedoaya.supabase.co',
   SUPABASE_KEY: 'sb_publishable_xqiQvcj_a-ZrH-E5a6ozng_Pa137wO5',
   TRACKING: { META_PIXEL_ID: '', GA4_ID: 'G-1E0M4FD2K8' }, // fill in to enable Meta Pixel / Google Analytics (leave empty to disable)
-  SUPPORT_CHAT: false, // set true after adding the ANTHROPIC_API_KEY secret in Supabase
+  SUPPORT_CHAT: false, // set true (the button also appears by itself once GEMINI_API_KEY is saved in the admin panel)
   GATEWAYS_FALLBACK: [], // payment methods now come from Admin → Integrations (keys saved there)
 };
 

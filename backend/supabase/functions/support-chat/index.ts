@@ -3,8 +3,9 @@ import { cors, withCors, json } from './_shared/lib.ts';
 import { loadSecrets, sec } from './_shared/secrets.ts';
 
 // Public support assistant. POST { messages: [{role:'user'|'assistant', content}] } -> { reply }
-// Needs the ANTHROPIC_API_KEY secret. Answers only from the platform facts below + live plans/catalog.
-const MODEL = Deno.env.get('SUPPORT_MODEL') || 'claude-haiku-5-5';
+// Needs GEMINI_API_KEY (Google AI Studio). Answers only from the platform facts below + live plans/catalog.
+// SUPPORT_MODEL overrides the model; if a model id is retired (404) the next one in the list is tried.
+const MODELS = [Deno.env.get('SUPPORT_MODEL'), 'gemini-3.5-flash-lite', 'gemini-2.5-flash'].filter(Boolean) as string[];
 const DAILY_LIMIT = Number(Deno.env.get('SUPPORT_DAILY_LIMIT') || 40);
 
 const POLICIES = `
@@ -38,7 +39,7 @@ const sha = async (s: string) => [...new Uint8Array(await crypto.subtle.digest('
 Deno.serve(withCors(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   await loadSecrets(admin());
-  const key = sec('ANTHROPIC_API_KEY');
+  const key = sec('GEMINI_API_KEY');
   if (!key) return json({ error: 'not configured' }, 503);
   const body = await req.json().catch(() => null);
   const msgs = Array.isArray(body?.messages) ? body.messages : [];
@@ -59,13 +60,21 @@ ${POLICIES}
 
 ${await catalog()}`;
 
-  const r = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model: MODEL, max_tokens: 600, system, messages: clean }),
-  });
-  if (!r.ok) { console.error('anthropic', r.status, (await r.text()).slice(0, 300)); return json({ error: 'assistant unavailable' }, 502); }
+  let r: Response | null = null;
+  for (const model of MODELS) {
+    r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+      method: 'POST',
+      headers: { 'x-goog-api-key': key, 'content-type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: system }] },
+        contents: clean.map((m: any) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })),
+        generationConfig: { maxOutputTokens: 1024 },
+      }),
+    });
+    if (r.status !== 404) break;
+  }
+  if (!r || !r.ok) { console.error('gemini', r?.status, (await r?.text())?.slice(0, 300)); return json({ error: 'assistant unavailable' }, 502); }
   const d = await r.json();
-  const reply = (d.content ?? []).filter((b: any) => b.type === 'text').map((b: any) => b.text).join('\n').trim();
+  const reply = (d.candidates?.[0]?.content?.parts ?? []).filter((p: any) => typeof p.text === 'string' && !p.thought).map((p: any) => p.text).join('').trim();
   return json({ reply: reply || 'عذرًا، لم أفهم السؤال. ممكن توضّح أكتر؟' });
 }));

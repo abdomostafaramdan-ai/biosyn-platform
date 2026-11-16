@@ -115,7 +115,7 @@
     let ln = document.head.querySelector('link[rel=canonical]'); if (!ln) { ln = document.createElement('link'); ln.rel = 'canonical'; document.head.appendChild(ln); } ln.href = canon;
   };
 
-  // ---------- AI support chat (enable with BIOSYN.SUPPORT_CHAT = true after setting ANTHROPIC_API_KEY) ----------
+  // ---------- AI support chat (enable with BIOSYN.SUPPORT_CHAT = true after saving GEMINI_API_KEY in the admin integrations page) ----------
   async function mountSupport() {
     if (/admin|instructor|watch/.test(document.body.dataset.page || '')) return;
     const st = await window.SITE_SETTINGS;

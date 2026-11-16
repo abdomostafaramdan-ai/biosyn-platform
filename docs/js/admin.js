@@ -707,8 +707,8 @@
           `<div class="row2">${field('RESEND_API_KEY', 'API key', 're_…')}${field('MAIL_FROM', 'عنوان المرسل', 'Biosyn Eg <noreply@biosyneg.com>', 'text')}</div>`)}
         ${card('meta', 'Meta Pixel وGoogle Analytics — تتبع الإعلانات', 'رقم الـPixel من Events Manager، وتوكن Conversions API من إعدادات الـPixel (اختياري)، ومعرّف GA4 يبدأ بـ G-.', ['META_PIXEL_ID'],
           `<div class="row2">${field('META_PIXEL_ID', 'Pixel ID', '1234567890', 'text')}${field('META_CAPI_TOKEN', 'Conversions API token (اختياري)', '')}</div>${field('GA4_ID', 'Google Analytics 4 ID (اختياري)', 'G-XXXXXXX', 'text')}`)}
-        ${card('claude', 'مساعد الدعم بالذكاء الاصطناعي (Claude)', 'مفتاح من console.anthropic.com. بمجرد الحفظ يظهر زر «مساعدة» للزوار ويرد من سياسات المنصة وباقاتها فقط.', ['ANTHROPIC_API_KEY'],
-          `${field('ANTHROPIC_API_KEY', 'Anthropic API key', 'sk-ant-…')}`)}
+        ${card('gemini', 'مساعد الدعم بالذكاء الاصطناعي (Gemini)', 'مفتاح من aistudio.google.com ← Get API key. بمجرد الحفظ يظهر زر «مساعدة» للزوار ويرد من سياسات المنصة وباقاتها فقط.', ['GEMINI_API_KEY'],
+          `${field('GEMINI_API_KEY', 'Gemini API key', 'AIza…')}`)}
         </div>
         <section class="bx-panel"><div class="bx-panel-head"><h3>Biosyn CRM</h3>${on(['CRM_URL', 'CRM_WOO_SECRET']) ? '<span class="bs-badge bs-badge-new">متصل</span>' : '<span class="bs-badge bs-badge-neutral">غير متصل</span>'}</div>
           <p class="bx-hint" style="margin-top:0">كل دفعة أو استرداد يدخل الـCRM تلقائيًا كعميل + عملية دخل، وكل طلب من نماذج الموقع يدخل كعميل محتمل مع مهمة متابعة. المزامنة كل 5 دقائق وفور كل دفعة.</p>
