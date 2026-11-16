@@ -4,8 +4,9 @@ import { loadSecrets, sec } from './_shared/secrets.ts';
 
 // Public support assistant. POST { messages: [{role:'user'|'assistant', content}] } -> { reply }
 // Needs GEMINI_API_KEY (Google AI Studio). Answers only from the platform facts below + live plans/catalog.
-// SUPPORT_MODEL overrides the model; if a model id is retired (404) the next one in the list is tried.
-const MODELS = [Deno.env.get('SUPPORT_MODEL'), 'gemini-3.5-flash-lite', 'gemini-2.5-flash'].filter(Boolean) as string[];
+// All three models are on the Gemini API free tier (each has its own free quota). If one is retired (404) or its
+// free quota is used up (429), the next one is tried. SUPPORT_MODEL puts another model first.
+const MODELS = [Deno.env.get('SUPPORT_MODEL'), 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.6-flash'].filter(Boolean) as string[];
 const DAILY_LIMIT = Number(Deno.env.get('SUPPORT_DAILY_LIMIT') || 40);
 
 const POLICIES = `
@@ -71,7 +72,7 @@ ${await catalog()}`;
         generationConfig: { maxOutputTokens: 1024 },
       }),
     });
-    if (r.status !== 404) break;
+    if (r.status !== 404 && r.status !== 429) break;
   }
   if (!r || !r.ok) { console.error('gemini', r?.status, (await r?.text())?.slice(0, 300)); return json({ error: 'assistant unavailable' }, 502); }
   const d = await r.json();

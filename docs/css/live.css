@@ -69,8 +69,31 @@
 
 /* support chat */
 .bx-chat { position: fixed; inset-inline-start: 16px; bottom: 16px; z-index: 90; font: 400 14px/22px var(--font-sans); }
-.bx-chat-fab { border: 0; border-radius: 999px; padding: 12px 18px; background: #c6f84a; color: #010232; font-weight: 700; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,.35); }
-.bx-chat-panel { position: absolute; bottom: 56px; inset-inline-start: 0; width: min(360px, calc(100vw - 32px)); height: min(480px, 70vh); display: flex; flex-direction: column; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--surface-raised, #0b0d4a); color: var(--ink); overflow: hidden; box-shadow: 0 16px 40px rgba(0,0,0,.45); }
+/* help launcher: a lime orb holding a speech bubble with a DNA strand, ringed by a slowly turning gradient orbit */
+.bx-chat-fab { display: flex; align-items: center; gap: 10px; border: 0; padding: 0; background: none; color: var(--ink, #f4f6ff); font: 700 14px/1 var(--font-sans); cursor: pointer; }
+.bx-chat-orb { position: relative; display: grid; place-items: center; width: 60px; height: 60px; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #e8f84a 0%, #c6f84a 45%, #7cf04a 100%); box-shadow: 0 10px 28px rgba(0,0,20,.45), 0 0 0 6px rgba(198,248,74,.12); transition: transform .25s ease, box-shadow .25s ease; }
+.bx-chat-ring { position: absolute; inset: -7px; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0 55%, #e8f84a 68%, #7cf04a 80%, #8ec9ff 88%, transparent 96%); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px)); mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px)); animation: bx-orbit 6s linear infinite; }
+.bx-chat-ic { width: 38px; height: 38px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.bx-chat-ic .bub { fill: #010232; stroke: #010232; stroke-width: 1.6; }
+.bx-chat-ic .dna { stroke: #c6f84a; stroke-width: 1.9; }
+.bx-chat-ic .node { fill: #e8f84a; stroke: none; }
+.bx-chat-ic.sm .node { fill: #010232; }
+.bx-chat-ic .rung { stroke: #e8f84a; stroke-width: 1.4; }
+.bx-chat-ic.sm { width: 22px; height: 22px; vertical-align: -6px; margin-inline-end: 8px; }
+.bx-chat-ic.sm .bub { fill: #c6f84a; stroke: #c6f84a; }
+.bx-chat-ic.sm .dna { stroke: #010232; }
+.bx-chat-ic.sm .rung { stroke: #010232; }
+.bx-chat-live { position: absolute; top: 4px; inset-inline-end: 4px; width: 11px; height: 11px; border-radius: 50%; background: #5fd68a; border: 2px solid #010232; }
+.bx-chat-tag { padding: 9px 14px; border-radius: 999px; background: var(--surface-raised, #10144f); border: 1px solid var(--line-strong, #6c72b0); box-shadow: 0 8px 24px rgba(0,0,20,.35); white-space: nowrap; transition: opacity .2s ease, transform .2s ease; }
+.bx-chat-fab:hover .bx-chat-orb, .bx-chat-fab:focus-visible .bx-chat-orb { transform: translateY(-2px) rotate(-6deg); box-shadow: 0 14px 34px rgba(0,0,20,.5), 0 0 0 8px rgba(198,248,74,.18); }
+.bx-chat-fab:focus-visible { outline: none; }
+.bx-chat-fab:focus-visible .bx-chat-orb { outline: 2px solid var(--focus-ring, #c6f84a); outline-offset: 6px; }
+.bx-chat-fab[aria-expanded="true"] .bx-chat-tag { opacity: 0; transform: translateX(-6px); pointer-events: none; }
+.bx-chat-title { display: flex; align-items: center; }
+@keyframes bx-orbit { to { transform: rotate(360deg); } }
+@media (max-width: 560px) { .bx-chat-tag { display: none; } .bx-chat-orb { width: 54px; height: 54px; } }
+@media (prefers-reduced-motion: reduce) { .bx-chat-ring { animation: none; } .bx-chat-orb, .bx-chat-tag { transition: none; } }
+.bx-chat-panel { position: absolute; bottom: 72px; inset-inline-start: 0; width: min(360px, calc(100vw - 32px)); height: min(480px, 70vh); display: flex; flex-direction: column; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--surface-raised, #0b0d4a); color: var(--ink); overflow: hidden; box-shadow: 0 16px 40px rgba(0,0,0,.45); }
 .bx-chat-panel[hidden] { display: none; }
 .bx-chat-panel header { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line); }
 .bx-chat-panel header button { background: none; border: 0; color: inherit; font-size: 22px; cursor: pointer; }
