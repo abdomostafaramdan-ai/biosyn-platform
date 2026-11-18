@@ -668,8 +668,11 @@
       const consent = $('input[type=checkbox]', form);
       msg.className = 'bx-formmsg err';
       if (!name || !/^\S+@\S+\.\S+$/.test(email)) { msg.textContent = 'اكتب الاسم وبريدًا إلكترونيًا صحيحًا.'; return; }
-      const blank = $$('select', form).find((el) => !el.value && /\*/.test((el.id && $(`label[for="${el.id}"]`, form) || {}).textContent || ''));
+      const starred = (el) => /\*/.test((el.id && $(`label[for="${el.id}"]`, form) || {}).textContent || '');
+      const blank = $$('select', form).find((el) => !el.value && starred(el));
       if (blank) { msg.textContent = 'اختر ' + $(`label[for="${blank.id}"]`, form).textContent.replace('*', '').trim() + '.'; blank.focus(); return; }
+      const empty = $$('input:not([type=checkbox]):not([type=file]):not([type=hidden]),textarea', form).find((el) => !el.value.trim() && starred(el));
+      if (empty) { msg.textContent = 'اكتب ' + $(`label[for="${empty.id}"]`, form).textContent.replace('*', '').trim() + '.'; empty.focus(); return; }
       if (consent && !consent.checked) { msg.textContent = 'يرجى الموافقة على الشروط للمتابعة.'; return; }
       // attachments (CV, degree): required ones must be present, each up to 5 MB, PDF / Word / image
       const fileEls = $$('input[type=file]', form), OKX = /\.(pdf|docx?|jpe?g|png|webp)$/i;
