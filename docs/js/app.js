@@ -721,7 +721,7 @@
     const hint = x.hint ? `<small class="bx-hint">${esc(x.hint)}</small>` : '';
     let ctl;
     if (type === 'textarea') ctl = `<textarea id="${id}" class="bx-textarea"${ph}></textarea>`;
-    else if (type === 'select') ctl = `<select id="${id}" class="bx-select"><option value="">${esc(x.placeholder || 'اختر')}</option>${(Array.isArray(x.options) ? x.options : []).filter(Boolean).slice(0, 60).map((o) => `<option>${esc(o)}</option>`).join('')}</select>`;
+    else if (type === 'select') ctl = `<select id="${id}" class="bx-select">${x.placeholder || req ? `<option value="">${esc(x.placeholder || 'اختر')}</option>` : ''}${(Array.isArray(x.options) ? x.options : []).filter(Boolean).slice(0, 60).map((o) => `<option>${esc(o)}</option>`).join('')}</select>`;
     else if (type === 'file') ctl = `<input id="${id}" class="bx-input" type="file" accept="${SF_ACCEPT}" data-file="${id.replace(/^[a-z]-/, '')}"${req ? ' required' : ''}>`;
     else ctl = `<input id="${id}" class="bx-input" type="${SF_TYPES[type]}"${/^(email|tel|number)$/.test(type) ? ' dir="ltr"' : ''}${ph}>`;
     return `<div class="bx-field${x.wide ? ' bx-wide' : ''}">${lab}${ctl}${hint}</div>`;
