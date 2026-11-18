@@ -20,11 +20,35 @@
     return lines.slice(start).map(split).map((c) => ({ email: c[ie] || '', name: iname >= 0 ? c[iname] : '', phone: ip >= 0 ? c[ip] : '', created_at: ic >= 0 ? c[ic] : '', last_active_at: ia >= 0 ? c[ia] : '' })).filter((r) => r.email.includes('@'));
   }
 
+
+  // «تحليل الحملة»: how many opened, clicked, signed up, paid — per subject line and per day
+  function analytics(a) {
+    if (!a || !Number(a.sent)) return D.panel('تحليل الحملة', '<p class="bx-hint" style="margin:0">التحليل هيظهر هنا أول ما تتبعت أول دفعة رسائل.</p>');
+    const n = (k) => Number(a[k] || 0), ES = window.EmailStats;
+    const tiles = `<div class="bx-stats" style="margin:0 0 16px">
+      ${D.stat('فتحوا الرسالة', n('opened'), pct(n('opened'), n('sent')) + ' من المُرسَل')}
+      ${D.stat('ضغطوا على الرابط', n('clicked'), pct(n('clicked'), n('sent')) + ' من المُرسَل')}
+      ${D.stat('سجّلوا حساب', n('activated'), (n('activated_after_email') !== n('activated') ? n('activated_after_email') + ' بعد الرسالة · ' : '') + pct(n('activated'), n('sent')))}
+      ${D.stat('اشتركوا (دفعوا)', n('paid'), pct(n('paid'), n('activated')) + ' من المسجّلين')}
+      ${D.stat('ضغطوا «قدّم كمحاضر»', n('teach_clicks'), 'راحوا لصفحة انضم كمحاضر')}
+      ${D.stat('فشل الإرسال', n('failed'), n('failed') ? 'بريد مرفوض أو خطأ' : '—')}
+    </div>`;
+    const funnel = ES ? ES.funnel([['أُرسلت', n('sent')], ['فتحوا', n('opened')], ['ضغطوا', n('clicked')], ['سجّلوا حساب', n('activated')], ['اشتركوا', n('paid')]]) : '';
+    const V = { A: 'العنوان (أ)', B: 'العنوان (ب)' };
+    const vt = (a.variants || []).length ? `<h4 style="margin:18px 0 8px">حسب عنوان الرسالة</h4>` + D.table(['العنوان', 'أُرسلت', 'فتحوا', 'ضغطوا', 'سجّلوا'],
+      a.variants.map((v) => [V[v.v] || v.v, String(v.sent), `${v.opened} <small class="bx-hint">${pct(v.opened, v.sent)}</small>`, `${v.clicked} <small class="bx-hint">${pct(v.clicked, v.sent)}</small>`, `${v.activated} <small class="bx-hint">${pct(v.activated, v.sent)}</small>`]), '') : '';
+    const days = (a.daily || []).filter((d) => Number(d.sent) || Number(d.opened) || Number(d.activated)).reverse();
+    const dt = days.length ? `<h4 style="margin:18px 0 8px">آخر 14 يوم</h4>` + D.table(['اليوم', 'أُرسلت', 'فتحوا', 'سجّلوا'],
+      days.map((d) => [new Date(d.d + 'T12:00:00').toLocaleDateString('ar-EG', { weekday: 'short', day: 'numeric', month: 'short' }), String(d.sent), String(d.opened), String(d.activated)]), '') : '';
+    return D.panel('تحليل الحملة', tiles + funnel + vt + dt + `<p style="margin:12px 0 0">${ES ? ES.note : ''}</p>`);
+  }
+
   window.campaignAdmin = async function (main) {
-    const [st, cfgRow, recent] = await Promise.all([
+    const [st, cfgRow, recent, an] = await Promise.all([
       sb.rpc('reactivation_stats').catch(() => null),
       sb.one('site_content', { select: 'data', key: 'eq.reactivation' }).catch(() => null),
       sb.get('legacy_users', { select: 'email,full_name,status,variant,sent_at,activated_at,founding', order: 'sent_at.desc.nullslast,created_at.desc', limit: 60 }).catch(() => []),
+      sb.rpc('reactivation_analytics').catch(() => null),
     ]);
     const s = st || {}, cfg = (cfgRow && cfgRow.data) || {};
     const limit = Number(cfg.daily_limit || 80), days = s.queued ? Math.ceil(s.queued / Math.max(limit, 1)) : 0;
@@ -36,6 +60,7 @@
         ${D.stat('في الانتظار', s.queued || 0, s.queued ? 'تنتهي خلال ~' + days + ' يومًا' : '—')}
         ${D.stat('ألغوا الاشتراك', s.unsubscribed || 0, pct(s.unsubscribed || 0, s.sent || 0))}
       </div>
+      ${analytics(an)}
       ${D.panel('حالة الحملة', `<p class="bx-hint" style="margin-top:0">تُرسل دفعة واحدة يوميًا تلقائيًا (مهمة مجدولة في Claude). الحد الأقصى للحملة <b>${limit}</b> رسالة يوميًا، ولا يتجاوز مجموع رسائل المنصة كلها <b>${cfg.total_daily_cap || 95}</b> رسالة خلال 24 ساعة حتى تبقى ضمن الباقة المجانية لـ Resend (100 رسالة يوميًا). لا تُنشأ حسابات مسبقًا ولا تُفعَّل أي اشتراكات؛ المستخدم ينشئ حسابه بنفسه بالبريد نفسه فيُربط تلقائيًا.</p>
         <div class="bx-formmsg ${cfg.enabled ? 'ok' : 'err'}" style="display:block">${cfg.enabled ? '● الحملة تعمل' : '○ الحملة متوقفة — لن تُرسل أي رسالة حتى تشغّلها'}</div>
         <div class="bx-grid2" style="margin-top:14px">
@@ -50,7 +75,7 @@
           <button class="bs-btn ${cfg.enabled ? 'bs-btn-ghost' : 'bs-btn-secondary'}" type="button" id="cp-toggle">${cfg.enabled ? 'إيقاف الحملة' : 'تشغيل الحملة'}</button>
           <button class="bs-btn bs-btn-ghost" type="button" id="cp-test">إرسال رسالة تجريبية إلى بريدي</button>
           <button class="bs-btn bs-btn-ghost" type="button" id="cp-now">إرسال دفعة اليوم الآن</button></div>`)}
-      ${D.panel('مقارنة العنوانين', `<div class="bx-stats" style="margin:0">${D.stat('العنوان (أ)', pct(s.a_act || 0, s.a_sent || 0), (s.a_act || 0) + ' تفعيل من ' + (s.a_sent || 0))}${D.stat('العنوان (ب)', pct(s.b_act || 0, s.b_sent || 0), (s.b_act || 0) + ' تفعيل من ' + (s.b_sent || 0))}</div>`)}
+      ${an && Number(an.sent) ? '' : D.panel('مقارنة العنوانين', `<div class="bx-stats" style="margin:0">${D.stat('العنوان (أ)', pct(s.a_act || 0, s.a_sent || 0), (s.a_act || 0) + ' تفعيل من ' + (s.a_sent || 0))}${D.stat('العنوان (ب)', pct(s.b_act || 0, s.b_sent || 0), (s.b_act || 0) + ' تفعيل من ' + (s.b_sent || 0))}</div>`)}
       ${D.panel('استيراد المستخدمين', `<p class="bx-hint" style="margin-top:0">ارفع ملف CSV يحتوي على عمود للبريد الإلكتروني على الأقل (ويُفضّل الاسم والهاتف وتاريخ التسجيل وآخر دخول). البريد المكرر يُتجاهل، ومن لديه حساب على المنصة الجديدة بالفعل يُستبعد من الإرسال تلقائيًا. يُرسل أولًا لمن دخل مؤخرًا.</p>
         <input type="file" id="cp-file" accept=".csv,text/csv,text/plain" class="bx-input"><div class="bx-formmsg" id="cp-imsg" aria-live="polite"></div>`)}
       ${D.panel('آخر النشاط', D.table(['المستخدم', 'الحالة', 'العنوان', 'أُرسلت', 'فعّل'], recent.map((r) => [

@@ -94,11 +94,32 @@
   // ---------------- campaigns ----------------
   const AUD = { all_users: 'كل المستخدمين المسجلين', subscribers: 'المشتركون حاليًا', non_subscribers: 'الطلاب غير المشتركين', instructors: 'المحاضرون', legacy_all: 'كل مستخدمي المنصة القديمة', legacy_pending: 'مستخدمو المنصة القديمة الذين لم يفعّلوا حساباتهم', newsletter: 'مشتركو النشرة البريدية' };
   const ST = { draft: ['مسودة', 'mute'], sending: ['جارٍ الإرسال', 'info'], paused: ['متوقفة مؤقتًا', 'warn'], done: ['اكتملت', 'ok'] };
+
+  // shared by «حملة إعادة التفعيل» and «حملات البريد»: a funnel (sent → opened → clicked → signed up → paid)
+  const pc = (a, b) => (b ? Math.round((a / b) * 1000) / 10 : 0);
+  window.EmailStats = {
+    funnel(steps) {
+      const base = Number(steps[0] && steps[0][1]) || 0;
+      return `<div style="display:grid;gap:10px">${steps.map(([label, n, hint]) => {
+        const v = Number(n) || 0, w = base ? Math.max(v ? 2 : 0, pc(v, base)) : 0;
+        return `<div style="display:grid;grid-template-columns:minmax(120px,190px) 1fr auto;gap:10px;align-items:center">
+          <span>${esc(label)}${hint ? `<br><small class="bx-hint">${esc(hint)}</small>` : ''}</span>
+          <span style="height:12px;border-radius:6px;background:var(--surface-raised);overflow:hidden" aria-hidden="true"><span style="display:block;height:100%;width:${w}%;background:var(--brand-lime);border-radius:6px"></span></span>
+          <b style="font-variant-numeric:tabular-nums;white-space:nowrap">${v}${base && v !== base ? ` <small class="bx-hint">(${pc(v, base)}٪)</small>` : ''}</b></div>`;
+      }).join('')}</div>`;
+    },
+    note: '<small class="bx-hint">«فتحوا» تقريبي: بعض برامج البريد (زي Apple Mail) بتفتح الصور تلقائيًا، وبعضها بيمنعها. الأدق هو «ضغطوا» و«سجّلوا».</small>',
+  };
+
   window.campaignsAdmin = async function (main) {
-    const list = await sb.get('email_campaigns', { select: '*', order: 'created_at.desc', limit: 200 }).catch(() => []);
+    const [list, an] = await Promise.all([sb.get('email_campaigns', { select: '*', order: 'created_at.desc', limit: 200 }).catch(() => []), sb.rpc('campaign_analytics').then((r) => (Array.isArray(r) ? r : [])).catch(() => [])]);
+    const A = Object.fromEntries(an.map((x) => [x.id, x])), sum = (k) => an.reduce((t, x) => t + Number(x[k] || 0), 0);
     main.innerHTML = D.panel('حملات البريد', `<p class="bx-hint" style="margin-top:0">اكتب رسالة واختر الجمهور ثم أرسلها. تُرسل الحملات بالتدريج يوميًا مع المهمة المجدولة (الساعة 10:13 صباحًا)، ولا يتجاوز مجموع رسائل المنصة <b>95 رسالة خلال 24 ساعة</b> للبقاء ضمن الباقة المجانية. حملة إعادة التفعيل لها الأولوية، وتأخذ الحملات ما يتبقى. يُستبعد تلقائيًا كل من ألغى الاشتراك في الرسائل، وفي كل رسالة رابط لإلغاء الاشتراك.</p>
-      ${D.table(['الحملة', 'الجمهور', 'الحالة', 'التقدم', ''], list.map((c) => [`<b dir="auto">${esc(c.name)}</b><br><small class="bx-hint" dir="auto">${esc(c.subject)}</small>`, AUD[c.audience] || c.audience,
-        `<span class="bx-st bx-st-${(ST[c.status] || ['', 'mute'])[1]}">${(ST[c.status] || [c.status])[0]}</span>`, c.total ? `${c.sent} / ${c.total}` : '—', `<button class="bs-btn bs-btn-secondary bs-btn-sm" data-c="${c.id}">فتح</button>`]), 'لا توجد حملات بعد.')}`,
+      ${an.some((x) => Number(x.sent)) ? `<div style="margin:0 0 18px"><h4 style="margin:0 0 10px">نتائج كل الحملات</h4>${window.EmailStats.funnel([['أُرسلت', sum('sent')], ['فتحوا الرسالة', sum('opened')], ['ضغطوا الزر', sum('clicked')], ['عملوا حساب جديد', sum('new_accounts')], ['اشتروا بعدها', sum('purchases'), D.money(sum('revenue'))]])}${window.EmailStats.note}</div>` : ''}
+      ${D.table(['الحملة', 'الجمهور', 'الحالة', 'التقدم', 'فتحوا', 'ضغطوا', 'حسابات جديدة', 'اشتروا', ''], list.map((c) => { const x = A[c.id] || {}, sn = Number(x.sent || 0), pp = (n) => (sn ? ` <small class="bx-hint">${pc(Number(n || 0), sn)}٪</small>` : ''); return [`<b dir="auto">${esc(c.name)}</b><br><small class="bx-hint" dir="auto">${esc(c.subject)}</small>`, AUD[c.audience] || c.audience,
+        `<span class="bx-st bx-st-${(ST[c.status] || ['', 'mute'])[1]}">${(ST[c.status] || [c.status])[0]}</span>`, c.total ? `${c.sent} / ${c.total}` : '—',
+        sn ? `${x.opened || 0}${pp(x.opened)}` : '—', sn ? `${x.clicked || 0}${pp(x.clicked)}` : '—', sn ? String(x.new_accounts || 0) : '—', sn ? `${x.purchases || 0}${Number(x.revenue) ? `<br><small class="bx-hint">${D.money(x.revenue)}</small>` : ''}` : '—',
+        `<button class="bs-btn bs-btn-secondary bs-btn-sm" data-c="${c.id}">فتح</button>`]; }), 'لا توجد حملات بعد.')}`,
       '<button class="bs-btn bs-btn-primary bs-btn-sm" type="button" id="cp-new">+ حملة جديدة</button>');
     $('#cp-new', main).onclick = () => edit(null);
     $$('[data-c]', main).forEach((b) => (b.onclick = () => edit(list.find((c) => c.id === b.dataset.c))));
