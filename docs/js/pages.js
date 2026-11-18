@@ -595,7 +595,8 @@
       return `<div style="display:grid;gap:6px;justify-items:center"><b style="font-size:40px;line-height:1.1" dir="ltr">${r.score} / ${r.max}</b><span class="bx-st bx-st-${ok === false ? 'warn' : 'ok'}" style="font-size:15px">${r.percent}٪${ok === true ? ' · ناجح 🎉' : ok === false ? ` · لم تجتز (النجاح من ${r.pass_percent}٪)` : ''}</span></div>
         ${det.length ? `<ol style="text-align:start;display:grid;gap:8px;margin:8px 0 0;padding-inline-start:20px;width:100%">${det.map((d) => `<li><b dir="auto">${esc(d.label)}</b> ${d.ok ? '<span class="bx-st bx-st-ok">✓ صحيحة</span>' : '<span class="bx-st bx-st-warn">✗ خاطئة</span>'}<br><small class="bx-hint" dir="auto">إجابتك: ${esc(d.your || '—')}${d.answer && !d.ok ? ` · الإجابة الصحيحة: ${esc(d.answer)}` : ''}</small></li>`).join('')}</ol>` : ''}`;
     };
-    const errText = (err) => /too many/.test(err.message) ? 'يوجد ضغط على النموذج، حاول بعد دقيقة.' : /form locked/.test(err.message) ? 'سبق أن بدأت هذا النموذج ولا يمكن فتحه مرة أخرى.' : /missing: (.+)/.test(err.message) ? 'من فضلك املأ: ' + err.message.match(/missing: (.+)/)[1] : 'تعذّر الإرسال، حاول مرة أخرى.';
+    const whenTxt = (iso) => new Date(iso).toLocaleString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' });
+    const errText = (err) => /form not open yet/.test(err.message) ? 'لم يبدأ موعد هذا النموذج بعد' + (f.settings && f.settings.opens_at ? '، يفتح ' + whenTxt(f.settings.opens_at) : '') + '.' : /form closed/.test(err.message) ? 'انتهى موعد هذا النموذج.' : /too many/.test(err.message) ? 'يوجد ضغط على النموذج، حاول بعد دقيقة.' : /form locked/.test(err.message) ? 'سبق أن بدأت هذا النموذج ولا يمكن فتحه مرة أخرى.' : /missing: (.+)/.test(err.message) ? 'من فضلك املأ: ' + err.message.match(/missing: (.+)/)[1] : 'تعذّر الإرسال، حاول مرة أخرى.';
 
     if (!timed) {
       root.innerHTML = `${head}
@@ -629,6 +630,20 @@
       ST.lock_on_leave ? '<b>إذا غادرت الصفحة أو بدّلت التبويب أو التطبيق، يُغلق النموذج فورًا ويُرسل ما أجبت عنه حتى تلك اللحظة.</b>' : '', 'لا يمكن بدء النموذج أكثر من مرة.'].filter(Boolean);
     root.innerHTML = `${head}<div class="bx-formcard" style="display:grid;gap:14px"><h2 style="margin:0">⏱ نموذج مؤقت</h2><ul class="bx-hint" style="margin:0;padding-inline-start:20px;display:grid;gap:6px">${rules.map((r) => `<li>${r}</li>`).join('')}</ul>
       <div class="bx-formmsg" aria-live="polite"></div><button type="button" class="bs-btn bs-btn-primary bs-btn-lg" id="fstart" style="justify-self:start">ابدأ الآن</button></div>`;
+    // scheduled exam: the start button wakes up at opens_at (the server refuses earlier starts anyway)
+    const opensAt = ST.opens_at ? new Date(ST.opens_at) : null, closesAt = ST.closes_at ? new Date(ST.closes_at) : null;
+    if (closesAt && Date.now() > closesAt) { const m = $('.bx-formmsg', root); m.className = 'bx-formmsg err'; m.textContent = 'انتهى موعد هذا النموذج.'; $('#fstart').disabled = true; }
+    else if (opensAt && Date.now() < opensAt) {
+      const sb2 = $('#fstart'), m = $('.bx-formmsg', root); sb2.disabled = true;
+      const two = (n) => String(n).padStart(2, '0');
+      const tickOpen = () => {
+        const left = Math.ceil((opensAt - Date.now()) / 1000);
+        if (left <= 0) { clearInterval(ot); sb2.disabled = false; m.className = 'bx-formmsg'; m.textContent = 'بدأ الموعد، اضغط «ابدأ الآن».'; return; }
+        const d = Math.floor(left / 86400), h = Math.floor(left % 86400 / 3600), mi = Math.floor(left % 3600 / 60), se = left % 60;
+        m.className = 'bx-formmsg'; m.innerHTML = `يفتح ${esc(whenTxt(ST.opens_at))} · متبقٍ <b dir="ltr">${d ? d + 'd ' : ''}${two(h)}:${two(mi)}:${two(se)}</b>`;
+      };
+      const ot = setInterval(tickOpen, 1000); tickOpen();
+    }
     $('#fstart').onclick = async (ev) => {
       const b = ev.target; b.disabled = true;
       let att = null; try { att = await sb.rpc('form_start', { p_slug: f.slug }); } catch (err) { b.disabled = false; const m = $('.bx-formmsg', root); m.className = 'bx-formmsg err'; m.textContent = errText(err); return; }

@@ -9,6 +9,8 @@
 
   const FTYPES = { text: 'نص قصير', textarea: 'نص طويل', email: 'بريد إلكتروني', phone: 'هاتف محمول', number: 'رقم', date: 'تاريخ', select: 'قائمة اختيار', radio: 'اختيار واحد', checkbox: 'اختيارات متعددة' };
   const hasOpts = (t) => t === 'select' || t === 'radio' || t === 'checkbox';
+  // ISO timestamp -> value for <input type=datetime-local> in the browser's own time zone
+  const toLocalInput = (iso) => { if (!iso) return ''; const d = new Date(iso); if (isNaN(d)) return ''; return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); };
   const rid = () => Math.random().toString(36).slice(2, 9);
   async function formBuilder(f, opt) {
     opt = opt || {}; const isNew = !f, owner = opt.role !== 'editor';
@@ -26,6 +28,9 @@
       <fieldset class="bx-field" style="border:1px solid var(--line);border-radius:12px;padding:12px 14px"><legend style="padding:0 6px">⏱ نموذج مؤقت (اختبار أو مسابقة)</legend>
         <label class="bx-check" style="min-height:auto"><input type="checkbox" id="fblock" ${f.settings && f.settings.lock_on_leave ? 'checked' : ''}> إغلاق النموذج إذا غادر الشخص الصفحة أو بدّل التبويب، وإرسال ما أجاب عنه حتى تلك اللحظة</label>
         <div class="bx-field" style="margin-top:8px"><label for="fbtm">الوقت الكلي للنموذج بالدقائق (اختياري)</label><input id="fbtm" class="bx-input" type="number" min="1" max="600" value="${(f.settings && f.settings.total_minutes) || ''}" dir="ltr" style="max-width:160px"></div>
+        <div class="bx-row" style="gap:12px;flex-wrap:wrap;margin-top:8px"><div class="bx-field" style="flex:1;min-width:200px"><label for="fbop">يفتح في (اختياري)</label><input id="fbop" class="bx-input" type="datetime-local" value="${toLocalInput(f.settings && f.settings.opens_at)}" dir="ltr"></div>
+          <div class="bx-field" style="flex:1;min-width:200px"><label for="fbcl">آخر موعد للبدء (اختياري)</label><input id="fbcl" class="bx-input" type="datetime-local" value="${toLocalInput(f.settings && f.settings.closes_at)}" dir="ltr"></div></div>
+        <small class="bx-hint">المواعيد بتوقيت جهازك. قبل موعد الفتح لا يمكن بدء النموذج، وبعد آخر موعد للبدء لا يبدأ أحد جديد، ومن بدأ يكمل وقته.</small>
         <small class="bx-hint">لتحديد وقت لكل سؤال اكتب عدد الثواني في خانة ⏱ بجوار السؤال. عند وجود مؤقت تظهر الأسئلة سؤالًا تلو الآخر، وينتقل النموذج تلقائيًا للسؤال التالي عند انتهاء الوقت. لا يمكن الرجوع لسؤال سابق.</small></fieldset>
       <fieldset class="bx-field" style="border:1px solid var(--line);border-radius:12px;padding:12px 14px"><legend style="padding:0 6px">🎯 التصحيح التلقائي</legend>
         <small class="bx-hint">اكتب «الإجابة الصحيحة» تحت أي سؤال اختيار أو نص قصير أو رقم ليُصحَّح تلقائيًا. الإجابات الصحيحة لا تظهر لمن يجيب، وتُحسب الدرجة على الخادم.</small>
@@ -67,7 +72,8 @@
         row.fields = fields.map((x) => ({ id: x.id, label: x.label, type: x.type, required: !!x.required, ...(hasOpts(x.type) ? { options: x.options } : {}), ...(x.time_limit ? { time_limit: x.time_limit } : {}) }));
         const tm = parseInt($('#fbtm', m).value, 10);
         const pp = parseInt($('#fbpp', m).value, 10);
-        row.settings = { ...(f.settings || {}), lock_on_leave: $('#fblock', m).checked, total_minutes: tm >= 1 ? Math.min(600, tm) : null, show_score: $('#fbss', m).checked, show_answers: $('#fbsa', m).checked, pass_percent: pp >= 1 ? Math.min(100, pp) : null };
+        const isoOf = (v) => (v ? new Date(v).toISOString() : null);
+        row.settings = { ...(f.settings || {}), lock_on_leave: $('#fblock', m).checked, total_minutes: tm >= 1 ? Math.min(600, tm) : null, opens_at: isoOf($('#fbop', m).value), closes_at: isoOf($('#fbcl', m).value), show_score: $('#fbss', m).checked, show_answers: $('#fbsa', m).checked, pass_percent: pp >= 1 ? Math.min(100, pp) : null };
         Object.keys(key).forEach((id) => { if (!fields.some((x) => x.id === id)) delete key[id]; });
         try {
           let fid = f.id;
