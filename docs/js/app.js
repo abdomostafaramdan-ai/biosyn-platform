@@ -658,7 +658,7 @@
     btn.addEventListener('click', async () => {
       const f = {};
       $$('input,select,textarea', form).forEach((el) => {
-        if (el.type === 'checkbox') return;
+        if (el.type === 'checkbox' || el.type === 'file') return;
         const lab = el.id && $(`label[for="${el.id}"]`, form);
         const key = (lab ? lab.textContent : el.getAttribute('aria-label') || el.id || '').trim();
         if (key) f[key] = el.tagName === 'SELECT' ? el.options[el.selectedIndex].text : el.value.trim();
@@ -671,10 +671,30 @@
       const blank = $$('select', form).find((el) => !el.value && /\*/.test((el.id && $(`label[for="${el.id}"]`, form) || {}).textContent || ''));
       if (blank) { msg.textContent = 'اختر ' + $(`label[for="${blank.id}"]`, form).textContent.replace('*', '').trim() + '.'; blank.focus(); return; }
       if (consent && !consent.checked) { msg.textContent = 'يرجى الموافقة على الشروط للمتابعة.'; return; }
+      // attachments (CV, degree): required ones must be present, each up to 5 MB, PDF / Word / image
+      const fileEls = $$('input[type=file]', form), OKX = /\.(pdf|docx?|jpe?g|png|webp)$/i;
+      for (const el of fileEls) {
+        const lab = ((el.id && $(`label[for="${el.id}"]`, form)) || {}).textContent || 'الملف', fl = el.files && el.files[0], nm = lab.replace('*', '').trim();
+        if (!fl) { if (el.required) { msg.textContent = 'ارفع ' + nm + '.'; el.focus(); return; } continue; }
+        if (fl.size > 5 * 1024 * 1024) { msg.textContent = nm + ': الحد الأقصى 5 ميجا.'; el.focus(); return; }
+        if (!OKX.test(fl.name)) { msg.textContent = nm + ': ارفع ملف PDF أو Word أو صورة.'; el.focus(); return; }
+      }
       if (type === 'institution' && PERSONAL_MAIL.test(email)) { msg.textContent = 'من فضلك استخدم البريد الإلكتروني للجهة (مثل name@university.edu.eg)، وليس بريدًا شخصيًا مثل Gmail أو Yahoo.'; return; }
       btn.disabled = true; msg.className = 'bx-formmsg'; msg.textContent = 'جارٍ الإرسال…';
       try {
         window.track && track('lead', { type });
+        if (fileEls.some((el) => el.files && el.files[0])) {
+          msg.textContent = 'جارٍ رفع الملفات…';
+          const folder = crypto.randomUUID();
+          for (const el of fileEls) {
+            const fl = el.files && el.files[0]; if (!fl) continue;
+            const ext = (fl.name.match(/\.(\w+)$/) || [, 'pdf'])[1].toLowerCase(), path = `${folder}/${el.dataset.file || 'file'}.${ext}`;
+            try { await sb.storage.upload('applications', path, fl); }
+            catch (x) { throw new Error(/mime|type/i.test(x.message) ? 'نوع الملف غير مدعوم، ارفع PDF أو Word أو صورة.' : /size|large|exceed/i.test(x.message) ? 'الملف أكبر من 5 ميجا.' : 'تعذّر رفع الملف، حاول مرة أخرى.'); }
+            f[(((el.id && $(`label[for="${el.id}"]`, form)) || {}).textContent || 'ملف').replace('*', '').trim()] = 'file:applications/' + path;
+          }
+          msg.textContent = 'جارٍ الإرسال…';
+        }
         await sb.insertQuiet('requests', { type, name, email, phone: phone || null, payload: f, user_id: sb.user ? sb.user.id : null }, !!sb.user);
         msg.className = 'bx-formmsg ok'; msg.textContent = /^instructor/.test(type) ? 'وصل طلبك. سنراجعه ونتواصل معك على بريدك الإلكتروني. تقديم الطلب لا يعني القبول.' : 'وصل طلبك، وسيتواصل معك فريق Biosyn قريبًا.';
         form.reset();
@@ -831,6 +851,14 @@
     mountSupport();
     mountInstStrip();
     sb.auth.ready.then(trackVisit);
+    // phone + WhatsApp are required for every account (Google sign-ups included): send anyone missing them to "complete your data"
+    if (!/^(login|privacy|terms|refund|verify|certificate|unsubscribe|form|404)\.html$/.test(here())) {
+      sb.auth.ready.then(async () => {
+        if (!sb.user) return;
+        const me = await window.getMe();
+        if (me && (!String(me.phone || '').trim() || !String(me.whatsapp || '').trim())) location.replace('login.html?complete=1&next=' + encodeURIComponent(here() + location.search));
+      }).catch(() => {});
+    }
     const p = document.body.dataset.page;
     const fn = pages[p] || window.BiosynPages[p];
     if (fn) { try { await fn(); } catch (e) { console.error(e); } }

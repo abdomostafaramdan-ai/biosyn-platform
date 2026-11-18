@@ -76,10 +76,12 @@
       // Google sign-ups: the ?ref= invite code can't travel through OAuth, so claim it now (no-op for older accounts)
       try { const rc = localStorage.getItem('biosyn.ref'); if (rc) { await sb.rpc('claim_referral', { p_code: rc }).catch(() => null); localStorage.removeItem('biosyn.ref'); } } catch {}
       try { if (sessionStorage.getItem('biosyn.oauth')) { sessionStorage.removeItem('biosyn.oauth'); window.track && track('login', { method: 'google' }); } } catch {}
-      let prof = null; try { prof = await sb.one('profiles', { select: 'phone', id: 'eq.' + sb.user.id }); } catch {}
-      if (prof && prof.phone) { location.replace(nextUrl()); return; }
+      let prof = null; try { prof = await sb.one('profiles', { select: 'phone,whatsapp', id: 'eq.' + sb.user.id }); } catch {}
+      if (prof && String(prof.phone || '').trim() && String(prof.whatsapp || '').trim()) { location.replace(nextUrl()); return; }
+      // prefill what we already have (an older account may have the phone but not WhatsApp)
+      if (prof && prof.phone) { const loc = String(prof.phone).replace(/^\+?20/, '0'); if (/^01\d{9}$/.test(loc)) $('#c-ph').value = loc; }
       ['#f-in', '#f-up', '.bx-seg', '#oauth'].forEach((q) => { const el = $(q); if (el) el.hidden = true; });
-      $('#auth-h').textContent = 'أكمل بياناتك'; $('#auth-eb').textContent = 'أهلًا بك في Biosyn'; $('#auth-sub').textContent = '';
+      $('#auth-h').textContent = 'أكمل بياناتك'; $('#auth-eb').textContent = 'أهلًا بك في Biosyn'; $('#auth-sub').textContent = 'رقم الموبايل والواتساب مطلوبين عشان نقدر نتواصل معاك بخصوص اشتراكك ودوراتك.';
       const f = $('#f-ph'); f.hidden = false;
       f.addEventListener('submit', async (ev) => {
         ev.preventDefault(); const m = $('#m-ph'), iso = $('#c-cc').value, ph = normPhone(iso, $('#c-ph').value);

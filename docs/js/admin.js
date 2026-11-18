@@ -9,6 +9,13 @@
   const say = (el, t, k) => { el.className = 'bx-formmsg' + (k ? ' ' + k : ''); el.textContent = t; };
 
   // ---------- requests ----------
+  // attachments on instructor applications (private bucket): open through a short-lived signed link
+  document.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-appfile]'); if (!b) return;
+    const w = window.open('', '_blank');
+    try { const u = await sb.storage.signedUrl('applications', b.dataset.appfile, 600); if (w) w.location.href = u; else location.href = u; }
+    catch (x) { if (w) w.close(); ui.toast(arErr(x), 'err'); }
+  });
   async function setReqStatus(id, status) { await sb.update('requests', { id: 'eq.' + id }, { status }); }
   function reqCard(r, usersById, lessonsByProp) {
     const pid = r.payload && r.payload.proposal_id;
@@ -17,7 +24,7 @@
     const lessonsHtml = pid ? `<div class="bx-reqlessons"><b>الدروس والفيديوهات</b><ol>${ls.map((l) => `<li>${esc(l.title)} ${l.video_url ? `<a class="bx-linkbtn" href="${esc(l.video_url)}" target="_blank" rel="noopener">فتح رابط الفيديو</a>` : ''}${l.bunny_video_id ? ` <span class="bx-st bx-st-ok">مرفوع على Bunny</span>` : ''}${!l.video_url && !l.bunny_video_id ? ' <small class="bx-hint">بدون فيديو</small>' : ''}</li>`).join('') || '<li class="bx-hint">لا توجد دروس</li>'}</ol><button class="bs-btn bs-btn-secondary bs-btn-sm" data-act="proposal" data-pid="${esc(pid)}">فتح الدورة المقدّمة ومشاهدة الفيديوهات</button></div>` : '';
     const isRefund = r.type === 'refund';
     return `<article class="bx-reqcard" data-r="${r.id}"><div class="bx-spread" style="gap:8px;flex-wrap:wrap"><div><b>${esc(r.name)}</b> <span class="bx-hint">· ${esc(D.reqType[r.type] || r.type)} · ${D.dateTime(r.created_at)}</span></div>${D.badge('req', r.status)}</div>
-      <dl><div><dt>التواصل</dt><dd class="bx-kbd">${esc(r.email || '')}${r.phone ? ' · ' + esc(r.phone) : ''}</dd></div>${f.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(typeof v === 'object' ? JSON.stringify(v) : v)}</dd></div>`).join('')}</dl>${lessonsHtml}
+      <dl><div><dt>التواصل</dt><dd class="bx-kbd">${esc(r.email || '')}${r.phone ? ' · ' + esc(r.phone) : ''}</dd></div>${f.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${typeof v === 'string' && /^file:applications\/[\w-]+\/[\w.-]+$/.test(v) ? `<button type="button" class="bs-btn bs-btn-secondary bs-btn-sm" data-appfile="${esc(v.slice(18))}">📎 فتح الملف</button>` : esc(typeof v === 'object' ? JSON.stringify(v) : v)}</dd></div>`).join('')}</dl>${lessonsHtml}
       <div class="bx-btnrow">
         ${isRefund && isAdmin() && ['new', 'in_review'].includes(r.status) ? `<button class="bs-btn bs-btn-primary bs-btn-sm" data-act="refund" data-pay="${esc(r.payload.payment_id)}">تنفيذ الاسترداد</button>` : ''}
         ${r.status === 'new' ? '<button class="bs-btn bs-btn-secondary bs-btn-sm" data-act="in_review">قيد المراجعة</button>' : ''}
@@ -471,6 +478,69 @@
     },
 
     // ---------- instructor monitoring: one row per instructor account, with signals that need follow-up ----------
+    async subs(main) {
+      let all = [];
+      const F = { q: '', st: 'all' };
+      const N = (v) => Number(v || 0);
+      const wa = (p) => { const x = String(p || '').replace(/\D/g, ''); return x ? (x.startsWith('0') ? '2' + x : x) : ''; };
+      const ACT = { extend: 'تمديد', pause: 'إيقاف مؤقت', resume: 'استئناف', cancel: 'إلغاء' };
+      const load = async () => { all = await sb.rpc('admin_active_subscriptions').then((r) => (Array.isArray(r) ? r : [])); draw(); };
+      const list = () => all.filter((r) => (F.st === 'all' || r.status === F.st || (F.st === 'soon' && r.status === 'active' && N(r.days_left) <= 7))
+        && (!F.q || `${r.full_name || ''} ${r.email || ''} ${r.phone || ''} ${r.whatsapp || ''}`.toLowerCase().includes(F.q.toLowerCase())));
+      const act = (r, kind) => {
+        const T = { extend: ['تمديد الاشتراك', 'تمديد'], pause: ['إيقاف الاشتراك مؤقتًا', 'إيقاف'], resume: ['استئناف الاشتراك', 'استئناف'], cancel: ['إلغاء الاشتراك', 'إلغاء الاشتراك'] }[kind];
+        const info = { extend: 'الأيام تُضاف إلى نهاية الاشتراك (ولو موقوف تُضاف للمدة المحفوظة).', pause: `الوصول للدورات يتوقف فورًا، والمتبقي (${N(r.days_left)} يوم) يتحفظ ويرجع كامل عند الاستئناف.`, resume: `الاشتراك يرجع يشتغل من دلوقتي بالمدة المحفوظة (${N(r.days_left)} يوم).`, cancel: 'الوصول يتوقف فورًا ونهائيًا. المدفوعات مش بتتأثر (الاسترداد من صفحة المدفوعات). تقدّم الطالب وشهاداته محفوظة.' }[kind];
+        ui.modal(`<h3>${T[0]}</h3><p class="bx-hint" style="margin-top:0"><b>${esc(r.full_name || r.email)}</b> · ${esc(r.plan_name || '')}</p><p class="bx-hint">${info} الطالب هيوصله إشعار داخل المنصة.</p>
+          ${kind === 'extend' ? `<div class="bx-field"><label for="sxd">عدد الأيام</label><div class="bx-row" style="gap:6px;flex-wrap:wrap">${[7, 14, 30, 90].map((d) => `<button type="button" class="bs-btn bs-btn-ghost bs-btn-sm" data-d="${d}">${d} يوم</button>`).join('')}<input id="sxd" class="bx-input" type="number" min="1" max="3650" value="7" dir="ltr" style="max-width:110px"></div></div>` : ''}
+          <div class="bx-field"><label for="sxn">ملاحظة داخلية (اختياري)</label><input id="sxn" class="bx-input" maxlength="300" placeholder="السبب، للرجوع إليه لاحقًا"></div>
+          <div class="bx-formmsg" aria-live="polite"></div><div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" data-ok ${kind === 'cancel' ? 'style="background:var(--danger,#ff8a7a);border-color:transparent"' : ''}>${T[1]}</button><button class="bs-btn bs-btn-ghost" data-x>رجوع</button></div>`, (m, close) => {
+          $('[data-x]', m).onclick = close;
+          $$('[data-d]', m).forEach((b) => { b.onclick = () => { $('#sxd', m).value = b.dataset.d; }; });
+          $('[data-ok]', m).onclick = async (e) => {
+            const note = $('#sxn', m).value.trim(), args = { p_user: r.user_id, p_note: note || null };
+            if (kind === 'extend') { const d = parseInt($('#sxd', m).value, 10); if (!(d >= 1 && d <= 3650)) return say($('.bx-formmsg', m), 'اكتب عدد أيام من 1 إلى 3650.', 'err'); args.p_days = d; }
+            e.target.disabled = true;
+            try { await sb.rpc('admin_sub_' + kind, args); close(); ui.toast({ extend: `تم تمديد الاشتراك ${args.p_days} يوم.`, pause: 'تم إيقاف الاشتراك مؤقتًا.', resume: 'تم استئناف الاشتراك.', cancel: 'تم إلغاء الاشتراك.' }[kind]); await load(); }
+            catch (x) { e.target.disabled = false; say($('.bx-formmsg', m), /no active/.test(x.message) ? 'مفيش اشتراك ساري للحساب ده.' : /not paused/.test(x.message) ? 'الاشتراك مش موقوف.' : arErr(x), 'err'); }
+          };
+        });
+      };
+      const draw = () => {
+        const L = list(), act_ = all.filter((r) => r.status === 'active'), paused = all.filter((r) => r.status === 'paused');
+        $('[data-sstats]', main).innerHTML = `<div class="bx-stats">
+            ${D.stat('اشتراكات سارية', act_.length, `${act_.filter((r) => r.source === 'payment').length} مدفوعة · ${act_.filter((r) => r.source !== 'payment').length} هدية أو إحالة`)}
+            ${D.stat('تنتهي خلال 7 أيام', act_.filter((r) => N(r.days_left) <= 7).length, 'فرصة للتذكير بالتجديد')}
+            ${D.stat('موقوفة مؤقتًا', paused.length, paused.length ? 'المدة المتبقية محفوظة لحد الاستئناف' : 'لا يوجد')}
+          </div>`;
+        $('[data-slist]', main).innerHTML = D.table(['المشترك', 'الباقة', 'الحالة', 'المتبقي', 'تنتهي في', 'إجمالي المدفوع', 'آخر إجراء', ''], L.map((r) => {
+          const w = wa(r.whatsapp || r.phone), paused = r.status === 'paused', soon = !paused && N(r.days_left) <= 7;
+          return [
+            `<b>${esc(r.full_name || '—')}</b><br><small class="bx-hint" dir="ltr">${esc(r.email || '')}</small>${r.phone || r.whatsapp ? `<br><small class="bx-hint" dir="ltr">${esc(r.phone || r.whatsapp)}</small>` : ''}`,
+            `${esc(r.plan_name || '—')}<br><small class="bx-hint">${r.source === 'payment' ? 'مدفوع' : r.source === 'referral' ? 'إحالة' : esc(r.source || '')}</small>`,
+            paused ? `<span class="bx-st bx-st-warn">موقوف</span><br><small class="bx-hint">منذ ${D.date(r.paused_at)}</small>` : soon ? '<span class="bx-st bx-st-warn">ينتهي قريبًا</span>' : '<span class="bx-st bx-st-ok">ساري</span>',
+            `<b>${N(r.days_left)}</b> يوم`,
+            paused ? '<span class="bx-hint">— (موقوف)</span>' : D.date(r.ends_at),
+            D.money(r.paid_egp),
+            r.last_event ? `${ACT[r.last_event] || esc(r.last_event)}<br><small class="bx-hint">${D.date(r.last_event_at)}</small>` : '<span class="bx-hint">—</span>',
+            `<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+              <button class="bs-btn bs-btn-secondary bs-btn-sm" data-a="extend" data-u="${r.user_id}">تمديد</button>
+              ${paused ? `<button class="bs-btn bs-btn-primary bs-btn-sm" data-a="resume" data-u="${r.user_id}">استئناف</button>` : `<button class="bs-btn bs-btn-ghost bs-btn-sm" data-a="pause" data-u="${r.user_id}">إيقاف مؤقت</button>`}
+              <button class="bs-btn bs-btn-ghost bs-btn-sm" style="color:var(--danger-text)" data-a="cancel" data-u="${r.user_id}">إلغاء</button>
+              ${w ? `<a class="bs-btn bs-btn-ghost bs-btn-sm" href="https://wa.me/${w}" target="_blank" rel="noopener">واتساب</a>` : ''}</div>`,
+          ];
+        }), F.q || F.st !== 'all' ? 'لا يوجد مشتركين بهذه التصفية' : 'لا يوجد اشتراكات سارية الآن');
+        $$('[data-a]', main).forEach((b) => { b.onclick = () => { const r = all.find((x) => x.user_id === b.dataset.u); if (r) act(r, b.dataset.a); }; });
+      };
+      main.innerHTML = D.panel('الاشتراكات السارية', `<p class="bx-hint" style="margin-top:0">كل اللي عندهم اشتراك شغال أو موقوف مؤقتًا. تقدر تمدّد الاشتراك أو توقفه وترجّعه أو تلغيه. أي إجراء بيتسجل، والطالب بيوصله إشعار.</p>
+        <div data-sstats></div>
+        <div class="bx-filters" style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin:16px 0">
+          <div class="bx-field" style="flex:1;min-width:200px"><label for="sbq" class="bx-hint">بحث</label><input id="sbq" class="bx-input" placeholder="الاسم أو البريد أو الموبايل"></div>
+          <div class="bx-field"><label for="sbs" class="bx-hint">الحالة</label><select id="sbs" class="bx-select"><option value="all">الكل</option><option value="active">ساري</option><option value="soon">ينتهي خلال 7 أيام</option><option value="paused">موقوف مؤقتًا</option></select></div>
+        </div><div data-slist><div class="bx-loading">جارٍ التحميل…</div></div>`);
+      $('#sbq', main).oninput = (e) => { F.q = e.target.value.trim(); draw(); };
+      $('#sbs', main).onchange = (e) => { F.st = e.target.value; draw(); };
+      await load();
+    },
     async imonitor(main) {
       const all = await sb.rpc('admin_instructor_overview').then((r) => (Array.isArray(r) ? r : []));
       const F = { q: '', sort: 'views_month', need: false, empty: false };
@@ -1159,7 +1229,7 @@
 
   window.BiosynPages.admin = async () => {
     me = await D.guard(['admin', 'support']); if (!me) return;
-    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'insights', label: 'مركز التحليلات', icon: 'chart' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'imonitor', label: 'متابعة المحاضرين', icon: 'users' }, { id: 'faculties', label: 'الكليات والتخصصات', icon: 'list' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'social', label: 'السوشيال والنشرة البريدية', icon: 'users' }, { id: 'texts', label: 'نصوص الموقع', icon: 'book' }, { id: 'news', label: 'الأخبار والفعاليات', icon: 'book' }, { id: 'testimonials', label: 'آراء الطلاب', icon: 'chat' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'mailcampaigns', label: 'حملات البريد', icon: 'inbox' }, { id: 'emails', label: 'رسائل البريد', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
+    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'insights', label: 'مركز التحليلات', icon: 'chart' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'imonitor', label: 'متابعة المحاضرين', icon: 'users' }, { id: 'faculties', label: 'الكليات والتخصصات', icon: 'list' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'social', label: 'السوشيال والنشرة البريدية', icon: 'users' }, { id: 'texts', label: 'نصوص الموقع', icon: 'book' }, { id: 'news', label: 'الأخبار والفعاليات', icon: 'book' }, { id: 'testimonials', label: 'آراء الطلاب', icon: 'chat' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'subs', label: 'الاشتراكات السارية', icon: 'card' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'mailcampaigns', label: 'حملات البريد', icon: 'inbox' }, { id: 'emails', label: 'رسائل البريد', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
     // live counters: new requests + open refund requests (refreshes every minute and when the tab regains focus)
     let lastRef = -1;
