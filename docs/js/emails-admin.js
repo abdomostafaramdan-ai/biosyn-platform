@@ -19,6 +19,7 @@
     { fn: 'trg_mail_thread_message', name: 'الرسائل والتذاكر', types: ['thr'] },
     { fn: 'trg_mail_earning', name: 'أرباح المحاضر الشهرية', types: ['earn'] },
     { fn: 'sign_contract', name: 'نسخة اتفاقية المحاضر', types: ['contract'] },
+    { fn: 'enqueue_nurture_emails', name: 'متابعة من لم يكمل الاشتراك', desc: 'من بدأ الدفع ولم يكمله: رسالة كل يوم لمدة 5 أيام (abandon). ومن سجّل حساب فقط: رسالة كل يوم لمدة 3 أيام (nurture). تتوقف فور الاشتراك، وتُرسل يوميًا 10 صباحًا.', types: ['abandon', 'nurture'] },
     { fn: 'reactivation_mail', name: 'حملة إعادة التفعيل', types: ['reactivation'] },
     { fn: 'campaign_mail', name: 'حملات البريد (سطر إلغاء الاشتراك)', types: ['campaign'] },
     { fn: 'trg_mail_request', name: 'تنبيه الفريق بطلب جديد', desc: 'تصل إلى بريد التنبيهات فقط.' },

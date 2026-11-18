@@ -706,17 +706,49 @@
     });
   }
 
-  function pageTeach() {
-    const forms = $$('form.bx-form');
+  // ---------- site forms editable from Admin → النماذج (site_content.site_forms) ----------
+  // Each form keeps the fields the page code relies on (name / e-mail / phone …); if a saved layout lacks one of them the
+  // page keeps its built-in fields. Everything shown is escaped; field ids and types are whitelisted.
+  const SITE_FORM_CORE = { 'teach-interactive': ['i-n', 'i-e'], 'teach-help': ['h-n', 'h-e', 'h-p'], institutions: ['o-c', 'o-e', 'o-p'], consultations: ['c-s', 'c-n', 'c-e', 'c-p', 'c-m'] };
+  const SF_TYPES = { text: 'text', email: 'email', tel: 'tel', number: 'number', date: 'date', textarea: 1, select: 1, file: 1 };
+  const SF_ACCEPT = '.pdf,.doc,.docx,.jpg,.jpeg,.png,.webp';
+  let siteFormsP = null;
+  const siteFormsCfg = () => siteFormsP || (siteFormsP = sb.one('site_content', { select: 'data', key: 'eq.site_forms' }).then((r) => (r && r.data) || {}).catch(() => ({})));
+  function siteField(x) {
+    const id = String(x.id || ''), type = String(x.type || 'text');
+    if (!/^[a-z][a-z0-9-]{0,40}$/.test(id) || !SF_TYPES[type]) return '';
+    const req = !!x.required, lab = `<label for="${id}">${esc(x.label || '')}${req ? ' *' : ''}</label>`, ph = x.placeholder ? ` placeholder="${esc(x.placeholder)}"` : '';
+    const hint = x.hint ? `<small class="bx-hint">${esc(x.hint)}</small>` : '';
+    let ctl;
+    if (type === 'textarea') ctl = `<textarea id="${id}" class="bx-textarea"${ph}></textarea>`;
+    else if (type === 'select') ctl = `<select id="${id}" class="bx-select"><option value="">${esc(x.placeholder || 'اختر')}</option>${(Array.isArray(x.options) ? x.options : []).filter(Boolean).slice(0, 60).map((o) => `<option>${esc(o)}</option>`).join('')}</select>`;
+    else if (type === 'file') ctl = `<input id="${id}" class="bx-input" type="file" accept="${SF_ACCEPT}" data-file="${id.replace(/^[a-z]-/, '')}"${req ? ' required' : ''}>`;
+    else ctl = `<input id="${id}" class="bx-input" type="${SF_TYPES[type]}"${/^(email|tel|number)$/.test(type) ? ' dir="ltr"' : ''}${ph}>`;
+    return `<div class="bx-field${x.wide ? ' bx-wide' : ''}">${lab}${ctl}${hint}</div>`;
+  }
+  async function applySiteForm(key, form) {
+    if (!form) return;
+    const c = (await siteFormsCfg())[key], grid = $('.bx-form-grid', form);
+    if (!c || !grid || !Array.isArray(c.fields) || !c.fields.length) return;
+    if (!(SITE_FORM_CORE[key] || []).every((id) => c.fields.some((x) => x.id === id))) return;
+    grid.innerHTML = c.fields.slice(0, 40).map(siteField).join('');
+    const btn = $('button.bs-btn-primary', form); if (btn && c.submit) btn.textContent = String(c.submit).slice(0, 60);
+  }
+  window.siteFieldHtml = siteField;
+
+  async function pageTeach() {
+    const forms = $$('form.bx-form'), fi = forms.find((f) => $('#i-n', f)), fh = forms.find((f) => $('#h-n', f));
+    await Promise.all([applySiteForm('teach-interactive', fi), applySiteForm('teach-help', fh)]);
     wireRequestForm(forms.find((f) => $('#r-n', f)), 'instructor_recorded', { name: 'r-n', email: 'r-e' });
-    wireRequestForm(forms.find((f) => $('#i-n', f)), 'instructor_interactive', { name: 'i-n', email: 'i-e' });
-    wireRequestForm(forms.find((f) => $('#h-n', f)), 'instructor_recording_help', { name: 'h-n', email: 'h-e', phone: 'h-p' });
+    wireRequestForm(fi, 'instructor_interactive', { name: 'i-n', email: 'i-e' });
+    wireRequestForm(fh, 'instructor_recording_help', { name: 'h-n', email: 'h-e', phone: 'h-p' });
   }
 
-  function pageInstitutions() { wireRequestForm($('form.bx-formcard'), 'institution', { name: 'o-c', email: 'o-e', phone: 'o-p' }); }
+  async function pageInstitutions() { const f = $('form.bx-formcard'); await applySiteForm('institutions', f); wireRequestForm(f, 'institution', { name: 'o-c', email: 'o-e', phone: 'o-p' }); }
   // paid consultation: fixed price (EGP in Egypt, intl price in the visitor's currency abroad), request first then checkout
   async function pageConsultations() {
     const form = $('form.bx-formcard'); if (!form) return;
+    await applySiteForm('consultations', form);
     const [S, R] = await Promise.all([window.SITE_SETTINGS.catch(() => ({})), REGION]);
     const price = Number((S && S.consultation_price) || 1500), intl = S && S.consultation_intl != null ? Number(S.consultation_intl) : null;
     const cp = $('[data-cp]', form); if (cp) cp.textContent = priceTxt(price, R, intl);

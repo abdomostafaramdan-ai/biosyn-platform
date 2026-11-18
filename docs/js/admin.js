@@ -701,23 +701,34 @@
       const rc = {}; reqs.forEach((r) => { const c = (rc[r.type] = rc[r.type] || { all: 0, new: 0 }); c.all++; if (r.status === 'new') c.new++; });
       const siteForms = SITE_FORMS.map((sf) => { const c = sf.types.reduce((a, t) => ({ all: a.all + ((rc[t] || {}).all || 0), new: a.new + ((rc[t] || {}).new || 0) }), { all: 0, new: 0 });
         return [`<b>${sf.title}</b><br><small class="bx-hint">نموذج ثابت في الموقع</small>`, `<a class="bx-linkbtn" href="${sf.page}" target="_blank" rel="noopener">فتح الصفحة</a>`, `${c.all}${c.new ? ` <span class="bx-st bx-st-warn">${c.new} جديد</span>` : ''}`, '<span class="bx-st bx-st-ok">يعمل</span>', `<button class="bx-linkbtn" data-sf="${sf.key}">الردود</button>`]; });
-      main.innerHTML = D.panel('نماذج الموقع', D.table(['النموذج', 'الصفحة', 'الردود', 'الحالة', ''], siteForms)) + D.panel('النماذج والردود', `<p class="bx-hint" style="margin-top:0">أنشئ أي نموذج (تسجيل اهتمام، استبيان، طلب خدمة…) وخذ رابطه وانشره على وسائل التواصل أو واتساب. يصل كل رد إلى هنا وإلى بريد التنبيهات، وإذا تضمّن بريدًا إلكترونيًا أو رقم هاتف يُرسل إلى الـ CRM بوصفه Lead.</p>
+      const SFA = window.SiteFormsAdmin, sfCfg = SFA && isAdmin() ? await SFA.loadAll() : {};
+      const sfEdit = SFA && isAdmin() ? D.table(['النموذج', 'الصفحة', 'الحقول', ''], SFA.FORMS.map((d) => [
+        `<b>${esc(d.title)}</b>`, `<a class="bx-linkbtn" href="${d.page}" target="_blank" rel="noopener">فتح الصفحة</a>`,
+        sfCfg[d.key] ? `<span class="bx-st bx-st-info">معدّلة · ${(sfCfg[d.key].fields || []).length} حقل</span><br><small class="bx-hint">${D.date(sfCfg[d.key].updated_at)}</small>` : '<span class="bx-hint">الحقول الأصلية</span>',
+        `<button class="bs-btn bs-btn-secondary bs-btn-sm" data-sfe="${d.key}">تعديل الحقول</button>`])) : '';
+      main.innerHTML = D.panel('نماذج الموقع', D.table(['النموذج', 'الصفحة', 'الردود', 'الحالة', ''], siteForms) + (sfEdit ? `<h4 style="margin:22px 0 8px">تعديل حقول نماذج الموقع</h4><p class="bx-hint" style="margin-top:0">غيّر أسماء الخانات وترتيبها وأضف خانات جديدة (منها رفع ملف) لأي نموذج من نماذج الموقع.</p>${sfEdit}` : '')) + D.panel('النماذج والردود', `<p class="bx-hint" style="margin-top:0">أنشئ أي نموذج (تسجيل اهتمام، استبيان، طلب خدمة…) وخذ رابطه وانشره على وسائل التواصل أو واتساب. يصل كل رد إلى هنا وإلى بريد التنبيهات، وإذا تضمّن بريدًا إلكترونيًا أو رقم هاتف يُرسل إلى الـ CRM بوصفه Lead.</p>
         ${isAdmin() ? '<div class="bx-btnrow" style="margin-bottom:12px"><button class="bs-btn bs-btn-primary" id="fm-new">+ نموذج جديد</button></div>' : ''}` +
         D.table(['النموذج', 'الرابط', 'الردود', 'الحالة', ''], forms.map((f) => {
           const c = cnt[f.id] || { all: 0, new: 0 };
           return [`<b>${esc(f.title)}</b><br><small class="bx-hint">${(f.fields || []).length} حقل</small>`,
             `<button class="bx-linkbtn" data-copy="${esc(link(f))}">نسخ الرابط</button> · <a class="bx-linkbtn" href="${esc(link(f))}" target="_blank" rel="noopener">فتح</a>`,
             `${c.all}${c.new ? ` <span class="bx-st bx-st-warn">${c.new} جديد</span>` : ''}`,
-            `<label class="bx-hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-fa="${f.id}" ${f.active ? 'checked' : ''} ${isAdmin() ? '' : 'disabled'}> ${f.active ? 'مفتوح' : 'مقفول'}</label>`,
+            `<span class="bx-st bx-st-${f.active ? 'ok' : 'mute'}">${f.active ? 'مفتوح الآن' : 'مقفول'}</span>${isAdmin() ? `<br><button type="button" class="bs-btn bs-btn-${f.active ? 'ghost' : 'primary'} bs-btn-sm" style="margin-top:6px;white-space:nowrap" data-fa="${f.id}" data-on="${f.active ? '0' : '1'}">${f.active ? 'إيقاف النموذج' : 'تفعيل النموذج'}</button>` : ''}`,
             `<button class="bx-linkbtn" data-fr="${f.id}">الردود</button>${isAdmin() ? ` · <button class="bx-linkbtn" data-fe="${f.id}">تعديل</button> · <button class="bx-linkbtn" data-fs="${f.id}">مشاركة</button>` : ''}`];
         }), 'لا توجد نماذج بعد. اضغط «نموذج جديد».'));
       $$('[data-copy]', main).forEach((b) => (b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.copy); ui.toast('تم نسخ الرابط.'); } catch { prompt('انسخ الرابط:', b.dataset.copy); } }));
-      $$('[data-fa]', main).forEach((i) => (i.onchange = async () => { try { await sb.update('forms', { id: 'eq.' + i.dataset.fa }, { active: i.checked }); ui.toast(i.checked ? 'النموذج مفتوح.' : 'تم إغلاق النموذج.'); D.reload(); } catch (err) { i.checked = !i.checked; ui.toast(arErr(err), 'err'); } }));
+      $$('[data-fa]', main).forEach((b) => (b.onclick = async () => {
+        const on = b.dataset.on === '1', f = forms.find((x) => x.id === b.dataset.fa);
+        if (!confirm(on ? `تفعيل «${f ? f.title : ''}»؟ أي حد معاه الرابط هيقدر يبدأ فورًا.` : `إيقاف «${f ? f.title : ''}»؟ محدش هيقدر يبدأ بعد كده، واللي بدأ بالفعل مش هيقدر يبعت.`)) return;
+        b.disabled = true;
+        try { await sb.update('forms', { id: 'eq.' + b.dataset.fa }, { active: on }); ui.toast(on ? 'النموذج مفتوح الآن.' : 'تم إيقاف النموذج.'); D.reload(); } catch (err) { b.disabled = false; ui.toast(arErr(err), 'err'); }
+      }));;
       const nb = $('#fm-new', main); if (nb) nb.onclick = () => formBuilder(null);
       $$('[data-fe]', main).forEach((b) => (b.onclick = () => formBuilder(forms.find((f) => f.id === b.dataset.fe))));
       $$('[data-fr]', main).forEach((b) => (b.onclick = () => formResponses(forms.find((f) => f.id === b.dataset.fr))));
       $$('[data-fs]', main).forEach((b) => (b.onclick = () => window.FormsUI.share(forms.find((f) => f.id === b.dataset.fs))));
       $$('[data-sf]', main).forEach((b) => (b.onclick = () => siteFormResponses(SITE_FORMS.find((x) => x.key === b.dataset.sf))));
+      $$('[data-sfe]', main).forEach((b) => (b.onclick = () => SFA.edit(SFA.FORMS.find((d) => d.key === b.dataset.sfe), () => D.reload())));
     },
 
     async blog(main) {
