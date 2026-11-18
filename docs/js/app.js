@@ -891,6 +891,7 @@
       sb.auth.ready.then(async () => {
         if (!sb.user) return;
         const me = await window.getMe();
+        if (me && me.banned_at) { if (window.secBanned) window.secBanned(); else { await sb.auth.signOut(); location.replace('login.html?banned=1'); } return; }
         if (me && (!String(me.phone || '').trim() || !String(me.whatsapp || '').trim())) location.replace('login.html?complete=1&next=' + encodeURIComponent(here() + location.search));
       }).catch(() => {});
     }

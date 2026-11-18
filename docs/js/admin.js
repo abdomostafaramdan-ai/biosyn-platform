@@ -541,6 +541,44 @@
       $('#sbs', main).onchange = (e) => { F.st = e.target.value; draw(); };
       await load();
     },
+    async security(main) {
+      const [rows, cfg] = await Promise.all([sb.rpc('admin_security_overview').then((r) => (Array.isArray(r) ? r : [])).catch(() => []), sb.rpc('admin_security_get').catch(() => ({}))]);
+      const C = Object.assign({ auto_ban: true, ban_after: 2 }, cfg || {});
+      const KIND = { capture_shortcut: 'تصوير الشاشة', record_shortcut: 'تسجيل الشاشة', devtools: 'أدوات المطوّر' };
+      const wa = (p) => { const x = String(p || '').replace(/\D/g, ''); return x ? (x.startsWith('0') ? '2' + x : x) : ''; };
+      const day = Date.now() - 86400000;
+      main.innerHTML = D.panel('التنبيهات الأمنية', `<p class="bx-hint" style="margin-top:0">صفحة المشاهدة بتبلّغ هنا عن محاولات تصوير أو تسجيل الشاشة (أزرار PrintScreen، Win+Shift+S، Win+Alt+R، Cmd+Shift+3/4/5) وعن فتح أدوات المطوّر. مع كل محاولة بيوصلك إشعار فيه بيانات الحساب. الحظر بيقفل المشاهدة ويلغي الاشتراك ويمنع تسجيل الدخول.<br><b>مهم:</b> المتصفح مش بيقدر يشوف برامج التسجيل اللي شغالة على الجهاز أو تصوير الشاشة بموبايل، ودول بتغطيهم العلامة المائية المتحركة اللي فيها إيميل الطالب ورقمه.</p>
+        <div class="bx-stats">${D.stat('حسابات عليها تنبيهات', rows.filter((r) => Number(r.incidents)).length, `${rows.filter((r) => r.last_at && new Date(r.last_at) > day).length} خلال آخر 24 ساعة`)}${D.stat('محظورين', rows.filter((r) => r.banned_at).length, 'ممنوعين من الدخول والمشاهدة')}</div>
+        <fieldset class="bx-field" style="border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:16px 0"><legend style="padding:0 6px">الحظر التلقائي</legend>
+          <label class="bx-check" style="min-height:auto"><input type="checkbox" id="sec-auto" ${C.auto_ban ? 'checked' : ''}> احظر الطالب تلقائيًا وألغِ اشتراكه عند تكرار محاولات التصوير أو التسجيل</label>
+          <div class="bx-row" style="gap:10px;align-items:end;flex-wrap:wrap;margin-top:8px"><div class="bx-field"><label for="sec-n" class="bx-hint">الحظر بعد</label><select id="sec-n" class="bx-select">${[1, 2, 3, 4, 5].map((n) => `<option value="${n}" ${Number(C.ban_after) === n ? 'selected' : ''}>${n === 1 ? 'أول محاولة' : `${n} محاولات (أول ${n - 1} تحذير)`}</option>`).join('')}</select></div>
+          <button type="button" class="bs-btn bs-btn-primary bs-btn-sm" id="sec-save">حفظ</button></div>
+          <small class="bx-hint">الأزرار ممكن تتداس بالغلط، فالافتراضي إن أول مرة الطالب ياخد تحذير على الشاشة والتانية يتحظر. فتح أدوات المطوّر بيتسجل بس من غير حظر. المحاضرين والإدارة عمرهم ما بيتحظروا تلقائيًا.</small></fieldset>
+        ${D.table(['الحساب', 'التنبيهات', 'آخر تنبيه', 'الحالة', ''], rows.map((r) => {
+          const w = wa(r.whatsapp || r.phone);
+          return [
+            `<b>${esc(r.full_name || '—')}</b> <small class="bx-hint">${esc(D.roleAr[r.role] || r.role || '')}</small><br><small class="bx-hint" dir="ltr">${esc(r.email || '')}</small>${r.phone ? `<br><small class="bx-hint" dir="ltr">${esc(r.phone)}</small>` : ''}`,
+            `${Number(r.captures) ? `<span class="bx-st bx-st-warn">${r.captures} تصوير/تسجيل</span> ` : ''}${Number(r.devtools) ? `<span class="bx-st bx-st-mute">${r.devtools} أدوات مطوّر</span>` : ''}${!Number(r.incidents) ? '<span class="bx-hint">—</span>' : ''}`,
+            r.last_at ? `${esc(KIND[r.last_kind] || r.last_kind || '')}<br><small class="bx-hint">${D.dateTime(r.last_at)}</small>` : '<span class="bx-hint">—</span>',
+            r.banned_at ? `<span class="bx-st bx-st-danger">محظور</span><br><small class="bx-hint">${D.dateTime(r.banned_at)}</small>${r.banned_reason ? `<br><small class="bx-hint">${esc(r.banned_reason)}</small>` : ''}` : '<span class="bx-st bx-st-ok">نشط</span>',
+            `<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">${r.role === 'admin' ? '' : r.banned_at ? `<button class="bs-btn bs-btn-secondary bs-btn-sm" data-unban="${r.user_id}">رفع الحظر</button>` : `<button class="bs-btn bs-btn-ghost bs-btn-sm" style="color:var(--danger-text)" data-ban="${r.user_id}">حظر</button>`}${w ? `<a class="bs-btn bs-btn-ghost bs-btn-sm" href="https://wa.me/${w}" target="_blank" rel="noopener">واتساب</a>` : ''}</div>`,
+          ];
+        }), 'لا توجد تنبيهات حتى الآن.')}`);
+      $('#sec-save', main).onclick = async (e) => {
+        e.target.disabled = true;
+        try { await sb.rpc('admin_security_settings', { p_auto_ban: $('#sec-auto', main).checked, p_ban_after: parseInt($('#sec-n', main).value, 10) }); ui.toast('تم حفظ إعدادات الحظر.'); }
+        catch (x) { ui.toast(arErr(x), 'err'); }
+        e.target.disabled = false;
+      };
+      const act = async (uid, ban) => {
+        const r = rows.find((x) => x.user_id === uid);
+        if (!confirm(ban ? `حظر ${r ? r.full_name || r.email : ''}؟ هيتقفل عليه الدخول والمشاهدة واشتراكه هيتلغي.` : `رفع الحظر عن ${r ? r.full_name || r.email : ''}؟ هيقدر يدخل تاني، لكن الاشتراك اللي اتلغى مش بيرجع لوحده (تقدر تديله اشتراك من المدفوعات).`)) return;
+        try { await sb.rpc('admin_ban_user', { p_user: uid, p_ban: ban, p_reason: ban ? 'حظر من الإدارة بعد مراجعة التنبيهات' : null }); ui.toast(ban ? 'تم حظر الحساب وإلغاء اشتراكه.' : 'تم رفع الحظر.'); D.reload(); }
+        catch (x) { ui.toast(arErr(x), 'err'); }
+      };
+      $$('[data-ban]', main).forEach((b) => (b.onclick = () => act(b.dataset.ban, true)));
+      $$('[data-unban]', main).forEach((b) => (b.onclick = () => act(b.dataset.unban, false)));
+    },
     async imonitor(main) {
       const all = await sb.rpc('admin_instructor_overview').then((r) => (Array.isArray(r) ? r : []));
       const F = { q: '', sort: 'views_month', need: false, empty: false };
@@ -1240,7 +1278,7 @@
 
   window.BiosynPages.admin = async () => {
     me = await D.guard(['admin', 'support']); if (!me) return;
-    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'insights', label: 'مركز التحليلات', icon: 'chart' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'imonitor', label: 'متابعة المحاضرين', icon: 'users' }, { id: 'faculties', label: 'الكليات والتخصصات', icon: 'list' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'social', label: 'السوشيال والنشرة البريدية', icon: 'users' }, { id: 'texts', label: 'نصوص الموقع', icon: 'book' }, { id: 'news', label: 'الأخبار والفعاليات', icon: 'book' }, { id: 'testimonials', label: 'آراء الطلاب', icon: 'chat' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'subs', label: 'الاشتراكات السارية', icon: 'card' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'mailcampaigns', label: 'حملات البريد', icon: 'inbox' }, { id: 'emails', label: 'رسائل البريد', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
+    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'insights', label: 'مركز التحليلات', icon: 'chart' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'imonitor', label: 'متابعة المحاضرين', icon: 'users' }, { id: 'faculties', label: 'الكليات والتخصصات', icon: 'list' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'social', label: 'السوشيال والنشرة البريدية', icon: 'users' }, { id: 'texts', label: 'نصوص الموقع', icon: 'book' }, { id: 'news', label: 'الأخبار والفعاليات', icon: 'book' }, { id: 'testimonials', label: 'آراء الطلاب', icon: 'chat' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'subs', label: 'الاشتراكات السارية', icon: 'card' }, { id: 'security', label: 'التنبيهات الأمنية', icon: 'ticket' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'mailcampaigns', label: 'حملات البريد', icon: 'inbox' }, { id: 'emails', label: 'رسائل البريد', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
     // live counters: new requests + open refund requests (refreshes every minute and when the tab regains focus)
     let lastRef = -1;
@@ -1248,6 +1286,7 @@
       try {
         const open = await sb.get('requests', { select: 'id,type,status', status: 'in.(new,in_review)', limit: 500 });
         const nRef = open.filter((r) => r.type === 'refund').length;
+        try { const si = await sb.get('security_incidents', { select: 'id', created_at: 'gt.' + new Date(Date.now() - 86400000).toISOString(), limit: 200 }); D.setBadge('security', si.length); } catch {}
         D.setBadge('payments', nRef); D.setBadge('requests', open.filter((r) => r.type !== 'refund' && r.status === 'new').length);
         if (window.Chat) Chat.unreadCounts().then((u) => { D.setBadge('tickets', (u && u.tickets) || 0); D.setBadge('questions', (u && u.course_unanswered) || 0); });
         if (lastRef >= 0 && nRef > lastRef) ui.toast(`وصل طلب استرداد جديد (${nRef} مفتوح).`);

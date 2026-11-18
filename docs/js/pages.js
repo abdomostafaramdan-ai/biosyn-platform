@@ -123,6 +123,7 @@
     { const qs = new URLSearchParams(location.search); if (qs.get('mode') === 'signup' || qs.get('as') === 'instructor') show(true); }
     { const pe = (new URLSearchParams(location.search).get('email') || '').trim(); if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(pe)) { $('#r-e').value = pe; $('#l-e').value = pe; } }
     const say = (id, t, k) => { const m = $(id); m.textContent = t; m.className = 'bx-formmsg' + (k ? ' ' + k : ''); };
+    if (new URLSearchParams(location.search).get('banned') === '1') say('#m-in', 'تم إيقاف حسابك بسبب مخالفة شروط الاستخدام. للاستفسار راسلنا على contact@biosyneg.com', 'err');
     // button loading state: busy(btn, label) shows a spinner; busy(btn) restores it
     const busy = (b, label) => {
       if (label) { if (!b.dataset.label) b.dataset.label = b.innerHTML; b.disabled = true; b.setAttribute('aria-busy', 'true'); b.innerHTML = '<span class="bx-btnspin" aria-hidden="true"></span>' + esc(label); }
@@ -155,7 +156,7 @@
         catch (err) { busy(re); say('#m-sent', authErr(err), 'err'); }
       };
     };
-    const authErr = (e) => /invalid login/i.test(e.message) ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة.' : /already registered/i.test(e.message) ? 'هذا البريد مسجّل بالفعل، سجّل الدخول.' : /email not confirmed/i.test(e.message) ? 'أكّد بريدك الإلكتروني أولًا من الرسالة التي وصلتك.' : /rate limit/i.test(e.message) ? 'محاولات كثيرة، انتظر قليلًا ثم أعد المحاولة.' : window.arErr(e);
+    const authErr = (e) => /banned/i.test(e.message) ? 'تم إيقاف هذا الحساب. للاستفسار راسلنا على contact@biosyneg.com' : /invalid login/i.test(e.message) ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة.' : /already registered/i.test(e.message) ? 'هذا البريد مسجّل بالفعل، سجّل الدخول.' : /email not confirmed/i.test(e.message) ? 'أكّد بريدك الإلكتروني أولًا من الرسالة التي وصلتك.' : /rate limit/i.test(e.message) ? 'محاولات كثيرة، انتظر قليلًا ثم أعد المحاولة.' : window.arErr(e);
 
     $('#f-in').addEventListener('submit', async (ev) => {
       ev.preventDefault(); const b = $('button[type=submit]', ev.target); busy(b, 'جارٍ تسجيل الدخول…'); say('#m-in', '');
@@ -410,12 +411,41 @@
       const blackout = (ms) => { shield.hidden = false; clearTimeout(blackout.t); blackout.t = setTimeout(() => (shield.hidden = true), ms || 2500); };
       const keys = (e) => {
         const k = (e.key || '').toLowerCase();
-        if (k === 'printscreen' || (e.metaKey && e.shiftKey && ['3', '4', '5', 's'].includes(k)) || (e.ctrlKey && e.shiftKey && k === 's') || (e.key === 'Meta' && e.shiftKey)) {
-          blackout(3000); try { navigator.clipboard && navigator.clipboard.writeText(''); } catch {}
-        }
+        // clear capture / record shortcuts are reported (and can lead to a ban); ambiguous ones (Win+Shift…) only black out
+        const capture = k === 'printscreen' || (e.metaKey && e.shiftKey && ['3', '4', 's'].includes(k)) || (e.ctrlKey && e.shiftKey && k === 's');
+        const record = (e.metaKey && e.shiftKey && k === '5') || (e.metaKey && e.altKey && k === 'r') || (e.metaKey && k === 'g');
+        const devtools = k === 'f12' || ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'j', 'c'].includes(k)) || (e.metaKey && e.altKey && ['i', 'j'].includes(k));
+        if (capture || record || (e.key === 'Meta' && e.shiftKey) || (e.key === 'Shift' && e.metaKey)) { blackout(3000); try { navigator.clipboard && navigator.clipboard.writeText(''); } catch {} }
+        if (capture || record || devtools) { if (devtools) e.preventDefault(); secReport(record ? 'record_shortcut' : capture ? 'capture_shortcut' : 'devtools', e); }
       };
-      if (!window.__bxKeys) { window.__bxKeys = true; document.addEventListener('keydown', keys, true); document.addEventListener('keyup', keys, true); }
+      if (!window.__bxKeys) {
+        window.__bxKeys = true; document.addEventListener('keydown', keys, true); document.addEventListener('keyup', keys, true);
+        // docked developer tools shrink the page by a lot; checked while the player is on screen (logged only, never a ban)
+        const dt = setInterval(() => {
+          if (!stage.isConnected) return clearInterval(dt);
+          if (window.outerWidth - window.innerWidth > 220 || window.outerHeight - window.innerHeight > 260) secReport('devtools', { key: 'docked' });
+        }, 4000);
+      }
     }
+    // ---------- capture alerts: tell the server, warn on the first attempt, lock the page on a ban ----------
+    const secLast = {};
+    async function secReport(kind, e) {
+      if (Date.now() - (secLast[kind] || 0) < (kind === 'devtools' ? 600000 : 4000)) return;   // one report per burst (keydown + keyup)
+      secLast[kind] = Date.now();
+      let r = null;
+      try {
+        r = await sb.rpc('report_security_incident', { p_kind: kind, p_lecture: (typeof cur !== 'undefined' && cur && cur.id) || null,
+          p_detail: { ua: navigator.userAgent, key: (e && e.key) || '', screen: `${screen.width}x${screen.height}`, page: location.pathname + location.search } });
+      } catch { return; }
+      if (r && r.action === 'banned') secBanned();
+      else if (r && r.action === 'warned') ui.modal(`<h3>⚠️ تحذير</h3><p>رصدنا محاولة تصوير أو تسجيل للشاشة أثناء مشاهدة المحاضرة. المحتوى محمي ومربوط بحسابك، وتكرار المحاولة هيؤدي إلى <b>حظر الحساب وإلغاء الاشتراك</b> نهائيًا.</p><div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" data-x>فهمت</button></div>`, (m, close) => { $('[data-x]', m).onclick = close; });
+    }
+    window.secBanned = async function secBanned() {
+      document.querySelectorAll('iframe').forEach((f) => f.remove());
+      const box = document.querySelector('main') || document.body;
+      box.innerHTML = '<div class="bx-empty-big" style="margin:60px auto;max-width:560px"><b>تم إيقاف حسابك</b>تم حظر الحساب وإلغاء الاشتراك بسبب محاولة تصوير أو تسجيل محتوى المحاضرات، وده مخالف لشروط الاستخدام. لو شايف إن ده حصل بالغلط، راسلنا على contact@biosyneg.com.</div>';
+      try { await sb.auth.signOut(); } catch {}
+    };
 
     async function loadVideo() {
       loadFiles();
