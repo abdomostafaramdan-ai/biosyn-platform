@@ -292,7 +292,8 @@
           const act = manual ? `<button class="bx-linkbtn" data-ma="${p.id}">تأكيد الاستلام</button> · <button class="bx-linkbtn" data-mr="${p.id}" style="color:var(--danger-text)">رفض</button>`
             : rq && openRef(rq) ? `<button class="bx-linkbtn" data-goref="${rq.id}">طلب استرداد مفتوح ←</button>`
             : canRefund(p) && isAdmin() ? `<button class="bx-linkbtn" data-rf="${p.id}">استرداد</button>` : '';
-          return [D.date(p.created_at), esc((p.profiles && p.profiles.full_name) || '—'), esc(itemOf(p)) + (p.receipt_no ? `<br><small class="bx-hint">إيصال ${p.receipt_no}</small>` : ''), (p.currency && p.currency !== 'EGP' ? `${paidTxt(p)}<br><small class="bx-hint">≈ ${D.money(p.amount_egp)}</small>` : D.money(p.amount_egp)) + (Number(p.discount_egp) ? `<br><small class="bx-hint">خصم ${D.money(p.discount_egp)}</small>` : ''), p.currency && p.currency !== 'EGP' ? paidTxt(p, 'fee') : D.money(p.fee_egp), (D.gw[p.gateway] || p.gateway) + (p.gateway === 'manual' ? `<br><small class="bx-hint">${({ instapay: 'إنستاباي', vodafone_cash: 'فودافون كاش', paypal: 'PayPal' })[p.manual_method] || ''} · <span class="bs-latin">${esc(p.manual_ref || '')}</span></small>${p.proof_path ? `<br><button class="bx-linkbtn" data-proof="${esc(p.proof_path)}">🧾 عرض سكرين التحويل</button>` : p.manual_method && p.manual_method !== 'paypal' ? '<br><small class="bx-hint">بدون سكرين (طلب قديم)</small>' : ''}` : ''), D.badge('pay', p.status), act];
+          const del = isAdmin() ? `${act ? '<br>' : ''}<button class="bx-linkbtn" data-pdel="${p.id}" style="color:var(--danger-text)">حذف</button>` : '';
+          return [D.date(p.created_at), esc((p.profiles && p.profiles.full_name) || '—'), esc(itemOf(p)) + (p.receipt_no ? `<br><small class="bx-hint">إيصال ${p.receipt_no}</small>` : ''), (p.currency && p.currency !== 'EGP' ? `${paidTxt(p)}<br><small class="bx-hint">≈ ${D.money(p.amount_egp)}</small>` : D.money(p.amount_egp)) + (Number(p.discount_egp) ? `<br><small class="bx-hint">خصم ${D.money(p.discount_egp)}</small>` : ''), p.currency && p.currency !== 'EGP' ? paidTxt(p, 'fee') : D.money(p.fee_egp), (D.gw[p.gateway] || p.gateway) + (p.gateway === 'manual' ? `<br><small class="bx-hint">${({ instapay: 'إنستاباي', vodafone_cash: 'فودافون كاش', paypal: 'PayPal' })[p.manual_method] || ''} · <span class="bs-latin">${esc(p.manual_ref || '')}</span></small>${p.proof_path ? `<br><button class="bx-linkbtn" data-proof="${esc(p.proof_path)}">🧾 عرض سكرين التحويل</button>` : p.manual_method && p.manual_method !== 'paypal' ? '<br><small class="bx-hint">بدون سكرين (طلب قديم)</small>' : ''}` : ''), D.badge('pay', p.status), act + del];
         }), 'لا توجد مدفوعات بهذه التصفية');
       }
       function refCard(r) {
@@ -318,6 +319,39 @@
         </article>`;
       }
 
+      // permanent delete (test orders, duplicates): shows what goes with it, needs a reason, keeps an audit copy
+      async function deletePayment(p) {
+        if (!p) return;
+        let L; try { L = await sb.rpc('admin_payment_links', { p_payment: p.id }); } catch (e) { return ui.toast(arErr(e), 'err'); }
+        const who = esc((p.profiles && p.profiles.full_name) || '—'), real = p.status === 'paid' && p.gateway !== 'manual';
+        const goes = [L.subscriptions ? `الاشتراك اللي فتحته الدفعة (${L.active_subscriptions ? 'ساري دلوقتي، وهيتقفل فورًا' : 'منتهي'})` : '',
+          L.enrollments ? 'تسجيل الطالب في الدورة (هيفقد الوصول لها)' : '', L.referrals ? 'احتساب الدعوة في برنامج الإحالة' : ''].filter(Boolean);
+        const blocked = L.month_closed ? 'مينفعش تتحذف: الشهر بتاع الدفعة دي اتقفل واتحسبت منه أرباح المحاضرين.' : L.reward_used ? 'مينفعش تتحذف: الاشتراك ده اتستخدم في مكافأة إحالة.' : '';
+        ui.modal(`<h3>حذف دفعة نهائيًا</h3>
+          <dl class="bx-dl" style="display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0 0 12px">
+            <dt class="bx-hint">العميل</dt><dd style="margin:0">${who}</dd>
+            <dt class="bx-hint">البند</dt><dd style="margin:0">${esc(itemOf(p))}${p.receipt_no ? ` · إيصال ${p.receipt_no}` : ''}</dd>
+            <dt class="bx-hint">المبلغ</dt><dd style="margin:0">${D.money(p.amount_egp)} · ${esc(D.gw[p.gateway] || p.gateway)} · ${esc(({ paid: 'مدفوع', pending: 'بانتظار الدفع', failed: 'فشل', refunded: 'مسترد' })[p.status] || p.status)}</dd></dl>
+          ${blocked ? `<div class="bx-formmsg err" style="display:block">${blocked}</div><div class="bx-modal-actions"><button class="bs-btn bs-btn-ghost" data-x>إغلاق</button></div>` : `
+          <p style="margin:0 0 8px">هتتمسح الدفعة من المدفوعات والإيرادات${goes.length ? '، ومعاها:' : '.'}</p>
+          ${goes.length ? `<ul style="margin:0 0 10px;padding-inline-start:20px">${goes.map((g) => `<li>${g}</li>`).join('')}</ul>` : ''}
+          ${real ? '<div class="bx-formmsg err" style="display:block;margin-bottom:10px">⚠️ دي دفعة حقيقية اتدفعت عن طريق البوابة. الحذف مش بيرجّع الفلوس للعميل. لو عاوز ترجّعها استخدم «استرداد».</div>' : ''}
+          <p class="bx-hint" style="margin:0 0 10px">الحذف نهائي ومفيش تراجع عنه، بس بيتحفظ سجل بالبيانات والسبب ومين حذف.</p>
+          <div class="bx-field"><label for="pd-r">سبب الحذف *</label><input id="pd-r" class="bx-input" maxlength="300" placeholder="مثال: طلب تجربة"></div>
+          <div class="bx-formmsg" aria-live="polite"></div>
+          <div class="bx-modal-actions"><button class="bs-btn" data-go style="background:#c0392b;border:1px solid #c0392b;color:#fff;box-shadow:none">حذف نهائي</button><button class="bs-btn bs-btn-ghost" data-x>إلغاء</button></div>`}`, (m, close) => {
+          $('[data-x]', m).onclick = close;
+          const go = $('[data-go]', m); if (!go) return;
+          const msg = $('.bx-formmsg:not(.err)', m) || $('.bx-formmsg', m);
+          go.onclick = async () => {
+            const reason = $('#pd-r', m).value.trim();
+            if (reason.length < 3) { msg.className = 'bx-formmsg err'; msg.textContent = 'اكتب سبب الحذف.'; return; }
+            go.disabled = true;
+            try { await sb.rpc('admin_delete_payment', { p_payment: p.id, p_reason: reason }); close(); ui.toast('اتحذفت الدفعة.'); D.reload(); }
+            catch (e) { go.disabled = false; msg.className = 'bx-formmsg err'; msg.textContent = /month closed/.test(e.message) ? 'الشهر ده اتقفل خلاص.' : arErr(e); }
+          };
+        });
+      }
       function draw() {
         views._payTab = F.tab;
         const pl = F.tab === 'pay' ? payList() : null, rl = F.tab === 'ref' ? refList() : null, nOpen = refs.filter(openRef).length;
@@ -352,6 +386,7 @@
           if (!confirm(ok ? 'تأكيد وصول التحويل وتفعيل الاشتراك/التسجيل؟' : 'رفض هذا التحويل؟')) return;
           try { await sb.rpc('admin_review_manual', { p_payment: id, p_approve: ok }); ui.toast(ok ? 'تم التأكيد والتفعيل.' : 'تم الرفض.'); D.reload(); } catch (e) { ui.toast(arErr(e), 'err'); }
         }));
+        $$('[data-pdel]', main).forEach((b) => (b.onclick = () => deletePayment(payById[b.dataset.pdel])));
         $$('[data-rf]', main).forEach((b) => (b.onclick = async () => {
           if (!confirm('تنفيذ الاسترداد وإلغاء تسجيل الطالب في الدورة؟')) return;
           b.disabled = true;
