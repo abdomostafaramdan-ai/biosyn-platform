@@ -423,7 +423,7 @@
         const record = (e.metaKey && e.shiftKey && c === 'Digit5') || (e.metaKey && e.altKey && ['KeyR', 'KeyG'].includes(c)) || (e.metaKey && c === 'KeyG');
         const devtools = k === 'f12' || ((e.ctrlKey || e.metaKey) && e.shiftKey && ['KeyI', 'KeyJ', 'KeyC'].includes(c)) || (e.metaKey && e.altKey && ['KeyI', 'KeyJ'].includes(c));
         if (e.type === 'keydown' && e.metaKey && (e.shiftKey || e.altKey)) { modAt = Date.now(); modKind = e.altKey ? 'record_shortcut' : 'capture_shortcut'; }
-        if (capture || record || (e.key === 'Meta' && (e.shiftKey || e.altKey)) || ((e.key === 'Shift' || e.key === 'Alt') && e.metaKey)) { blackout(3000); try { navigator.clipboard && navigator.clipboard.writeText(''); } catch {} }
+        if (capture || record || (e.key === 'Meta' && (e.shiftKey || e.altKey)) || ((e.key === 'Shift' || e.key === 'Alt') && e.metaKey)) { blackout(3000); try { navigator.clipboard && navigator.clipboard.writeText('').catch(() => {}); } catch {} }
         if (capture || record || devtools) { if (devtools) e.preventDefault(); secReport(record ? 'record_shortcut' : capture ? 'capture_shortcut' : 'devtools', e); return; }
         // the page keeps the keyboard (so the shortcuts above are seen), so it also drives the player
         if (e.type === 'keydown' && !e.ctrlKey && !e.metaKey && !e.altKey && cur$stage && cur$stage.isConnected && !/^(input|textarea|select|button)$/i.test(e.target.tagName || '')) {
