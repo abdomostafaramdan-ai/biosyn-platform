@@ -220,3 +220,29 @@
     function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
   })();
 })();
+
+/* Bug reporter: JavaScript errors visitors hit on our own pages go to report_client_error();
+   the security watchdog raises an alert when the same error repeats (Admin → «مركز الأمان»). */
+(() => {
+  'use strict';
+  let left = 5; const seen = new Set();
+  const ours = (f) => !f || f.indexOf(location.origin) === 0 || /^\/?js\//.test(f);
+  const skip = /^(Script error\.?|ResizeObserver loop|Failed to fetch|NetworkError|Load failed|The operation was aborted|AbortError)/i;
+  const send = (msg, src) => {
+    msg = String(msg || '').slice(0, 400);
+    if (!msg || skip.test(msg) || left <= 0 || seen.has(msg) || !window.sb) return;
+    seen.add(msg); left--;
+    try { window.sb.rpc('report_client_error', { p_msg: msg, p_src: src ? String(src).slice(0, 300) : null, p_page: (location.pathname + location.search).slice(0, 200) }).catch(() => {}); } catch {}
+  };
+  window.addEventListener('error', (e) => {
+    if (!e || !e.message || e.target !== window && e.target && e.target.tagName) return; // resource load errors are not code bugs
+    if (!ours(e.filename)) return;
+    send(e.message, `${(e.filename || '').split('/').pop()}:${e.lineno || 0}:${e.colno || 0}`);
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    const r = e && e.reason; if (!r || !(r instanceof Error)) return;   // API refusals arrive as plain objects and are handled by the page
+    const at = String(r.stack || '').split('\n').find((l) => /\/js\/[\w.-]+\.js/.test(l)) || '';
+    if (!at) return;
+    send((r.name ? r.name + ': ' : '') + r.message, (at.match(/\/js\/[\w.-]+\.js:\d+:\d+/) || [''])[0].replace('/js/', ''));
+  });
+})();

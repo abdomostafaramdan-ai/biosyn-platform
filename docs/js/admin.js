@@ -45,6 +45,57 @@
     }
   }
 
+
+  // ---------- «حارس الأمان»: alerts raised by security_watchdog() every 10 minutes ----------
+  function secGuard(alerts, ips, st) {
+    const SEV = { critical: ['خطير', 'danger'], warning: ['مهم', 'warn'], info: ['للعلم', 'info'] };
+    const CAT = { vuln: 'ثغرة', attack: 'هجوم', bug: 'خطأ برمجي', integrity: 'صلاحيات' };
+    const open = alerts.filter((a) => a.status === 'open');
+    const F = { show: 'open' };
+    const canApprove = (a) => /^(anonfn|staff):/.test(a.key);
+    const list = () => {
+      const rows = F.show === 'open' ? open : alerts;
+      return D.table(['الخطورة', 'المشكلة', 'الإجراء التلقائي', 'آخر مرة', ''], rows.map((a) => {
+        const [t, c] = SEV[a.severity] || [a.severity, 'mute'];
+        return [
+          `<span class="bx-st bx-st-${c}">${t}</span><br><small class="bx-hint">${esc(CAT[a.category] || a.category)}</small>`,
+          `<b>${esc(a.title)}</b><br><small class="bx-hint" style="white-space:pre-wrap">${esc(a.detail || '')}</small>`,
+          a.action_taken ? `<small>${esc(a.action_taken)}</small>` : '<span class="bx-hint">تنبيه فقط</span>',
+          `${D.dateTime(a.last_at)}${a.hits > 1 ? `<br><small class="bx-hint">اتكرر ${a.hits} مرة</small>` : ''}`,
+          a.status === 'open'
+            ? `<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">${canApprove(a) ? `<button class="bs-btn bs-btn-secondary bs-btn-sm" data-al="${a.id}" data-s="approved" title="التغيير ده مقصود">مسموح</button>` : ''}<button class="bs-btn bs-btn-ghost bs-btn-sm" data-al="${a.id}" data-s="resolved">تم الحل</button></div>`
+            : `<small class="bx-hint">${a.status === 'approved' ? 'مسموح' : 'اتحل'}${a.resolved_by ? ' · ' + esc(a.resolved_by) : ''}</small>`,
+        ];
+      }), F.show === 'open' ? 'مفيش مشاكل مفتوحة دلوقتي ✓' : 'لا توجد تنبيهات بعد');
+    };
+    const html = D.panel('حارس الأمان', `<p class="bx-hint" style="margin-top:0">بيفحص المنصة كل 10 دقايق: الجداول المفتوحة، الدوال الخطيرة، الصلاحيات الجديدة، الهجوم بالطلبات، اختفاء البيانات، الإيميلات ومدفوعات البوابات اللي وقفت، والأخطاء اللي بتقابل الزوار في الموقع. اللي ينفع يتصلّح تلقائيًا بيتصلّح فورًا، وكل مشكلة بيوصلك عنها إشعار هنا، والمهم منها على الإيميل.</p>
+      <div class="bx-stats">${D.stat('مشاكل خطيرة مفتوحة', open.filter((a) => a.severity === 'critical').length)}${D.stat('مشاكل مهمة مفتوحة', open.filter((a) => a.severity === 'warning').length)}${D.stat('عناوين محظورة الآن', ips.length, 'بسبب إغراق بالطلبات')}${D.stat('آخر فحص', st && st.at ? D.dateTime(st.at) : '—', st ? `${st.fixed || 0} إصلاح تلقائي` : '')}</div>
+      <div class="bx-btnrow" style="margin:12px 0"><button class="bs-btn bs-btn-primary bs-btn-sm" id="wd-run">افحص الآن</button>
+        <select class="bx-select" id="wd-show" style="max-width:200px"><option value="open">المفتوحة فقط</option><option value="all">كل التنبيهات</option></select></div>
+      <div id="wd-list">${list()}</div>
+      ${ips.length ? `<h4 style="margin:18px 0 8px">العناوين المحظورة</h4>${D.table(['العنوان', 'السبب', 'لحد', ''], ips.map((b) => [`<span class="bx-kbd" dir="ltr">${esc(b.ip)}</span>`, esc(b.reason || ''), D.dateTime(b.until), `<button class="bx-linkbtn" data-unip="${esc(b.ip)}">رفع الحظر</button>`]))}` : ''}`);
+    const wire = (main) => {
+      const bind = () => $$('[data-al]', main).forEach((b) => (b.onclick = async () => {
+        const a = alerts.find((x) => x.id === b.dataset.al);
+        if (b.dataset.s === 'approved' && !confirm(a.key.startsWith('staff:') ? 'متأكد إنك انت اللي ادّيت الصلاحية دي؟' : 'متأكد إن الدالة دي مقصود الزوار يستخدموها؟ هترجع متاحة للزوار.')) return;
+        b.disabled = true;
+        try { await sb.rpc('admin_alert_set', { p_id: a.id, p_status: b.dataset.s }); ui.toast('تم.'); D.reload(); } catch (x) { ui.toast(arErr(x), 'err'); b.disabled = false; }
+      }));
+      bind();
+      $('#wd-show', main).onchange = (e) => { F.show = e.target.value; $('#wd-list', main).innerHTML = list(); bind(); };
+      $('#wd-run', main).onclick = async (e) => {
+        e.target.disabled = true; e.target.textContent = 'جارٍ الفحص…';
+        try { const r = await sb.rpc('admin_watchdog_run'); ui.toast(`خلص الفحص: ${r.fixed || 0} إصلاح تلقائي، ${r.open || 0} مشكلة مفتوحة.`); D.reload(); }
+        catch (x) { ui.toast(arErr(x), 'err'); e.target.disabled = false; e.target.textContent = 'افحص الآن'; }
+      };
+      $$('[data-unip]', main).forEach((b) => (b.onclick = async () => {
+        if (!confirm('رفع الحظر عن ' + b.dataset.unip + '؟')) return;
+        try { await sb.rpc('admin_unblock_ip', { p_ip: b.dataset.unip }); ui.toast('تم رفع الحظر.'); D.reload(); } catch (x) { ui.toast(arErr(x), 'err'); }
+      }));
+    };
+    return { html, wire };
+  }
+
   const views = {
     async tickets(main) {
       main.innerHTML = D.panel('التذاكر والشكاوى', `<p class="bx-hint" style="margin-top:0">التذاكر التي يفتحها الطلاب من «حسابي ← الرسائل والدعم». يصلهم ردّك هنا وعلى البريد الإلكتروني.</p><div data-ib></div>`);
@@ -542,12 +593,16 @@
       await load();
     },
     async security(main) {
-      const [rows, cfg] = await Promise.all([sb.rpc('admin_security_overview').then((r) => (Array.isArray(r) ? r : [])).catch(() => []), sb.rpc('admin_security_get').catch(() => ({}))]);
+      const [rows, cfg, alerts, ips, wst] = await Promise.all([sb.rpc('admin_security_overview').then((r) => (Array.isArray(r) ? r : [])).catch(() => []), sb.rpc('admin_security_get').catch(() => ({})),
+        sb.get('security_alerts', { select: '*', order: 'last_at.desc', limit: 300 }).catch(() => []),
+        sb.get('blocked_ips', { select: '*', until: 'gt.' + new Date().toISOString(), order: 'created_at.desc' }).catch(() => []),
+        sb.rpc('admin_watchdog_state').catch(() => null)]);
+      const G = secGuard(alerts || [], ips || [], wst);
       const C = Object.assign({ auto_ban: true, ban_after: 2 }, cfg || {});
       const KIND = { capture_shortcut: 'تصوير الشاشة', record_shortcut: 'تسجيل الشاشة', devtools: 'أدوات المطوّر' };
       const wa = (p) => { const x = String(p || '').replace(/\D/g, ''); return x ? (x.startsWith('0') ? '2' + x : x) : ''; };
       const day = Date.now() - 86400000;
-      main.innerHTML = D.panel('التنبيهات الأمنية', `<p class="bx-hint" style="margin-top:0">صفحة المشاهدة بتبلّغ هنا عن محاولات تصوير أو تسجيل الشاشة (أزرار PrintScreen، Win+Shift+S، Win+Alt+R، Cmd+Shift+3/4/5) وعن فتح أدوات المطوّر. مع كل محاولة بيوصلك إشعار فيه بيانات الحساب. الحظر بيقفل المشاهدة ويلغي الاشتراك ويمنع تسجيل الدخول.<br><b>مهم:</b> المتصفح مش بيقدر يشوف برامج التسجيل اللي شغالة على الجهاز أو تصوير الشاشة بموبايل، ودول بتغطيهم العلامة المائية المتحركة اللي فيها إيميل الطالب ورقمه.</p>
+      main.innerHTML = G.html + D.panel('محاولات تصوير المحاضرات', `<p class="bx-hint" style="margin-top:0">صفحة المشاهدة بتبلّغ هنا عن محاولات تصوير أو تسجيل الشاشة (أزرار PrintScreen، Win+Shift+S، Win+Alt+R، Cmd+Shift+3/4/5) وعن فتح أدوات المطوّر. مع كل محاولة بيوصلك إشعار فيه بيانات الحساب. الحظر بيقفل المشاهدة ويلغي الاشتراك ويمنع تسجيل الدخول.<br><b>مهم:</b> المتصفح مش بيقدر يشوف برامج التسجيل اللي شغالة على الجهاز أو تصوير الشاشة بموبايل، ودول بتغطيهم العلامة المائية المتحركة اللي فيها إيميل الطالب ورقمه.</p>
         <div class="bx-stats">${D.stat('حسابات عليها تنبيهات', rows.filter((r) => Number(r.incidents)).length, `${rows.filter((r) => r.last_at && new Date(r.last_at) > day).length} خلال آخر 24 ساعة`)}${D.stat('محظورين', rows.filter((r) => r.banned_at).length, 'ممنوعين من الدخول والمشاهدة')}</div>
         <fieldset class="bx-field" style="border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:16px 0"><legend style="padding:0 6px">الحظر التلقائي</legend>
           <label class="bx-check" style="min-height:auto"><input type="checkbox" id="sec-auto" ${C.auto_ban ? 'checked' : ''}> احظر الطالب تلقائيًا وألغِ اشتراكه عند تكرار محاولات التصوير أو التسجيل</label>
@@ -564,6 +619,7 @@
             `<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">${r.role === 'admin' ? '' : r.banned_at ? `<button class="bs-btn bs-btn-secondary bs-btn-sm" data-unban="${r.user_id}">رفع الحظر</button>` : `<button class="bs-btn bs-btn-ghost bs-btn-sm" style="color:var(--danger-text)" data-ban="${r.user_id}">حظر</button>`}${w ? `<a class="bs-btn bs-btn-ghost bs-btn-sm" href="https://wa.me/${w}" target="_blank" rel="noopener">واتساب</a>` : ''}</div>`,
           ];
         }), 'لا توجد تنبيهات حتى الآن.')}`);
+      G.wire(main);
       $('#sec-save', main).onclick = async (e) => {
         e.target.disabled = true;
         try { await sb.rpc('admin_security_settings', { p_auto_ban: $('#sec-auto', main).checked, p_ban_after: parseInt($('#sec-n', main).value, 10) }); ui.toast('تم حفظ إعدادات الحظر.'); }
@@ -1278,15 +1334,22 @@
 
   window.BiosynPages.admin = async () => {
     me = await D.guard(['admin', 'support']); if (!me) return;
-    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'insights', label: 'مركز التحليلات', icon: 'chart' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'imonitor', label: 'متابعة المحاضرين', icon: 'users' }, { id: 'faculties', label: 'الكليات والتخصصات', icon: 'list' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'social', label: 'السوشيال والنشرة البريدية', icon: 'users' }, { id: 'texts', label: 'نصوص الموقع', icon: 'book' }, { id: 'news', label: 'الأخبار والفعاليات', icon: 'book' }, { id: 'testimonials', label: 'آراء الطلاب', icon: 'chat' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'subs', label: 'الاشتراكات السارية', icon: 'card' }, { id: 'security', label: 'التنبيهات الأمنية', icon: 'ticket' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'mailcampaigns', label: 'حملات البريد', icon: 'inbox' }, { id: 'emails', label: 'رسائل البريد', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
+    const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'insights', label: 'مركز التحليلات', icon: 'chart' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'imonitor', label: 'متابعة المحاضرين', icon: 'users' }, { id: 'faculties', label: 'الكليات والتخصصات', icon: 'list' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'social', label: 'السوشيال والنشرة البريدية', icon: 'users' }, { id: 'texts', label: 'نصوص الموقع', icon: 'book' }, { id: 'news', label: 'الأخبار والفعاليات', icon: 'book' }, { id: 'testimonials', label: 'آراء الطلاب', icon: 'chat' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'subs', label: 'الاشتراكات السارية', icon: 'card' }, { id: 'security', label: 'مركز الأمان', icon: 'ticket' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'mailcampaigns', label: 'حملات البريد', icon: 'inbox' }, { id: 'emails', label: 'رسائل البريد', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
     // live counters: new requests + open refund requests (refreshes every minute and when the tab regains focus)
-    let lastRef = -1;
+    let lastRef = -1, lastCrit = -1;
     const pulse = async () => {
       try {
         const open = await sb.get('requests', { select: 'id,type,status', status: 'in.(new,in_review)', limit: 500 });
         const nRef = open.filter((r) => r.type === 'refund').length;
-        try { const si = await sb.get('security_incidents', { select: 'id', created_at: 'gt.' + new Date(Date.now() - 86400000).toISOString(), limit: 200 }); D.setBadge('security', si.length); } catch {}
+        try {
+          const [si, al] = await Promise.all([sb.get('security_incidents', { select: 'id', created_at: 'gt.' + new Date(Date.now() - 86400000).toISOString(), limit: 200 }),
+            sb.get('security_alerts', { select: 'id,severity,title', status: 'eq.open', severity: 'in.(warning,critical)', limit: 200 }).catch(() => [])]);
+          D.setBadge('security', si.length + al.length);
+          const crit = al.filter((a) => a.severity === 'critical');
+          if (lastCrit >= 0 && crit.length > lastCrit) ui.toast('🚨 تنبيه أمني خطير: ' + crit[0].title + ' — افتح «مركز الأمان».', 'err');
+          lastCrit = crit.length;
+        } catch {}
         D.setBadge('payments', nRef); D.setBadge('requests', open.filter((r) => r.type !== 'refund' && r.status === 'new').length);
         if (window.Chat) Chat.unreadCounts().then((u) => { D.setBadge('tickets', (u && u.tickets) || 0); D.setBadge('questions', (u && u.course_unanswered) || 0); });
         if (lastRef >= 0 && nRef > lastRef) ui.toast(`وصل طلب استرداد جديد (${nRef} مفتوح).`);
