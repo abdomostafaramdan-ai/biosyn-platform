@@ -30,9 +30,15 @@ export async function sendPending(sb: Sb, max = 20): Promise<{ sent: number; fai
   const { data: rows, error } = await sb.rpc('claim_emails', { p_n: max });
   if (error || !rows) return { sent: 0, failed: 0, skipped: error?.message };
   let sent = 0, failed = 0;
+  // Resend allows 10 requests/second per account and several callers can drain the queue at once: keep each one at ~4/s,
+  // and treat a 429 as "try again later" (it doesn't use up one of the row's 5 attempts).
+  const pause = (ms: number) => new Promise((ok) => setTimeout(ok, ms));
+  let first = true;
   for (const r of rows as Array<{ id: string; to_email: string; subject: string; body_html: string; attempts: number }>) {
+    if (!first) await pause(250);
+    first = false;
     try {
-      const res = await fetch('https://api.resend.com/emails', {
+      const post = () => fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'Idempotency-Key': r.id },
         body: JSON.stringify({
@@ -41,6 +47,13 @@ export async function sendPending(sb: Sb, max = 20): Promise<{ sent: number; fai
           headers: { 'List-Unsubscribe': `<mailto:${replyTo}?subject=unsubscribe>`, 'X-Entity-Ref-ID': r.id },
         }),
       });
+      let res = await post();
+      if (res.status === 429) { await res.text(); await pause(1500); res = await post(); }
+      if (res.status === 429) {
+        await res.text();
+        await sb.from('email_outbox').update({ status: 'pending', attempts: Math.max(0, r.attempts - 1), last_error: 'resend 429 (rate limit), will retry' }).eq('id', r.id);
+        continue;
+      }
       if (!res.ok) throw new Error(`resend ${res.status}: ${(await res.text()).slice(0, 300)}`);
       await sb.from('email_outbox').update({ status: 'sent', sent_at: new Date().toISOString(), last_error: null }).eq('id', r.id);
       sent++;

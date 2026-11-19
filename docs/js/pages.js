@@ -394,7 +394,7 @@
       $$('[data-f]', sec).forEach((b) => (b.onclick = async () => { try { location.href = await sb.storage.signedUrl('lecture-files', b.dataset.f, 300, b.dataset.n); } catch (e) { ui.toast(arErr(e), 'err'); } }));
     }
     // ---------- anti-recording: moving personal watermark, own fullscreen, blackout on screenshot keys ----------
-    let wmId = null;
+    let wmId = null, cur$stage = null;
     async function guardPlayer(stage) {
       if (!stage || stage.dataset.guarded) return; stage.dataset.guarded = '1';
       if (wmId === null) { wmId = ''; try { const pr = await sb.one('profiles', { select: 'phone', id: 'eq.' + sb.user.id }); wmId = (pr && pr.phone) || ''; } catch {} }
@@ -408,21 +408,44 @@
       $('.bx-rwbtn', stage).onclick = () => { if (stage._rewind) stage._rewind(); };
       $('.bx-fsbtn:not(.bx-rwbtn)', stage).onclick = () => (document.fullscreenElement ? document.exitFullscreen() : (stage.requestFullscreen || stage.webkitRequestFullscreen || (() => {})).call(stage));
       stage.addEventListener('contextmenu', (e) => e.preventDefault());
-      const blackout = (ms) => { shield.hidden = false; clearTimeout(blackout.t); blackout.t = setTimeout(() => (shield.hidden = true), ms || 2500); };
-      const keys = (e) => {
-        const k = (e.key || '').toLowerCase();
-        // clear capture / record shortcuts are reported (and can lead to a ban); ambiguous ones (Win+Shift…) only black out
-        const capture = k === 'printscreen' || (e.metaKey && e.shiftKey && ['3', '4', 's'].includes(k)) || (e.ctrlKey && e.shiftKey && k === 's');
-        const record = (e.metaKey && e.shiftKey && k === '5') || (e.metaKey && e.altKey && k === 'r') || (e.metaKey && k === 'g');
-        const devtools = k === 'f12' || ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'j', 'c'].includes(k)) || (e.metaKey && e.altKey && ['i', 'j'].includes(k));
-        if (capture || record || (e.key === 'Meta' && e.shiftKey) || (e.key === 'Shift' && e.metaKey)) { blackout(3000); try { navigator.clipboard && navigator.clipboard.writeText(''); } catch {} }
-        if (capture || record || devtools) { if (devtools) e.preventDefault(); secReport(record ? 'record_shortcut' : capture ? 'capture_shortcut' : 'devtools', e); }
+      // the shield hides the video; it only comes off while this window has the focus
+      const blackout = (ms, why) => {
+        $('b', shield).textContent = why || 'التسجيل والتصوير ممنوعين'; shield.hidden = false; clearTimeout(blackout.t);
+        blackout.t = setTimeout(() => { if (document.hasFocus()) shield.hidden = true; }, ms || 2500);
       };
+      // Windows hands Win+Shift+S (Snipping Tool) and Win+Alt+R / Win+Alt+PrtSc (Game Bar) to the OS: the page only sees
+      // Win+Shift / Win+Alt and then loses focus to the capture overlay. That pair is reported; focus loss alone only hides the video.
+      let modAt = 0, modKind = '';
+      const keys = (e) => {
+        const k = (e.key || '').toLowerCase(), c = e.code || '';
+        // clear capture / record shortcuts are reported (and can lead to a ban)
+        const capture = k === 'printscreen' || c === 'PrintScreen' || (e.metaKey && e.shiftKey && ['Digit3', 'Digit4', 'KeyS'].includes(c)) || (e.ctrlKey && e.shiftKey && c === 'KeyS');
+        const record = (e.metaKey && e.shiftKey && c === 'Digit5') || (e.metaKey && e.altKey && ['KeyR', 'KeyG'].includes(c)) || (e.metaKey && c === 'KeyG');
+        const devtools = k === 'f12' || ((e.ctrlKey || e.metaKey) && e.shiftKey && ['KeyI', 'KeyJ', 'KeyC'].includes(c)) || (e.metaKey && e.altKey && ['KeyI', 'KeyJ'].includes(c));
+        if (e.type === 'keydown' && e.metaKey && (e.shiftKey || e.altKey)) { modAt = Date.now(); modKind = e.altKey ? 'record_shortcut' : 'capture_shortcut'; }
+        if (capture || record || (e.key === 'Meta' && (e.shiftKey || e.altKey)) || ((e.key === 'Shift' || e.key === 'Alt') && e.metaKey)) { blackout(3000); try { navigator.clipboard && navigator.clipboard.writeText(''); } catch {} }
+        if (capture || record || devtools) { if (devtools) e.preventDefault(); secReport(record ? 'record_shortcut' : capture ? 'capture_shortcut' : 'devtools', e); return; }
+        // the page keeps the keyboard (so the shortcuts above are seen), so it also drives the player
+        if (e.type === 'keydown' && !e.ctrlKey && !e.metaKey && !e.altKey && cur$stage && cur$stage.isConnected && !/^(input|textarea|select|button)$/i.test(e.target.tagName || '')) {
+          if (c === 'Space' || c === 'KeyK') { e.preventDefault(); cur$stage._toggle && cur$stage._toggle(); }
+          else if (c === 'ArrowLeft' || c === 'KeyJ') { e.preventDefault(); cur$stage._rewind && cur$stage._rewind(); }
+        }
+      };
+      cur$stage = stage;
       if (!window.__bxKeys) {
         window.__bxKeys = true; document.addEventListener('keydown', keys, true); document.addEventListener('keyup', keys, true);
+        window.addEventListener('blur', () => {
+          const st = cur$stage; if (!st || !st.isConnected) return;
+          const ae = document.activeElement;
+          // a click on the video moves the keyboard into the player frame, where the page can't see the keys: take it back
+          if (ae && ae.tagName === 'IFRAME' && st.contains(ae)) { setTimeout(() => { try { ae.blur(); window.focus(); } catch {} }, 0); return; }
+          const sh = $('.bx-shield', st); if (sh) { $('b', sh).textContent = 'الفيديو بيختفي لما تخرج من الصفحة'; sh.hidden = false; }
+          if (Date.now() - modAt < 1500) secReport(modKind, { key: modKind === 'record_shortcut' ? 'Win+Alt (Game Bar)' : 'Win+Shift (Snipping Tool)' });
+        });
+        window.addEventListener('focus', () => { const st = cur$stage, sh = st && $('.bx-shield', st); if (sh) setTimeout(() => { if (document.hasFocus()) sh.hidden = true; }, 300); });
         // docked developer tools shrink the page by a lot; checked while the player is on screen (logged only, never a ban)
         const dt = setInterval(() => {
-          if (!stage.isConnected) return clearInterval(dt);
+          if (!cur$stage || !cur$stage.isConnected) return;
           if (window.outerWidth - window.innerWidth > 220 || window.outerHeight - window.innerHeight > 260) secReport('devtools', { key: 'docked' });
         }, 4000);
       }
@@ -438,6 +461,7 @@
           p_detail: { ua: navigator.userAgent, key: (e && e.key) || '', screen: `${screen.width}x${screen.height}`, page: location.pathname + location.search } });
       } catch { return; }
       if (r && r.action === 'banned') secBanned();
+      else if (r && r.action === 'logged' && kind !== 'devtools') toast('🛡️ اتسجلت محاولة التصوير عندنا (الحسابات الإدارية والمحاضرين مش بتتحظر تلقائيًا).');
       else if (r && r.action === 'warned') ui.modal(`<h3>⚠️ تحذير</h3><p>رصدنا محاولة تصوير أو تسجيل للشاشة أثناء مشاهدة المحاضرة. المحتوى محمي ومربوط بحسابك، وتكرار المحاولة هيؤدي إلى <b>حظر الحساب وإلغاء الاشتراك</b> نهائيًا.</p><div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" data-x>فهمت</button></div>`, (m, close) => { $('[data-x]', m).onclick = close; });
     }
     window.secBanned = async function secBanned() {
@@ -461,10 +485,12 @@
         const f = $('#bunny'); const post = (o) => f.contentWindow && f.contentWindow.postMessage(JSON.stringify({ context: 'player.js', version: '0.0.11', ...o }), '*');
         f.addEventListener('load', () => post({ method: 'addEventListener', value: 'ready' }));
         stageEl._rewind = () => post({ method: 'setCurrentTime', value: Math.max(0, curT - 10) });   // back 10 s (going back is always allowed)
+        let paused = true; stageEl._toggle = () => post({ method: paused ? 'play' : 'pause' });
         window.onmessage = (e) => {
           if (e.source !== f.contentWindow) return; let d = e.data; if (typeof d === 'string') { try { d = JSON.parse(d); } catch { return; } }
           if (!d || d.context !== 'player.js') return;
-          if (d.event === 'ready') ['timeupdate', 'ended'].forEach((ev) => post({ method: 'addEventListener', value: ev }));
+          if (d.event === 'ready') ['timeupdate', 'ended', 'play', 'pause'].forEach((ev) => post({ method: 'addEventListener', value: ev }));
+          else if (d.event === 'play' || d.event === 'pause') paused = d.event === 'pause';
           else if (d.event === 'timeupdate' && d.value && d.value.duration) {
             const D = d.value.duration, t = d.value.seconds;
             curT = t;

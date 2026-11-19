@@ -5,8 +5,43 @@
     get() { try { return JSON.parse(localStorage.getItem(KEY)); } catch { return null; } },
     set(s) { try { s ? localStorage.setItem(KEY, JSON.stringify(s)) : localStorage.removeItem(KEY); } catch {} },
   };
+  // Sign-in lasts while the site is open: closing every tab of the site (or the browser) signs the user out.
+  // Each open tab refreshes a heartbeat; a tab opened with no heartbeat from another tab (and no sessionStorage mark of its
+  // own, which survives refreshes and same-tab redirects such as Google sign-in) starts signed out.
+  const HB = 'biosyn.hb', TAB = 'biosyn.tab', HB_MS = 10000, HB_STALE = 90000;   // hidden tabs are throttled to ~1/min
+  (function () {
+    try {
+      const mine = sessionStorage.getItem(TAB) === '1', last = Number(localStorage.getItem(HB)) || 0;
+      if (!mine && Date.now() - last > HB_STALE) {
+        const old = store.get();
+        if (old && old.access_token) {   // revoke it on the server too (best effort)
+          fetch(C.SUPABASE_URL + '/auth/v1/logout', { method: 'POST', keepalive: true, headers: { apikey: C.SUPABASE_KEY, Authorization: 'Bearer ' + old.access_token } }).catch(() => {});
+          store.set(null);
+        }
+      }
+      sessionStorage.setItem(TAB, '1');
+      const beat = () => { try { localStorage.setItem(HB, String(Date.now())); } catch {} };
+      beat(); setInterval(beat, HB_MS);
+      document.addEventListener('visibilitychange', beat);
+    } catch {}
+  })();
+  // a refresh always starts at the top of the page (back/forward still return to where the user was)
+  try {
+    const nav = performance.getEntriesByType('navigation')[0];
+    if (nav && nav.type === 'reload') {
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      const top = () => window.scrollTo(0, 0);
+      top(); document.addEventListener('DOMContentLoaded', top); window.addEventListener('load', top);
+    }
+  } catch {}
   let session = store.get();
   const listeners = [];
+  // signed out (or in) in another tab: follow it here
+  window.addEventListener('storage', (e) => {
+    if (e.key !== KEY) return;
+    const was = !!session; session = store.get(); emit();
+    if (was && !session) location.reload();
+  });
   const emit = () => listeners.forEach((f) => f(session));
 
   function setSession(r) {
