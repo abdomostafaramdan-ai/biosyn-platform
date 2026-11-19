@@ -49,3 +49,10 @@ select cron.schedule('promo100-0930', '30 7 20 11 *',
   $$select public.promo_campaign_send('b8cbd2d6-c0a9-4ee0-8908-653539972945', 'عرض 100 جنيه · الإرسال 2 (20 نوفمبر 9:30)', 'تذكير: {name}، 15 دورة كاملة بـ100 جنيه فقط', false, 'promo100-0930')$$);
 select cron.schedule('promo100-1700', '0 15 20 11 *',
   $$select public.promo_campaign_send('b8cbd2d6-c0a9-4ee0-8908-653539972945', 'عرض 100 جنيه · الإرسال 3 (20 نوفمبر 5:00)', 'الساعات الأخيرة: {name}، اشترك في 15 دورة بـ100 جنيه فقط', false, 'promo100-1700')$$);
+
+-- each delivery run gets 2 minutes before pg_net gives up on it
+select cron.alter_job((select jobid from cron.job where jobname = 'flush-emails'), command := $c$
+  select net.http_post(url := 'https://qdlvvwwlsofcngedoaya.supabase.co/functions/v1/send-emails',
+                       headers := '{"Content-Type":"application/json"}'::jsonb, body := '{}'::jsonb, timeout_milliseconds := 120000)
+   where exists (select 1 from public.email_outbox where status = 'pending' and attempts < 5)
+$c$);
