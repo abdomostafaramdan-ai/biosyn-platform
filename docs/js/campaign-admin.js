@@ -44,27 +44,32 @@
   }
 
   window.campaignAdmin = async function (main) {
-    const [st, cfgRow, recent, an] = await Promise.all([
+    const [st, cfgRow, recent, an, tl] = await Promise.all([
       sb.rpc('reactivation_stats').catch(() => null),
       sb.one('site_content', { select: 'data', key: 'eq.reactivation' }).catch(() => null),
       sb.get('legacy_users', { select: 'email,full_name,status,variant,sent_at,activated_at,founding', order: 'sent_at.desc.nullslast,created_at.desc', limit: 60 }).catch(() => []),
       sb.rpc('reactivation_analytics').catch(() => null),
+      sb.rpc('reactivation_today_limit').catch(() => null),
     ]);
     const s = st || {}, cfg = (cfgRow && cfgRow.data) || {};
-    const limit = Number(cfg.daily_limit || 80), days = s.queued ? Math.ceil(s.queued / Math.max(limit, 1)) : 0;
+    const limit = Number(cfg.daily_limit || 80), ramp = Array.isArray(cfg.ramp) && cfg.ramp.length && cfg.ramp_start;
+    const todayLim = Number(tl) || limit;
+    // days left: walk the warm-up steps, then the full limit
+    let days = 0; if (s.queued) { let left = s.queued, d = ramp ? Math.max(0, Math.round((Date.now() - new Date(cfg.ramp_start + 'T00:00:00+02:00')) / 864e5)) : 0;
+      while (left > 0 && days < 999) { const step = ramp ? Math.min(limit, Number(cfg.ramp[Math.min(d, cfg.ramp.length - 1)]) || limit) : limit; left -= step; d++; days++; } }
     main.innerHTML = `<div class="bx-stats">
         ${D.stat('مستخدمو المنصة القديمة', s.total || 0, s.invalid ? s.invalid + ' بريد غير صالح' : 'في قائمة الحملة')}
-        ${D.stat('أُرسلت لهم الرسالة', s.sent || 0, 'اليوم: ' + (s.today || 0) + ' من ' + limit)}
+        ${D.stat('أُرسلت لهم الرسالة', s.sent || 0, 'اليوم: ' + (s.today || 0) + ' من ' + todayLim)}
         ${D.stat('فعّلوا حساباتهم', s.activated || 0, 'نسبة التفعيل ' + pct(s.activated || 0, s.sent || 0))}
         ${D.stat('عضو مؤسس', s.founding || 0, 'فعّلوا خلال ' + (cfg.founder_days || 14) + ' يومًا')}
         ${D.stat('في الانتظار', s.queued || 0, s.queued ? 'تنتهي خلال ~' + days + ' يومًا' : '—')}
         ${D.stat('ألغوا الاشتراك', s.unsubscribed || 0, pct(s.unsubscribed || 0, s.sent || 0))}
       </div>
       ${analytics(an)}
-      ${D.panel('حالة الحملة', `<p class="bx-hint" style="margin-top:0">تُرسل دفعة واحدة يوميًا تلقائيًا (مهمة مجدولة في Claude). الحد الأقصى للحملة <b>${limit}</b> رسالة يوميًا، ولا يتجاوز مجموع رسائل المنصة كلها <b>${cfg.total_daily_cap || 95}</b> رسالة خلال 24 ساعة حتى تبقى ضمن الباقة المجانية لـ Resend (100 رسالة يوميًا). لا تُنشأ حسابات مسبقًا ولا تُفعَّل أي اشتراكات؛ المستخدم ينشئ حسابه بنفسه بالبريد نفسه فيُربط تلقائيًا.</p>
+      ${D.panel('حالة الحملة', `<p class="bx-hint" style="margin-top:0">تُرسل دفعة واحدة يوميًا تلقائيًا (مهمة مجدولة في Claude). حد النهارده <b>${todayLim}</b> رسالة${ramp ? ' (بيزيد بالتدريج: ' + cfg.ramp.join(' ← ') + ' علشان الرسايل توصل الـInbox مش الـSpam)' : ''}، وأقصى حد للحملة <b>${limit}</b> في اليوم. مجموع رسائل المنصة كلها ما يعديش <b>${cfg.total_daily_cap || 95}</b> خلال 24 ساعة. ${cfg.plan === 'pro' ? 'باقة Resend الحالية: Pro (50,000 رسالة في الشهر).' : 'باقة Resend المجانية: 100 رسالة في اليوم.'} لا تُنشأ حسابات مسبقًا ولا تُفعَّل أي اشتراكات؛ المستخدم ينشئ حسابه بنفسه بالبريد نفسه فيُربط تلقائيًا.</p>
         <div class="bx-formmsg ${cfg.enabled ? 'ok' : 'err'}" style="display:block">${cfg.enabled ? '● الحملة تعمل' : '○ الحملة متوقفة — لن تُرسل أي رسالة حتى تشغّلها'}</div>
         <div class="bx-grid2" style="margin-top:14px">
-          <div class="bx-field"><label for="cp-lim">عدد الرسائل يوميًا</label><input id="cp-lim" class="bx-input" type="number" min="1" max="95" value="${limit}" dir="ltr"></div>
+          <div class="bx-field"><label for="cp-lim">عدد الرسائل يوميًا</label><input id="cp-lim" class="bx-input" type="number" min="1" max="${cfg.plan === 'pro' ? 2000 : 95}" value="${limit}" dir="ltr"></div>
           <div class="bx-field"><label for="cp-days">مدة شارة «عضو مؤسس» (أيام)</label><input id="cp-days" class="bx-input" type="number" min="1" max="60" value="${cfg.founder_days || 14}" dir="ltr"></div>
           <div class="bx-field"><label for="cp-sa">عنوان الرسالة (أ)</label><input id="cp-sa" class="bx-input" value="${esc(cfg.subject_a || '')}"></div>
           <div class="bx-field"><label for="cp-sb">عنوان الرسالة (ب)</label><input id="cp-sb" class="bx-input" value="${esc(cfg.subject_b || '')}"></div>
@@ -85,7 +90,7 @@
 
     const msg = (t, k) => { const m = $('#cp-msg', main); m.className = 'bx-formmsg ' + (k || ''); m.textContent = t; };
     const save = async (extra) => {
-      const lim = Math.min(95, Math.max(1, parseInt($('#cp-lim', main).value, 10) || 80)), fd = Math.min(60, Math.max(1, parseInt($('#cp-days', main).value, 10) || 14));
+      const lim = Math.min(cfg.plan === 'pro' ? 2000 : 95, Math.max(1, parseInt($('#cp-lim', main).value, 10) || 80)), fd = Math.min(60, Math.max(1, parseInt($('#cp-days', main).value, 10) || 14));
       const data = { ...cfg, daily_limit: lim, founder_days: fd, subject_a: $('#cp-sa', main).value.trim(), subject_b: $('#cp-sb', main).value.trim(), ...(extra || {}) };
       if (!data.subject_a || !data.subject_b) { msg('اكتب عنواني الرسالة.', 'err'); return false; }
       await sb.update('site_content', { key: 'eq.reactivation' }, { data, updated_at: new Date().toISOString() });
