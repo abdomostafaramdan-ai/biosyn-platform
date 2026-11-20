@@ -516,3 +516,19 @@ html[dir="rtl"] .in-tip{transform:translateX(50%)}
 .bx-promo-cta{display:inline-block;padding:14px 44px;border:none;border-radius:14px;background:linear-gradient(135deg,#e63600,#ff4d1a);color:#fff;font-size:18px;font-weight:800;cursor:pointer;transition:transform .15s,box-shadow .2s;box-shadow:0 8px 28px rgba(230,54,0,.45)}
 .bx-promo-cta:hover{transform:scale(1.04);box-shadow:0 12px 36px rgba(230,54,0,.6)}
 @media(max-width:520px){.bx-promo-body{padding:28px 18px 24px}.bx-promo-tag{font-size:22px}.bx-promo-disc{font-size:20px}.bx-promo-cta{padding:12px 32px;font-size:16px}}
+/* plan cards on phones: compact like almentor (smaller padding, price and checklist) — desktop unchanged */
+@media (max-width:600px){
+  .bs-plans{gap:16px}
+  .bs-plan{padding:24px;gap:6px;border-radius:32px}
+  .bs-plan .bs-plan-name{font-size:22px;line-height:30px;font-weight:600}
+  .bs-plan .bs-plan-period{font-size:13px;line-height:20px}
+  .bs-plan .bs-plan-price{margin:6px 0 2px;gap:6px}
+  .bs-plan .bs-plan-price b{font-size:26px;line-height:1.2;font-weight:700}
+  .bs-plan .bs-plan-price span{font-size:14px;line-height:21px}
+  .bs-plan-price .bx-plan-was{font-size:14px}
+  .bs-plan .bx-plan-total{font-size:13px;line-height:20px}
+  .bs-plan .bs-checks{gap:2px;margin:8px 0 12px}
+  .bs-plan .bs-checks li{font-size:13px;line-height:21px;gap:8px}
+  .bs-plan .bs-checks svg{width:14px;height:14px;margin-top:4px}
+  .bs-plan .bs-btn{min-height:45px;padding:10px 16px;font-size:16px;border-radius:12px}
+}
