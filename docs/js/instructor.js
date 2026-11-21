@@ -46,13 +46,12 @@
       const max = Math.max(1, ...months.map((m) => m.n));
       const rec = d.stats.filter((r) => r.kind === 'recorded');
       const myMin = rec.reduce((a, r) => a + Number(r.watch_minutes_month || 0), 0);
-      const est = rec.reduce((a, r) => a + Number(r.est_earnings_month || 0), 0);
       const liveNow = d.stats.reduce((a, r) => a + Number(r.watching_now || 0), 0);
       const top = rec.slice().sort((x, y) => Number(y.watch_minutes_month || 0) - Number(x.watch_minutes_month || 0));
       main.innerHTML = `<div class="bx-stats">
           ${D.stat('الرصيد المتراكم', D.money(d.available), d.canWithdraw ? 'متاح للسحب الآن' : d.nextOK && d.available > 0 ? 'السحب متاح في ' + D.date(d.nextOK) : 'يُضاف شهريًا')}
           ${D.stat('دقائق المشاهدة هذا الشهر', fmt(s.my_minutes), `${fmt(s.learners)} طالب · <span class="bx-live"><i></i>${liveNow}</span> يشاهدون الآن`)}
-          ${D.stat('الأرباح المتوقعة هذا الشهر', D.money(est), s.share_pct != null ? `نصيبك ${s.share_pct}٪ من دقائق المشاهدة على المنصة` : 'تظهر مع أول دقائق مشاهدة')}
+          ${D.stat('نصيبك من دقائق المنصة', s.share_pct != null ? `${s.share_pct}٪` : '—', 'أرباح الشهر تُحسب بهذه النسبة عند إقفاله')}
           ${D.stat('أرباح آخر شهر مُقفل', d.earnings[0] ? D.money(d.earnings[0].amount_egp) : '—', d.earnings[0] ? D.month(d.earnings[0].month) : 'تُحتسب أول كل شهر')}
         </div>
         <div class="bx-dgrid2">
@@ -62,12 +61,11 @@
           <section class="bx-panel"><div class="bx-panel-head"><div><span class="bx-eyebrow">آخر 6 أشهر</span><h3>دقائق المشاهدة على دوراتي</h3></div></div>
             <div class="bx-bars" role="img" aria-label="رسم أعمدة لدقائق المشاهدة في آخر ستة أشهر">${months.map((m) => `<div class="bx-barcol" title="${fmt(m.n)} دقيقة · ${m.l} طالب"><div class="bx-barpair"><i style="height:${Math.max(3, Math.round((m.n / max) * 100))}%"></i></div><span>${m.label} · ${fmt(m.n)}</span></div>`).join('')}</div></section>
         </div>
-        ${D.panel('دوراتي هذا الشهر', D.table(['الدورة', 'دقائق المشاهدة', 'من دقائقك', 'الربح المتوقع'], top.map((r) => [
+        ${D.panel('دوراتي هذا الشهر', D.table(['الدورة', 'دقائق المشاهدة', 'من دقائقك'], top.map((r) => [
           `<b class="bs-latin">${esc(r.title)}</b>`,
           `${fmt(r.watch_minutes_month)} <small class="bx-hint">دقيقة</small>`,
-          myMin > 0 ? `${Math.round((Number(r.watch_minutes_month || 0) / myMin) * 100)}٪` : '—',
-          D.money(r.est_earnings_month)]), 'لا توجد دورات مسجلة بعد'))}
-        <p class="bx-hint">أرباح الدورات المسجلة = 30٪ من دخل الاشتراكات × نصيب دوراتك من دقائق المشاهدة على المنصة. تُحتسب كل دقيقة مرة واحدة لكل طالب، ولا تُحتسب المحاضرة الأولى المجانية. الربح المتوقع يتغير حتى إقفال الشهر في بدايته التالية، والدورات التفاعلية لها اتفاقات مستقلة. <a class="bx-link" href="#live">التفاصيل لايف</a></p>`;
+          myMin > 0 ? `${Math.round((Number(r.watch_minutes_month || 0) / myMin) * 100)}٪` : '—']), 'لا توجد دورات مسجلة بعد'))}
+        <p class="bx-hint">أرباح الدورات المسجلة = 30٪ من دخل الاشتراكات × نصيب دوراتك من دقائق المشاهدة على المنصة. تُحتسب كل دقيقة مرة واحدة لكل طالب، ولا تُحتسب المحاضرة الأولى المجانية. تُحسب أرباح كل شهر عند إقفاله في بداية الشهر التالي وتظهر في «الأرباح والسحب»، والدورات التفاعلية لها اتفاقات مستقلة. <a class="bx-link" href="#live">التفاصيل لايف</a></p>`;
       const w = $('#wd', main); if (w) w.onclick = () => requestPayout(d);
     },
 
@@ -84,7 +82,6 @@
       const share = (base) => `${location.origin}${location.pathname.replace(/[^/]*$/, '')}pricing?code=${encodeURIComponent(base)}`;
       main.innerHTML = `<div class="bx-stats">
           ${D.stat('اشتراكات بكودك هذا الشهر', rows.reduce((s, r) => s + Number(r.uses_month || 0), 0), rows.reduce((s, r) => s + Number(r.uses_total || 0), 0) + ' إجمالي')}
-          ${D.stat('أرباحك من مشاهدات طلاب كودك هذا الشهر', D.money(rows.reduce((s, r) => s + Number(r.earned_month || 0), 0)), 'تُضاف إلى رصيدك في بداية الشهر القادم')}
         </div>` + D.panel('كود الخصم الخاص بك', rows.length ? D.table(['الكود', 'خصم للطالب', 'نسبتك', 'الاستخدام', 'رابط المشاركة', 'الحالة'], rows.map((r) => [
           `<b class="bs-latin" style="font-size:18px">${esc(r.code)}</b>`, r.percent_off ? r.percent_off + '٪' : '—', Number(r.instructor_pct) + '٪ من قيمة دقائق المشاهدة (بدل 30٪)',
           `${r.uses_month} هذا الشهر · ${r.uses_total} إجمالي`, `<button class="bx-linkbtn" data-copy="${esc(share(r.code))}">انسخ الرابط</button>`, r.active ? '<span class="bx-st bx-st-ok">يعمل</span>' : '<span class="bx-st bx-st-mute">متوقف</span>']))

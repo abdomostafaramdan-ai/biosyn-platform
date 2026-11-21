@@ -29,7 +29,7 @@
 
     function draw() {
       const L = list(), rec = rows.filter((r) => r.kind === 'recorded'), unlinked = rec.filter((r) => !r.instructor_id && Number(r.views_total) > 0).length;
-      const head = ['الدورة', ...(opt.admin ? ['المحاضر'] : []), 'دقائق المشاهدة', 'طلاب', 'النشاط', 'شهادات', opt.admin ? 'أرباح المحاضر' : 'أرباحك'];
+      const head = ['الدورة', ...(opt.admin ? ['المحاضر'] : []), 'دقائق المشاهدة', 'طلاب', 'النشاط', 'شهادات', opt.admin ? 'أرباح المحاضر' : 'أرباح الشهور المقفولة'];
       main.innerHTML = `<div class="bx-stats">
           ${D.stat('دقائق المشاهدة هذا الشهر', n(Math.round(sum('watch_minutes_month', rec))), n(sum('views_month', rec)) + ' طالب تابعوا الدورات هذا الشهر')}
           ${D.stat('يشاهدون الآن', `<span class="bx-live bx-live-lg"><i></i>${n(sum('watching_now'))}</span>`, 'آخر دقيقتين')}
@@ -41,7 +41,7 @@
           <div class="bx-field bx-pf-q"><label for="aq" class="bx-hint">بحث</label><input id="aq" class="bx-input" type="search" value="${esc(F.q)}" placeholder="اسم الدورة أو المحاضر"></div>
           ${opt.admin ? `<div class="bx-field"><label for="ak" class="bx-hint">النوع</label><select id="ak" class="bx-select">${[['', 'الكل'], ['recorded', 'مسجل'], ['interactive', 'تفاعلي']].map(([k, t]) => `<option value="${k}" ${k === F.kind ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
           <div class="bx-field"><label for="as" class="bx-hint">الحالة</label><select id="as" class="bx-select">${[['', 'الكل'], ['published', 'منشور'], ['draft', 'مسودة']].map(([k, t]) => `<option value="${k}" ${k === F.status ? 'selected' : ''}>${t}</option>`).join('')}</select></div>` : ''}
-          <div class="bx-field"><label for="ao" class="bx-hint">ترتيب حسب</label><select id="ao" class="bx-select">${[['watch_minutes_month', 'دقائق الشهر'], ['watch_minutes_total', 'إجمالي الدقائق'], ['watching_now', 'يشاهدون الآن'], ['est_earnings_month', 'الربح المتوقع']].map(([k, t]) => `<option value="${k}" ${k === F.sort ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+          <div class="bx-field"><label for="ao" class="bx-hint">ترتيب حسب</label><select id="ao" class="bx-select">${[['watch_minutes_month', 'دقائق الشهر'], ['watch_minutes_total', 'إجمالي الدقائق'], ['watching_now', 'يشاهدون الآن'], ...(opt.admin ? [['est_earnings_month', 'الربح المتوقع']] : [])].map(([k, t]) => `<option value="${k}" ${k === F.sort ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
           ${opt.admin ? `<label class="bx-check bx-pf-act" style="align-self:center"><input type="checkbox" id="au" ${F.unlinked ? 'checked' : ''}> الدورات غير المرتبطة بمحاضر فقط</label>` : ''}
         </div>
         ${D.panel(opt.admin ? 'تحليل كل دورة' : 'مشاهدات دوراتك', D.table(head, L.map((r) => [
@@ -51,10 +51,10 @@
           n(r.viewers_total),
           `${live(r.watching_now)} <small class="bx-hint">الآن</small><small class="bx-hint bx-an-sub">${n(r.active_today)} آخر 24 ساعة</small>`,
           n(r.certificates),
-          r.kind === 'recorded' ? `<b>${D.money(r.est_earnings_month)}</b><small class="bx-hint bx-an-sub">متوقع هذا الشهر · ${D.money(r.earned_closed)} شهور مقفولة</small>` : '<span class="bx-hint">اتفاق منفصل</span>',
+          r.kind === 'recorded' ? (opt.admin ? `<b>${D.money(r.est_earnings_month)}</b><small class="bx-hint bx-an-sub">متوقع هذا الشهر · ${D.money(r.earned_closed)} شهور مقفولة</small>` : `<b>${D.money(r.earned_closed)}</b><small class="bx-hint bx-an-sub">تُضاف بعد إقفال كل شهر</small>`) : '<span class="bx-hint">اتفاق منفصل</span>',
         ]), opt.admin ? 'لا توجد دورات بهذه التصفية' : 'لا توجد دورات مرتبطة بحسابك بعد'),
         `<span class="bx-hint bx-livestamp"><span class="bx-live"><i></i></span> يتحدّث تلقائيًا · آخر تحديث ${at.toLocaleTimeString('ar-EG-u-nu-latn', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>`)}
-        <p class="bx-hint">دقائق المشاهدة = مدة المحتوى التي شاهدها المشتركون فعليًا من المحاضرات المدفوعة، وتُحتسب كل دقيقة مرة واحدة لكل طالب مهما أعاد مشاهدتها، ولا تُحتسب المحاضرة الأولى المجانية. «يشاهدون الآن» = طلاب يعمل الفيديو لديهم خلال آخر دقيقتين. يُحتسب الربح المتوقع على اشتراكات الشهر حتى الآن، ويُقفل الرقم النهائي في بداية الشهر القادم.</p>`;
+        <p class="bx-hint">دقائق المشاهدة = مدة المحتوى التي شاهدها المشتركون فعليًا من المحاضرات المدفوعة، وتُحتسب كل دقيقة مرة واحدة لكل طالب مهما أعاد مشاهدتها، ولا تُحتسب المحاضرة الأولى المجانية. «يشاهدون الآن» = طلاب يعمل الفيديو لديهم خلال آخر دقيقتين. ${opt.admin ? 'يُحتسب الربح المتوقع على اشتراكات الشهر حتى الآن، ويُقفل الرقم النهائي في بداية الشهر القادم.' : 'تُحسب أرباح كل شهر عند إقفاله في بداية الشهر التالي.'}</p>`;
       const bind = (id, k, ev) => { const el = $('#' + id, main); if (el) el.addEventListener(ev || 'change', () => { F[k] = el.type === 'checkbox' ? el.checked : el.value; const pos = el.selectionStart; draw(); if (ev === 'input') { const x = $('#' + id, main); x.focus(); x.setSelectionRange(pos, pos); } }); };
       bind('aq', 'q', 'input'); bind('ak', 'kind'); bind('as', 'status'); bind('ao', 'sort'); bind('au', 'unlinked');
     }
