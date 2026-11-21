@@ -188,6 +188,12 @@
 
   // ---------- header, footer, drawer ----------
   function mountLayout() {
+    // layout.js can fail to arrive on a weak connection ("LAYOUT is not defined" broke the whole page): fetch it once more, then mount
+    if (!window.LAYOUT) {
+      if (mountLayout.retried) return; mountLayout.retried = true;
+      const sc = document.createElement('script'); sc.src = 'js/layout.js?r=' + Date.now(); sc.onload = () => { if (window.LAYOUT) mountLayout(); }; document.head.appendChild(sc);
+      return;
+    }
     const h = $('#site-header'), f = $('#site-footer');
     if (h) h.outerHTML = LAYOUT.header;
     if (f) f.outerHTML = LAYOUT.footer;

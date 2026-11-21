@@ -261,8 +261,9 @@
 (() => {
   'use strict';
   let left = 5; const seen = new Set();
-  const ours = (f) => !f || f.indexOf(location.origin) === 0 || /^\/?js\//.test(f);
-  const skip = /^(Script error\.?|ResizeObserver loop|Failed to fetch|NetworkError|Load failed|The operation was aborted|AbortError)/i;
+  // only our own script files: errors at line 1 of the page itself are scripts injected by browser extensions (wallets, ad tools…)
+  const ours = (f) => !!f && /^(https?:\/\/[^/]*biosyneg\.com|https?:\/\/localhost[^/]*)?\/?js\/[\w.-]+\.js/.test(f.replace(location.origin, ''));
+  const skip = /^(Script error\.?|ResizeObserver loop|Failed to fetch|NetworkError|Load failed|The operation was aborted|AbortError)|ethereum|web3|solana|__gCrWeb|chrome-extension|moz-extension|safari-extension/i;
   const send = (msg, src) => {
     msg = String(msg || '').slice(0, 400);
     if (!msg || skip.test(msg) || left <= 0 || seen.has(msg) || !window.sb) return;
