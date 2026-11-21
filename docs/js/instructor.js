@@ -41,7 +41,7 @@
     async home(main) {
       const d = await load();
       const fmt = (x) => Math.round(Number(x || 0)).toLocaleString('en');
-      const s = d.summary || { my_minutes: 0, share_pct: null, learners: 0, months: [] };
+      const s = d.summary || { my_minutes: 0, learners: 0, months: [] };
       const months = (s.months || []).map((m) => ({ label: new Date(String(m.month).slice(0, 10) + 'T00:00:00').toLocaleDateString('ar-EG-u-nu-latn', { month: 'short' }), n: Number(m.minutes || 0), l: Number(m.learners || 0) }));
       const max = Math.max(1, ...months.map((m) => m.n));
       const rec = d.stats.filter((r) => r.kind === 'recorded');
@@ -51,7 +51,6 @@
       main.innerHTML = `<div class="bx-stats">
           ${D.stat('الرصيد المتراكم', D.money(d.available), d.canWithdraw ? 'متاح للسحب الآن' : d.nextOK && d.available > 0 ? 'السحب متاح في ' + D.date(d.nextOK) : 'يُضاف شهريًا')}
           ${D.stat('دقائق المشاهدة هذا الشهر', fmt(s.my_minutes), `${fmt(s.learners)} طالب · <span class="bx-live"><i></i>${liveNow}</span> يشاهدون الآن`)}
-          ${D.stat('نصيبك من دقائق المنصة', s.share_pct != null ? `${s.share_pct}٪` : '—', 'أرباح الشهر تُحسب بهذه النسبة عند إقفاله')}
           ${D.stat('أرباح آخر شهر مُقفل', d.earnings[0] ? D.money(d.earnings[0].amount_egp) : '—', d.earnings[0] ? D.month(d.earnings[0].month) : 'تُحتسب أول كل شهر')}
         </div>
         <div class="bx-dgrid2">
