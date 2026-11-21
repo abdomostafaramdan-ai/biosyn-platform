@@ -9,8 +9,8 @@
   const load = async () => {
     const courses = await sb.get('courses', { select: '*,lectures(id)', instructor_id: 'eq.' + uid, order: 'created_at.desc' });
     const ids = courses.map((c) => c.id);
-    const [views, earnings, payouts, stats] = await Promise.all([
-      ids.length ? sb.get('course_views', { select: 'month,course_id', course_id: 'in.(' + ids.join(',') + ')' }) : [],
+    const [summary, earnings, payouts, stats] = await Promise.all([
+      sb.rpc('instructor_watch_summary', viewing ? { p_user: uid } : {}).catch(() => null),
       sb.get('earnings', { select: '*', instructor_id: 'eq.' + uid, order: 'month.desc' }),
       sb.get('payouts', { select: '*', instructor_id: 'eq.' + uid, order: 'requested_at.desc' }),
       sb.rpc('course_stats').then((r) => (Array.isArray(r) ? r : []).filter((x) => x.instructor_id === uid)).catch(() => []),
@@ -18,7 +18,7 @@
     const available = earnings.filter((e) => !e.payout_id).reduce((s, e) => s + Number(e.amount_egp), 0);
     const live = payouts.filter((p) => p.status !== 'rejected');
     const nextOK = live[0] ? D.addMonths(live[0].requested_at, 3) : null;
-    return { stats, courses, views, earnings, payouts, available, nextOK, canWithdraw: available > 0 && (!nextOK || nextOK <= new Date()) };
+    return { stats, courses, summary, earnings, payouts, available, nextOK, canWithdraw: available > 0 && (!nextOK || nextOK <= new Date()) };
   };
 
   function requestPayout(d) {
@@ -40,25 +40,34 @@
   const views = {
     async home(main) {
       const d = await load();
-      const now = new Date(), months = [];
-      for (let i = 5; i >= 0; i--) { const m = new Date(now.getFullYear(), now.getMonth() - i, 1); months.push({ key: `${m.getFullYear()}-${String(m.getMonth() + 1).padStart(2, '0')}`, label: m.toLocaleDateString('ar-EG-u-nu-latn', { month: 'short' }), n: 0 }); }
-      d.views.forEach((v) => { const m = months.find((x) => x.key === String(v.month).slice(0, 7)); if (m) m.n++; });
+      const fmt = (x) => Math.round(Number(x || 0)).toLocaleString('en');
+      const s = d.summary || { my_minutes: 0, share_pct: null, learners: 0, months: [] };
+      const months = (s.months || []).map((m) => ({ label: new Date(String(m.month).slice(0, 10) + 'T00:00:00').toLocaleDateString('ar-EG-u-nu-latn', { month: 'short' }), n: Number(m.minutes || 0), l: Number(m.learners || 0) }));
       const max = Math.max(1, ...months.map((m) => m.n));
-      const thisMonth = months[months.length - 1].n;
+      const rec = d.stats.filter((r) => r.kind === 'recorded');
+      const myMin = rec.reduce((a, r) => a + Number(r.watch_minutes_month || 0), 0);
+      const est = rec.reduce((a, r) => a + Number(r.est_earnings_month || 0), 0);
+      const liveNow = d.stats.reduce((a, r) => a + Number(r.watching_now || 0), 0);
+      const top = rec.slice().sort((x, y) => Number(y.watch_minutes_month || 0) - Number(x.watch_minutes_month || 0));
       main.innerHTML = `<div class="bx-stats">
           ${D.stat('الرصيد المتراكم', D.money(d.available), d.canWithdraw ? 'متاح للسحب الآن' : d.nextOK && d.available > 0 ? 'السحب متاح في ' + D.date(d.nextOK) : 'يُضاف شهريًا')}
-          ${D.stat('مشاهدات هذا الشهر', thisMonth, `<span class="bx-live"><i></i>${d.stats.reduce((s, r) => s + Number(r.watching_now || 0), 0)}</span> يشاهدون الآن · <a class="bx-link" href="#live">التفاصيل لايف</a>`)}
-          ${D.stat('دوراتي', d.courses.length, d.courses.filter((c) => c.status === 'published').length + ' منشور')}
+          ${D.stat('دقائق المشاهدة هذا الشهر', fmt(s.my_minutes), `${fmt(s.learners)} طالب · <span class="bx-live"><i></i>${liveNow}</span> يشاهدون الآن`)}
+          ${D.stat('الأرباح المتوقعة هذا الشهر', D.money(est), s.share_pct != null ? `نصيبك ${s.share_pct}٪ من دقائق المشاهدة على المنصة` : 'تظهر مع أول دقائق مشاهدة')}
           ${D.stat('أرباح آخر شهر مُقفل', d.earnings[0] ? D.money(d.earnings[0].amount_egp) : '—', d.earnings[0] ? D.month(d.earnings[0].month) : 'تُحتسب أول كل شهر')}
         </div>
         <div class="bx-dgrid2">
           <section class="bx-balance" aria-labelledby="bal"><span class="bx-eyebrow" style="color:#c6f84a">رصيد متراكم</span><h3 id="bal">المستحقات</h3><b class="bx-balance-n">${EGP(d.available)} <small>ج.م</small></b>
             <p style="margin:0;font:400 13px/20px var(--font-sans)">تُضاف الأرباح إلى رصيدك شهريًا، ويمكنك طلب السحب كل 3 أشهر.${d.nextOK && !d.canWithdraw && d.available > 0 ? ' موعد السحب القادم: ' + D.date(d.nextOK) + '.' : ''}</p>
             ${viewing ? `<p class="bx-hint" style="margin:0">${RO}</p>` : `<button class="bs-btn bs-btn-primary bs-btn-lg" id="wd" ${d.canWithdraw ? '' : 'disabled'}>اطلب سحب المستحقات</button>`}</section>
-          <section class="bx-panel"><div class="bx-panel-head"><div><span class="bx-eyebrow">آخر 6 أشهر</span><h3>مشاهدات دوراتي</h3></div></div>
-            <div class="bx-bars" role="img" aria-label="رسم أعمدة لمشاهدات آخر ستة أشهر">${months.map((m) => `<div class="bx-barcol"><div class="bx-barpair"><i style="height:${Math.max(3, Math.round((m.n / max) * 100))}%"></i></div><span>${m.label} · ${m.n}</span></div>`).join('')}</div></section>
+          <section class="bx-panel"><div class="bx-panel-head"><div><span class="bx-eyebrow">آخر 6 أشهر</span><h3>دقائق المشاهدة على دوراتي</h3></div></div>
+            <div class="bx-bars" role="img" aria-label="رسم أعمدة لدقائق المشاهدة في آخر ستة أشهر">${months.map((m) => `<div class="bx-barcol" title="${fmt(m.n)} دقيقة · ${m.l} طالب"><div class="bx-barpair"><i style="height:${Math.max(3, Math.round((m.n / max) * 100))}%"></i></div><span>${m.label} · ${fmt(m.n)}</span></div>`).join('')}</div></section>
         </div>
-        <p class="bx-hint">أرباح الدورات المسجلة تُحتسب بنسبة 30٪ للمحاضر من قيمة المشاهدات. الدورات التفاعلية لها اتفاقات مستقلة. <a class="bx-link" href="#calc">احسب أرباحك المتوقعة</a></p>`;
+        ${D.panel('دوراتي هذا الشهر', D.table(['الدورة', 'دقائق المشاهدة', 'من دقائقك', 'الربح المتوقع'], top.map((r) => [
+          `<b class="bs-latin">${esc(r.title)}</b>`,
+          `${fmt(r.watch_minutes_month)} <small class="bx-hint">دقيقة</small>`,
+          myMin > 0 ? `${Math.round((Number(r.watch_minutes_month || 0) / myMin) * 100)}٪` : '—',
+          D.money(r.est_earnings_month)]), 'لا توجد دورات مسجلة بعد'))}
+        <p class="bx-hint">أرباح الدورات المسجلة = 30٪ من دخل الاشتراكات × نصيب دوراتك من دقائق المشاهدة على المنصة. تُحتسب كل دقيقة مرة واحدة لكل طالب، ولا تُحتسب المحاضرة الأولى المجانية. الربح المتوقع يتغير حتى إقفال الشهر في بدايته التالية، والدورات التفاعلية لها اتفاقات مستقلة. <a class="bx-link" href="#live">التفاصيل لايف</a></p>`;
       const w = $('#wd', main); if (w) w.onclick = () => requestPayout(d);
     },
 
@@ -77,12 +86,12 @@
           ${D.stat('اشتراكات بكودك هذا الشهر', rows.reduce((s, r) => s + Number(r.uses_month || 0), 0), rows.reduce((s, r) => s + Number(r.uses_total || 0), 0) + ' إجمالي')}
           ${D.stat('أرباحك من مشاهدات طلاب كودك هذا الشهر', D.money(rows.reduce((s, r) => s + Number(r.earned_month || 0), 0)), 'تُضاف إلى رصيدك في بداية الشهر القادم')}
         </div>` + D.panel('كود الخصم الخاص بك', rows.length ? D.table(['الكود', 'خصم للطالب', 'نسبتك', 'الاستخدام', 'رابط المشاركة', 'الحالة'], rows.map((r) => [
-          `<b class="bs-latin" style="font-size:18px">${esc(r.code)}</b>`, r.percent_off ? r.percent_off + '٪' : '—', Number(r.instructor_pct) + '٪ من قيمة المشاهدة (بدل 30٪)',
+          `<b class="bs-latin" style="font-size:18px">${esc(r.code)}</b>`, r.percent_off ? r.percent_off + '٪' : '—', Number(r.instructor_pct) + '٪ من قيمة دقائق المشاهدة (بدل 30٪)',
           `${r.uses_month} هذا الشهر · ${r.uses_total} إجمالي`, `<button class="bx-linkbtn" data-copy="${esc(share(r.code))}">انسخ الرابط</button>`, r.active ? '<span class="bx-st bx-st-ok">يعمل</span>' : '<span class="bx-st bx-st-mute">متوقف</span>']))
           : '<div class="bx-empty-big"><b>لا يوجد لديك كود بعد</b>اطلب كودًا باسمك من النموذج أدناه وسيراجعه فريق Biosyn.</div>')
         + (viewing ? '' : D.panel('اطلب كود خصم جديد', `<form class="bx-form2" id="prf" novalidate><div class="row2"><div class="bx-field"><label for="prc">الكود المطلوب</label><input id="prc" class="bx-input" dir="ltr" maxlength="30" placeholder="DRAHMED"></div><div class="bx-field"><label for="prn">ملاحظة للفريق (اختياري)</label><input id="prn" class="bx-input" maxlength="300"></div></div><p class="bx-hint" style="margin:0">حروف إنجليزية وأرقام فقط (من 3 إلى 30). الفريق هو من يحدد نسبة الخصم للطالب ونسبتك، وسيصلك إشعار بالقرار.</p><div class="bx-formmsg" id="prm" aria-live="polite"></div><div class="bx-btnrow"><button class="bs-btn bs-btn-primary" type="submit">إرسال الطلب</button></div></form>`))
         + (reqs.length ? D.panel('طلباتي', D.table(['الكود', 'التاريخ', 'الحالة', 'ملاحظة الفريق'], reqs.map((q) => [`<b class="bs-latin">${esc(q.code)}</b>`, D.date(q.created_at), q.status === 'accepted' ? '<span class="bx-st bx-st-ok">تم الاعتماد</span>' : q.status === 'rejected' ? '<span class="bx-st bx-st-mute">مرفوض</span>' : '<span class="bx-st bx-st-info">قيد المراجعة</span>', esc(q.note || '—')]))) : '')
-        + '<p class="bx-hint">في الوضع العادي تحصل على 30٪ من قيمة المشاهدات. أما مشاهدات الطلاب الذين اشتركوا في باقة بكودك فتحصل عليها بنسبة 50٪ (افتراضيًا) من قيمة المشاهدة بدلًا من الـ 30٪. اشتراك الطالب يدخل في حساب المشاهدات كالمعتاد، ويُضاف المبلغ إلى رصيدك مع الإقفال الشهري. انشر الكود أو الرابط لجمهورك.</p>';
+        + '<p class="bx-hint">في الوضع العادي تحصل على 30٪ من قيمة دقائق المشاهدة على دوراتك. أما دقائق مشاهدة الطلاب الذين اشتركوا في باقة بكودك فتحصل عليها بنسبة 50٪ (افتراضيًا) بدلًا من الـ 30٪ طوال مدة اشتراكهم، ويُضاف المبلغ إلى رصيدك مع الإقفال الشهري. انشر الكود أو الرابط لجمهورك.</p>';
       $$('[data-copy]', main).forEach((b) => (b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.copy); ui.toast('تم نسخ الرابط.'); } catch { prompt('انسخ الرابط:', b.dataset.copy); } }));
       const pf = $('#prf', main);
       if (pf) pf.onsubmit = async (e) => {
@@ -103,7 +112,7 @@
 
     async earnings(main) {
       const d = await load();
-      main.innerHTML = D.panel('الأرباح الشهرية', D.table(['الشهر', 'مشاهداتك', 'الأرباح', 'منها من كودك', 'الحالة'], d.earnings.map((e) => [D.month(e.month), e.instructor_views, D.money(e.amount_egp), Number(e.promo_egp) ? `${D.money(e.promo_egp)} <small class="bx-hint">(${e.promo_count} مشاهدة من طلاب كودك)</small>` : '—', e.payout_id ? '<span class="bx-st bx-st-ok">ضمن طلب سحب</span>' : '<span class="bx-st bx-st-info">رصيد متاح</span>']), 'لم يُقفل أي شهر بعد. تُحتسب الأرباح أول كل شهر.'))
+      main.innerHTML = D.panel('الأرباح الشهرية', D.table(['الشهر', 'دقائق المشاهدة', 'الأرباح', 'منها من كودك', 'الحالة'], d.earnings.map((e) => [D.month(e.month), e.watch_seconds != null ? Math.round(Number(e.watch_seconds) / 60).toLocaleString('en') + ' دقيقة' : e.instructor_views + ' مشاهدة', D.money(e.amount_egp), Number(e.promo_egp) ? `${D.money(e.promo_egp)} <small class="bx-hint">(${e.promo_count} طالب من كودك)</small>` : '—', e.payout_id ? '<span class="bx-st bx-st-ok">ضمن طلب سحب</span>' : '<span class="bx-st bx-st-info">رصيد متاح</span>']), 'لم يُقفل أي شهر بعد. تُحتسب الأرباح أول كل شهر.'))
         + D.panel('طلبات السحب', D.table(['التاريخ', 'المبلغ', 'الوسيلة', 'الحالة'], d.payouts.map((p) => [D.date(p.requested_at), D.money(p.amount_egp), `<span style="white-space:pre-wrap">${esc(p.method)}</span>`, D.badge('payout', p.status)]), 'لا توجد طلبات سحب'));
     },
   };
@@ -118,7 +127,7 @@
       if (!viewing) { D.denied('لم نجد حساب المحاضر المطلوب.'); return; }
       uid = viewing.id;
     } else if (me.role === 'support') { D.denied('هذه الصفحة غير متاحة لحسابك.'); return; }
-    const items = [{ id: 'home', label: 'نظرة عامة', icon: 'home' }, { id: 'live', label: 'المشاهدات لايف', icon: 'chart' }, { id: 'messages', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'promo', label: viewing ? 'كود الخصم' : 'كود الخصم الخاص بي', icon: 'tag' }, { id: 'courses', label: viewing ? 'الدورات' : 'دوراتي', icon: 'book' }, { id: 'earnings', label: 'الأرباح والسحب', icon: 'coin' }, { id: 'contracts', label: viewing ? 'الاتفاقيات' : 'اتفاقياتي', icon: 'list' }];
+    const items = [{ id: 'home', label: 'نظرة عامة', icon: 'home' }, { id: 'live', label: 'المشاهدة لايف', icon: 'chart' }, { id: 'messages', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'promo', label: viewing ? 'كود الخصم' : 'كود الخصم الخاص بي', icon: 'tag' }, { id: 'courses', label: viewing ? 'الدورات' : 'دوراتي', icon: 'book' }, { id: 'earnings', label: 'الأرباح والسحب', icon: 'coin' }, { id: 'contracts', label: viewing ? 'الاتفاقيات' : 'اتفاقياتي', icon: 'list' }];
     if (viewing) document.title = `لوحة ${viewing.full_name || viewing.email} | Biosyn Eg`;
     await D.shell({
       title: 'لوحة المحاضر', who: viewing ? (viewing.full_name || viewing.email) : (me.full_name || sb.user.email), sub: viewing ? 'عرض الإدارة · قراءة فقط' : D.roleAr[me.role],
