@@ -47,7 +47,7 @@
 
 
   // ---------- «حارس الأمان»: alerts raised by security_watchdog() every 10 minutes ----------
-  function secGuard(alerts, ips, st) {
+  function secGuard(alerts, ips, st, bk) {
     const SEV = { critical: ['خطير', 'danger'], warning: ['مهم', 'warn'], info: ['للعلم', 'info'] };
     const CAT = { vuln: 'ثغرة', attack: 'هجوم', bug: 'خطأ برمجي', integrity: 'صلاحيات' };
     const open = alerts.filter((a) => a.status === 'open');
@@ -73,6 +73,10 @@
       <div class="bx-btnrow" style="margin:12px 0"><button class="bs-btn bs-btn-primary bs-btn-sm" id="wd-run">افحص الآن</button>
         <select class="bx-select" id="wd-show" style="max-width:200px"><option value="open">المفتوحة فقط</option><option value="all">كل التنبيهات</option></select></div>
       <div id="wd-list">${list()}</div>
+      <h4 style="margin:18px 0 8px">النسخ الاحتياطي</h4>
+      <p class="bx-hint" style="margin-top:0">باقة Supabase المجانية مفيهاش نسخ احتياطي تلقائي، فالمنصة بتاخد نسخة من كل بيانات العمل كل ليلة وتحتفظ بآخر 14 ليلة. نزّل نسخة على جهازك من وقت للتاني (مثلًا كل أسبوع) واحفظها في مكان آمن: الملف فيه بيانات الطلاب الشخصية.</p>
+      <div class="bx-stats">${D.stat('آخر نسخة', bk && bk.last && bk.last.at ? D.dateTime(bk.last.at) : '—', bk && bk.last ? `${bk.last.rows} صف` : '')}${D.stat('ليالي محفوظة', bk ? bk.nights : '—')}${D.stat('حجم قاعدة البيانات', bk ? bk.db_size : '—', 'الحد المجاني 500 MB')}</div>
+      <div class="bx-btnrow" style="margin:12px 0"><button class="bs-btn bs-btn-secondary bs-btn-sm" id="bk-dl">تنزيل نسخة احتياطية</button></div>
       ${ips.length ? `<h4 style="margin:18px 0 8px">العناوين المحظورة</h4>${D.table(['العنوان', 'السبب', 'لحد', ''], ips.map((b) => [`<span class="bx-kbd" dir="ltr">${esc(b.ip)}</span>`, esc(b.reason || ''), D.dateTime(b.until), `<button class="bx-linkbtn" data-unip="${esc(b.ip)}">رفع الحظر</button>`]))}` : ''}`);
     const wire = (main) => {
       const bind = () => $$('[data-al]', main).forEach((b) => (b.onclick = async () => {
@@ -83,6 +87,17 @@
       }));
       bind();
       $('#wd-show', main).onchange = (e) => { F.show = e.target.value; $('#wd-list', main).innerHTML = list(); bind(); };
+      $('#bk-dl', main).onclick = async (e) => {
+        e.target.disabled = true; e.target.textContent = 'جارٍ التجهيز…';
+        try {
+          const j = await sb.rpc('admin_backup_export');
+          const url = URL.createObjectURL(new Blob([JSON.stringify(j)], { type: 'application/json' }));
+          const a = document.createElement('a'); a.href = url; a.download = 'biosyn-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+          document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000);
+          ui.toast('اتنزّلت النسخة. احفظها في مكان آمن.');
+        } catch (x) { ui.toast(arErr(x), 'err'); }
+        e.target.disabled = false; e.target.textContent = 'تنزيل نسخة احتياطية';
+      };
       $('#wd-run', main).onclick = async (e) => {
         e.target.disabled = true; e.target.textContent = 'جارٍ الفحص…';
         try { const r = await sb.rpc('admin_watchdog_run'); ui.toast(`خلص الفحص: ${r.fixed || 0} إصلاح تلقائي، ${r.open || 0} مشكلة مفتوحة.`); D.reload(); }
@@ -628,11 +643,11 @@
       await load();
     },
     async security(main) {
-      const [rows, cfg, alerts, ips, wst] = await Promise.all([sb.rpc('admin_security_overview').then((r) => (Array.isArray(r) ? r : [])).catch(() => []), sb.rpc('admin_security_get').catch(() => ({})),
+      const [rows, cfg, alerts, ips, wst, bkst] = await Promise.all([sb.rpc('admin_security_overview').then((r) => (Array.isArray(r) ? r : [])).catch(() => []), sb.rpc('admin_security_get').catch(() => ({})),
         sb.get('security_alerts', { select: '*', order: 'last_at.desc', limit: 300 }).catch(() => []),
         sb.get('blocked_ips', { select: '*', until: 'gt.' + new Date().toISOString(), order: 'created_at.desc' }).catch(() => []),
-        sb.rpc('admin_watchdog_state').catch(() => null)]);
-      const G = secGuard(alerts || [], ips || [], wst);
+        sb.rpc('admin_watchdog_state').catch(() => null), sb.rpc('admin_backup_state').catch(() => null)]);
+      const G = secGuard(alerts || [], ips || [], wst, bkst);
       const C = Object.assign({ auto_ban: true, ban_after: 2 }, cfg || {});
       const KIND = { capture_shortcut: 'تصوير الشاشة', record_shortcut: 'تسجيل الشاشة', devtools: 'أدوات المطوّر' };
       const wa = (p) => { const x = String(p || '').replace(/\D/g, ''); return x ? (x.startsWith('0') ? '2' + x : x) : ''; };
