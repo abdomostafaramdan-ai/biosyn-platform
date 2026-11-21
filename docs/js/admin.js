@@ -46,8 +46,33 @@
   }
 
 
+
+  // ---------- two-step verification: an account with the authenticator set up must enter its code first ----------
+  async function mfaGate() {
+    if (sb.mfa.aal() === 'aal2') return true;
+    let fs = [];
+    try { fs = (await sb.mfa.factors()).filter((f) => f.factor_type === 'totp' && f.status === 'verified'); } catch { return true; }
+    if (!fs.length) return true;
+    $('#app').innerHTML = `<div class="bs-root"><form class="bx-panel" id="mfa-f" style="margin:80px auto;max-width:420px;padding:28px;text-align:center" autocomplete="off">
+      <h3 style="margin:0 0 8px">التحقق بخطوتين</h3>
+      <p class="bx-hint" style="margin:0 0 16px">افتح تطبيق المصادقة على موبايلك (Google Authenticator) واكتب الكود المكوّن من 6 أرقام لحساب Biosyn Eg.</p>
+      <input class="bx-input" id="mfa-c" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" dir="ltr" style="text-align:center;font-size:24px;letter-spacing:8px" placeholder="000000" required autofocus>
+      <div class="bx-formmsg err" id="mfa-m" style="margin-top:10px"></div>
+      <button class="bs-btn bs-btn-primary" style="width:100%;margin-top:14px" type="submit">تأكيد</button>
+      <button class="bx-linkbtn" type="button" id="mfa-out" style="margin-top:12px">تسجيل الخروج</button>
+    </form></div>`;
+    $('#mfa-out').onclick = async () => { await sb.auth.signOut(); location.href = 'login.html'; };
+    $('#mfa-f').onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = $('#mfa-f button[type=submit]'), msg = $('#mfa-m'); btn.disabled = true; msg.style.display = 'none';
+      try { await sb.mfa.verify(fs[0].id, $('#mfa-c').value); location.reload(); }
+      catch (x) { msg.textContent = 'الكود غير صحيح أو انتهى وقته. اكتب الكود الحالي من التطبيق.'; msg.style.display = 'block'; btn.disabled = false; $('#mfa-c').select(); }
+    };
+    return false;
+  }
+
   // ---------- «حارس الأمان»: alerts raised by security_watchdog() every 10 minutes ----------
-  function secGuard(alerts, ips, st, bk) {
+  function secGuard(alerts, ips, st, bk, factors) {
     const SEV = { critical: ['خطير', 'danger'], warning: ['مهم', 'warn'], info: ['للعلم', 'info'] };
     const CAT = { vuln: 'ثغرة', attack: 'هجوم', bug: 'خطأ برمجي', integrity: 'صلاحيات' };
     const open = alerts.filter((a) => a.status === 'open');
@@ -68,7 +93,14 @@
         ];
       }), F.show === 'open' ? 'مفيش مشاكل مفتوحة دلوقتي ✓' : 'لا توجد تنبيهات بعد');
     };
-    const html = D.panel('حارس الأمان', `<p class="bx-hint" style="margin-top:0">بيفحص المنصة كل 10 دقايق: الجداول المفتوحة، الدوال الخطيرة، الصلاحيات الجديدة، الهجوم بالطلبات، اختفاء البيانات، الإيميلات ومدفوعات البوابات اللي وقفت، والأخطاء اللي بتقابل الزوار في الموقع. اللي ينفع يتصلّح تلقائيًا بيتصلّح فورًا، وكل مشكلة بيوصلك عنها إشعار هنا، والمهم منها على الإيميل.</p>
+    const ver = (factors || []).filter((f) => f.factor_type === 'totp' && f.status === 'verified');
+    const mfaHtml = D.panel('التحقق بخطوتين', `<p class="bx-hint" style="margin-top:0">${ver.length
+        ? '✓ مفعّل. صلاحيات الإدارة بتشتغل بس بعد كتابة الكود من تطبيق المصادقة، فلو حد عرف كلمة مرورك مش هيقدر يعمل حاجة. ضيف جهاز تاني (موبايل احتياطي) عشان لو موبايلك ضاع.'
+        : '⚠️ غير مفعّل. لو كلمة مرور حسابك اتسرقت، اللي سرقها يتحكم في المنصة كلها. فعّله في دقيقة باستخدام تطبيق Google Authenticator أو Microsoft Authenticator على موبايلك.'}</p>
+      ${ver.length ? D.table(['الجهاز', 'اتضاف', ''], ver.map((f) => [esc(f.friendly_name || 'تطبيق المصادقة'), D.dateTime(f.created_at), ver.length > 1 ? `<button class="bx-linkbtn" data-unf="${esc(f.id)}" style="color:var(--danger-text)">إزالة</button>` : '<small class="bx-hint">الجهاز الوحيد</small>'])) : ''}
+      <div class="bx-btnrow" style="margin:12px 0"><button class="bs-btn ${ver.length ? 'bs-btn-secondary' : 'bs-btn-primary'} bs-btn-sm" id="mfa-add">${ver.length ? 'إضافة جهاز تاني' : 'فعّل التحقق بخطوتين'}</button></div>
+      <div id="mfa-setup" hidden></div>`);
+    const html = mfaHtml + D.panel('حارس الأمان', `<p class="bx-hint" style="margin-top:0">بيفحص المنصة كل 10 دقايق: الجداول المفتوحة، الدوال الخطيرة، الصلاحيات الجديدة، الهجوم بالطلبات، اختفاء البيانات، الإيميلات ومدفوعات البوابات اللي وقفت، والأخطاء اللي بتقابل الزوار في الموقع. اللي ينفع يتصلّح تلقائيًا بيتصلّح فورًا، وكل مشكلة بيوصلك عنها إشعار هنا، والمهم منها على الإيميل.</p>
       <div class="bx-stats">${D.stat('مشاكل خطيرة مفتوحة', open.filter((a) => a.severity === 'critical').length)}${D.stat('مشاكل مهمة مفتوحة', open.filter((a) => a.severity === 'warning').length)}${D.stat('عناوين محظورة الآن', ips.length, 'بسبب إغراق بالطلبات')}${D.stat('آخر فحص', st && st.at ? D.dateTime(st.at) : '—', st ? `${st.fixed || 0} إصلاح تلقائي` : '')}</div>
       <div class="bx-btnrow" style="margin:12px 0"><button class="bs-btn bs-btn-primary bs-btn-sm" id="wd-run">افحص الآن</button>
         <select class="bx-select" id="wd-show" style="max-width:200px"><option value="open">المفتوحة فقط</option><option value="all">كل التنبيهات</option></select></div>
@@ -87,6 +119,34 @@
       }));
       bind();
       $('#wd-show', main).onchange = (e) => { F.show = e.target.value; $('#wd-list', main).innerHTML = list(); bind(); };
+      $('#mfa-add', main).onclick = async (e) => {
+        e.target.disabled = true;
+        const box = $('#mfa-setup', main);
+        try {
+          // a half-finished setup from before blocks a new one: clear unverified factors first
+          for (const f of (factors || []).filter((x) => x.status !== 'verified')) { try { await sb.mfa.unenroll(f.id); } catch {} }
+          const en = await sb.mfa.enroll();
+          const qr = en && en.totp && en.totp.qr_code;
+          box.hidden = false;
+          box.innerHTML = `<ol class="bx-hint" style="line-height:2;padding-inline-start:18px;margin:0 0 10px">
+              <li>افتح تطبيق Google Authenticator (أو Microsoft Authenticator) على موبايلك واضغط «+».</li>
+              <li>امسح الكود ده، أو اكتب المفتاح يدويًا: <span class="bx-kbd" dir="ltr" style="word-break:break-all">${esc((en.totp && en.totp.secret) || '')}</span></li>
+              <li>اكتب الكود المكوّن من 6 أرقام اللي ظهر في التطبيق.</li></ol>
+            ${qr && /^data:image\/svg\+xml/.test(qr) ? `<img src="${esc(qr)}" alt="رمز QR للتحقق بخطوتين" width="190" height="190" style="background:#fff;padding:8px;border-radius:12px;display:block;margin:0 0 12px">` : ''}
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input class="bx-input" id="mfa-v" inputmode="numeric" autocomplete="one-time-code" maxlength="6" dir="ltr" placeholder="000000" style="max-width:160px;text-align:center;letter-spacing:6px;font-size:18px">
+            <button class="bs-btn bs-btn-primary bs-btn-sm" id="mfa-ok">تأكيد وتفعيل</button></div>
+            <div class="bx-formmsg err" id="mfa-err" style="margin-top:8px"></div>`;
+          $('#mfa-ok', box).onclick = async (ev) => {
+            ev.target.disabled = true; const m = $('#mfa-err', box); m.style.display = 'none';
+            try { await sb.mfa.verify(en.id, $('#mfa-v', box).value); ui.toast('✓ اتفعّل التحقق بخطوتين. من دلوقتي الدخول للوحة الإدارة هيطلب الكود.'); D.reload(); }
+            catch (x) { m.textContent = 'الكود غير صحيح. اكتب الكود الحالي من التطبيق (بيتغير كل 30 ثانية).'; m.style.display = 'block'; ev.target.disabled = false; }
+          };
+        } catch (x) { ui.toast(arErr(x), 'err'); e.target.disabled = false; }
+      };
+      $$('[data-unf]', main).forEach((b) => (b.onclick = async () => {
+        if (!confirm('إزالة الجهاز ده من التحقق بخطوتين؟')) return;
+        try { await sb.mfa.unenroll(b.dataset.unf); ui.toast('اتشال الجهاز.'); D.reload(); } catch (x) { ui.toast(arErr(x), 'err'); }
+      }));
       $('#bk-dl', main).onclick = async (e) => {
         e.target.disabled = true; e.target.textContent = 'جارٍ التجهيز…';
         try {
@@ -643,11 +703,11 @@
       await load();
     },
     async security(main) {
-      const [rows, cfg, alerts, ips, wst, bkst] = await Promise.all([sb.rpc('admin_security_overview').then((r) => (Array.isArray(r) ? r : [])).catch(() => []), sb.rpc('admin_security_get').catch(() => ({})),
+      const [rows, cfg, alerts, ips, wst, bkst, mfs] = await Promise.all([sb.rpc('admin_security_overview').then((r) => (Array.isArray(r) ? r : [])).catch(() => []), sb.rpc('admin_security_get').catch(() => ({})),
         sb.get('security_alerts', { select: '*', order: 'last_at.desc', limit: 300 }).catch(() => []),
         sb.get('blocked_ips', { select: '*', until: 'gt.' + new Date().toISOString(), order: 'created_at.desc' }).catch(() => []),
-        sb.rpc('admin_watchdog_state').catch(() => null), sb.rpc('admin_backup_state').catch(() => null)]);
-      const G = secGuard(alerts || [], ips || [], wst, bkst);
+        sb.rpc('admin_watchdog_state').catch(() => null), sb.rpc('admin_backup_state').catch(() => null), sb.mfa.factors().catch(() => [])]);
+      const G = secGuard(alerts || [], ips || [], wst, bkst, mfs);
       const C = Object.assign({ auto_ban: true, ban_after: 2 }, cfg || {});
       const KIND = { capture_shortcut: 'تصوير الشاشة', record_shortcut: 'تسجيل الشاشة', devtools: 'أدوات المطوّر' };
       const wa = (p) => { const x = String(p || '').replace(/\D/g, ''); return x ? (x.startsWith('0') ? '2' + x : x) : ''; };
@@ -1387,6 +1447,7 @@
 
   window.BiosynPages.admin = async () => {
     me = await D.guard(['admin', 'support']); if (!me) return;
+    if (!(await mfaGate())) return;
     const items = [{ id: 'home', label: 'اليوم', icon: 'home' }, { id: 'insights', label: 'مركز التحليلات', icon: 'chart' }, { id: 'requests', label: 'صندوق الطلبات', icon: 'inbox' }, { id: 'proposals', label: 'دورات مقدّمة', icon: 'book' }, { id: 'courses', label: 'الدورات', icon: 'book' }, { id: 'imonitor', label: 'متابعة المحاضرين', icon: 'users' }, { id: 'faculties', label: 'الكليات والتخصصات', icon: 'list' }, { id: 'traffic', label: 'زيارات المنصة', icon: 'chart' }, { id: 'seo', label: 'السيو والظهور', icon: 'chart' }, { id: 'about', label: 'صفحة من نحن', icon: 'book' }, { id: 'social', label: 'السوشيال والنشرة البريدية', icon: 'users' }, { id: 'texts', label: 'نصوص الموقع', icon: 'book' }, { id: 'news', label: 'الأخبار والفعاليات', icon: 'book' }, { id: 'testimonials', label: 'آراء الطلاب', icon: 'chat' }, { id: 'analytics', label: 'تحليلات الدورات', icon: 'chart' }, { id: 'users', label: 'المستخدمون', icon: 'users' }, { id: 'subs', label: 'الاشتراكات السارية', icon: 'card' }, { id: 'security', label: 'مركز الأمان', icon: 'ticket' }, { id: 'campaign', label: 'حملة إعادة التفعيل', icon: 'inbox' }, { id: 'mailcampaigns', label: 'حملات البريد', icon: 'inbox' }, { id: 'emails', label: 'رسائل البريد', icon: 'inbox' }, { id: 'payments', label: 'المدفوعات', icon: 'card' }, { id: 'tickets', label: 'التذاكر والشكاوى', icon: 'ticket' }, { id: 'questions', label: 'أسئلة الطلاب', icon: 'chat' }, { id: 'payouts', label: 'سحوبات المحاضرين', icon: 'coin' }, { id: 'contracts', label: 'عقود المحاضرين', icon: 'list' }, { id: 'plans', label: 'الباقات والأسعار', icon: 'list' }, { id: 'coupons', label: 'كوبونات الخصم', icon: 'card' }, { id: 'forms', label: 'النماذج والردود', icon: 'inbox' }, { id: 'instructors', label: 'المحاضرون في الموقع', icon: 'users' }, { id: 'blog', label: 'المدونة', icon: 'book' }, { id: 'integrations', label: 'التكاملات', icon: 'card' }, { id: 'settings', label: 'الإعدادات', icon: 'list' }];
     await D.shell({ title: 'لوحة الإدارة', who: me.full_name || sb.user.email, sub: D.roleAr[me.role], items, views });
     // live counters: new requests + open refund requests (refreshes every minute and when the tab regains focus)

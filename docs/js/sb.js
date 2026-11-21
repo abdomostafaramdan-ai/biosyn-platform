@@ -95,7 +95,24 @@
 
   const qs = (o) => Object.entries(o || {}).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
 
+  // two-step verification (TOTP authenticator app) through Supabase Auth MFA
+  const jwtClaims = () => { try { return JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))); } catch { return {}; } };
+  const mfa = {
+    aal: () => (session ? jwtClaims().aal || 'aal1' : null),
+    async factors() { const u = await raw('/auth/v1/user'); return (u && u.factors) || []; },
+    // returns { id, totp: { qr_code (svg data URL), secret, uri } }
+    enroll: () => raw('/auth/v1/factors', { method: 'POST', body: { factor_type: 'totp', issuer: 'Biosyn Eg', friendly_name: 'Biosyn ' + new Date().toISOString().slice(0, 16).replace('T', ' ') } }),
+    async verify(factorId, code) {
+      const ch = await raw(`/auth/v1/factors/${encodeURIComponent(factorId)}/challenge`, { method: 'POST', body: {} });
+      const r = await raw(`/auth/v1/factors/${encodeURIComponent(factorId)}/verify`, { method: 'POST', body: { challenge_id: ch.id, code: String(code).replace(/\D/g, '') } });
+      if (r && r.access_token) setSession({ ...r, user: r.user || (session && session.user) });
+      return r;
+    },
+    unenroll: (factorId) => raw(`/auth/v1/factors/${encodeURIComponent(factorId)}`, { method: 'DELETE' }),
+  };
+
   window.sb = {
+    mfa,
     onChange(f) { listeners.push(f); },
     get session() { return session; },
     get user() { return session && session.user; },
