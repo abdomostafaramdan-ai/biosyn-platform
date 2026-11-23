@@ -53,7 +53,7 @@ begin
     v_fixed := v_fixed + 1;
   end if;
   if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'requests' and cmd = 'INSERT'
-                   and coalesce(with_check, '') ~* 'is not distinct from') then
+                   and coalesce(with_check, '') ~* 'is (not )?distinct from') then
     execute 'drop policy if exists requests_create on public.requests';
     execute $p$create policy requests_create on public.requests for insert to anon, authenticated with check (user_id is not distinct from (select auth.uid()) and status = 'new' and type <> 'refund')$p$;
     perform sec_alert('policy:requests_create:' || to_char(now(), 'YYYYMMDDHH24'), 'critical', 'bug', 'نماذج التقديم كانت واقفة',
