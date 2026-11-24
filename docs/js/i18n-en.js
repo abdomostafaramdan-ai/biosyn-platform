@@ -2114,6 +2114,15 @@ window.I18N_EN = {
   "تُضاف بعد إقفال كل شهر": "Added after each month closes",
   "تُحسب أرباح كل شهر عند إقفاله في بداية الشهر التالي.": "Each month's earnings are calculated when it closes at the start of the next month.",
   "أرباح الدورات المسجلة = 30٪ من دخل الاشتراكات × نصيب دوراتك من دقائق المشاهدة على المنصة. تُحتسب كل دقيقة مرة واحدة لكل طالب، ولا تُحتسب المحاضرة الأولى المجانية. تُحسب أرباح كل شهر عند إقفاله في بداية الشهر التالي وتظهر في «الأرباح والسحب»، والدورات التفاعلية لها اتفاقات مستقلة.": "Recorded-course earnings = 30% of subscription income × your courses' share of watch minutes on the platform. Each minute counts once per student and the free first lecture does not count. Each month's earnings are calculated when it closes at the start of the next month and appear under Earnings & withdrawals; interactive courses have separate agreements.",
+  "⛔ تم إيقاف اشتراكك مؤقتًا": "⛔ Your subscription has been paused",
+  "⚠️ تحذير: ممنوع تصوير المحاضرات": "⚠️ Warning: recording lectures is not allowed",
+  "تواصل معنا على واتساب": "Contact us on WhatsApp",
+  "استئناف الاشتراك": "Resume subscription",
+  "اشتراك موقوف": "Subscription paused",
+  "اشتراكات موقوفة": "Paused subscriptions",
+  "الإيقاف التلقائي": "Automatic pause",
+  "الإيقاف بعد": "Pause after",
+  "أوقف اشتراك الطالب مؤقتًا تلقائيًا عند تكرار محاولات التصوير أو التسجيل": "Automatically pause the student's subscription after repeated capture or recording attempts",
 };
 
 window.I18N_EN_PATTERNS = (function () {

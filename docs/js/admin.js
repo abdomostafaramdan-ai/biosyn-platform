@@ -707,32 +707,34 @@
         sb.get('security_alerts', { select: '*', order: 'last_at.desc', limit: 300 }).catch(() => []),
         sb.get('blocked_ips', { select: '*', until: 'gt.' + new Date().toISOString(), order: 'created_at.desc' }).catch(() => []),
         sb.rpc('admin_watchdog_state').catch(() => null), sb.rpc('admin_backup_state').catch(() => null), sb.mfa.factors().catch(() => [])]);
+      const subs = await sb.rpc('admin_active_subscriptions').then((r) => (Array.isArray(r) ? r : [])).catch(() => []);
+      const paused = new Map(subs.filter((s) => s.status === 'paused').map((s) => [s.user_id, s]));
       const G = secGuard(alerts || [], ips || [], wst, bkst, mfs);
       const C = Object.assign({ auto_ban: true, ban_after: 2 }, cfg || {});
       const KIND = { capture_shortcut: 'تصوير الشاشة', record_shortcut: 'تسجيل الشاشة', devtools: 'أدوات المطوّر' };
       const wa = (p) => { const x = String(p || '').replace(/\D/g, ''); return x ? (x.startsWith('0') ? '2' + x : x) : ''; };
       const day = Date.now() - 86400000;
-      main.innerHTML = G.html + D.panel('محاولات تصوير المحاضرات', `<p class="bx-hint" style="margin-top:0">صفحة المشاهدة بتبلّغ هنا عن محاولات تصوير أو تسجيل الشاشة (أزرار PrintScreen، Win+Shift+S، Win+Alt+R، Cmd+Shift+3/4/5) وعن فتح أدوات المطوّر. مع كل محاولة بيوصلك إشعار فيه بيانات الحساب. الحظر بيقفل المشاهدة ويلغي الاشتراك ويمنع تسجيل الدخول.<br><b>مهم:</b> المتصفح مش بيقدر يشوف برامج التسجيل اللي شغالة على الجهاز أو تصوير الشاشة بموبايل، ودول بتغطيهم العلامة المائية المتحركة اللي فيها إيميل الطالب ورقمه.</p>
-        <div class="bx-stats">${D.stat('حسابات عليها تنبيهات', rows.filter((r) => Number(r.incidents)).length, `${rows.filter((r) => r.last_at && new Date(r.last_at) > day).length} خلال آخر 24 ساعة`)}${D.stat('محظورين', rows.filter((r) => r.banned_at).length, 'ممنوعين من الدخول والمشاهدة')}</div>
-        <fieldset class="bx-field" style="border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:16px 0"><legend style="padding:0 6px">الحظر التلقائي</legend>
-          <label class="bx-check" style="min-height:auto"><input type="checkbox" id="sec-auto" ${C.auto_ban ? 'checked' : ''}> احظر الطالب تلقائيًا وألغِ اشتراكه عند تكرار محاولات التصوير أو التسجيل</label>
-          <div class="bx-row" style="gap:10px;align-items:end;flex-wrap:wrap;margin-top:8px"><div class="bx-field"><label for="sec-n" class="bx-hint">الحظر بعد</label><select id="sec-n" class="bx-select">${[1, 2, 3, 4, 5].map((n) => `<option value="${n}" ${Number(C.ban_after) === n ? 'selected' : ''}>${n === 1 ? 'أول محاولة' : `${n} محاولات (أول ${n - 1} تحذير)`}</option>`).join('')}</select></div>
+      main.innerHTML = G.html + D.panel('محاولات تصوير المحاضرات', `<p class="bx-hint" style="margin-top:0">صفحة المشاهدة بتبلّغ هنا عن محاولات تصوير أو تسجيل الشاشة (أزرار PrintScreen، Win+Shift+S، Win+Alt+R، Cmd+Shift+3/4/5) وعن فتح أدوات المطوّر. مع كل محاولة بيوصلك إشعار فيه بيانات الحساب. الإيقاف التلقائي بيوقف الاشتراك مؤقتًا بس، أما الحظر اليدوي فبيقفل المشاهدة ويلغي الاشتراك ويمنع تسجيل الدخول.<br><b>مهم:</b> المتصفح مش بيقدر يشوف برامج التسجيل اللي شغالة على الجهاز أو تصوير الشاشة بموبايل، ودول بتغطيهم العلامة المائية المتحركة اللي فيها إيميل الطالب ورقمه.</p>
+        <div class="bx-stats">${D.stat('حسابات عليها تنبيهات', rows.filter((r) => Number(r.incidents)).length, `${rows.filter((r) => r.last_at && new Date(r.last_at) > day).length} خلال آخر 24 ساعة`)}${D.stat('اشتراكات موقوفة', rows.filter((r) => paused.has(r.user_id)).length, 'موقوفة تلقائيًا أو يدويًا، والمدة محفوظة')}${D.stat('محظورين', rows.filter((r) => r.banned_at).length, 'ممنوعين من الدخول والمشاهدة')}</div>
+        <fieldset class="bx-field" style="border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:16px 0"><legend style="padding:0 6px">الإيقاف التلقائي</legend>
+          <label class="bx-check" style="min-height:auto"><input type="checkbox" id="sec-auto" ${C.auto_ban ? 'checked' : ''}> أوقف اشتراك الطالب مؤقتًا تلقائيًا عند تكرار محاولات التصوير أو التسجيل</label>
+          <div class="bx-row" style="gap:10px;align-items:end;flex-wrap:wrap;margin-top:8px"><div class="bx-field"><label for="sec-n" class="bx-hint">الإيقاف بعد</label><select id="sec-n" class="bx-select">${[1, 2, 3, 4, 5].map((n) => `<option value="${n}" ${Number(C.ban_after) === n ? 'selected' : ''}>${n === 1 ? 'أول محاولة' : `${n} محاولات (أول ${n - 1} تحذير)`}</option>`).join('')}</select></div>
           <button type="button" class="bs-btn bs-btn-primary bs-btn-sm" id="sec-save">حفظ</button></div>
-          <small class="bx-hint">الأزرار ممكن تتداس بالغلط، فالافتراضي إن أول مرة الطالب ياخد تحذير على الشاشة والتانية يتحظر. فتح أدوات المطوّر بيتسجل بس من غير حظر. المحاضرين والإدارة عمرهم ما بيتحظروا تلقائيًا.</small></fieldset>
+          <small class="bx-hint">الأزرار ممكن تتداس بالغلط، فالافتراضي إن أول مرة الطالب ياخد تحذير على الشاشة وفي الإشعارات، والتانية اشتراكه يتوقف مؤقتًا من غير ما يتلغي، والمدة المتبقية بتفضل محفوظة. بيوصلك إشعار وتقدر تستأنف الاشتراك من هنا، ومع الاستئناف مخالفاته بتتصفّر. فتح أدوات المطوّر بيتسجل بس. المحاضرين والإدارة عمرهم ما بيتوقفوا تلقائيًا. الحظر الكامل بقى يدوي بس من زرار «حظر».</small></fieldset>
         ${D.table(['الحساب', 'التنبيهات', 'آخر تنبيه', 'الحالة', ''], rows.map((r) => {
           const w = wa(r.whatsapp || r.phone);
           return [
             `<b>${esc(r.full_name || '—')}</b> <small class="bx-hint">${esc(D.roleAr[r.role] || r.role || '')}</small><br><small class="bx-hint" dir="ltr">${esc(r.email || '')}</small>${r.phone ? `<br><small class="bx-hint" dir="ltr">${esc(r.phone)}</small>` : ''}`,
             `${Number(r.captures) ? `<span class="bx-st bx-st-warn">${r.captures} تصوير/تسجيل</span> ` : ''}${Number(r.devtools) ? `<span class="bx-st bx-st-mute">${r.devtools} أدوات مطوّر</span>` : ''}${!Number(r.incidents) ? '<span class="bx-hint">—</span>' : ''}`,
             r.last_at ? `${esc(KIND[r.last_kind] || r.last_kind || '')}<br><small class="bx-hint">${D.dateTime(r.last_at)}</small>` : '<span class="bx-hint">—</span>',
-            r.banned_at ? `<span class="bx-st bx-st-danger">محظور</span><br><small class="bx-hint">${D.dateTime(r.banned_at)}</small>${r.banned_reason ? `<br><small class="bx-hint">${esc(r.banned_reason)}</small>` : ''}` : '<span class="bx-st bx-st-ok">نشط</span>',
-            `<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">${r.role === 'admin' ? '' : r.banned_at ? `<button class="bs-btn bs-btn-secondary bs-btn-sm" data-unban="${r.user_id}">رفع الحظر</button>` : `<button class="bs-btn bs-btn-ghost bs-btn-sm" style="color:var(--danger-text)" data-ban="${r.user_id}">حظر</button>`}${w ? `<a class="bs-btn bs-btn-ghost bs-btn-sm" href="https://wa.me/${w}" target="_blank" rel="noopener">واتساب</a>` : ''}</div>`,
+            paused.has(r.user_id) && !r.banned_at ? `<span class="bx-st bx-st-warn">اشتراك موقوف</span><br><small class="bx-hint">${D.dateTime(paused.get(r.user_id).paused_at)} · متبقي ${Math.round(Number(paused.get(r.user_id).days_left || 0))} يوم</small>` : r.banned_at ? `<span class="bx-st bx-st-danger">محظور</span><br><small class="bx-hint">${D.dateTime(r.banned_at)}</small>${r.banned_reason ? `<br><small class="bx-hint">${esc(r.banned_reason)}</small>` : ''}` : '<span class="bx-st bx-st-ok">نشط</span>',
+            `<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">${paused.has(r.user_id) && !r.banned_at ? `<button class="bs-btn bs-btn-primary bs-btn-sm" data-resume="${r.user_id}">استئناف الاشتراك</button>` : ''}${r.role === 'admin' ? '' : r.banned_at ? `<button class="bs-btn bs-btn-secondary bs-btn-sm" data-unban="${r.user_id}">رفع الحظر</button>` : `<button class="bs-btn bs-btn-ghost bs-btn-sm" style="color:var(--danger-text)" data-ban="${r.user_id}">حظر</button>`}${w ? `<a class="bs-btn bs-btn-ghost bs-btn-sm" href="https://wa.me/${w}" target="_blank" rel="noopener">واتساب</a>` : ''}</div>`,
           ];
         }), 'لا توجد تنبيهات حتى الآن.')}`);
       G.wire(main);
       $('#sec-save', main).onclick = async (e) => {
         e.target.disabled = true;
-        try { await sb.rpc('admin_security_settings', { p_auto_ban: $('#sec-auto', main).checked, p_ban_after: parseInt($('#sec-n', main).value, 10) }); ui.toast('تم حفظ إعدادات الحظر.'); }
+        try { await sb.rpc('admin_security_settings', { p_auto_ban: $('#sec-auto', main).checked, p_ban_after: parseInt($('#sec-n', main).value, 10) }); ui.toast('تم حفظ إعدادات الإيقاف التلقائي.'); }
         catch (x) { ui.toast(arErr(x), 'err'); }
         e.target.disabled = false;
       };
@@ -744,6 +746,13 @@
       };
       $$('[data-ban]', main).forEach((b) => (b.onclick = () => act(b.dataset.ban, true)));
       $$('[data-unban]', main).forEach((b) => (b.onclick = () => act(b.dataset.unban, false)));
+      $$('[data-resume]', main).forEach((b) => (b.onclick = async () => {
+        const r = rows.find((x) => x.user_id === b.dataset.resume);
+        if (!confirm(`استئناف اشتراك ${r ? r.full_name || r.email : ''}؟ هيرجع بنفس المدة المتبقية، ومخالفاته هتتصفّر.`)) return;
+        b.disabled = true;
+        try { await sb.rpc('admin_sub_resume', { p_user: b.dataset.resume, p_note: 'استئناف من صفحة الأمان بعد مراجعة التنبيه' }); ui.toast('تم استئناف الاشتراك.'); D.reload(); }
+        catch (x) { ui.toast(arErr(x), 'err'); b.disabled = false; }
+      }));
     },
     async imonitor(main) {
       const [all, mins] = await Promise.all([sb.rpc('admin_instructor_overview').then((r) => (Array.isArray(r) ? r : [])), sb.rpc('admin_instructor_minutes').then((r) => (Array.isArray(r) ? r : [])).catch(() => [])]);

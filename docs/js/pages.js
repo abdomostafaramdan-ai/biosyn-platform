@@ -461,9 +461,15 @@
           p_detail: { ua: navigator.userAgent, key: (e && e.key) || '', screen: `${screen.width}x${screen.height}`, page: location.pathname + location.search } });
       } catch { return; }
       if (r && r.action === 'banned') secBanned();
+      else if (r && r.action === 'paused') secPaused();
       else if (r && r.action === 'logged' && kind !== 'devtools') toast('🛡️ اتسجلت محاولة التصوير عندنا (الحسابات الإدارية والمحاضرين مش بتتحظر تلقائيًا).');
-      else if (r && r.action === 'warned') ui.modal(`<h3>⚠️ تحذير</h3><p>رصدنا محاولة تصوير أو تسجيل للشاشة أثناء مشاهدة المحاضرة. المحتوى محمي ومربوط بحسابك، وتكرار المحاولة هيؤدي إلى <b>حظر الحساب وإلغاء الاشتراك</b> نهائيًا.</p><div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" data-x>فهمت</button></div>`, (m, close) => { $('[data-x]', m).onclick = close; });
+      else if (r && r.action === 'warned') ui.modal(`<h3>⚠️ تحذير</h3><p>رصدنا محاولة تصوير أو تسجيل للشاشة أثناء مشاهدة المحاضرة. المحتوى محمي ومربوط بحسابك، وتكرار المحاولة هيؤدي إلى <b>إيقاف اشتراكك مؤقتًا</b>. وصلك تنبيه بده في الإشعارات كمان.</p><div class="bx-modal-actions"><button class="bs-btn bs-btn-primary" data-x>فهمت</button></div>`, (m, close) => { $('[data-x]', m).onclick = close; });
     }
+    window.secPaused = function secPaused() {
+      document.querySelectorAll('iframe, video').forEach((f) => f.remove());
+      const box = document.querySelector('main') || document.body;
+      box.innerHTML = '<div class="bx-empty-big" style="margin:60px auto;max-width:560px"><b>⛔ تم إيقاف اشتراكك مؤقتًا</b>رصدنا تكرار محاولة تصوير أو تسجيل الشاشة أثناء مشاهدة المحاضرات، وده مخالف لشروط الاستخدام. المدة المتبقية من اشتراكك محفوظة بالكامل، وهنراجع الأمر ونرجّع الاشتراك. للاستفسار تواصل معنا على واتساب.<div style="margin-top:16px"><a class="bs-btn bs-btn-primary" href="https://wa.me/201069151456" target="_blank" rel="noopener">تواصل معنا على واتساب</a></div></div>';
+    };
     window.secBanned = async function secBanned() {
       document.querySelectorAll('iframe').forEach((f) => f.remove());
       const box = document.querySelector('main') || document.body;
