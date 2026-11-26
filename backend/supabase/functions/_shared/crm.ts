@@ -10,7 +10,7 @@ async function wooSignature(secret: string, raw: string) {
   return btoa(String.fromCharCode(...sig));
 }
 
-// Sends queued payments/requests to the Biosyn CRM (orders -> woo-webhook, form requests -> lead-capture).
+// Sends queued payments, subscription changes, opt-outs and form requests to the Biosyn CRM (all signed, to woo-webhook).
 export async function crmFlush(sb: Sb, max = 20) {
   await loadSecrets(sb);
   const base = sec('CRM_URL').replace(/\/$/, ''), woo = sec('CRM_WOO_SECRET');
@@ -20,10 +20,10 @@ export async function crmFlush(sb: Sb, max = 20) {
   let sent = 0, failed = 0;
   for (const r of rows as Row[]) {
     try {
-      const raw = JSON.stringify(r.payload);
-      const res = r.kind === 'order'
-        ? await fetch(`${base}/functions/v1/woo-webhook`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-wc-webhook-signature': await wooSignature(woo, raw) }, body: raw })
-        : await fetch(`${base}/functions/v1/lead-capture`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: raw });
+      // everything goes through the signed channel; requests become biosyn_event "lead" (no public rate limit, CRM makes a task)
+      const body = r.kind === 'lead' ? { ...r.payload, id: 'lead-' + r.id, biosyn_event: 'lead' } : r.payload;
+      const raw = JSON.stringify(body);
+      const res = await fetch(`${base}/functions/v1/woo-webhook`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-wc-webhook-signature': await wooSignature(woo, raw) }, body: raw });
       const txt = await res.text();
       if (!res.ok) throw new Error(`${res.status}: ${txt.slice(0, 300)}`);
       await sb.from('crm_outbox').update({ status: 'sent', sent_at: new Date().toISOString(), last_error: null }).eq('id', r.id);
