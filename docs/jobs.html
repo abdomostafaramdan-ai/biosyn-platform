@@ -1,0 +1,37 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>وظائف وفرص عمل حر في العلوم والمعلوماتية الحيوية | Biosyn Eg</title>
+<meta name="description" content="وظائف ومشاريع عمل حر في البحث العلمي والمعلوماتية الحيوية والإحصاء الحيوي والترجمة العلمية على منصة Biosyn for Freelance التابعة لـ Biosyn Eg.">
+<meta name="robots" content="noindex,follow">
+<meta http-equiv="refresh" content="1;url=https://www.biosynforfreelance.com/freelance-jobs?utm_source=biosyneg&amp;utm_medium=referral&amp;utm_campaign=jobs_page">
+<link rel="icon" href="img/biosyn-mark.png">
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#010232;color:#fff;font:16px/1.7 Tahoma,'Segoe UI',Arial,sans-serif;text-align:center;padding:16px}a{color:#c6f84a}img{width:72px;height:auto}h1{font-size:24px;margin:16px 0 8px}</style>
+<script src="js/config.js"></script>
+</head><body><main>
+<img src="img/biosyn-mark.png" alt="Biosyn">
+<h1>جارٍ فتح صفحة الوظائف…</h1>
+<p>وظائف ومشاريع العمل الحر في التخصصات العلمية على منصة <b>Biosyn for Freelance</b>.</p>
+<p><a id="go" href="https://www.biosynforfreelance.com/freelance-jobs?utm_source=biosyneg&amp;utm_medium=referral&amp;utm_campaign=jobs_page">افتح الوظائف الآن ←</a></p>
+</main>
+<script>(function(){
+  var url = document.getElementById('go').href, done = false;
+  function go(){ if (done) return; done = true; location.replace(url); }
+  // Count the visit in «زيارات المنصة» (same anonymous id as the rest of the site), then leave.
+  try {
+    var ua = navigator.userAgent || '';
+    if (!navigator.webdriver && !/bot|crawl|spider|slurp|headless|lighthouse|preview/i.test(ua) && window.BIOSYN) {
+      var rid = function(){ return crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 12); };
+      var vid = localStorage.getItem('biosyn.vid'), isNew = false; if (!vid) { vid = rid(); isNew = true; localStorage.setItem('biosyn.vid', vid); }
+      var ses = null; try { ses = JSON.parse(localStorage.getItem('biosyn.ses') || 'null'); } catch (e) {}
+      if (!ses || Date.now() - ses.t > 30 * 60e3) ses = { id: rid(), src: 'direct', ref: '', utm: '' };
+      ses.t = Date.now(); localStorage.setItem('biosyn.ses', JSON.stringify(ses));
+      var dev = /iPad|Tablet/i.test(ua) ? 'tablet' : /Mobi|iPhone|Android/i.test(ua) ? 'mobile' : 'desktop';
+      fetch(BIOSYN.SUPABASE_URL + '/rest/v1/rpc/track_visit', { method: 'POST', keepalive: true,
+        headers: { apikey: BIOSYN.SUPABASE_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p: { vid: vid, sid: ses.id, path: '/jobs.html', ref: ses.ref, src: ses.src, cc: '', dev: dev, br: '', os: '', lang: 'ar', new: isNew } }) })
+        .then(go, go);
+    }
+  } catch (e) {}
+  setTimeout(go, 400);
+})();</script>
+</body></html>
