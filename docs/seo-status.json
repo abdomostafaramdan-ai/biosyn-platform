@@ -1,6 +1,6 @@
 {
- "built_at": "2026-11-26T12:38:37+00:00",
- "sitemap_urls": 61,
+ "built_at": "2026-11-26T14:32:20+00:00",
+ "sitemap_urls": 62,
  "indexable": [
   {
    "slug": "some-concepts-in-clinical-research",
@@ -160,5 +160,5 @@
   }
  ],
  "ai_training": true,
- "changed": 61
+ "changed": 62
 }

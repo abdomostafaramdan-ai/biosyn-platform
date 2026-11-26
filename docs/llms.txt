@@ -62,7 +62,15 @@
 - [م. ندى صلاح](https://biosyneg.com/teacher-nada-salah): باحثة في علوم الأعصاب الحسابية
 - [د. ناردين زريف](https://biosyneg.com/teacher-nardine-zarif): 
 
+## Biosyn for Freelance (sister platform)
+- Website: https://www.biosynforfreelance.com/ — a freelance marketplace for scientific and medical fields, run by Biosyn Eg (Cairo, Egypt); Arabic and English
+- Jobs: https://www.biosynforfreelance.com/freelance-jobs (also linked from https://biosyneg.com/jobs)
+- Categories: research services, bioinformatics, biostatistics, academic CV writing, scientific and medical translation, scholarships, mentoring
+- How it works: clients post a job with a budget; freelancers bid; work is delivered in milestones and reviewed before payment is released
+- Contact: freelance@biosynegypt.com
+
 ## Articles
+- [Biosyn for Freelance: منصة العمل الحر للتخصصات العلمية والطبية](https://biosyneg.com/blog-biosyn-for-freelance-scientific-freelancing-platform): دليل شامل لمنصة Biosyn for Freelance: ما هي، والتخصصات المتاحة، وأمثلة من المشاريع، وكيف تبدأ كمستقل أو كعميل، والرسوم وطرق السحب من مصر.
 - [البيولوجيا الحاسوبية: من قواعد البيانات الحيوية إلى تحليل التعبير الجيني](https://biosyneg.com/blog-computational-biology): مقال تعريفي يشرح كيف تُحوَّل البيانات البيولوجية الضخمة إلى معرفة، من البحث في قواعد البيانات ومحاذاة التسلسلات وBLAST، إلى تقنيات التسلسل وتحليل RNA-Seq بلغة…
 - [الهندسة الوراثية: كيف يعدّل العلماء الحمض النووي بشكل موجّه؟](https://biosyneg.com/blog-introduction-to-genetic-engineering): مقال تعريفي يشرح أدوات الهندسة الوراثية الأساسية، من النواقل وإنزيمات القطع وعزل الجينات، إلى الإشريكية القولونية كعائل والتخمير وتحرير الجينوم والتصميم…
 - [أساسيات علم الوراثة: من قوانين مندل إلى وراثة العشائر](https://biosyneg.com/blog-introduction-to-genetics): مقال تعريفي في أساسيات علم الوراثة يشرح كيف تنتقل الصفات عبر الأجيال، من تجارب مندل والانقسام الاختزالي والارتباط الجيني، حتى العقيدة المركزية ووراثة العشائر.…
