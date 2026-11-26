@@ -203,6 +203,12 @@ ORG = {'@type': 'EducationalOrganization', '@id': SITE + '/#org', 'name': BRAND,
        'areaServed': [{'@type': 'Country', 'name': 'Egypt'}, 'MENA'], 'knowsLanguage': ['ar', 'en'],
        'contactPoint': {'@type': 'ContactPoint', 'contactType': 'customer support', 'email': CONTACT, 'availableLanguage': ['Arabic', 'English']}}
 ORG_REF = {'@id': SITE + '/#org'}
+# Sister brand: the freelance marketplace (one entity family, so search engines and AI assistants connect the two)
+FREELANCE = 'https://www.biosynforfreelance.com'
+FREELANCE_ORG = {'@type': 'Organization', '@id': FREELANCE + '/#org', 'name': 'Biosyn for Freelance', 'alternateName': 'بايوسين للعمل الحر', 'url': FREELANCE + '/',
+                 'description': 'منصة عمل حر للتخصصات العلمية والطبية تابعة لـ Biosyn Eg: مشاريع في البحث العلمي والمعلوماتية الحيوية والإحصاء الحيوي والترجمة العلمية وكتابة السيرة الذاتية الأكاديمية والإرشاد.',
+                 'email': 'freelance@biosynegypt.com', 'areaServed': [{'@type': 'Country', 'name': 'Egypt'}, 'MENA'], 'parentOrganization': ORG_REF}
+ORG['subOrganization'] = FREELANCE_ORG
 
 
 def crumbs(items):
@@ -519,6 +525,7 @@ def post_faq(body):
 
 
 def post_course(p, courses):
+    if FREELANCE.split('//')[1].replace('www.', '') in (p.get('body') or ''): return None   # articles about the freelance platform: no single course
     return next((c for c in courses if f"course-{c['slug']}.html" in (p.get('body') or '')), None)
 
 
@@ -534,6 +541,7 @@ def post_page(tpl, p, d):
            'inLanguage': 'ar', 'author': ORG_REF, 'publisher': ORG_REF, 'image': img or OG_IMAGE, 'wordCount': words,
            'datePublished': (p.get('published_at') or TODAY)[:10], 'dateModified': (p.get('updated_at') or p.get('published_at') or TODAY)[:10]}
     if p.get('tag'): art['articleSection'] = p['tag']
+    if 'biosynforfreelance.com' in (p.get('body') or ''): art['about'] = {'@id': FREELANCE + '/#org'}
     if c: art['about'] = {'@id': f"{SITE}/course-{c['slug']}.html#course"}; art['mentions'] = {'@type': 'Course', 'name': c['title'], 'url': f"{SITE}/course-{c['slug']}.html", 'provider': ORG_REF}
     graph = [ORG, art, crumbs([('الرئيسية', SITE + '/'), ('المدونة', SITE + '/blog.html'), (p['title'], url)])]
     if faq: graph.append(faq_ld(faq))
@@ -590,6 +598,12 @@ def llms(d, courses, topics, teachers):
         L.append(f"- [{c['title']}]({SITE}/course-{c['slug']}.html): {'recorded course' if c['kind'] == 'recorded' else 'live interactive course'}" + (f', {n} lectures' if n else '') + (f', ~{round(total / 3600, 1)} hours' if total >= 360 else '') + (f", {c['specialty']}" if c.get('specialty') and c['specialty'] != 'كل التخصصات' else '') + (f" — {plain(c.get('summary'), 180)}" if c.get('summary') else ''))
     if topics: L += ['', '## Courses by faculty'] + [f'- [{f["name"]}]({SITE}/topic-{f["id"]}.html)' for f in topics]
     if teachers: L += ['', '## Instructors'] + [f'- [{t["name"]}]({SITE}/teacher-{teacher_slug(t)}.html): {plain(t.get("title"), 160)}' for t in teachers]
+    L += ['', '## Biosyn for Freelance (sister platform)',
+          f'- Website: {FREELANCE}/ — a freelance marketplace for scientific and medical fields, run by {BRAND} (Cairo, Egypt); Arabic and English',
+          f'- Jobs: {FREELANCE}/freelance-jobs (also linked from {SITE}/jobs)',
+          '- Categories: research services, bioinformatics, biostatistics, academic CV writing, scientific and medical translation, scholarships, mentoring',
+          '- How it works: clients post a job with a budget; freelancers bid; work is delivered in milestones and reviewed before payment is released',
+          '- Contact: freelance@biosynegypt.com']
     if d.get('posts'): L += ['', '## Articles'] + [f"- [{p['title']}]({SITE}/blog-{p['slug']}.html)" + (f": {plain(p.get('excerpt'), 160)}" if p.get('excerpt') else '') for p in d['posts']]
     L += ['', '## Main pages'] + [f'- [{n}]({SITE}/{"" if f == "index.html" else f})' for f, n, _ in STATIC]
     L += ['', '## Optional', f'- [Full content for LLMs]({SITE}/llms-full.txt)']
