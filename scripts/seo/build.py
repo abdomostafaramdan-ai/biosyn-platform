@@ -84,6 +84,7 @@ def load(fixture):
             'about': ((rest(url, key, 'site_content?select=data&key=eq.about') or [{}])[0]).get('data') or {},
             'social': ((rest(url, key, 'site_content?select=data&key=eq.social') or [{}])[0]).get('data') or {},
             'about_stats': rpc(url, key, 'about_stats'),
+            'public_stats': rpc(url, key, 'public_stats'),
         }
     ov = d.get('faculties_override')
     if isinstance(ov, list) and ov:   # admin → «الكليات والتخصصات» (site_content.faculties) replaces the defaults in config.js
@@ -96,6 +97,7 @@ def load(fixture):
     soc = [v for k, v in (d.get('social') or {}).items() if k != 'whatsapp' and isinstance(v, str) and v.startswith('https://')]
     S['same_as'] = list(dict.fromkeys([*(S.get('same_as') or []), *soc]))
     ABOUT.clear(); ABOUT.update(d.get('about') or {}); ABOUT['_stats'] = d.get('about_stats') or {}
+    LIVE.clear(); LIVE.update({'plans': d.get('plans') or [], 'stats': d.get('public_stats') or {}})
     for c in d['courses']:
         c['lectures'] = sorted(c.get('lectures') or [], key=lambda l: l.get('position') or 0)
     return d
@@ -648,7 +650,41 @@ def clean(t):
     return CLEAN_RE.sub(lambda m: m.group(1) + (m.group(2) or ''), t)
 
 
+LIVE = {}   # current plans + platform numbers, baked into the HTML so the first paint already shows today's values
+
+
+def _months(n): return 'شهر' if n == 1 else 'شهرين' if n == 2 else f'{n} أشهر' if n <= 10 else f'{n} شهرًا'
+def _period(m): return 'مدة شهر واحد' if m == 1 else 'صلاحية 12 شهرًا' if m == 12 else f'صلاحية {m} أشهر' if m < 11 else f'صلاحية {m} شهرًا'
+
+
+def bake_live(t):
+    """Same EGP presentation as app.js hydratePlans() / pageHome(), so the page doesn't flash old values before JS runs."""
+    st = LIVE.get('stats') or {}
+    if st and 'data-k="' in t:
+        t = re.sub(r'<span data-count="[^"]*" data-k="(\w+)">[^<]*</span>', lambda m: f'<span data-count="{int(st.get(m.group(1)) or 0)}" data-k="{m.group(1)}">{int(st.get(m.group(1)) or 0):,}</span>', t)
+    plans = LIVE.get('plans') or []
+    if not plans or 'class="bs-plan-price"' not in t: return t
+    base = next((float(p['price_egp']) for p in plans if p['duration_months'] == 1), 0)
+    parts = re.split(r'(?=<div class="bs-plan(?:"| bs-plan-featured))', t)
+    k = 0
+    for i, seg in enumerate(parts):
+        if not re.match(r'<div class="bs-plan(?:"| )', seg) or 'bs-plan-price' not in seg: continue
+        p = plans[k % len(plans)]; k += 1
+        m, price = p['duration_months'], float(p['price_egp']); per = int(price // m); full = base * m
+        ratio = price / base if base else 0; paid = round(ratio) if base and abs(ratio - round(ratio)) < 0.06 else 0
+        seg = re.sub(r'(<span class="bs-plan-name[^"]*">)[^<]*', lambda x: x.group(1) + e(p['name']), seg, count=1)
+        seg = re.sub(r'(<div class="bs-plan-price">(?:<s class="bx-plan-was">[^<]*</s>)?<b class="bs-latin">)[^<]*(</b><span>)[^<]*', lambda x: x.group(1) + f'{per:,}' + x.group(2) + 'ج.م / شهر', seg, count=1)
+        seg = re.sub(r'(<div class="bs-plan-period">)[^<]*', lambda x: x.group(1) + (f'احصل على {_months(m)} بسعر {_months(paid)}' if m > 1 and paid and paid < m else _period(m)), seg, count=1)
+        cut = seg.find('class="bs-plan-period"'); head, tail = (seg[:cut], seg[cut:]) if cut > 0 else ('', seg)   # the badge sits in the card's top row
+        if m > 1 and full > price: head = re.sub(r'(<span class="bs-badge[^"]*">)[^<]*', lambda x: x.group(1) + f'وفر {round((1 - price / full) * 100)}٪', head, count=1)
+        else: head = re.sub(r'<span class="bs-badge[^"]*">[^<]*</span>', '', head, count=1)
+        seg = head + tail
+        parts[i] = seg
+    return ''.join(parts)
+
+
 def write(path, text, changed, manifest, url=None):
+    if path.endswith('.html'): text = bake_live(text)
     if path.endswith(('.html', '.xml', '.txt')): text = clean(text)
     if path.endswith('.html') and 'data-urlfix' not in text: text = re.sub(r'(<meta charset="utf-8">)', lambda m: m.group(1) + URLFIX, text, count=1, flags=re.I)
     full = os.path.join(DOCS, path)

@@ -25,15 +25,17 @@
 
   // ---------- regional pricing: outside Egypt prices show in the visitor's currency (same number × factor) ----------
   const EG_REGION = { country: 'EG', currency: 'EGP', symbol: 'ج.م', factor: 1, decimals: 2, gateways: null, manual: true };
+  // last known region (12 h): lets prices render at once instead of waiting for the geo lookup
+  function REGION_CACHED() { try { const c = JSON.parse(localStorage.getItem('biosyn.region') || 'null'); if (c && c.currency && Date.now() - (c.at || 0) < 12 * 3600e3) return c; } catch {} return null; }
   const REGION = (async () => {
-    try { const c = JSON.parse(sessionStorage.getItem('biosyn.region') || 'null'); if (c && c.currency && Date.now() - (c.at || 0) < 30 * 60e3) return c; } catch {}
+    const c = REGION_CACHED(); if (c) return c;
     try {
       const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 4000);
       const r = await fetch(BIOSYN.SUPABASE_URL + '/functions/v1/geo', { method: 'POST', signal: ctl.signal, headers: { apikey: BIOSYN.SUPABASE_KEY, Authorization: 'Bearer ' + BIOSYN.SUPABASE_KEY, 'Content-Type': 'application/json' }, body: '{}' });
       clearTimeout(t);
       const d = r.ok ? await r.json() : null;
       const out = d && d.currency ? { ...EG_REGION, ...d, at: Date.now() } : EG_REGION;
-      try { sessionStorage.setItem('biosyn.region', JSON.stringify(out)); } catch {}
+      try { localStorage.setItem('biosyn.region', JSON.stringify(out)); } catch {}
       return out;
     } catch { return EG_REGION; }
   })();
@@ -407,11 +409,13 @@
   window.checkout = checkout;
 
   const periodAr = (m) => (m === 1 ? 'مدة شهر واحد' : m === 12 ? 'صلاحية 12 شهرًا' : m < 11 ? `صلاحية ${m} أشهر` : `صلاحية ${m} شهرًا`);
-  async function hydratePlans() {
+  async function hydratePlans(Rforced) {
     const cards = $$('.bs-plan');
     if (!cards.length) return;
     let plans; try { plans = await sb.get('plans', { select: '*', active: 'eq.true', order: 'duration_months' }); } catch { return; }
-    const R = await REGION;
+    // render now with the last known region (Egypt for first-time visitors); re-render only if the geo lookup says otherwise
+    const R = Rforced || REGION_CACHED() || EG_REGION;
+    if (!Rforced) REGION.then((r) => { if (r && r.currency !== R.currency) hydratePlans(r); });
     const cur = curOf(R), base = plans.find((x) => x.duration_months === 1);
     const basePrice = base ? itemPrice(base.price_egp, base.intl_price, R) : 0;
     // the featured card is the best value (lowest price per month; ties go to the longer plan), not simply the longest
@@ -426,14 +430,16 @@
       const full = basePrice * m, ratio = basePrice ? price / basePrice : 0, paidFor = Math.abs(ratio - Math.round(ratio)) < 0.06 ? Math.round(ratio) : 0;  // 'N months for the price of K' only when it is (almost) exact
       $('.bs-plan-name', card).textContent = p.name;
       card.dataset.plan = p.code; card.dataset.months = m;
-      const ctaX = $('.bs-plan-cta', card);
-      if (ctaX) ctaX.addEventListener('click', () => checkout({ plan_code: p.code, title: p.name, price: p.price_egp, intl: p.intl_price, note: (card.dataset.upnote || '') + 'الاشتراك لا يتجدد تلقائيًا ولا يمكن استرداده.' }));
+      const ctaX = $('.bs-plan-cta', card); card._plan = p;
+      if (ctaX && !ctaX.dataset.bound) { ctaX.dataset.bound = '1'; ctaX.addEventListener('click', () => { const q = card._plan; checkout({ plan_code: q.code, title: q.name, price: q.price_egp, intl: q.intl_price, note: (card.dataset.upnote || '') + 'الاشتراك لا يتجدد تلقائيًا ولا يمكن استرداده.' }); }); }
       // outside Egypt: the previous presentation (full price per plan, no promo strike or savings)
       if (R.currency !== 'EGP') {
         $('.bs-plan-price b', card).textContent = EGP(price);
         const cu0 = $('.bs-plan-price span', card); if (cu0) cu0.textContent = cur;
         $('.bs-plan-period', card).textContent = periodAr(m);
         const bd = $('.bs-badge', card); if (bd) bd.remove();
+        ['.bx-plan-was', '.bx-plan-total', '.bx-plan-save', '.bx-plan-ribbon'].forEach((s) => { const x = $(s, card); if (x) x.remove(); });
+        card.classList.remove('bs-plan-featured', 'bx-plan-best');
         return;
       }
       // like almentor: the per-month price is the headline, with the monthly price struck through and the total under it
@@ -464,7 +470,7 @@
     });
     // payment methods under the plans (text chips, no third-party logos)
     $$('.bs-plans').forEach((w) => {
-      if (w.nextElementSibling && w.nextElementSibling.classList.contains('bx-paymethods')) return;
+      if (w.nextElementSibling && w.nextElementSibling.classList.contains('bx-paymethods')) { if (!Rforced) return; w.nextElementSibling.remove(); }
       // official method logos from the payment gateway (same files as the checkout); manual transfers keep an icon chip
       const LOGO = (f) => `${BIOSYN.SUPABASE_URL}/storage/v1/object/public/site-assets/pay/${f}.png`;
       const eg = R.currency === 'EGP';
@@ -476,7 +482,7 @@
       const manual = eg ? [['vodafone-cash', 'فودافون كاش'], ['instapay', 'إنستاباي']] : [];
       w.insertAdjacentHTML('afterend', `<div class="bx-paymethods"><span>ادفع بالطريقة التي تناسبك:</span>${logos}${manual.map(([f, t]) => `<img class="bx-paysq" src="${MEDIA(f)}" alt="${t}" title="${t}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('b'),{textContent:this.alt}))">`).join('')}<small>الدفع مرة واحدة، ولا يتجدد الاشتراك تلقائيًا.</small></div>`);
     });
-    planState(cards);
+    if (!Rforced) planState(cards);
   }
 
   // signed-in subscriber: mark the current plan, offer upgrades to longer plans, renewals only in the last 7 days
@@ -635,8 +641,10 @@
       const band = $('#stats'); if (!band) return;
       let st = {}; try { st = (await sb.rpc('public_stats')) || {}; } catch (e) { /* keep zeros */ }
       const shown = $$('[data-k]', band);
-      shown.forEach((el) => (el.dataset.count = Number(st[el.dataset.k]) || 0));
       const fmt = (n) => Math.round(n).toLocaleString('en-US');
+      const baked = shown.some((el) => +el.dataset.count > 0);
+      shown.forEach((el) => { const v = Number(st[el.dataset.k]); el.dataset.count = v || +el.dataset.count || 0; if (baked) el.textContent = fmt(+el.dataset.count); });
+      if (baked) return;
       if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { shown.forEach((el) => (el.textContent = fmt(+el.dataset.count))); return; }
       const io = new IntersectionObserver((ents) => ents.forEach((en) => {
         if (!en.isIntersecting) return; io.unobserve(en.target);
