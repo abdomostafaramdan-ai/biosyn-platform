@@ -43,8 +43,8 @@ footer{text-align:center;opacity:.6;font-size:13px;margin-top:40px}
 </div>
 
 <div class="steps"><h2>كيف تحصل على الخصم؟</h2><ol>
-  <li><b>أنشئ حسابك الآن</b> حتى تكون جاهزًا وتدفع في دقيقة يوم الجمعة.</li>
-  <li><b>انتظر بريدك يوم الجمعة الساعة 2 ظهرًا</b>: سيصلك كود الخصم.</li>
+  <li><b>عندك حساب بالفعل؟</b> مش محتاج تعمل أي حاجة، الكود هيوصلك تلقائيًا. <b>لسه ما سجّلتش؟</b> أنشئ حسابك الآن حتى تكون جاهزًا وتدفع في دقيقة يوم الجمعة.</li>
+  <li><b>انتظر يوم الجمعة الساعة 2 ظهرًا</b>: سيصلك كود الخصم على بريدك، ويظهر لك أيضًا على المنصة.</li>
   <li><b>اختر الباقة وأدخل الكود</b> في صفحة الدفع قبل أن تنفد المقاعد.</li>
 </ol></div>
 
@@ -55,6 +55,7 @@ footer{text-align:center;opacity:.6;font-size:13px;margin-top:40px}
 </ul>
 
 <a class="cta" id="cta" href="/login?mode=signup&amp;utm_source=bf_page&amp;utm_campaign=black-friday">أنشئ حسابك الآن</a>
+<a class="cta alt" id="cta_login" href="/login?utm_source=bf_page&amp;utm_campaign=black-friday">عندك حساب؟ سجّل دخولك</a>
 <a class="cta alt" href="/pricing">شاهد تفاصيل الباقات</a>
 
 <footer>Biosyn Eg · biosyneg.com</footer>
@@ -74,8 +75,9 @@ footer{text-align:center;opacity:.6;font-size:13px;margin-top:40px}
   }
   function tick() {
     var now = Date.now(), st = $('state');
-    if (now >= END) { $('cd').hidden = true; $('cdl').hidden = true; st.hidden = false; st.className = 'state over'; st.textContent = 'انتهى عرض الجمعة البيضاء. تابعنا للعروض القادمة.'; $('cta').textContent = 'تصفّح الباقات'; $('cta').href = '/pricing'; return; }
+    if (now >= END) { $('cd').hidden = true; $('cdl').hidden = true; st.hidden = false; st.className = 'state over'; st.textContent = 'انتهى عرض الجمعة البيضاء. تابعنا للعروض القادمة.'; if ($('cta_login')) $('cta_login').hidden = true; $('cta').textContent = 'تصفّح الباقات'; $('cta').href = '/pricing'; return; }
     if (now >= START) {
+      if ($('cta_login')) $('cta_login').hidden = true;
       $('cd').hidden = true; $('cdl').hidden = true; st.hidden = false; st.className = 'state live';
       if (!st.dataset.loaded) { st.dataset.loaded = '1'; st.textContent = '🔥 العرض متاح الآن · الكود في بريدك'; seats(); setInterval(seats, 60000); }
       $('cta').textContent = 'اشترك الآن بالخصم'; $('cta').href = '/pricing?utm_source=bf_page&utm_campaign=black-friday';
