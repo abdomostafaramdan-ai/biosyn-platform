@@ -1,0 +1,75 @@
+# Claude Approvals (Claude Ship) policy for Biosyn Eg.
+# Starts in observe mode: the "Claude Approvals" check only shows what it would decide.
+# Delete the `mode: observe` line to enforce it after a couple of weeks of watching.
+#
+# How it reads:
+#   - Content pages (blog, course and teacher landing pages, topic pages, images, docs):
+#     Claude can approve alone once its own code review passes.
+#   - Ordinary site code: one person (the PR author counts), and Claude approves too when its review passes.
+#   - Money, accounts, the database, security and the review rules themselves:
+#     Claude never approves; a person always decides.
+version: 1
+mode: observe
+rules:
+  - purpose: "Ordinary site code needs one person. When Claude's review passes, Claude approves as well."
+    paths:
+      - "**"
+      - "!docs/blog-*.html"
+      - "!docs/course-*.html"
+      - "!docs/teacher-*.html"
+      - "!docs/topic-*.html"
+      - "!docs/img/**"
+      - "!**/*.md"
+    verdict: { claude: comments, seats: 1 }
+    override:
+      - { if: "claude/code_review = pass", verdict: { claude: approves, seats: 1 } }
+
+  - purpose: "Content pages and images: Claude can approve alone when its review passes; otherwise one person."
+    paths:
+      - "docs/blog-*.html"
+      - "docs/course-*.html"
+      - "docs/teacher-*.html"
+      - "docs/topic-*.html"
+      - "docs/img/**"
+      - "**/*.md"
+    verdict: { claude: comments, seats: 1 }
+    override:
+      - { if: "claude/code_review = pass", verdict: { claude: approves, seats: 0 } }
+
+  - purpose: "Payments, subscriptions, instructor earnings, emails and the database: a person always decides, Claude only comments."
+    paths:
+      - "backend/supabase/migrations/**"
+      - "backend/supabase/functions/**"
+      - "docs/js/sb.js"
+      - "docs/js/config.js"
+      - "docs/js/app.js"
+      - "docs/js/account.js"
+      - "docs/js/admin.js"
+      - "docs/js/instructor.js"
+      - "docs/js/analytics.js"
+      - "docs/js/contract.js"
+      - "docs/js/contracts-admin.js"
+      - "docs/js/campaign-admin.js"
+      - "docs/js/emails-admin.js"
+      - "docs/js/users-export.js"
+      - "docs/js/pages.js"
+      - "docs/pricing.html"
+      - "docs/login.html"
+      - "docs/watch.html"
+      - "docs/contract.html"
+      - "docs/refund.html"
+      - "docs/terms.html"
+      - "docs/privacy.html"
+    nested: inherit
+    verdict: { claude: comments, seats: 1 }
+
+  - purpose: "Review rules, CI workflows, deploy settings and agent instructions: a person always decides."
+    paths:
+      - "**/.claude/**"
+      - ".github/**"
+      - "docs/CNAME"
+      - "**/CLAUDE.md"
+      - "**/AGENTS.md"
+      - "scripts/**"
+    nested: inherit
+    verdict: { claude: comments, seats: 1 }
