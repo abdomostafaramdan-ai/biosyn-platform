@@ -225,7 +225,8 @@
   const page = (location.pathname.split('/').pop() || 'index').replace(/\.html$/, '') || 'index';
   if (/^(login|admin|unsubscribe)$/.test(page) || !window.sb) return;
   let overlay, timer, reshowTimer;
-  const PK = 'biosyn.promo_shown';
+  // the view counter is per offer: a new title/subtitle/code (e.g. teaser → code reveal) shows again
+  let PK = 'biosyn.promo_shown';
   const getShown = () => { try { return Number(localStorage.getItem(PK)) || 0; } catch { return 0; } };
   const incShown = () => { try { localStorage.setItem(PK, String(getShown() + 1)); } catch {} };
   let maxShows = 2;
@@ -251,6 +252,7 @@
         try { const st = await sb.rpc('my_plan_state'); if (st && st.plan_code) return; } catch {}
       }
     } catch {}
+    { let h = 0; const sig = [d.title, d.subtitle, d.discount, d.promo_code].join('|'); for (let i = 0; i < sig.length; i++) h = (h * 31 + sig.charCodeAt(i)) | 0; PK = 'biosyn.promo_shown:' + (h >>> 0).toString(36); }
     window._promoReshowSec = d.reshow_sec || 60;
     maxShows = Math.max(1, Number(d.max_shows) || 2);
     if (getShown() >= maxShows) return;
