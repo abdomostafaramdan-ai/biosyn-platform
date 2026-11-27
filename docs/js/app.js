@@ -352,6 +352,15 @@
       const cm = $('[data-cpnmsg]', m), priceEl = $('p b', m).parentElement;
       let saved = ''; try { saved = localStorage.getItem('biosyn.code') || sessionStorage.getItem('biosyn.promo') || ''; } catch {}
       if (saved) setTimeout(() => { $('#cpn', m).value = saved; $('[data-cpn]', m).click(); try { sessionStorage.removeItem('biosyn.promo'); } catch {} }, 0);
+      // no code of their own: while an offer is live (admin → النافذة الإعلانية, with a promo code) it is filled in and applied for them
+      else if (!target.consultation) (async () => {
+        try {
+          const r = await sb.get('site_content', { select: 'data', key: 'eq.promo_popup' }), d = r && r[0] && r[0].data;
+          if (!d || !d.on || !d.promo_code || !document.body.contains(m) || $('#cpn', m).value) return;
+          const q = await sb.rpc('validate_coupon', { p_code: d.promo_code, p_plan_code: target.plan_code || null, p_course: target.course_id || null });
+          if (q && q.final != null && document.body.contains(m) && !$('#cpn', m).value) { $('#cpn', m).value = d.promo_code; $('[data-cpn]', m).click(); }
+        } catch {}   // not valid for this item/user: leave the field empty, no error shown
+      })();
       $('[data-cpn]', m).onclick = async (ev) => {
         const cbtn = ev.currentTarget, code = $('#cpn', m).value.trim(); coupon = ''; cm.className = 'bx-formmsg';
         if (!code) { cm.textContent = ''; priceEl.innerHTML = `<b>${esc(target.title)}</b> · ${priceTxt(target.price, R, target.intl)}`; return; }
